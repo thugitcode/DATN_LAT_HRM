@@ -1,0 +1,246 @@
+@import '@mantine/core/styles.css';
+@import '@mantine/dates/styles.css';
+@import '@mantine/charts/styles.css';
+@import '@mantine/notifications/styles.css';
+@import 'mantine-datatable/styles.css';
+
+:root {
+  --main-sider-width: 70px;
+  --main-sider-width-active: 250px;
+  --main-sider-item-height: 40px;
+  --main-sider-icon-size: 20px;
+  --header-height: 72px;
+}
+
+body {
+  --mantine-color-text: #2c3782;
+  overflow: hidden;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+[data-mantine-color-scheme='light'] .mantine-Input-input[data-variant='filled'] {
+  --input-bg: #f5f6fa;
+  --input-bd: #e5e9fb;
+  --input-radius: rem(10px);
+}
+
+[data-mantine-color-scheme='light']
+  .mantine-Input-input[data-variant='default']:not(:focus):not([data-error='true']) {
+  --input-bg: #f5f6fa;
+  --input-bd: #e5e9fb;
+}
+
+[data-mantine-color-scheme='light'] .mantine-Tabs-tab[data-active='true'][data-variant='default'] {
+  color: var(--mantine-color-primary-text);
+}
+
+.mantine-datatable-pagination {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  flex-wrap: nowrap !important;
+
+  button.mantine-Button-root.mantine-UnstyledButton-root {
+    min-width: fit-content !important;
+  }
+
+  button.mantine-Button-root[data-active='true'] {
+    background-color: #6576ff !important;
+    color: white !important;
+  }
+
+  --pagination-control-radius: 100px;
+
+  > *:first-child {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    order: 1 !important;
+    margin-right: auto !important;
+  }
+
+  .mantine-Select-wrapper::after,
+  .mantine-Select-root::after {
+    content: ' trên trang';
+    margin-left: 8px;
+    color: #2c3782;
+    display: inline-block;
+    font-size: 14px;
+  }
+
+  > *:last-child {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    order: 2 !important;
+    margin-left: auto !important;
+  }
+}
+
+.mantine-ActionIcon-root[data-variant='subtle'][data-disabled='true'] {
+  background-color: transparent;
+  opacity: 0.5;
+}
+
+.filter__tab-work__taks .mantine-Tabs-tab[aria-selected='true'] > span {
+  color: white;
+}
+
+.animate-spin {
+  animation: spin var(--animation-duration) linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+[data-mantine-color-scheme='light'] .mantine-Input-input[data-disabled] {
+  color: #000000;
+}
+
+/*
+Đoạn css ở dưới đang ghi đè lên mọi variant của Input, đúng ra chỉ nên ghi đè lên varient "filled" thôi
+-> Tạm thời comment ẩn đi '.mantine-Input-input', và đã thêm border vào đoạn css ở trên
+  `
+  [data-mantine-color-scheme='light'] .mantine-Input-input[data-variant='filled'] {...}
+  `
+*/
+.mantine-Input-input.mantine-DatePickerInput-input {
+  /* .mantine-Input-input { */
+  border-radius: 10px;
+  background: #f5f6fa;
+  border: 1px solid #e5e9fb;
+}
+
+.mantine-InputPlaceholder-placeholder,
+.mantine-Input-section svg g {
+  color: #2c3782;
+}
+
+/* Appointment table styling (scoped by classNames in AppointmentList) */
+.appointment-table {
+  border-collapse: separate !important;
+  border-spacing: 0 8px !important;
+  background: transparent !important;
+}
+
+.appointment-header {
+  background: #eef1fb !important;
+}
+
+.appointment-header th {
+  background: transparent !important;
+  border: none !important;
+  color: #1f2a44;
+}
+
+.appointment-header th:first-child {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.appointment-header th:last-child {
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.appointment-table tbody {
+  background: #ffffff !important;
+  box-shadow: 0 8px 24px rgba(33, 37, 41, 0.04);
+}
+
+.appointment-table tbody tr td {
+  border-bottom: none !important;
+}
+
+.appointment-table tbody tr:first-child td:first-child {
+  border-top-left-radius: 10px;
+}
+
+.appointment-table tbody tr:first-child td:last-child {
+  border-top-right-radius: 10px;
+}
+
+.appointment-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+}
+
+.appointment-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
+}
+
+.appointment-form :global(.mantine-InputWrapper-label) {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.switch-track-active[data-checked] {
+  background-color: #6576ff !important;
+}
+
+.mantine-datatable-pagination {
+  background: white;
+  padding: 15 !important;
+  padding-inline: 24px 15px !important;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  button.mantine-Button-root.mantine-UnstyledButton-root {
+    background: white !important;
+    box-shadow: 0px 4px 10px 0px #0000000d;
+    border: none;
+    height: 33px !important;
+
+    .mantine-datatable-page-size-selector-button-icon {
+      position: relative;
+      width: 14px;
+      height: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      left: 4px;
+      top: -3px;
+
+      svg {
+        display: none;
+      }
+    }
+
+    .mantine-datatable-page-size-selector-button-icon::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-right: 1.5px solid #868caa;
+      border-bottom: 1.5px solid #868caa;
+      transform: rotate(45deg);
+    }
+  }
+}
+
+.mantine-datatable-scroll-area-corner {
+  background: white;
+  opacity: 1;
+}
+
+.mantine-datatable-scroll-area-scrollbar {
+  &[data-orientation='horizontal'] {
+    background: white;
+  }
+}

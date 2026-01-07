@@ -1,0 +1,381 @@
+[
+  {
+    "ID": "1",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_NOITONGQUAT",
+    "TEN_LOAI": "Nội tổng quát"
+  },
+  {
+    "ID": "2",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_NOITIET",
+    "TEN_LOAI": "Nội tiết"
+  },
+  {
+    "ID": "3",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_TIMMACH",
+    "TEN_LOAI": "Tim mạch"
+  },
+  {
+    "ID": "4",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_TIEUHOA",
+    "TEN_LOAI": "Nội Tiêu hóa"
+  },
+  {
+    "ID": "5",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_NGOAIKHOA",
+    "TEN_LOAI": "Ngoại khoa"
+  },
+  {
+    "ID": "6",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_NGOAITIEUHOA",
+    "TEN_LOAI": "Ngoại tiêu hóa"
+  },
+  {
+    "ID": "7",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_SANPHUKHOA",
+    "TEN_LOAI": "Sản phụ khoa"
+  },
+  {
+    "ID": "8",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_NAMKHOA",
+    "TEN_LOAI": "Nam khoa"
+  },
+  {
+    "ID": "9",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_TMH",
+    "TEN_LOAI": "Tai mũi họng"
+  },
+  {
+    "ID": "10",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_RHM",
+    "TEN_LOAI": "Răng hàm mặt"
+  },
+  {
+    "ID": "11",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_NHI",
+    "TEN_LOAI": "Nhi khoa"
+  },
+  {
+    "ID": "12",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_DALIEU",
+    "TEN_LOAI": "Da liễu"
+  },
+  {
+    "ID": "13",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_TAMTHAN",
+    "TEN_LOAI": "Tâm thần"
+  },
+  {
+    "ID": "14",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_MAT",
+    "TEN_LOAI": "Mắt"
+  },
+  {
+    "ID": "15",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_DINHDUONG",
+    "TEN_LOAI": "Dinh dưỡng"
+  },
+  {
+    "ID": "16",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_COXUONGKHOP",
+    "TEN_LOAI": "Cơ xương khớp"
+  },
+  {
+    "ID": "17",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_YHCT",
+    "TEN_LOAI": "Y học cổ truyền"
+  },
+  {
+    "ID": "18",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_RANG",
+    "TEN_LOAI": "Nha khoa"
+  },
+  {
+    "ID": "19",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_PHCN",
+    "TEN_LOAI": "Phục hồi chức năng"
+  },
+  {
+    "ID": "20",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_UNGBUOU",
+    "TEN_LOAI": "Ung bướu"
+  },
+  {
+    "ID": "21",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_SPATHAMMY",
+    "TEN_LOAI": "Spa thẩm mỹ"
+  },
+  {
+    "ID": "22",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_TRUYENNHIEM",
+    "TEN_LOAI": "Truyền nhiễm"
+  },
+  {
+    "ID": "23",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_THANTIETNIEU",
+    "TEN_LOAI": "Thận tiết niệu"
+  },
+  {
+    "ID": "24",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_THANKINH",
+    "TEN_LOAI": "Thần kinh"
+  },
+  {
+    "ID": "25",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_HOHAP",
+    "TEN_LOAI": "Hô hấp"
+  },
+  {
+    "ID": "26",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_CTCH",
+    "TEN_LOAI": "Chấn thương chỉnh hình"
+  },
+  {
+    "ID": "27",
+    "NHOM_DV_ID": 1,
+    "NHOM_BHYT": 1,
+    "MA_LOAI": "KB_CAPCUU",
+    "TEN_LOAI": "Cấp cứu"
+  },
+  {
+    "ID": "28",
+    "NHOM_DV_ID": 2,
+    "NHOM_BHYT": 4,
+    "MA_LOAI": "TDCN_NOISOITIEUHOA",
+    "TEN_LOAI": "Nội soi tiêu hóa"
+  },
+  {
+    "ID": "29",
+    "NHOM_DV_ID": 2,
+    "NHOM_BHYT": 4,
+    "MA_LOAI": "TDCN_NOISOITAIMUIHONG",
+    "TEN_LOAI": "Nội soi tai mũi họng"
+  },
+  {
+    "ID": "30",
+    "NHOM_DV_ID": 2,
+    "NHOM_BHYT": 4,
+    "MA_LOAI": "TDCN_SOICOTUCUNG",
+    "TEN_LOAI": "Soi cổ tử cung"
+  },
+  {
+    "ID": "31",
+    "NHOM_DV_ID": 2,
+    "NHOM_BHYT": 4,
+    "MA_LOAI": "TDCN_DIENTIM",
+    "TEN_LOAI": "Điện tim"
+  },
+  {
+    "ID": "32",
+    "NHOM_DV_ID": 2,
+    "NHOM_BHYT": 4,
+    "MA_LOAI": "TDCN_DIENNAO",
+    "TEN_LOAI": "Điện não "
+  },
+  {
+    "ID": "33",
+    "NHOM_DV_ID": 2,
+    "NHOM_BHYT": 4,
+    "MA_LOAI": "TDCN_PHUCHOICHUCNANG",
+    "TEN_LOAI": "Phục hồi chức năng"
+  },
+  {
+    "ID": "34",
+    "NHOM_DV_ID": 3,
+    "NHOM_BHYT": "14",
+    "MA_LOAI": "TP_TIEUPHAU",
+    "TEN_LOAI": "Tiểu phẫu"
+  },
+  {
+    "ID": "35",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_SINHHOA",
+    "TEN_LOAI": "Sinh hóa"
+  },
+  {
+    "ID": "36",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_HUYETHOC",
+    "TEN_LOAI": "Huyết học"
+  },
+  {
+    "ID": "37",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_VISINH",
+    "TEN_LOAI": "Vi sinh"
+  },
+  {
+    "ID": "38",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_NUOCTIEU",
+    "TEN_LOAI": "Xét nghiệm nước tiểu"
+  },
+  {
+    "ID": "39",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_TEBAO",
+    "TEN_LOAI": "Xét nghiệm tế bào"
+  },
+  {
+    "ID": "40",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_GIAIPHAUBENH",
+    "TEN_LOAI": "Giải phẫu bệnh"
+  },
+  {
+    "ID": "41",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_SINHHOCPHANTU",
+    "TEN_LOAI": "Sinh học phân tử"
+  },
+  {
+    "ID": "42",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_SANGLOCSOSINH",
+    "TEN_LOAI": "Sàng lọc trước sinh - Sơ sinh"
+  },
+  {
+    "ID": "43",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_HUYETSACTO",
+    "TEN_LOAI": "Xét nghiệm điện di huyết sắc tố"
+  },
+  {
+    "ID": "44",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_KHIMAU",
+    "TEN_LOAI": "Xét nghiệm khí máu"
+  },
+  {
+    "ID": "45",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_KYSINHTRUNG",
+    "TEN_LOAI": "Xét nghiệm ký sinh trùng"
+  },
+  {
+    "ID": "46",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_MIENDICH",
+    "TEN_LOAI": "Xét nghiệm miễn dịch"
+  },
+  {
+    "ID": "47",
+    "NHOM_DV_ID": 4,
+    "NHOM_BHYT": 2,
+    "MA_LOAI": "XN_TINHDICHDO",
+    "TEN_LOAI": "Xét nghiệm tinh dịch đồ"
+  },
+  {
+    "ID": "48",
+    "NHOM_DV_ID": 5,
+    "NHOM_BHYT": 3,
+    "MA_LOAI": "CDHA_XQUANG",
+    "TEN_LOAI": "Xquang"
+  },
+  {
+    "ID": "49",
+    "NHOM_DV_ID": 5,
+    "NHOM_BHYT": 3,
+    "MA_LOAI": "CDHA_SIEUAM",
+    "TEN_LOAI": "Siêu âm"
+  },
+  {
+    "ID": "50",
+    "NHOM_DV_ID": 5,
+    "NHOM_BHYT": 3,
+    "MA_LOAI": "CDHA_MAMO",
+    "TEN_LOAI": "Mamo"
+  },
+  {
+    "ID": "51",
+    "NHOM_DV_ID": 5,
+    "NHOM_BHYT": 3,
+    "MA_LOAI": "CDHA_CT",
+    "TEN_LOAI": "CT"
+  },
+  {
+    "ID": "52",
+    "NHOM_DV_ID": 5,
+    "NHOM_BHYT": 3,
+    "MA_LOAI": "CDHA_MRI",
+    "TEN_LOAI": "MRI"
+  },
+  {
+    "ID": "53",
+    "NHOM_DV_ID": 5,
+    "NHOM_BHYT": 3,
+    "MA_LOAI": "CDHA_LOANGXUONG",
+    "TEN_LOAI": "Loãng xương"
+  },
+  {
+    "ID": "54",
+    "NHOM_DV_ID": 6,
+    "NHOM_BHYT": 15,
+    "MA_LOAI": "COMBO_DV",
+    "TEN_LOAI": "Combo dịch vụ",
+    "TEN_LOAI_EN": "Combo of services"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "TEN_TUYEN_BV": "Tư nhân bệnh viện đa khoa",
+    "MA_TUYEN_BV": "tu_nhan_BV_da_khoa"
+  },
+  {
+    "TEN_TUYEN_BV": "Tư nhân Phòng khám đa khoa",
+    "MA_TUYEN_BV": "tu_nhan_PK_da_khoa"
+  },
+  {
+    "TEN_TUYEN_BV": "Tuyến huyện",
+    "MA_TUYEN_BV": "tuyen_huyen"
+  },
+  {
+    "TEN_TUYEN_BV": "Tuyến tỉnh",
+    "MA_TUYEN_BV": "tuyen_tinh"
+  },
+  {
+    "TEN_TUYEN_BV": "Tuyến trung ương",
+    "MA_TUYEN_BV": "tuyen_tw"
+  }
+]
