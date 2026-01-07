@@ -1,0 +1,15 @@
+import { createFileRoute, redirect } from '@tanstack/react-router';
+
+export const Route = createFileRoute('/')({
+  beforeLoad: () => {
+    throw redirect({
+      to: '/admin/dashboard',
+    });
+  },
+
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  return <div>This is Public page!!</div>;
+}

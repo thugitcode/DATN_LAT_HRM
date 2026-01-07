@@ -1,0 +1,172 @@
+[
+  {
+    "MA_TINH_THANH_BNV": "01",
+    "MA_TINH_THANH_TMS": "101",
+    "TEN_TINH_THANH": "Thành phố Hà Nội"
+  },
+  {
+    "MA_TINH_THANH_BNV": "02",
+    "MA_TINH_THANH_TMS": "223",
+    "TEN_TINH_THANH": "Tỉnh Bắc Ninh"
+  },
+  {
+    "MA_TINH_THANH_BNV": "03",
+    "MA_TINH_THANH_TMS": "225",
+    "TEN_TINH_THANH": "Tỉnh Quảng Ninh"
+  },
+  {
+    "MA_TINH_THANH_BNV": "04",
+    "MA_TINH_THANH_TMS": "103",
+    "TEN_TINH_THANH": "Tp Hải Phòng"
+  },
+  {
+    "MA_TINH_THANH_BNV": "05",
+    "MA_TINH_THANH_TMS": "109",
+    "TEN_TINH_THANH": "Tỉnh Hưng Yên"
+  },
+  {
+    "MA_TINH_THANH_BNV": "06",
+    "MA_TINH_THANH_TMS": "117",
+    "TEN_TINH_THANH": "Tỉnh Ninh Bình"
+  },
+  {
+    "MA_TINH_THANH_BNV": "07",
+    "MA_TINH_THANH_TMS": "203",
+    "TEN_TINH_THANH": "Tỉnh Cao Bằng"
+  },
+  {
+    "MA_TINH_THANH_BNV": "08",
+    "MA_TINH_THANH_TMS": "211",
+    "TEN_TINH_THANH": "Tỉnh Tuyên Quang"
+  },
+  {
+    "MA_TINH_THANH_BNV": "09",
+    "MA_TINH_THANH_TMS": "205",
+    "TEN_TINH_THANH": "Tỉnh Lào Cai"
+  },
+  {
+    "MA_TINH_THANH_BNV": "10",
+    "MA_TINH_THANH_TMS": "215",
+    "TEN_TINH_THANH": "Tỉnh Thái Nguyên"
+  },
+  {
+    "MA_TINH_THANH_BNV": "11",
+    "MA_TINH_THANH_TMS": "209",
+    "TEN_TINH_THANH": "Tỉnh Lạng Sơn"
+  },
+  {
+    "MA_TINH_THANH_BNV": "12",
+    "MA_TINH_THANH_TMS": "217",
+    "TEN_TINH_THANH": "Tỉnh Phú Thọ"
+  },
+  {
+    "MA_TINH_THANH_BNV": "13",
+    "MA_TINH_THANH_TMS": "301",
+    "TEN_TINH_THANH": "Tỉnh Điện Biên"
+  },
+  {
+    "MA_TINH_THANH_BNV": "14",
+    "MA_TINH_THANH_TMS": "302",
+    "TEN_TINH_THANH": "Tỉnh Lai Châu"
+  },
+  {
+    "MA_TINH_THANH_BNV": "15",
+    "MA_TINH_THANH_TMS": "303",
+    "TEN_TINH_THANH": "Tỉnh Sơn La"
+  },
+  {
+    "MA_TINH_THANH_BNV": "16",
+    "MA_TINH_THANH_TMS": "401",
+    "TEN_TINH_THANH": "Tỉnh Thanh Hóa"
+  },
+  {
+    "MA_TINH_THANH_BNV": "17",
+    "MA_TINH_THANH_TMS": "403",
+    "TEN_TINH_THANH": "Tỉnh Nghệ An"
+  },
+  {
+    "MA_TINH_THANH_BNV": "18",
+    "MA_TINH_THANH_TMS": "405",
+    "TEN_TINH_THANH": "Tỉnh Hà Tĩnh"
+  },
+  {
+    "MA_TINH_THANH_BNV": "19",
+    "MA_TINH_THANH_TMS": "409",
+    "TEN_TINH_THANH": "Tỉnh Quảng Trị"
+  },
+  {
+    "MA_TINH_THANH_BNV": "20",
+    "MA_TINH_THANH_TMS": "411",
+    "TEN_TINH_THANH": "Thành phố Huế"
+  },
+  {
+    "MA_TINH_THANH_BNV": "21",
+    "MA_TINH_THANH_TMS": "501",
+    "TEN_TINH_THANH": "Tp Đà Nẵng"
+  },
+  {
+    "MA_TINH_THANH_BNV": "22",
+    "MA_TINH_THANH_TMS": "505",
+    "TEN_TINH_THANH": "Tỉnh Quảng Ngãi"
+  },
+  {
+    "MA_TINH_THANH_BNV": "23",
+    "MA_TINH_THANH_TMS": 511,
+    "TEN_TINH_THANH": "Tỉnh Khánh Hòa"
+  },
+  {
+    "MA_TINH_THANH_BNV": "24",
+    "MA_TINH_THANH_TMS": "603",
+    "TEN_TINH_THANH": "Tỉnh Gia Lai"
+  },
+  {
+    "MA_TINH_THANH_BNV": "25",
+    "MA_TINH_THANH_TMS": "605",
+    "TEN_TINH_THANH": "Tỉnh Đắk Lắk"
+  },
+  {
+    "MA_TINH_THANH_BNV": "26",
+    "MA_TINH_THANH_TMS": "703",
+    "TEN_TINH_THANH": "Tỉnh Lâm Đồng"
+  },
+  {
+    "MA_TINH_THANH_BNV": "27",
+    "MA_TINH_THANH_TMS": "709",
+    "TEN_TINH_THANH": "Tỉnh Tây Ninh"
+  },
+  {
+    "MA_TINH_THANH_BNV": "28",
+    "MA_TINH_THANH_TMS": "713",
+    "TEN_TINH_THANH": "Tỉnh Đồng Nai"
+  },
+  {
+    "MA_TINH_THANH_BNV": "29",
+    "MA_TINH_THANH_TMS": "701",
+    "TEN_TINH_THANH": "Tp Hồ Chí Minh"
+  },
+  {
+    "MA_TINH_THANH_BNV": "30",
+    "MA_TINH_THANH_TMS": "809",
+    "TEN_TINH_THANH": "Tỉnh Vĩnh Long"
+  },
+  {
+    "MA_TINH_THANH_BNV": "31",
+    "MA_TINH_THANH_TMS": "803",
+    "TEN_TINH_THANH": "Tỉnh Đồng Tháp"
+  },
+  {
+    "MA_TINH_THANH_BNV": "32",
+    "MA_TINH_THANH_TMS": "805",
+    "TEN_TINH_THANH": "Tỉnh An Giang"
+  },
+  {
+    "MA_TINH_THANH_BNV": "33",
+    "MA_TINH_THANH_TMS": "815",
+    "TEN_TINH_THANH": "Tp Cần Thơ"
+  },
+  {
+    "MA_TINH_THANH_BNV": "34",
+    "MA_TINH_THANH_TMS": "823",
+    "TEN_TINH_THANH": "Tỉnh Cà Mau"
+  }
+]
