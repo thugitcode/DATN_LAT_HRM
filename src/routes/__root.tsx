@@ -7,16 +7,19 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { AxiosError } from 'axios';
 
 import type { AuthContext } from '@/types/auth.type';
+import { CommonErrorComponent } from '@/components/common-error-component';
 // import { CommonErrorComponent } from '@/components/common/common-error-component';
-import { CommonNotFoundComponent } from '@/components/common/common-not-found-component';
+// import { CommonNotFoundComponent } from '@/components/common/common-not-found-component';
+import { MainLayout } from '@/components/layouts/main-layout/main-layout';
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   auth: AuthContext;
 }>()({
   component: RootComponent,
-  notFoundComponent: () => <CommonNotFoundComponent variant="page" h="100dvh" />,
+  notFoundComponent: () => <div>Not found</div>,
   errorComponent: ({ error }) => {
+    console.log('error______________________', error);
     let isUnauthenticated = false;
     let isUnauthorized = false;
 
@@ -38,7 +41,7 @@ export const Route = createRootRouteWithContext<{
       //   h="100dvh"
       // />
 
-      <div>CommonErrorComponent</div>
+      <CommonErrorComponent />
     );
   },
 });
@@ -48,7 +51,7 @@ function RootComponent() {
     <>
       <Outlet />
 
-      <TanStackDevtools
+      {/* <TanStackDevtools
         plugins={[
           {
             name: 'TanStack Query',
@@ -68,7 +71,7 @@ function RootComponent() {
           defaultOpen: false,
           position: 'bottom-left',
         }}
-      />
+      /> */}
     </>
   );
 }

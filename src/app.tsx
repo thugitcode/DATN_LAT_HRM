@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { HeroUIProvider } from '@heroui/react';
 import { useKeycloak } from '@react-keycloak/web';
 
-import { ConfirmModal } from './components/common/common-confirm-modal';
-import { GlobalLoading } from './components/common/common-global-loading';
+// import { ConfirmModal } from './components/common/common-confirm-modal';
+// import { GlobalLoading } from './components/common/common-global-loading';
 import { PersistProvider } from './components/providers/persist-provider';
 import { DISABLE_AUTH } from './lib/utils';
 import { routeTree } from './routeTree.gen';
@@ -50,35 +51,37 @@ export function App() {
 
   // Sau có tk đăng nhập hrm thì mở cmt trên và xóa đoạn dưới này đi
 
-  let auth: AuthContext;
+  // let auth: AuthContext;
 
-  if (DISABLE_AUTH) {
-    auth = {
-      isLoggedIn: true,
-      tokenPayload: undefined,
-      accessToken: undefined,
-      refreshToken: undefined,
-      logout: () => {},
-    };
-  } else {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const { keycloak } = useKeycloak();
+  // if (DISABLE_AUTH) {
+  //   auth = {
+  //     isLoggedIn: true,
+  //     tokenPayload: undefined,
+  //     accessToken: undefined,
+  //     refreshToken: undefined,
+  //     logout: () => {},
+  //   };
+  // } else {
+  //   // eslint-disable-next-line react-hooks/rules-of-hooks
+  //   const { keycloak } = useKeycloak();
 
-    auth = {
-      isLoggedIn: keycloak.authenticated ?? false,
-      tokenPayload: keycloak.tokenParsed,
-      accessToken: keycloak.token,
-      refreshToken: keycloak.refreshToken,
-      logout: () => keycloak.logout(),
-    };
-  }
+  //   auth = {
+  //     isLoggedIn: keycloak.authenticated ?? false,
+  //     tokenPayload: keycloak.tokenParsed,
+  //     accessToken: keycloak.token,
+  //     refreshToken: keycloak.refreshToken,
+  //     logout: () => keycloak.logout(),
+  //   };
+  // }
 
   return (
     <QueryClientProvider client={queryClient}>
       <PersistProvider>
-        <GlobalLoading />
-        <RouterProvider router={router} context={{ queryClient, auth }} />
-        <ConfirmModal />
+        {/* <GlobalLoading /> */}
+        <HeroUIProvider className="h-full">
+          <RouterProvider router={router} />
+        </HeroUIProvider>
+        {/* <ConfirmModal /> */}
       </PersistProvider>
     </QueryClientProvider>
   );

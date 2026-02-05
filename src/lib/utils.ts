@@ -1,4 +1,4 @@
-import { notifications, type NotificationData } from '@mantine/notifications';
+// import { notifications, type NotificationData } from '@mantine/notifications';
 import clsx, { type ClassValue } from 'clsx';
 
 import type { FormFieldProps } from '@/types';
@@ -108,24 +108,24 @@ export function getFormFieldProps({ formProps }: FormFieldProps) {
     : {};
 }
 
-export const noti = {
-  success: (message?: string, config: Omit<NotificationData, 'message'> = {}) => {
-    notifications.show({
-      message: message || 'Thao tác thành công',
-      color: 'green',
-      position: 'top-right',
-      ...config,
-    });
-  },
-  error: (message?: string, config: Omit<NotificationData, 'message'> = {}) => {
-    notifications.show({
-      message: message || 'Thao tác thất bại, vui lòng thử lại',
-      color: 'red',
-      position: 'top-right',
-      ...config,
-    });
-  },
-};
+// export const noti = {
+//   success: (message?: string, config: Omit<NotificationData, 'message'> = {}) => {
+//     notifications.show({
+//       message: message || 'Thao tác thành công',
+//       color: 'green',
+//       position: 'top-right',
+//       ...config,
+//     });
+//   },
+//   error: (message?: string, config: Omit<NotificationData, 'message'> = {}) => {
+//     notifications.show({
+//       message: message || 'Thao tác thất bại, vui lòng thử lại',
+//       color: 'red',
+//       position: 'top-right',
+//       ...config,
+//     });
+//   },
+// };
 
 export function formatPrice(price: string | number | undefined) {
   if (!price) return '0';

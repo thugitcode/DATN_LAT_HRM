@@ -1,5 +1,0 @@
-.filterTabBar {
-  :global(.mantine-Tabs-list)::before {
-    display: none !important;
-  }
-}

@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { Center, Loader, LoadingOverlay, Stack, Text } from '@mantine/core';
+// import { Center, Loader, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { identityQueryOptions } from '@/query-options';
 
 import { apiTokens } from '@/lib/axios';
@@ -7,13 +7,13 @@ import { apiTokens } from '@/lib/axios';
 // import { useBootstrapStaticData } from '@/hooks/common/use-bootstrap-static-data';
 
 export const Route = createFileRoute('/_private')({
-  beforeLoad: ({ context: { auth } }) => {
-    if (!auth.isLoggedIn) {
-      throw redirect({ to: '/login' });
-    }
-    apiTokens.accessToken = auth.accessToken;
-    apiTokens.refreshToken = auth.refreshToken;
-  },
+  // beforeLoad: ({ context: { auth } }) => {
+  //   if (!auth.isLoggedIn) {
+  //     throw redirect({ to: '/login' });
+  //   }
+  //   apiTokens.accessToken = auth.accessToken;
+  //   apiTokens.refreshToken = auth.refreshToken;
+  // },
   loader: async ({ context: { queryClient } }) => {
     // await queryClient.ensureQueryData(identityQueryOptions());
   },
@@ -23,9 +23,11 @@ export const Route = createFileRoute('/_private')({
 
 function PendingComponent() {
   return (
-    <Center h="100vh">
-      <Loader size="lg" />
-    </Center>
+    // <Center h="100vh">
+    //   <Loader size="lg" />
+    // </Center>
+
+    <div>PendingComponent</div>
   );
 }
 
@@ -36,7 +38,7 @@ function RouteComponent() {
   return (
     <>
       <Outlet />
-
+      {/* 
       <LoadingOverlay
         // visible={isBootstrapping}
         visible={false}
@@ -49,7 +51,7 @@ function RouteComponent() {
             </Stack>
           ),
         }}
-      />
+      /> */}
     </>
   );
 }
