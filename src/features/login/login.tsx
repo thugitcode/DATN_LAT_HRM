@@ -1,15 +1,4 @@
 import { useRef } from 'react';
-import {
-  BackgroundImage,
-  Box,
-  Button,
-  Container,
-  Group,
-  Image,
-  Paper,
-  Stack,
-  Text,
-} from '@mantine/core';
 import imageLoginBg from '@public/images/login-bg.jpg';
 import imageLogoH247 from '@public/images/logo-h247.svg';
 import { useKeycloak } from '@react-keycloak/web';
@@ -26,52 +15,54 @@ export const Login = () => {
   useEventListener('message', handleMessage, window, true);
 
   return (
-    <BackgroundImage src={imageLoginBg}>
-      <Container size="xl" h="100dvh" p="xl">
-        <Stack h="100%" gap="xl" justify="space-between">
-          <Box h="30dvh" />
+    // <BackgroundImage src={imageLoginBg}>
+    //   <Container size="xl" h="100dvh" p="xl">
+    //     <Stack h="100%" gap="xl" justify="space-between">
+    //       <Box h="30dvh" />
 
-          <Paper p="xl" radius="lg">
-            <Container size="sm">
-              <Stack align="center" gap="xl">
-                <Image src={imageLogoH247} w={220} />
+    //       <Paper p="xl" radius="lg">
+    //         <Container size="sm">
+    //           <Stack align="center" gap="xl">
+    //             <Image src={imageLogoH247} w={220} />
 
-                <Text ta="center" fz="lg">
-                  Giải pháp thông minh quản lý phòng khám, chuỗi phòng khám đa khoa hiệu quả, tiện
-                  dụng, mọi lúc, mọi nơi trên mọi nền tảng
-                </Text>
+    //             <Text ta="center" fz="lg">
+    //               Giải pháp thông minh quản lý phòng khám, chuỗi phòng khám đa khoa hiệu quả, tiện
+    //               dụng, mọi lúc, mọi nơi trên mọi nền tảng
+    //             </Text>
 
-                <Button
-                  size="lg"
-                  onClick={handleLogin}
-                  bg="#ff548e"
-                  rightSection={<IconCircleArrowRightFilled />}
-                >
-                  Đăng nhập
-                </Button>
-              </Stack>
-            </Container>
-          </Paper>
+    //             <Button
+    //               size="lg"
+    //               onClick={handleLogin}
+    //               bg="#ff548e"
+    //               rightSection={<IconCircleArrowRightFilled />}
+    //             >
+    //               Đăng nhập
+    //             </Button>
+    //           </Stack>
+    //         </Container>
+    //       </Paper>
 
-          <Group c="white" justify="space-between" fw={500}>
-            <Text fw="inherit">
-              Địa chỉ: Số 35 Lê Văn Thiêm, Phường Thanh Xuân Trung, Quận Thanh Xuân, TP Hà Nội
-            </Text>
+    //       <Group c="white" justify="space-between" fw={500}>
+    //         <Text fw="inherit">
+    //           Địa chỉ: Số 35 Lê Văn Thiêm, Phường Thanh Xuân Trung, Quận Thanh Xuân, TP Hà Nội
+    //         </Text>
 
-            <Text fw="inherit">
-              Website:{' '}
-              <Text component="a" href="https://deepcare.io" fw="inherit" td="underline">
-                Deepcare.io
-              </Text>
-            </Text>
+    //         <Text fw="inherit">
+    //           Website:{' '}
+    //           <Text component="a" href="https://deepcare.io" fw="inherit" td="underline">
+    //             Deepcare.io
+    //           </Text>
+    //         </Text>
 
-            <Text fw="inherit">Hotline: 1900 068 856</Text>
+    //         <Text fw="inherit">Hotline: 1900 068 856</Text>
 
-            <Text fw="inherit">Email: contact@deepcare.io</Text>
-          </Group>
-        </Stack>
-      </Container>
-    </BackgroundImage>
+    //         <Text fw="inherit">Email: contact@deepcare.io</Text>
+    //       </Group>
+    //     </Stack>
+    //   </Container>
+    // </BackgroundImage>
+
+    <div>Login</div>
   );
 
   async function handleLogin() {

@@ -1,9 +1,9 @@
-import { useEffect } from "react";
-import { useRouter } from "@tanstack/react-router";
+import { useEffect } from 'react';
+import { useRouter } from '@tanstack/react-router';
 
-import { CommonInitializingComponent } from "@/components/common/common-initializing-component";
+import { CommonInitializingComponent } from '@/components/common/common-initializing-component';
 
-import { WINDOW_LOGIN_SUCCESS_MESSAGE } from "./libs/constants";
+import { WINDOW_LOGIN_SUCCESS_MESSAGE } from './libs/constants';
 
 export const LoginSuccess = () => {
   const router = useRouter();
@@ -19,10 +19,12 @@ export const LoginSuccess = () => {
       };
     }
 
-    router.history.replace("/login");
+    router.history.replace('/login');
   }, [router.history]);
 
   return (
-    <CommonInitializingComponent h="100dvh" title="Đăng nhập thành công. Đang chuyển hướng..." />
+    // <CommonInitializingComponent h="100dvh" title="Đăng nhập thành công. Đang chuyển hướng..." />
+
+    <div>CommonInitializingComponent</div>
   );
 };

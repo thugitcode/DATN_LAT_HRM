@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { dehydrate, hydrate, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from 'react';
+import { dehydrate, hydrate, useQueryClient } from '@tanstack/react-query';
 
-import { PERSIST_MAX_AGE, STATIC_DATA_STALE_TIME } from "@/lib/constants";
-import { idbPersister } from "@/lib/idb-persister";
-import { logger } from "@/lib/logger";
-import { isPersistableQuery } from "@/lib/utils";
+import { PERSIST_MAX_AGE, STATIC_DATA_STALE_TIME } from '@/lib/constants';
+import { idbPersister } from '@/lib/idb-persister';
+import { logger } from '@/lib/logger';
+import { isPersistableQuery } from '@/lib/utils';
 
 /**
  * Hook để restore cache từ IndexedDB khi app start
@@ -29,14 +29,14 @@ export function usePersistStaticData() {
           persistedClient.timestamp && now - persistedClient.timestamp > PERSIST_MAX_AGE;
 
         if (isExpired) {
-          logger.log("⏰ Persisted cache expired, clearing...");
+          logger.log('⏰ Persisted cache expired, clearing...');
           await idbPersister.removeClient();
           return;
         }
 
         // Hydrate cache
         hydrate(queryClient, persistedClient.clientState);
-        logger.log("✅ Cache restored and hydrated");
+        logger.log('✅ Cache restored and hydrated');
 
         // Log chi tiết từng query được restore
         persistedClient.clientState.queries?.forEach((query) => {
@@ -46,7 +46,7 @@ export function usePersistStaticData() {
           logger.log(`   - ${queryKey}: age=${(dataAge / 1000).toFixed(0)}s, stale=${isStale}`);
         });
       } catch (error) {
-        console.error("Failed to restore cache:", error);
+        console.error('Failed to restore cache:', error);
       }
     };
 
@@ -60,17 +60,17 @@ export function usePersistStaticData() {
       });
 
       idbPersister.persistClient({
-        buster: "",
+        buster: '',
         clientState: dehydratedState,
         timestamp: Date.now(),
       });
     };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       isSubscribed = false;
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [queryClient]);
 }
