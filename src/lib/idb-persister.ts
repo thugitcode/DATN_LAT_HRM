@@ -1,9 +1,9 @@
-import type { PersistedClient, Persister } from "@tanstack/react-query-persist-client";
-import { del, get, set } from "idb-keyval";
+import type { PersistedClient, Persister } from '@tanstack/react-query-persist-client';
+import { del, get, set } from 'idb-keyval';
 
-import { logger } from "./logger";
+import { logger } from './logger';
 
-const IDB_KEY = "reactQuery-prm";
+const IDB_KEY = 'reactQuery-prm';
 
 /**
  * SIMPLIFIED IndexedDB Persister
@@ -15,9 +15,9 @@ export const idbPersister: Persister = {
   persistClient: async (client: PersistedClient) => {
     try {
       await set(IDB_KEY, client);
-      logger.log("✅ Persisted to IndexedDB");
+      logger.log('✅ Persisted to IndexedDB');
     } catch (error) {
-      console.error("Failed to persist:", error);
+      console.error('Failed to persist:', error);
     }
   },
 
@@ -26,12 +26,12 @@ export const idbPersister: Persister = {
       const client = await get<PersistedClient>(IDB_KEY);
       if (client) {
         logger.log(
-          `✅ Restored from IndexedDB (${client.clientState.queries?.length || 0} queries)`
+          `✅ Restored from IndexedDB (${client.clientState.queries?.length || 0} queries)`,
         );
       }
       return client;
     } catch (error) {
-      console.error("Failed to restore:", error);
+      console.error('Failed to restore:', error);
       return undefined;
     }
   },
@@ -39,9 +39,9 @@ export const idbPersister: Persister = {
   removeClient: async () => {
     try {
       await del(IDB_KEY);
-      logger.log("✅ Cleared IndexedDB");
+      logger.log('✅ Cleared IndexedDB');
     } catch (error) {
-      console.error("Failed to clear:", error);
+      console.error('Failed to clear:', error);
     }
   },
 };
