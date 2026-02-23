@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { dehydrate, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from 'react';
+import { dehydrate, useQueryClient } from '@tanstack/react-query';
 
-import { BOOTSTRAP_BATCH_SIZE } from "@/lib/constants";
-import { idbPersister } from "@/lib/idb-persister";
-import { logger } from "@/lib/logger";
-import { isPersistableQuery } from "@/lib/utils";
-import { useIdentity } from "@/hooks/common/use-identity";
+import { BOOTSTRAP_BATCH_SIZE } from '@/lib/constants';
+import { idbPersister } from '@/lib/idb-persister';
+import { logger } from '@/lib/logger';
+import { isPersistableQuery } from '@/lib/utils';
+import { useIdentity } from '@/hooks/common/use-identity';
 
 // Global flag để tránh bootstrap nhiều lần (persist qua remounts)
 let isBootstrappedGlobal = false;
@@ -39,7 +39,7 @@ export function useBootstrapStaticData() {
       let cachedCount = 0;
 
       try {
-        logger.log("🚀 Starting bootstrap static data...");
+        logger.log('🚀 Starting bootstrap static data...');
         setIsBootstrapping(true);
 
         // Danh sách query options cần prefetch
@@ -54,12 +54,12 @@ export function useBootstrapStaticData() {
             batch.map(async (option) => {
               const existingData = queryClient.getQueryData(option.queryKey);
               logger.log(`  🔍 Checking ${option.queryKey[0]} - queryKey:`, option.queryKey);
-              logger.log(`     existingData:`, existingData ? "EXISTS" : "NULL");
+              logger.log(`     existingData:`, existingData ? 'EXISTS' : 'NULL');
 
               // Debug: Kiểm tra tất cả queries trong cache
               const allQueries = queryClient.getQueryCache().getAll();
               const matchingQueries = allQueries.filter(
-                (q) => q.queryKey[0] === option.queryKey[0]
+                (q) => q.queryKey[0] === option.queryKey[0],
               );
               logger.log(`     matching queries in cache:`, matchingQueries.length);
               matchingQueries.forEach((q) => {
@@ -73,7 +73,7 @@ export function useBootstrapStaticData() {
                   await queryClient.prefetchQuery(option);
                   const queryEndTime = performance.now();
                   logger.log(
-                    `  ✓ Fetched ${option.queryKey[0]} in ${(queryEndTime - queryStartTime).toFixed(2)}ms`
+                    `  ✓ Fetched ${option.queryKey[0]} in ${(queryEndTime - queryStartTime).toFixed(2)}ms`,
                   );
                   fetchedCount++;
                 } catch (error) {
@@ -83,7 +83,7 @@ export function useBootstrapStaticData() {
                 logger.log(`  ⚡ Cached ${option.queryKey[0]} (skip)`);
                 cachedCount++;
               }
-            })
+            }),
           );
         }
 
@@ -97,20 +97,20 @@ export function useBootstrapStaticData() {
         // Persist static data NGAY sau bootstrap
         // Đảm bảo không mất data nếu user đóng tab sớm
         if (fetchedCount > 0) {
-          logger.log("💾 Persisting bootstrap data...");
+          logger.log('💾 Persisting bootstrap data...');
           const dehydratedState = dehydrate(queryClient, {
             shouldDehydrateQuery: isPersistableQuery,
             shouldDehydrateMutation: () => false,
           });
 
           idbPersister.persistClient({
-            buster: "",
+            buster: '',
             clientState: dehydratedState,
             timestamp: Date.now(),
           });
         }
       } catch (error) {
-        console.error("❌ Failed to bootstrap static data:", error);
+        console.error('❌ Failed to bootstrap static data:', error);
         // Reset nếu lỗi để có thể retry
         bootstrapAttemptedRef.current = false;
       } finally {

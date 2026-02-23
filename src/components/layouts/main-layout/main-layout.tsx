@@ -15,7 +15,7 @@ export const MainLayout: FC<Readonly<MainLayoutProps>> = ({ children }) => {
       <div className="flex flex-1">
         <MainSidebar />
 
-        <div className="bg-[#F4F4F5] flex-1">{children}</div>
+        <div className="bg-[#F4F4F5] flex-1 size-full relative min-w-0">{children}</div>
       </div>
     </div>
   );

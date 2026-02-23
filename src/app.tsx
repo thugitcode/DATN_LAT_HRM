@@ -1,22 +1,51 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { HeroUIProvider } from '@heroui/react';
-import { useKeycloak } from '@react-keycloak/web';
+import { HeroUIProvider, ToastProvider } from '@heroui/react';
 
-// import { ConfirmModal } from './components/common/common-confirm-modal';
-// import { GlobalLoading } from './components/common/common-global-loading';
+import { MainDrawer } from './components/drawers/main-drawer';
 import { PersistProvider } from './components/providers/persist-provider';
-import { DISABLE_AUTH } from './lib/utils';
 import { routeTree } from './routeTree.gen';
-import type { AuthContext } from './types/auth.type';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
-      retry: false,
-      gcTime: 5 * 60 * 1000,
-      staleTime: 0,
+      staleTime: 3 * 60 * 1000, // 3 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes
+
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+
+      retry: (failureCount, error) => {
+        if (error instanceof Error) {
+          const message = error.message.toLowerCase();
+          if (
+            message.includes('unauthorized') ||
+            message.includes('forbidden') ||
+            message.includes('not found') ||
+            message.includes('không có quyền') ||
+            message.includes('đăng nhập')
+          ) {
+            return false;
+          }
+        }
+
+        return failureCount < 3;
+      },
+
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+
+      networkMode: 'online',
+    },
+
+    mutations: {
+      retry: 1,
+
+      networkMode: 'online',
+
+      onError: (error) => {
+        console.error('Mutation error:', error);
+      },
     },
   },
 });
@@ -39,49 +68,16 @@ declare module '@tanstack/react-router' {
 }
 
 export function App() {
-  // const { keycloak } = useKeycloak();
-
-  // const auth: AuthContext = {
-  //   isLoggedIn: keycloak.authenticated ?? false,
-  //   tokenPayload: keycloak.tokenParsed,
-  //   accessToken: keycloak.token,
-  //   refreshToken: keycloak.refreshToken,
-  //   logout: () => keycloak.logout(),
-  // };
-
-  // Sau có tk đăng nhập hrm thì mở cmt trên và xóa đoạn dưới này đi
-
-  // let auth: AuthContext;
-
-  // if (DISABLE_AUTH) {
-  //   auth = {
-  //     isLoggedIn: true,
-  //     tokenPayload: undefined,
-  //     accessToken: undefined,
-  //     refreshToken: undefined,
-  //     logout: () => {},
-  //   };
-  // } else {
-  //   // eslint-disable-next-line react-hooks/rules-of-hooks
-  //   const { keycloak } = useKeycloak();
-
-  //   auth = {
-  //     isLoggedIn: keycloak.authenticated ?? false,
-  //     tokenPayload: keycloak.tokenParsed,
-  //     accessToken: keycloak.token,
-  //     refreshToken: keycloak.refreshToken,
-  //     logout: () => keycloak.logout(),
-  //   };
-  // }
-
   return (
     <QueryClientProvider client={queryClient}>
       <PersistProvider>
         {/* <GlobalLoading /> */}
         <HeroUIProvider className="h-full">
+          <ToastProvider placement={'top-right'} />
           <RouterProvider router={router} />
         </HeroUIProvider>
         {/* <ConfirmModal /> */}
+        <MainDrawer />
       </PersistProvider>
     </QueryClientProvider>
   );
