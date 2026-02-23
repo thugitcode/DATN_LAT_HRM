@@ -219,7 +219,7 @@ export function Table<T = RecordType>({
   };
 
   return (
-    <div className="flex flex-col gap-4 justify-between h-full">
+    <div className="flex flex-col gap-4 justify-between h-full ">
       <div className={cn('overflow-auto bg-white ', className)}>
         <table className="w-full border-collapse">
           <thead className="sticky top-0 z-30 ">

@@ -18,7 +18,7 @@ export const ShiftManagementListview: FC<Readonly<ShiftManagementListviewProps>>
 
   return (
     <div className="flex flex-col justify-between gap-7.5 h-full">
-      <div className="flex-1 overflow-auto bg-white rounded-[14px] p-4">
+      <div className="flex-1 bg-white rounded-[14px] p-4">
         <Table
           columns={columns}
           dataSource={data ?? []}

@@ -11,10 +11,9 @@ import { ActionsPage } from '@/components/actions-page';
 import { FooterPageColor } from '@/components/footer-page-color';
 import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
-import { WrapperLoading } from '@/components/wrapper-loading';
 
+import { ShiftManagementGrid } from './components/grid-layout/shift-management-grid';
 import { ShiftManagementFilter } from './components/shift-management-filter';
-import { ShiftManagementGrid } from './components/shift-management-grid';
 import { ShiftManagementListview } from './components/shift-management-listview';
 
 export const ShiftManagement = () => {

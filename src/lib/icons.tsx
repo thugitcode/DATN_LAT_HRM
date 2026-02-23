@@ -257,4 +257,27 @@ export const icons = {
       />
     </svg>
   ),
+
+  users: (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10" cy="4.99984" r="3.33333" stroke="black" strokeWidth="1.5" />
+      <path
+        d="M16.6667 14.5835C16.6667 16.6546 16.6667 18.3335 9.99999 18.3335C3.33333 18.3335 3.33333 16.6546 3.33333 14.5835C3.33333 12.5124 6.3181 10.8335 9.99999 10.8335C13.6819 10.8335 16.6667 12.5124 16.6667 14.5835Z"
+        stroke="black"
+        strokeWidth="1.5"
+      />
+    </svg>
+  ),
+
+  plusCircle: (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10" cy="9.99984" r="8.33333" stroke="#006FEE" />
+      <path
+        d="M12.5 10L10 10M10 10L7.5 10M10 10L10 7.5M10 10L10 12.5"
+        stroke="#006FEE"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  ),
 };

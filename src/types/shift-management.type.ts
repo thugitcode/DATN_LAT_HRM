@@ -34,8 +34,9 @@ export interface Shift {
   id: string;
   startTime: string;
   endTime: string;
-  type: string;
   shiftTemplateName: string;
+  shiftTemplateCode?: string;
+  shiftTemplateId?: string;
 }
 
 export interface DaySchedule {

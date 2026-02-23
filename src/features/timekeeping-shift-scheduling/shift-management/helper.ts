@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+
+import type { DayColumn } from './types/type';
 
 export const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
@@ -45,4 +46,16 @@ export const formatWorkDate = (dateStr?: string): string => {
   if (!dateStr) return '';
   const date = dayjs.utc(dateStr);
   return `${dayNames[date.day()]}, ngày ${date.format('DD/MM/YYYY')}`;
+};
+
+export const getDaysInMonth = (year: number, month: number): DayColumn[] => {
+  const count = new Date(year, month + 1, 0).getDate();
+  return Array.from({ length: count }, (_, i) => ({
+    day: i + 1,
+    dayOfWeek: new Date(year, month, i + 1).getDay(),
+  }));
+};
+
+export const isWeekend = (dow: number) => {
+  return dow === 0 || dow === 6;
 };
