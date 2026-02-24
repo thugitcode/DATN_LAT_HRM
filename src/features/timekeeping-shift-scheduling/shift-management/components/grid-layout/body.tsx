@@ -2,10 +2,11 @@ import { useMemo, useState, type FC } from 'react';
 import { Accordion, AccordionItem } from '@heroui/react';
 import dayjs from 'dayjs';
 
+import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
+
+import { getDaysInMonth } from '../../../helper';
 import { ROW_GAP, ROW_H, ROW_PY, STAFF_COL_W } from '../../constants/constants';
-import { getDaysInMonth } from '../../helper';
-import { useYearMonth } from '../../hooks/use-year-month';
-import type { ShiftType, StaffRow } from '../../types/type';
+import type { StaffRow } from '../../types/type';
 import { ScheduleBlock } from './schedule-block';
 import type { ShiftManagementGridProps } from './shift-management-grid';
 import { StaffInfo } from './staff-infor';
@@ -33,11 +34,6 @@ export const Body: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(['1', '2']));
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
 
-  console.log('schedules count:', data?.[0]?.schedules.length);
-  console.log('days count:', days.length);
-
-  console.log('data', data);
-
   const rows: StaffRow[] = !data?.length
     ? []
     : data.map((item) => ({
@@ -57,7 +53,7 @@ export const Body: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
             return {
               code: shift?.shiftTemplateCode ?? '',
               time: `${shift?.startTime.slice(0, 5)}-${shift?.endTime.slice(0, 5)}`,
-              type: 'main' as ShiftType,
+              type: shift?.shiftTemplateType,
               name: shift?.shiftTemplateName,
             };
           }),

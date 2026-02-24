@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import type { DayColumn } from './types/type';
+import type { DayColumn } from './shift-management/types/type';
 
 export const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 

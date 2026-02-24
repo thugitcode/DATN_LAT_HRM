@@ -1,7 +1,8 @@
 import { StaffPosition } from '@/types/global.type';
+import { ShiftTypeEnum } from '@/types/shift-management.type';
 import type { SelectOption } from '@/components/filters/filter-select';
 
-import { ShiftTypeEnum } from '../types/type';
+import type { LegendItem } from '../../timekeeping-management/types/index.type';
 
 export const KHOA_OPTIONS: readonly SelectOption[] = [
   { key: 'khoa-noi', label: 'Khoa nội' },
@@ -13,21 +14,32 @@ export const PHONG_OPTIONS: readonly SelectOption[] = [
   { key: 'phong-massage', label: 'Phòng massage' },
 ] as const;
 
-export const ShiftCa = [
+export const SHIFT_CA_LEGEND: LegendItem[] = [
   {
-    label: 'Ca chính',
+    label: 'Ca cố định',
+    color: '#006FEE',
+    status: ShiftTypeEnum.FIXED,
   },
+
   {
     label: 'Ca gãy',
+    color: '#F5A524',
+    status: ShiftTypeEnum.SPLIT,
   },
   {
     label: 'Ca trực',
+    color: '#7828C8',
+    status: ShiftTypeEnum.ON_DUTY,
   },
   {
     label: 'Ca linh hoạt',
+    color: '#17C964',
+    status: ShiftTypeEnum.FLEXIBLE,
   },
   {
-    label: 'Không có ca',
+    label: 'Nghỉ',
+    color: '#F4F4F5',
+    status: null,
   },
 ];
 

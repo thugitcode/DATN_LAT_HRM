@@ -1,23 +1,15 @@
 import type { StaffPosition } from '@/types/global.type';
-
-export enum ShiftTypeEnum {
-  FIXED = 'FIXED', // Ca cố định
-  FLEXIBLE = 'FLEXIBLE', // Ca linh hoạt
-  ON_DUTY = 'ON_DUTY', // Ca trực
-  SPLIT = 'SPLIT', // Ca gãy
-}
+import type { ShiftTypeEnum } from '@/types/shift-management.type';
 
 export interface DayColumn {
   day: number;
   dayOfWeek: number;
 }
 
-export type ShiftType = 'main' | 'alternate' | 'direct' | 'flexible' | 'off';
-
 export interface ShiftCell {
   code: string;
   time: string;
-  type: ShiftType;
+  type?: ShiftTypeEnum;
   name?: string;
 }
 

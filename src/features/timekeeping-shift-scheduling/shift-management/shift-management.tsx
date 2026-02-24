@@ -12,9 +12,12 @@ import { FooterPageColor } from '@/components/footer-page-color';
 import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
 
+import { TimekeepingManagementLegend } from '../timekeeping-management/components/timekeeping-management-legend';
+import { BtnCreateShift } from './components/btn-create-shift';
 import { ShiftManagementGrid } from './components/grid-layout/shift-management-grid';
 import { ShiftManagementFilter } from './components/shift-management-filter';
 import { ShiftManagementListview } from './components/shift-management-listview';
+import { SHIFT_CA_LEGEND } from './constants/data';
 
 export const ShiftManagement = () => {
   const location = useLocation();
@@ -49,14 +52,13 @@ export const ShiftManagement = () => {
   );
 
   return (
-    // <WrapperLoading loading={isLoading}>
     <div className="flex flex-col justify-baseline h-full gap-5">
       <PageContainer className="flex flex-col justify-between overflow-hidden">
         <div className="space-y-4 flex flex-col size-full">
           <div className="flex items-center justify-between">
             <TitlePage title="Quản lý phân ca" />
 
-            <ActionsPage />
+            <ActionsPage actions={<BtnCreateShift />} />
           </div>
 
           <ShiftManagementFilter />
@@ -70,8 +72,7 @@ export const ShiftManagement = () => {
           </div>
         </div>
       </PageContainer>
-      <FooterPageColor />
+      <TimekeepingManagementLegend legendItems={SHIFT_CA_LEGEND} />
     </div>
-    // </WrapperLoading>
   );
 };

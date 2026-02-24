@@ -7,7 +7,6 @@ import type { Column } from '@/components/table/table';
 
 import { dayNames, getWeeksInMonth } from '../../helper';
 import { useYearMonth } from '../../hooks/use-year-month';
-import { ShiftDepartment } from '../components/shift-department';
 
 export const useColumns = () => {
   const { month, year } = useYearMonth();
@@ -21,16 +20,29 @@ export const useColumns = () => {
         key: 'stt',
         title: 'STT',
         width: 64,
-        // fixed: 'left',
         align: 'center',
         render: (_, __, index) => index + 1,
       },
       {
         key: 'doctor-info',
         title: 'KHOA/PHÒNG',
+        width: 286,
+        // fixed: 'left',
+        render: (_, record) => <div>Khoa phòng</div>,
+      },
+      {
+        key: 'code',
+        title: 'MÃ NHÂN VIÊN',
+        width: 286,
+        // fixed: 'left',
+        render: (_, record) => <div>Mã nhân viên</div>,
+      },
+      {
+        key: 'name',
+        title: 'TÊN NHÂN VIÊN',
         // width: 286,
-        fixed: 'left',
-        render: (_, record) => <ShiftDepartment staff={record?.staff} />,
+        // fixed: 'left',
+        render: (_, record) => <div>Tên nhân viên</div>,
       },
     ];
 

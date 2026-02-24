@@ -219,7 +219,7 @@ export function Table<T = RecordType>({
   };
 
   return (
-    <div className="flex flex-col gap-4 justify-between h-full ">
+    <div className="flex flex-col gap-4 justify-between h-full flex-1 bg-white rounded-[14px] p-4">
       <div className={cn('overflow-auto bg-white ', className)}>
         <table className="w-full border-collapse">
           <thead className="sticky top-0 z-30 ">
@@ -236,7 +236,7 @@ export function Table<T = RecordType>({
                       colSpan={(col as ColumnGroup).colSpan}
                       rowSpan={(col as ColumnGroup).rowSpan}
                       className={cn(
-                        'px-4 py-3 font-semibold text-xs text-[#71717A] bg-[#F4F4F5] m-0!',
+                        'px-4 py-3 font-semibold text-xs text-[#71717A] bg-[#F4F4F5] m-0! text-nowrap',
                         bordered ? 'border border-gray-300' : '',
                         isFixed ? 'sticky z-40 ' : '',
                         getAlignClass(col.align),

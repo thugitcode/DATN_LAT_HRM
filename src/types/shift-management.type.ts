@@ -1,13 +1,12 @@
 import type { PaginationMeta } from '.';
 import type { StaffPosition } from './global.type';
 
-export enum ShiftType {
-  MAIN = 'MAIN', // Ca chính
-  BROKEN = 'BROKEN', // Ca gãy
-  ON_CALL = 'ON_CALL', // Ca trực
+export enum ShiftTypeEnum {
+  FIXED = 'FIXED', // Ca cố định
   FLEXIBLE = 'FLEXIBLE', // Ca linh hoạt
+  ON_DUTY = 'ON_DUTY', // Ca trực
+  SPLIT = 'SPLIT', // Ca gãy
 }
-
 export interface Staff {
   id: string;
   code: string;
@@ -37,6 +36,7 @@ export interface Shift {
   shiftTemplateName: string;
   shiftTemplateCode?: string;
   shiftTemplateId?: string;
+  shiftTemplateType: ShiftTypeEnum;
 }
 
 export interface DaySchedule {

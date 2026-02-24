@@ -1,7 +1,7 @@
 import { type FC } from 'react';
 
+import { isWeekend } from '../../../helper';
 import { COL_W, ROW_GAP, ROW_H, ROW_PY } from '../../constants/constants';
-import { isWeekend } from '../../helper';
 import type { DayColumn, StaffRow } from '../../types/type';
 import { ShiftCellBlock } from './shift-cell-block';
 
@@ -15,7 +15,7 @@ export const ScheduleBlock: FC<{
   expanded: boolean;
 }> = ({ staff, days, expanded }) => {
   const visibleRows = expanded ? staff.scheduleRows : staff.scheduleRows.slice(0, 1);
-
+  console.log('staff______', staff);
   return (
     <div
       className="flex flex-col border-b border-[#F4F4F5] transition-[height] duration-300 overflow-hidden"

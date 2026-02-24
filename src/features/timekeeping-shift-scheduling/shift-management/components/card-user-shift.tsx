@@ -1,6 +1,6 @@
 import { memo, type FC } from 'react';
 
-import { formatWorkDate } from '../helper';
+import { formatWorkDate } from '../../helper';
 import { ShiftAvatar } from './shift-avatar';
 
 interface CardUserShiftProps {
