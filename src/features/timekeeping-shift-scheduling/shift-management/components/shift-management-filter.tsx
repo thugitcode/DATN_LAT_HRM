@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import type { ShiftManagementParams } from '@/types';
 import { icons } from '@/lib/icons';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { FilterSelect } from '@/components/filters/filter-select';
@@ -7,12 +8,9 @@ import { MonthFilter } from '@/components/filters/month-filter';
 import { SearchInput } from '@/components/filters/search-input';
 
 import { KHOA_OPTIONS, PHONG_OPTIONS } from '../constants/data';
-import type { ShiftFilterParams } from '../types/filters.type';
 
 export const ShiftManagementFilter: React.FC = () => {
-  const { filters, setFilter } = useQueryFilter<ShiftFilterParams>({
-    replace: true,
-  });
+  const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
 
   const handleMonthChange = useCallback(
     (value: string) => {
@@ -49,14 +47,14 @@ export const ShiftManagementFilter: React.FC = () => {
       <SearchInput value={filters.search} onChange={handleSearchChange} startIcon={icons.search} />
 
       <FilterSelect
-        options={KHOA_OPTIONS}
+        options={[]}
         value={filters.khoa}
         onChange={handleKhoaChange}
         placeholder="Khoa"
       />
 
       <FilterSelect
-        options={PHONG_OPTIONS}
+        options={[]}
         value={filters.phong}
         onChange={handlePhongChange}
         placeholder="Phòng"

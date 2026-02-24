@@ -5,102 +5,78 @@ interface UseQueryFilterOptions {
   replace?: boolean;
 }
 
-export const useQueryFilter = <T extends Record<string, unknown>>(
+function isEmptyValue(value: unknown): boolean {
+  return value === undefined || value === null || value === '';
+}
+
+function cleanSearch<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  return Object.fromEntries(Object.entries(obj).filter(([_, v]) => !isEmptyValue(v))) as Partial<T>;
+}
+
+export function useQueryFilter<T extends Record<string, unknown>>(
   options: UseQueryFilterOptions = {},
-) => {
+) {
   const { replace = false } = options;
   const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as T;
+  const filters = useSearch({ strict: false }) as T;
 
-  const setFilter = useCallback(
-    <K extends keyof T>(key: K, value: T[K] | undefined) => {
+  const update = useCallback(
+    (updater: (prev: T) => T | Partial<T>) => {
       navigate({
-        search: (prev) => {
-          if (value === undefined || value === null || value === '') {
-            const { [key as string]: _, ...rest } = prev;
-            return rest;
-          }
-
-          return {
-            ...prev,
-            [key]: value,
-          };
-        },
+        search: (prev) => cleanSearch(updater(prev as T)),
         replace,
       });
     },
     [navigate, replace],
+  );
+
+  const setFilter = useCallback(
+    <K extends keyof T>(key: K, value: T[K] | undefined) =>
+      update((prev) => ({ ...prev, [key]: value })),
+    [update],
   );
 
   const setFilters = useCallback(
-    (updates: Partial<T>) => {
-      navigate({
-        search: (prev) => ({
-          ...prev,
-          ...updates,
-        }),
-        replace,
-      });
-    },
-    [navigate, replace],
+    (updates: Partial<T>) => update((prev) => ({ ...prev, ...updates })),
+    [update],
   );
 
   const removeFilter = useCallback(
-    <K extends keyof T>(key: K) => {
-      navigate({
-        search: (prev) => {
-          const { [key as string]: _, ...rest } = prev;
-          return rest;
-        },
-        replace,
-      });
-    },
-    [navigate, replace],
+    <K extends keyof T>(key: K) =>
+      update((prev) => {
+        const { [key]: _, ...rest } = prev;
+        return rest as Partial<T>;
+      }),
+    [update],
   );
 
   const removeFilters = useCallback(
-    <K extends keyof T>(keys: K[]) => {
-      navigate({
-        search: (prev) => {
-          const newSearch = { ...prev };
-          keys.forEach((key) => {
-            delete newSearch[key as string];
-          });
-          return newSearch;
-        },
-        replace,
-      });
-    },
-    [navigate, replace],
+    <K extends keyof T>(keys: K[]) =>
+      update((prev) => {
+        const next = { ...prev };
+        keys.forEach((key) => delete next[key]);
+        return next;
+      }),
+    [update],
   );
 
-  const clearFilters = useCallback(() => {
-    navigate({
-      search: {},
-      replace,
-    });
-  }, [navigate, replace]);
+  const clearFilters = useCallback(() => navigate({ search: {}, replace }), [navigate, replace]);
 
   const toggleFilter = useCallback(
-    <K extends keyof T>(key: K) => {
-      navigate({
-        search: (prev) => ({
-          ...prev,
-          [key]: !prev[key as string],
-        }),
-        replace,
-      });
-    },
-    [navigate, replace],
+    <K extends keyof T>(key: K) => update((prev) => ({ ...prev, [key]: !prev[key] })),
+    [update],
   );
 
+  const resetFilters = useCallback((defaults: Partial<T>) => update(() => defaults), [update]);
+
   return {
-    filters: search,
+    filters,
     setFilter,
     setFilters,
     removeFilter,
     removeFilters,
     clearFilters,
     toggleFilter,
-  };
-};
+    resetFilters,
+  } as const;
+}

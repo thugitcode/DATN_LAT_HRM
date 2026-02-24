@@ -8,8 +8,14 @@ export const HourlyPayroll = () => {
   return (
     <LayoutRenderer
       layouts={{
-        [LayoutSwitcherEnum.LIST]: HourlyPayrollList,
-        [LayoutSwitcherEnum.GRID]: HourlyPayrollGrid,
+        [LayoutSwitcherEnum.LIST]: {
+          component: HourlyPayrollList,
+          props: {},
+        },
+        [LayoutSwitcherEnum.GRID]: {
+          component: HourlyPayrollGrid,
+          props: {},
+        },
       }}
     />
   );

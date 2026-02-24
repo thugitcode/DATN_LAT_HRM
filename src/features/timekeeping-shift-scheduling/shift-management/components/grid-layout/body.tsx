@@ -2,6 +2,9 @@ import { useMemo, useState, type FC } from 'react';
 import { Accordion, AccordionItem } from '@heroui/react';
 import dayjs from 'dayjs';
 
+import { icons } from '@/lib/icons';
+import { cn } from '@/lib/utils';
+import { StaffInfo } from '@/features/timekeeping-shift-scheduling/components/staff-infor';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
 
 import { getDaysInMonth } from '../../../helper';
@@ -9,7 +12,6 @@ import { ROW_GAP, ROW_H, ROW_PY, STAFF_COL_W } from '../../constants/constants';
 import type { StaffRow } from '../../types/type';
 import { ScheduleBlock } from './schedule-block';
 import type { ShiftManagementGridProps } from './shift-management-grid';
-import { StaffInfo } from './staff-infor';
 
 // function buildMockRows(days: DayColumn[]): StaffRow[] {
 //   const types: ShiftType[] = ['main', 'alternate', 'direct', 'flexible'];
@@ -69,12 +71,8 @@ export const Body: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
   };
 
   return (
-    <div className="flex flex-1">
-      <div
-        className="shrink-0 border-r border-[#E4E4E7]"
-        style={{ width: STAFF_COL_W }}
-        id="left-panel"
-      >
+    <div className="flex flex-1 bg-white">
+      <div className="shrink-0 " style={{ width: STAFF_COL_W }} id="left-panel">
         <Accordion
           selectionMode="multiple"
           selectedKeys={selectedKeys}
@@ -82,9 +80,9 @@ export const Body: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
           showDivider={false}
           className="p-0"
           itemClasses={{
-            base: 'border-b border-[#F4F4F5] rounded-none px-0 shadow-none',
+            base: 'border-b border-[#F4F4F5] rounded-none px-0 shadow-none flex items-center min-w-0',
             trigger: [
-              'px-3 gap-2 rounded-none',
+              'px-3 gap-2 rounded-none min-w-0',
               'data-[hover=true]:bg-[#F4F4F5]/60',
               'transition-colors duration-150',
               `py-[${ROW_PY}px]`,
@@ -96,13 +94,29 @@ export const Body: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
             heading: 'p-0',
           }}
         >
-          {rows.map((staff) => (
+          {rows.map((staff, si) => (
             <AccordionItem
               key={staff.id}
               aria-label={staff.name}
-              title={<StaffInfo staff={staff} />}
+              indicator={icons.arrowDownIndicator}
+              title={
+                <StaffInfo
+                  avatarUrl={staff.avatar}
+                  code={staff.code}
+                  departmentName={staff.department}
+                  name={staff.name}
+                  role={staff.role}
+                />
+              }
               classNames={{
-                titleWrapper: 'py-3 w-full overflow-hidden',
+                base: cn('w-full pr-2 pl-8 relative', si % 2 !== 0 && 'bg-[#F4F4F5]'),
+                trigger: 'flex w-full items-center gap-2 min-w-0',
+                titleWrapper: 'flex-1 min-w-0 ',
+                title: 'min-w-0',
+                indicator: 'data-[open=true]:-rotate-90 absolute z-20 left-2.5 top-5',
+              }}
+              style={{
+                height: ROW_H + 16,
               }}
             >
               <div
@@ -117,7 +131,7 @@ export const Body: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
         </Accordion>
       </div>
 
-      <div className="flex-1 " id="right-panel">
+      <div className="flex-1 border border-[#F4F4F5]" id="right-panel">
         {rows.map((staff) => (
           <ScheduleBlock
             key={staff.id}

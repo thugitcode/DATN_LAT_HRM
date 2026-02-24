@@ -3,11 +3,12 @@ import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import type { StaffSchedule } from '@/types';
 import { cn } from '@/lib/utils';
-import type { Column } from '@/components/table/table';
+import type { Column } from '@/components/table/types';
 
 import { dayNames, getWeeksInMonth } from '../../helper';
 import { useYearMonth } from '../../hooks/use-year-month';
 import { ShiftDepartment } from '../components/shift-department';
+import { SHIFT_CA_LEGEND } from '../constants/data';
 
 export const useColumns = () => {
   const { month, year } = useYearMonth();
@@ -30,7 +31,11 @@ export const useColumns = () => {
         title: 'KHOA/PHÒNG',
         // width: 286,
         fixed: 'left',
-        render: (_, record) => <ShiftDepartment staff={record?.staff} />,
+        render: (_, record) => (
+          <div className="w-75">
+            <ShiftDepartment staff={record?.staff} />
+          </div>
+        ),
       },
     ];
 
@@ -53,7 +58,6 @@ export const useColumns = () => {
         children: week.days.map((day) => {
           const dateObj = new Date(year, month, day.day);
           const dateString = dateObj.toISOString().split('T')[0];
-
           return {
             key: `day-${week.weekNumber}-${day.day}`,
             title: (
@@ -66,7 +70,7 @@ export const useColumns = () => {
             ),
             width: 100,
             align: 'center',
-            className: '',
+
             render: (_, record) => {
               const daySchedule = record?.schedules?.find(
                 (schedule) => schedule.date === dateString,
@@ -75,32 +79,41 @@ export const useColumns = () => {
               if (daySchedule && daySchedule.shifts && daySchedule.shifts.length > 0) {
                 return (
                   <div className="flex flex-col items-center gap-1.5">
-                    {daySchedule.shifts.map((shift, idx) => (
-                      <div key={shift.id || idx} className="flex flex-col items-center gap-0.5">
-                        <span
-                          className={cn(
-                            'inline-flex items-center justify-center px-2 py-1 rounded-md text-xs font-semibold cursor-pointer transition-transform hover:scale-105',
-                          )}
-                          title={`Ca làm việc ${idx + 1}`}
-                          onClick={() =>
-                            onOpen(DrawerType.CHANGE_SHIFT_DIVISION, {
-                              record,
-                              shift,
-                              date: dateString,
-                              day: day.day,
-                              month: month + 1,
-                              year,
-                              dayOfWeek: day.dayOfWeek,
-                            })
-                          }
-                        >
-                          {shift.shiftTemplateName}
-                        </span>
-                        <span className="text-[14px] text-black whitespace-nowrap bg-[#D4D4D866] rounded-md py-1 px-2.5">
-                          {shift.startTime} - {shift.endTime}
-                        </span>
-                      </div>
-                    ))}
+                    {daySchedule.shifts.map((shift, idx) => {
+                      const color = SHIFT_CA_LEGEND.find(
+                        (s) => s.status === shift?.shiftTemplateType,
+                      )?.color;
+
+                      return (
+                        <div key={shift.id || idx} className="flex flex-col items-center gap-0.5">
+                          <span
+                            className={cn(
+                              'inline-flex items-center justify-center px-2 py-1 rounded-md text-sm cursor-pointer transition-transform hover:scale-105',
+                            )}
+                            title={`Ca làm việc ${idx + 1}`}
+                            onClick={() =>
+                              onOpen(DrawerType.CHANGE_SHIFT_DIVISION, {
+                                record,
+                                shift,
+                                date: dateString,
+                                day: day.day,
+                                month: month + 1,
+                                year,
+                                dayOfWeek: day.dayOfWeek,
+                              })
+                            }
+                            style={{
+                              color,
+                            }}
+                          >
+                            {shift.shiftTemplateName}
+                          </span>
+                          <span className="text-[14px] text-black whitespace-nowrap bg-[#D4D4D866] rounded-md py-1 px-2.5">
+                            {shift.startTime.slice(0, 5)} - {shift.endTime.slice(0, 5)}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               }

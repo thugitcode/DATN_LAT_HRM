@@ -15,7 +15,6 @@ export const ScheduleBlock: FC<{
   expanded: boolean;
 }> = ({ staff, days, expanded }) => {
   const visibleRows = expanded ? staff.scheduleRows : staff.scheduleRows.slice(0, 1);
-  console.log('staff______', staff);
   return (
     <div
       className="flex flex-col border-b border-[#F4F4F5] transition-[height] duration-300 overflow-hidden"
@@ -35,7 +34,7 @@ export const ScheduleBlock: FC<{
                 ${isWeekend(d.dayOfWeek) ? 'bg-[#FFFBEB]/40 rounded' : ''}`}
               style={{ width: COL_W }}
             >
-              <ShiftCellBlock cell={row[dIdx] ?? null} day={d} />
+              <ShiftCellBlock cell={row[dIdx] ?? null} day={d} record={staff} />
             </div>
           ))}
         </div>

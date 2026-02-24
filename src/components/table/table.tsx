@@ -1,253 +1,76 @@
-import React, { useState, type ReactNode } from 'react';
-import { Pagination } from '@heroui/react';
+import { useMemo, type ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
 import { TablePagination } from './table-pagination';
+import type { TableProps } from './types';
+import { buildHeaderRows, calcFixedLeft, getLeafColumns, getRowKey } from './utils';
 
-type RecordType = Record<string, unknown>;
+const SIZE_CLASS = {
+  small: 'text-xs',
+  middle: 'text-sm',
+  large: 'text-base',
+} as const;
 
-export interface BaseColumn<T = RecordType> {
-  key: string;
-  dataIndex?: keyof T | string;
-  title?: ReactNode;
-  width?: number | string;
-  align?: 'left' | 'center' | 'right';
-  className?: string;
-  fixed?: 'left' | 'right';
-  render?: (value: unknown, record: T, index: number) => ReactNode;
-  onCell?: (record: T, index: number) => React.TdHTMLAttributes<HTMLTableCellElement>;
-  onHeaderCell?: () => React.ThHTMLAttributes<HTMLTableHeaderCellElement>;
-}
+const ALIGN_CLASS = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+} as const;
 
-export interface ColumnGroup<T = RecordType> extends BaseColumn<T> {
-  children?: Column<T>[];
-}
-
-export type Column<T = RecordType> = BaseColumn<T> | ColumnGroup<T>;
-
-export interface PaginationConfig {
-  current?: number;
-  pageSize?: number;
-  total?: number;
-  showSizeChanger?: boolean;
-  pageSizeOptions?: number[];
-  onChange?: (page: number, pageSize: number) => void;
-  onShowSizeChange?: (current: number, size: number) => void;
-}
-
-interface TableProps<T = RecordType> {
-  columns: Column<T>[];
-  dataSource: T[];
-  rowKey?: keyof T | string | ((record: T) => string);
-  className?: string;
-  bordered?: boolean;
-  size?: 'small' | 'middle' | 'large';
-  loading?: boolean;
-  rowClassName?: string | ((record: T, index: number) => string);
-  onRow?: (record: T, index: number) => React.HTMLAttributes<HTMLTableRowElement>;
-  pagination?: false | PaginationConfig;
-}
-
-export function Table<T = RecordType>({
+export function Table<T extends object = object>({
   columns,
   dataSource,
-  rowKey = 'id',
-  className = '',
+  rowKey,
+  className,
   bordered = false,
   size = 'middle',
   loading = false,
+  empty,
   rowClassName,
   onRow,
   pagination,
 }: TableProps<T>) {
-  const [currentPage, setCurrentPage] = useState(pagination?.current || 1);
-  const [pageSize, setPageSize] = useState(pagination?.pageSize || 10);
+  const headerRows = useMemo(() => buildHeaderRows(columns), [columns]);
+  const leafColumns = useMemo(() => getLeafColumns(columns), [columns]);
+  const resolvedRowKey = rowKey ?? ('id' as keyof T);
 
-  const hasPagination = pagination !== false;
-  const totalRecords = pagination?.total || dataSource.length;
-  const totalPages = Math.ceil(totalRecords / pageSize);
+  const sizeClass = SIZE_CLASS[size];
 
-  const paginatedData = hasPagination
-    ? dataSource.slice((currentPage - 1) * pageSize, currentPage * pageSize)
-    : dataSource;
+  const thBase = cn(
+    'px-4 py-3 font-semibold text-xs text-[#71717A] bg-[#F4F4F5] text-nowrap',
+    bordered && 'border border-gray-300',
+  );
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    pagination?.onChange?.(page, pageSize);
-  };
+  const tdBase = cn('px-4 py-3', bordered && 'border border-gray-300');
 
-  const handlePageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(1);
-    pagination?.onShowSizeChange?.(1, newPageSize);
-    pagination?.onChange?.(1, newPageSize);
-  };
-
-  const getHeaderStructure = () => {
-    const maxDepth = getMaxDepth(columns);
-    const rows: Column<T>[][] = Array.from({ length: maxDepth }, () => []);
-
-    const processColumn = (col: Column<T>, depth: number, parentWidth: number = 1) => {
-      const columnGroup = col as ColumnGroup<T>;
-
-      if (columnGroup.children && columnGroup.children.length > 0) {
-        rows[depth].push({
-          ...col,
-          colSpan: getLeafColumnsCount(columnGroup.children),
-        });
-
-        columnGroup.children.forEach((child) => {
-          processColumn(child, depth + 1, parentWidth);
-        });
-      } else {
-        // Leaf column
-        rows[depth].push({
-          ...col,
-          rowSpan: maxDepth - depth,
-        });
-      }
-    };
-
-    columns.forEach((col) => processColumn(col, 0));
-    return rows;
-  };
-
-  const getMaxDepth = (cols: Column<T>[], depth: number = 1): number => {
-    let maxChildDepth = depth;
-    cols.forEach((col) => {
-      const columnGroup = col as ColumnGroup<T>;
-      if (columnGroup.children && columnGroup.children.length > 0) {
-        const childDepth = getMaxDepth(columnGroup.children, depth + 1);
-        maxChildDepth = Math.max(maxChildDepth, childDepth);
-      }
-    });
-    return maxChildDepth;
-  };
-
-  const getLeafColumnsCount = (cols: Column<T>[]): number => {
-    let count = 0;
-    cols.forEach((col) => {
-      const columnGroup = col as ColumnGroup<T>;
-      if (columnGroup.children && columnGroup.children.length > 0) {
-        count += getLeafColumnsCount(columnGroup.children);
-      } else {
-        count += 1;
-      }
-    });
-    return count;
-  };
-
-  const getLeafColumns = (cols: Column<T>[]): BaseColumn<T>[] => {
-    const leaves: BaseColumn<T>[] = [];
-    cols.forEach((col) => {
-      const columnGroup = col as ColumnGroup<T>;
-      if (columnGroup.children && columnGroup.children.length > 0) {
-        leaves.push(...getLeafColumns(columnGroup.children));
-      } else {
-        leaves.push(col as BaseColumn<T>);
-      }
-    });
-    return leaves;
-  };
-
-  const headerRows = getHeaderStructure();
-  const leafColumns = getLeafColumns(columns);
-
-  const getCellValue = (record: T, col: BaseColumn<T>) => {
-    if (col.dataIndex) {
-      return (record as Record<string, unknown>)[col.dataIndex as string];
-    }
-    return undefined;
-  };
-
-  const getRowKey = (record: T, index: number): string => {
-    if (typeof rowKey === 'function') {
-      return rowKey(record);
-    }
-    const key = (record as Record<string, unknown>)[rowKey as string];
-    return String(key) || `row-${index}`;
-  };
-
-  const getRowClassName = (record: T, index: number): string => {
-    if (typeof rowClassName === 'function') {
-      return rowClassName(record, index);
-    }
-    return rowClassName || '';
-  };
-
-  const getSizeClass = () => {
-    switch (size) {
-      case 'small':
-        return 'text-xs';
-      case 'large':
-        return 'text-base';
-      default:
-        return 'text-sm';
-    }
-  };
-
-  const getAlignClass = (align?: 'left' | 'center' | 'right') => {
-    switch (align) {
-      case 'center':
-        return 'text-center';
-      case 'right':
-        return 'text-right';
-      default:
-        return 'text-left';
-    }
-  };
-
-  const getFixedStyle = (fixed?: 'left' | 'right', index?: number) => {
-    if (!fixed) return {};
-
-    if (fixed === 'left') {
-      let leftPos = 0;
-      if (index !== undefined) {
-        for (let i = 0; i < index; i++) {
-          const col = leafColumns[i];
-          if (col.fixed === 'left') {
-            const width = typeof col.width === 'number' ? col.width : 100;
-            leftPos += width;
-          }
-        }
-      }
-      return { left: `${leftPos}px` };
-    }
-
-    return {};
-  };
+  const isEmpty = !loading && dataSource.length === 0;
 
   return (
     <div className="flex flex-col gap-4 justify-between h-full flex-1 bg-white rounded-[14px] p-4">
-      <div className={cn('overflow-auto bg-white ', className)}>
-        <table className="w-full border-collapse">
-          <thead className="sticky top-0 z-30 ">
+      <div className={cn('overflow-auto bg-white', className)}>
+        <table className="w-full border-collapse ">
+          <thead className="sticky top-0 z-30">
             {headerRows.map((row, rowIndex) => (
               <tr key={`header-row-${rowIndex}`}>
                 {row.map((col, colIndex) => {
-                  const headerCellProps = col.onHeaderCell?.() || {};
-                  const isFixed = col.fixed === 'left' || col.fixed === 'right';
-                  const fixedStyle = getFixedStyle(col.fixed, colIndex);
+                  const headerCellProps = col.onHeaderCell?.() ?? {};
+                  const fixedStyle =
+                    col.fixed === 'left' ? { left: calcFixedLeft(leafColumns, colIndex) } : {};
 
                   return (
                     <th
                       key={`${col.key}-${colIndex}`}
-                      colSpan={(col as ColumnGroup).colSpan}
-                      rowSpan={(col as ColumnGroup).rowSpan}
+                      colSpan={col.colSpan}
+                      rowSpan={col.rowSpan}
                       className={cn(
-                        'px-4 py-3 font-semibold text-xs text-[#71717A] bg-[#F4F4F5] m-0! text-nowrap',
-                        bordered ? 'border border-gray-300' : '',
-                        isFixed ? 'sticky z-40 ' : '',
-                        getAlignClass(col.align),
-                        getSizeClass(),
-                        col.className || '',
+                        thBase,
+                        col.fixed && 'sticky z-40',
+                        ALIGN_CLASS[col.align ?? 'left'],
+                        sizeClass,
+                        col.className,
                       )}
-                      style={{
-                        width: col.width,
-                        ...fixedStyle,
-                        ...headerCellProps.style,
-                      }}
+                      style={{ width: col.width, ...fixedStyle, ...headerCellProps.style }}
                       {...headerCellProps}
                     >
                       {col.title}
@@ -260,54 +83,69 @@ export function Table<T = RecordType>({
 
           <tbody>
             {loading ? (
-              <tr>
-                <td colSpan={leafColumns.length} className="text-center py-8 text-gray-500">
-                  Đang tải...
-                </td>
-              </tr>
-            ) : paginatedData.length === 0 ? (
-              <tr>
-                <td colSpan={leafColumns.length} className="text-center py-8 text-gray-500">
-                  Không có dữ liệu
-                </td>
-              </tr>
+              <>
+                {Array.from({ length: 10 }).map((_, rowIndex) => (
+                  <tr
+                    key={`skeleton-${rowIndex}`}
+                    className="animate-pulse border-b border-gray-100"
+                  >
+                    {leafColumns.map((col, colIndex) => (
+                      <td
+                        key={`skeleton-${rowIndex}-${colIndex}`}
+                        className={cn(tdBase, sizeClass)}
+                        style={{ width: col.width }}
+                      >
+                        <div
+                          className="h-3.5 bg-gray-200 rounded-full"
+                          style={{ width: `${55 + ((rowIndex * 13 + colIndex * 7) % 35)}%` }}
+                        />
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </>
+            ) : isEmpty ? (
+              <TablePlaceholder
+                colSpan={leafColumns.length}
+                message={empty ?? 'Không có dữ liệu'}
+              />
             ) : (
-              paginatedData.map((record, rowIndex) => {
-                const rowProps = onRow?.(record, rowIndex) || {};
-                const rKey = getRowKey(record, rowIndex);
-                const rClassName = getRowClassName(record, rowIndex);
+              dataSource.map((record, rowIndex) => {
+                const rowProps = onRow?.(record, rowIndex) ?? {};
+                const rKey = getRowKey(record, rowIndex, resolvedRowKey);
+                const rClass =
+                  typeof rowClassName === 'function'
+                    ? rowClassName(record, rowIndex)
+                    : (rowClassName ?? '');
 
                 return (
                   <tr
                     key={rKey}
-                    className={`hover:bg-gray-50 transition-colors ${rClassName}`}
+                    className={cn('hover:bg-gray-50 transition-colors', rClass)}
                     {...rowProps}
                   >
                     {leafColumns.map((col, colIndex) => {
-                      const cellProps = col.onCell?.(record, rowIndex) || {};
-                      const value = getCellValue(record, col);
-                      const isFixed = col.fixed === 'left' || col.fixed === 'right';
-                      const fixedStyle = getFixedStyle(col.fixed, colIndex);
+                      const cellProps = col.onCell?.(record, rowIndex) ?? {};
+                      const value = col.dataIndex
+                        ? (record as Record<string, unknown>)[col.dataIndex]
+                        : undefined;
+                      const fixedStyle =
+                        col.fixed === 'left' ? { left: calcFixedLeft(leafColumns, colIndex) } : {};
 
                       return (
                         <td
                           key={`${rKey}-${col.key}`}
-                          className={`
-                            px-4 py-3
-                            ${bordered ? 'border border-gray-300' : ''}
-                            ${isFixed ? 'sticky z-20 bg-white' : ''}
-                            ${getAlignClass(col.align)}
-                            ${getSizeClass()}
-                            ${col.className || ''}
-                          `}
-                          style={{
-                            width: col.width,
-                            ...fixedStyle,
-                            ...cellProps.style,
-                          }}
+                          className={cn(
+                            tdBase,
+                            col.fixed && 'sticky z-20 bg-white',
+                            ALIGN_CLASS[col.align ?? 'left'],
+                            sizeClass,
+                            col.className,
+                          )}
+                          style={{ width: col.width, ...fixedStyle, ...cellProps.style }}
                           {...cellProps}
                         >
-                          {col.render ? col.render(value, record, rowIndex) : value}
+                          {col.render ? col.render(value, record, rowIndex) : (value as ReactNode)}
                         </td>
                       );
                     })}
@@ -319,86 +157,18 @@ export function Table<T = RecordType>({
         </table>
       </div>
 
-      {/* {hasPagination && (
-        <div className="flex items-center justify-between">
-          {pagination?.showSizeChanger !== false && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Hiển thị</span>
-              <select
-                value={pageSize}
-                onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-                className="px-3 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {(pagination?.pageSizeOptions || [10, 20, 50, 100]).map((size) => (
-                  <option key={size} value={size}>
-                    {size}
-                  </option>
-                ))}
-              </select>
-              <span className="text-sm text-gray-600">/ trang</span>
-            </div>
-          )}
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`
-                px-3 py-1.5 border border-gray-300 rounded-md text-sm
-                ${currentPage === 1 ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'}
-              `}
-            >
-              Trước
-            </button>
-
-            <div className="flex items-center gap-1">
-              {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                let pageNum: number;
-                if (totalPages <= 7) {
-                  pageNum = i + 1;
-                } else if (currentPage <= 4) {
-                  pageNum = i + 1;
-                } else if (currentPage >= totalPages - 3) {
-                  pageNum = totalPages - 6 + i;
-                } else {
-                  pageNum = currentPage - 3 + i;
-                }
-
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className={`
-                      w-9 h-9 border rounded-md text-sm
-                      ${
-                        currentPage === pageNum
-                          ? 'bg-blue-500 text-white border-blue-500'
-                          : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                      }
-                    `}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-            </div>
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`
-                px-3 py-1.5 border border-gray-300 rounded-md text-sm
-                ${currentPage === totalPages ? 'text-gray-400 cursor-not-allowed' : 'text-gray-700 hover:bg-gray-50'}
-              `}
-            >
-              Sau
-            </button>
-          </div>
-
-          <div className="text-sm text-gray-600">Tổng {totalRecords} bản ghi</div>
-        </div>
-      )} */}
-      <TablePagination />
+      {pagination !== false && pagination && <TablePagination />}
     </div>
+  );
+}
+
+// ✅ Empty/loading state dùng chung 1 component, accept ReactNode cho message
+function TablePlaceholder({ colSpan, message }: { colSpan: number; message: ReactNode }) {
+  return (
+    <tr>
+      <td colSpan={colSpan} className="text-center py-8 text-gray-500">
+        {message}
+      </td>
+    </tr>
   );
 }

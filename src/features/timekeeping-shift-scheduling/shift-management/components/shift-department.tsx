@@ -11,7 +11,7 @@ interface ShiftDepartmentProps {
 
 export const ShiftDepartment: FC<Readonly<ShiftDepartmentProps>> = memo(({ staff }) => {
   return (
-    <div className="flex items-center gap-2" title={staff?.name}>
+    <div className="flex items-center gap-2 " title={staff?.name}>
       <ShiftAvatar avatarUrl={staff?.avatar} name={staff?.name} />
 
       <div className="text-[#A1A1AA] text-xs leading-4 font-normal flex-1">

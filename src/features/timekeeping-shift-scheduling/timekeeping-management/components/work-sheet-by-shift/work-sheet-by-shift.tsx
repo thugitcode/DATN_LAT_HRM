@@ -8,8 +8,14 @@ export const WorkSheetByShift = () => {
   return (
     <LayoutRenderer
       layouts={{
-        [LayoutSwitcherEnum.LIST]: WorkSheetByShiftList,
-        [LayoutSwitcherEnum.GRID]: WorkSheetByShiftGrid,
+        [LayoutSwitcherEnum.LIST]: {
+          component: WorkSheetByShiftList,
+          props: {},
+        },
+        [LayoutSwitcherEnum.GRID]: {
+          component: WorkSheetByShiftGrid,
+          props: {},
+        },
       }}
     />
   );

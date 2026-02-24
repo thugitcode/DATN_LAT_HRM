@@ -4,6 +4,7 @@ import type { ShiftTypeEnum } from '@/types/shift-management.type';
 export interface DayColumn {
   day: number;
   dayOfWeek: number;
+  date: string;
 }
 
 export interface ShiftCell {
@@ -18,7 +19,7 @@ export interface StaffRow {
   name: string;
   role: StaffPosition;
   code: string;
-  department: string;
+  department?: string;
   avatar?: string;
   scheduleRows: Array<Array<ShiftCell | null>>;
 }

@@ -12,14 +12,9 @@ export interface ShiftManagementGridProps {
 
 export const ShiftManagementGrid: FC<ShiftManagementGridProps> = ({ data }) => {
   return (
-    <div
-      className={cn(
-        'flex w-full flex-col bg-white rounded-xl border border-[#E4E4E7] ',
-        'h-[calc(100vh-324px)]',
-      )}
-    >
+    <div className={cn('flex w-full flex-col  rounded-xl ', 'h-[calc(100vh-304px)]')}>
       <div className="overflow-x-auto flex flex-col flex-1 min-h-0">
-        <DayHeader />
+        <DayHeader data={data} />
         <Body data={data} />
       </div>
     </div>

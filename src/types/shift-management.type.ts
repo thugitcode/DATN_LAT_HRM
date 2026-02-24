@@ -27,6 +27,9 @@ export interface ShiftManagementParams {
   endDate?: string;
   position?: StaffPosition;
   search?: string;
+  month?: string;
+
+  [key: string]: unknown;
 }
 
 export interface Shift {
@@ -55,3 +58,19 @@ export interface ShiftManagementResponse {
   pagination: PaginationMeta;
   message: string;
 }
+
+export interface CreateStaffSchedule {
+  staffId: string;
+  departmentId: string;
+  roomId: string;
+  fromDate: string;
+  toDate: string;
+  note?: string;
+  details: {
+    startTime: string;
+    endTime: string;
+    shiftTemplateId: string;
+    note?: string;
+  }[];
+}
+export interface UpdateStaffSchedule {}

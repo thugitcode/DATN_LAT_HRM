@@ -6,6 +6,7 @@ import { Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFieldArray, useForm } from 'react-hook-form';
 
+import type { CreateStaffSchedule } from '@/types/shift-management.type';
 import { icons } from '@/lib/icons';
 import { useCaseCategoryOptions } from '@/hooks/options/use-case-category-options';
 import { useStaffOptions } from '@/hooks/options/use-staff-options';
@@ -15,7 +16,7 @@ import { FormInput } from '@/components/form-fields/form-input';
 import { FormSelect } from '@/components/form-fields/form-select';
 import { WrapperBoxForm } from '@/components/wrapper-box-form';
 
-import { useAssignWorkShift } from '../hooks/use-assign-work-shift';
+import { useCreateShiftManagement } from '../hooks/use-shift-management'; // 👈 đổi hook
 import {
   workShiftAssignSchema,
   type WorkShiftAssignFormValues,
@@ -46,7 +47,7 @@ export const WorkShiftsForm = () => {
   const { options: staffOptions } = useStaffOptions();
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
 
-  const { mutateAsync } = useAssignWorkShift();
+  const { mutateAsync, isPending } = useCreateShiftManagement();
 
   const optionsStaffCode = useMemo(
     () =>
@@ -88,15 +89,15 @@ export const WorkShiftsForm = () => {
     mode: 'onChange',
   });
 
-  const staffId = watch('staffId');
-
   const { fields, append, remove } = useFieldArray({
     name: 'details',
     control,
   });
 
+  const isLoading = isSubmitting || isPending;
+
   const onSubmit = async (values: WorkShiftAssignFormValues) => {
-    const data = {
+    const data: CreateStaffSchedule = {
       ...values,
       staffId: staffOptions.find((s) => s.code === values.staffId)?.key || '',
       departmentId: '',
@@ -129,11 +130,10 @@ export const WorkShiftsForm = () => {
               options={optionsStaffCode}
               onSelect={(code) => {
                 const emp = staffOptions.find((e) => e.code === code);
-
                 if (!emp) return;
                 setValue('name', emp.key, { shouldValidate: true });
               }}
-              disabled={isSubmitting}
+              disabled={isLoading}
             />
 
             <FormAutocomplete
@@ -144,11 +144,10 @@ export const WorkShiftsForm = () => {
               options={staffOptions}
               onSelect={(id) => {
                 const emp = optionsStaffCode.find((e) => e.id === id);
-
                 if (!emp) return;
                 setValue('staffId', emp.key, { shouldValidate: true });
               }}
-              disabled={isSubmitting}
+              disabled={isLoading}
             />
 
             <FormAutocomplete
@@ -157,7 +156,7 @@ export const WorkShiftsForm = () => {
               label="Khoa làm việc"
               isRequired
               options={MOCK_DEPARTMENTS}
-              disabled={isSubmitting}
+              disabled={isLoading}
             />
 
             <FormAutocomplete
@@ -165,7 +164,7 @@ export const WorkShiftsForm = () => {
               name="roomId"
               label="Phòng làm việc"
               options={MOCK_ROOMS}
-              disabled={isSubmitting}
+              disabled={isLoading}
             />
           </div>
         </WrapperBoxForm>
@@ -177,10 +176,8 @@ export const WorkShiftsForm = () => {
               name="dateRangeSchema"
               isRequired
               label="Chọn ngày"
-              disabled={isSubmitting}
+              disabled={isLoading}
               onChange={(rangeObj) => {
-                console.log('Selected range:', rangeObj);
-
                 if (rangeObj?.start && rangeObj?.end) {
                   setValue('dateRangeSchema', `${rangeObj.start}~${rangeObj.end}`, {
                     shouldValidate: true,
@@ -202,16 +199,8 @@ export const WorkShiftsForm = () => {
                       name={`details.${index}.shiftTemplateId`}
                       label="Chọn ca"
                       isRequired
-                      disabled={isSubmitting}
+                      disabled={isLoading}
                       options={caseCategoryOptions}
-                      // onSelect={(id) => {
-                      //   const emp = caseCategoryOptions.find((e) => e.key === id);
-
-                      //   if (!emp) return;
-                      //   setValue(`details.${index}.startTime`, emp.startTime);
-                      //   setValue(`details.${index}.endTime`, emp.endTime);
-                      // }}
-
                       onSelect={(id) => {
                         const emp = caseCategoryOptions.find((e) => e.key === id);
                         if (!emp) return;
@@ -231,7 +220,7 @@ export const WorkShiftsForm = () => {
                     label="Giờ bắt đầu"
                     type="time"
                     isRequired
-                    disabled={isSubmitting}
+                    disabled={isLoading}
                   />
 
                   <FormInput
@@ -240,13 +229,9 @@ export const WorkShiftsForm = () => {
                     label="Giờ kết thúc"
                     type="time"
                     isRequired
-                    disabled={isSubmitting}
+                    disabled={isLoading}
                   />
                 </div>
-
-                {/* <Button type="button" color="danger" onPress={() => remove(index)}>
-                  Xóa ca
-                </Button> */}
               </div>
             ))}
           </div>
@@ -255,7 +240,7 @@ export const WorkShiftsForm = () => {
             className="border-[#006FEE] border-2 bg-white text-[#006FEE] text-[14px] font-normal"
             type="button"
             onPress={onAddCa}
-            disabled={isSubmitting}
+            disabled={isLoading}
           >
             {icons.plusBlue}
             Thêm ca
@@ -271,7 +256,7 @@ export const WorkShiftsForm = () => {
         >
           Hủy
         </Button>
-        <Button type="submit" color="primary" isLoading={isSubmitting}>
+        <Button type="submit" color="primary" isLoading={isLoading}>
           Lưu
         </Button>
       </div>

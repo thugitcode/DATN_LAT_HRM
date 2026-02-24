@@ -21,16 +21,6 @@ export const ChangeShiftDivision = () => {
   console.log('data in ChangeShiftDivisionForm', data);
   const { record, shift, date, day, month, year, dayOfWeek } = data ?? {};
 
-  console.log('record in ChangeShiftDivisionForm', {
-    record,
-    shift,
-    date,
-    day,
-    month,
-    year,
-    dayOfWeek,
-  });
-
   const { staff } = record || {};
   return (
     <div className="size-full flex flex-col justify-between">

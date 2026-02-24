@@ -48,12 +48,25 @@ export const formatWorkDate = (dateStr?: string): string => {
   return `${dayNames[date.day()]}, ngày ${date.format('DD/MM/YYYY')}`;
 };
 
+const formatDate = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+
 export const getDaysInMonth = (year: number, month: number): DayColumn[] => {
   const count = new Date(year, month + 1, 0).getDate();
-  return Array.from({ length: count }, (_, i) => ({
-    day: i + 1,
-    dayOfWeek: new Date(year, month, i + 1).getDay(),
-  }));
+
+  return Array.from({ length: count }, (_, i) => {
+    const dateObj = new Date(year, month, i + 1);
+
+    return {
+      day: i + 1,
+      dayOfWeek: dateObj.getDay(),
+      date: formatDate(dateObj),
+    };
+  });
 };
 
 export const isWeekend = (dow: number) => {
