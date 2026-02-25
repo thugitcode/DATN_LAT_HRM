@@ -16,7 +16,7 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
             {/* Tổng quát */}
             <div className="flex items-center gap-4">
                 <span className="text-sm font-semibold text-[#11181C] whitespace-nowrap">Tổng quát:</span>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                     <SummaryBadge
                         icon={
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,9 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
                         label="Tổng yêu cầu"
                         count={summary.totalRequests}
                         color="#006FEE"
+                        bgColor="#E6F1FE"
                     />
+                    <div className="w-px h-8 bg-[#E4E4E7]" />
                     <SummaryBadge
                         icon={
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -38,7 +40,9 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
                         label="Đã xác nhận"
                         count={summary.approved}
                         color="#17C964"
+                        bgColor="#E8FAF0"
                     />
+                    <div className="w-px h-8 bg-[#E4E4E7]" />
                     <SummaryBadge
                         icon={
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -49,7 +53,9 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
                         label="Từ chối"
                         count={summary.rejected}
                         color="#F31260"
+                        bgColor="#FEE7EF"
                     />
+                    <div className="w-px h-8 bg-[#E4E4E7]" />
                     <SummaryBadge
                         icon={
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -60,6 +66,7 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
                         label="Chờ xác nhận"
                         count={summary.pending}
                         color="#F5A524"
+                        bgColor="#FEF4E6"
                     />
                 </div>
             </div>
@@ -68,7 +75,8 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
             <div className="w-px bg-[#E4E4E7]" />
 
             {/* Loại lỗi giải trình */}
-            <div className="flex items-center gap-4 flex-1">
+            <div className="flex flex-col gap-2 flex-1">
+                {/* Title */}
                 <div className="flex items-center gap-1">
                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="8" cy="8" r="7" stroke="#006FEE" strokeWidth="2" />
@@ -80,13 +88,13 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
                     </span>
                 </div>
 
-                <div className="flex flex-col gap-1 flex-1">
-                    {explanationTypes.map((type, index) => (
+                {/* Items */}
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-1">
+                    {explanationTypes.map((type) => (
                         <ExplanationTypeRow
                             key={type.label}
                             label={type.label}
                             count={type.count}
-                            colorIndex={index}
                         />
                     ))}
                 </div>
@@ -100,13 +108,16 @@ interface SummaryBadgeProps {
     label: string;
     count: number;
     color: string;
+    bgColor: string;
 }
 
-const SummaryBadge: FC<Readonly<SummaryBadgeProps>> = ({ icon, label, count, color }) => {
+const SummaryBadge: FC<Readonly<SummaryBadgeProps>> = ({ icon, label, count, color, bgColor }) => {
     return (
-        <div className="flex items-center gap-2 bg-[#F4F4F5] rounded-lg px-3 py-2">
-            {icon}
-            <span className="text-xs text-[#71717A] whitespace-nowrap">{label}</span>
+        <div className="flex flex-col items-start gap-1 rounded-lg px-4 py-2" style={{ backgroundColor: bgColor }}>
+            <div className="flex items-center gap-2">
+                {icon}
+                <span className="text-xs text-[#71717A] whitespace-nowrap">{label}</span>
+            </div>
             <span className="text-lg font-bold" style={{ color }}>
                 {count}
             </span>
@@ -114,30 +125,27 @@ const SummaryBadge: FC<Readonly<SummaryBadgeProps>> = ({ icon, label, count, col
     );
 };
 
-const TYPE_COLORS = ['#006FEE', '#17C964', '#F5A524'];
-
 interface ExplanationTypeRowProps {
     label: string;
     count: number;
-    colorIndex: number;
 }
 
 const ExplanationTypeRow: FC<Readonly<ExplanationTypeRowProps>> = ({
     label,
     count,
-    colorIndex,
 }) => {
-    const color = TYPE_COLORS[colorIndex % TYPE_COLORS.length];
+    // Calculate percentage - assuming max value around 50 for better visual representation
+    const percentage = Math.min((count / 50) * 100, 100);
 
     return (
         <div className="flex items-center gap-3">
-            <span className="text-xs text-[#71717A] min-w-[60px]">{label}</span>
-            <div className="flex-1 h-[3px] bg-[#E4E4E7] rounded-full relative">
+            <span className="text-xs text-[#71717A] w-28 whitespace-nowrap">{label}</span>
+            <div className="w-20 h-[8px] bg-[#E4E4E7] rounded-full relative">
                 <div
                     className="absolute inset-y-0 left-0 rounded-full"
                     style={{
-                        backgroundColor: color,
-                        width: `${Math.min((count / 30) * 100, 100)}%`,
+                        backgroundColor: '#006FEE',
+                        width: `${percentage}%`,
                     }}
                 />
             </div>

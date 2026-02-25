@@ -1,25 +1,10 @@
-export interface ExplanationRecord {
-    id: string;
-    departmentName: string;
-    employeeCode: string;
-    employeeName: string;
-    position: string;
-    date: string;
-    errorType: string;
-    explanation: string;
-    attachmentName: string;
-    approverName: string;
-    status: 'pending' | 'approved' | 'rejected';
-}
+import type {
+    AttendanceExplanation,
+    AttendanceExplanationSummary,
+    AttendanceExplanationTypeCount,
+} from '@/types/attendance-explanation.type';
 
-export interface ExplanationSummary {
-    totalRequests: number;
-    approved: number;
-    rejected: number;
-    pending: number;
-}
-
-export interface ExplanationTypeCount {
-    label: string;
-    count: number;
-}
+// Re-export the main types
+export type ExplanationRecord = AttendanceExplanation;
+export type ExplanationSummary = AttendanceExplanationSummary;
+export type ExplanationTypeCount = AttendanceExplanationTypeCount;
