@@ -1,7 +1,7 @@
-import { useStaffList } from '@/query-options/staff';
+import { useDepartment } from '../use-department';
 
-export const useStaffOptions = () => {
-  const { data } = useStaffList({
+export const useDepartmentOptions = () => {
+  const { data } = useDepartment({
     page: 1,
     limit: 100,
   });
@@ -11,8 +11,6 @@ export const useStaffOptions = () => {
         key: item.id,
         label: item.name,
         code: item.code,
-        departments: item.departments,
-        rooms: item.rooms,
       })) ?? [],
   };
 };

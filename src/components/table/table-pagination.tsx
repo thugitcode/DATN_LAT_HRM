@@ -27,7 +27,6 @@ export const TablePagination: FC<Readonly<TablePaginationProps>> = ({ total = 0 
 
   const page = Number(filters.page) || DEFAULT_PAGE;
   const limit = Number(filters.limit) || Number(DEFAULT_LIMIT);
-  const totalPages = total > 0 ? Math.ceil(total / limit) : 1;
 
   const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilters({ limit: e.target.value, page: String(DEFAULT_PAGE) });
@@ -37,7 +36,7 @@ export const TablePagination: FC<Readonly<TablePaginationProps>> = ({ total = 0 
     setFilter('page', String(newPage));
   };
 
-  const totalText = total > 0 ? `Page ${page} of ${totalPages}` : 'No data';
+  const totalText = total > 0 ? `Page ${page} of ${total}` : 'No data';
 
   return (
     <div className="flex items-center justify-between">
@@ -58,13 +57,7 @@ export const TablePagination: FC<Readonly<TablePaginationProps>> = ({ total = 0 
       </div>
 
       {total > 0 && (
-        <Pagination
-          isCompact
-          showControls
-          page={page}
-          total={totalPages}
-          onChange={handlePageChange}
-        />
+        <Pagination isCompact showControls page={page} total={total} onChange={handlePageChange} />
       )}
     </div>
   );

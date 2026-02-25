@@ -6,7 +6,7 @@ import { STAFF_POSITION } from '../shift-management/constants/data';
 import { StaffAvatar } from './staff-avatar';
 
 interface StaffInfoProps {
-  avatarUrl?: string;
+  avatarUrl?: string | null;
   name?: string;
   role?: StaffPosition;
   code?: string;

@@ -36,6 +36,8 @@ export const ShiftManagement = () => {
     startDate,
     endDate,
     search: filters.search,
+    departmentId: filters.departmentId,
+    roomId: filters.roomId,
   });
 
   return (
@@ -59,11 +61,12 @@ export const ShiftManagement = () => {
                 page: filters.page,
                 isLoading,
                 pageSize: filters.limit,
+                totalPage: data?.pagination?.totalPage,
               },
             },
             [LayoutSwitcherEnum.GRID]: {
               component: ShiftManagementGrid,
-              props: { data: data?.data },
+              props: { data: data?.data, isLoading: isLoading },
             },
           }}
         />

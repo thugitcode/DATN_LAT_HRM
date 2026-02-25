@@ -12,6 +12,7 @@ interface ShiftManagementListviewProps {
   page?: number;
   pageSize?: number;
   isLoading?: boolean;
+  totalPage?: number;
 }
 
 export const ShiftManagementListview: FC<Readonly<ShiftManagementListviewProps>> = ({
@@ -20,6 +21,7 @@ export const ShiftManagementListview: FC<Readonly<ShiftManagementListviewProps>>
   page,
   pageSize,
   isLoading,
+  totalPage,
 }) => {
   const { columns } = useColumns();
 
@@ -36,6 +38,7 @@ export const ShiftManagementListview: FC<Readonly<ShiftManagementListviewProps>>
         total: total || 0,
         showSizeChanger: true,
         pageSizeOptions: PAGE_SIZE_OPTIONS,
+        totalPage,
       }}
     />
   );

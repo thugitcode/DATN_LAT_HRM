@@ -7,11 +7,7 @@ import { shiftManagementService } from '@/services/shift-management.service';
 import { useDrawer } from '@/store/useDrawer';
 import { addToast } from '@heroui/react';
 
-import type {
-  CreateStaffSchedule,
-  ShiftManagementParams,
-  UpdateStaffSchedule,
-} from '@/types/shift-management.type';
+import type { CreateStaffSchedule, ShiftManagementParams } from '@/types/shift-management.type';
 import { normalizeAxiosError } from '@/lib/axios';
 
 export function useShiftManagementList(params?: ShiftManagementParams) {
@@ -31,15 +27,16 @@ export function useCreateShiftManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
       addToast({
-        title: 'Phân ca làm việc thành công',
+        title: 'Thêm mới phân ca thành công.',
         color: 'success',
       });
       closedDrawer();
     },
     onError: (error: unknown) => {
+      console.log('error_______________', error);
       const { message } = normalizeAxiosError(error);
       addToast({
-        title: message,
+        title: JSON.stringify(error),
         color: 'danger',
       });
     },

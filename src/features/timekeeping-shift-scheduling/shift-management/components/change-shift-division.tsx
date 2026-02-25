@@ -23,7 +23,7 @@ export const ChangeShiftDivision = () => {
 
   const { staff } = record || {};
   return (
-    <div className="size-full flex flex-col justify-between">
+    <div className="flex flex-col justify-between">
       <CardUserShift
         avatarUrl={staff?.avatar}
         name={staff?.name}
@@ -32,9 +32,10 @@ export const ChangeShiftDivision = () => {
         endTime={shift?.endTime}
         shiftTemplateName={shift?.shiftTemplateName}
         workDate={date}
+        departmentName={staff?.departmentName}
       />
 
-      <ChangeShiftDivisionForm />
+      <ChangeShiftDivisionForm shift={shift} staff={staff} />
     </div>
   );
 };

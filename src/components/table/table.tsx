@@ -1,7 +1,9 @@
 import { useMemo, type ReactNode } from 'react';
+import { Spinner } from '@heroui/react';
 
 import { cn } from '@/lib/utils';
 
+import { TableLoading } from './table-loading';
 import { TablePagination } from './table-pagination';
 import type { TableProps } from './types';
 import { buildHeaderRows, calcFixedLeft, getLeafColumns, getRowKey } from './utils';
@@ -48,8 +50,8 @@ export function Table<T extends object = object>({
 
   return (
     <div className="flex flex-col gap-4 justify-between h-full flex-1 bg-white rounded-[14px] p-4">
-      <div className={cn('overflow-auto bg-white', className)}>
-        <table className="w-full border-collapse ">
+      <div className={cn('overflow-auto relative bg-white', className)}>
+        <table className="w-full border-collapse  ">
           <thead className="sticky top-0 z-30">
             {headerRows.map((row, rowIndex) => (
               <tr key={`header-row-${rowIndex}`}>
@@ -81,30 +83,8 @@ export function Table<T extends object = object>({
             ))}
           </thead>
 
-          <tbody>
-            {loading ? (
-              <>
-                {Array.from({ length: 10 }).map((_, rowIndex) => (
-                  <tr
-                    key={`skeleton-${rowIndex}`}
-                    className="animate-pulse border-b border-gray-100"
-                  >
-                    {leafColumns.map((col, colIndex) => (
-                      <td
-                        key={`skeleton-${rowIndex}-${colIndex}`}
-                        className={cn(tdBase, sizeClass)}
-                        style={{ width: col.width }}
-                      >
-                        <div
-                          className="h-3.5 bg-gray-200 rounded-full"
-                          style={{ width: `${55 + ((rowIndex * 13 + colIndex * 7) % 35)}%` }}
-                        />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </>
-            ) : isEmpty ? (
+          <tbody className="relative ">
+            {isEmpty ? (
               <TablePlaceholder
                 colSpan={leafColumns.length}
                 message={empty ?? 'Không có dữ liệu'}
@@ -155,14 +135,15 @@ export function Table<T extends object = object>({
             )}
           </tbody>
         </table>
+
+        {loading && <TableLoading />}
       </div>
 
-      {pagination !== false && pagination && <TablePagination />}
+      {pagination !== false && pagination && <TablePagination total={pagination.totalPage} />}
     </div>
   );
 }
 
-// ✅ Empty/loading state dùng chung 1 component, accept ReactNode cho message
 function TablePlaceholder({ colSpan, message }: { colSpan: number; message: ReactNode }) {
   return (
     <tr>

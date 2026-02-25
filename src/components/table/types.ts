@@ -38,6 +38,7 @@ export interface PaginationConfig {
   current?: number;
   pageSize?: number;
   total?: number;
+  totalPage?: number;
   showSizeChanger?: boolean;
   pageSizeOptions?: number[];
   onChange?: (page: number, pageSize: number) => void;

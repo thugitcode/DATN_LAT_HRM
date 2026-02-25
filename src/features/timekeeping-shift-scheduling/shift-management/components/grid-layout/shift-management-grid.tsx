@@ -2,21 +2,26 @@ import { type FC } from 'react';
 
 import type { StaffSchedule } from '@/types';
 import { cn } from '@/lib/utils';
+import { TableLoading } from '@/components/table/table-loading';
 
-import { Body } from './body';
+import { BodyV2 } from './body-v2';
 import { DayHeader } from './day-header';
 
 export interface ShiftManagementGridProps {
   data?: StaffSchedule[];
+  isLoading?: boolean;
 }
 
-export const ShiftManagementGrid: FC<ShiftManagementGridProps> = ({ data }) => {
+export const ShiftManagementGrid: FC<ShiftManagementGridProps> = ({ data, isLoading }) => {
   return (
-    <div className={cn('flex w-full flex-col  rounded-xl ', 'h-[calc(100vh-304px)]')}>
-      <div className="overflow-x-auto flex flex-col flex-1 min-h-0">
+    <div className={cn('w-full rounded-xl relative overflow-auto', 'h-[calc(100vh-304px)]')}>
+      <table className="border-collapse min-w-max w-full table-fixed">
         <DayHeader data={data} />
-        <Body data={data} />
-      </div>
+        {/* <Body data={data} /> */}
+        <BodyV2 data={data} />
+      </table>
+
+      {isLoading && <TableLoading />}
     </div>
   );
 };

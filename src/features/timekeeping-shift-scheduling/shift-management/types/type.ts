@@ -12,6 +12,8 @@ export interface ShiftCell {
   time: string;
   type?: ShiftTypeEnum;
   name?: string;
+  startTime?: string;
+  endTime?: string;
 }
 
 export interface StaffRow {

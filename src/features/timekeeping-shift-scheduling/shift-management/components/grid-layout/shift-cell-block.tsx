@@ -1,6 +1,7 @@
 import { type FC } from 'react';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
 
+import type { Shift } from '@/types';
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
@@ -11,7 +12,7 @@ import { SHIFT_CA_LEGEND } from '../../constants/data';
 import type { DayColumn, ShiftCell } from '../../types/type';
 
 interface ShiftCellBlockProps {
-  cell: ShiftCell | null;
+  cell: Shift | null;
   day: DayColumn;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   record?: any;
@@ -21,7 +22,7 @@ export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record }) =
   const w = COL_W - 8;
   const h = ROW_H - 8;
   const { month, year } = useYearMonth();
-  const color = SHIFT_CA_LEGEND.find((s) => s.status === cell?.type)?.color;
+  const color = SHIFT_CA_LEGEND.find((s) => s.status === cell?.shiftTemplateType)?.color;
 
   const onOpenDrawer = useDrawer((state) => state.onOpen);
 
@@ -68,13 +69,15 @@ export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record }) =
         color,
         backgroundColor: color + '20',
       }}
-      title={cell.name}
+      title={cell.shiftTemplateName}
       onClick={onOpenShiftDrawer}
     >
       <span className="tracking-wide truncate line-clamp-1 text-center" style={{ color }}>
-        {cell.name}
+        {cell.shiftTemplateName}
       </span>
-      <span className="font-normal opacity-75 text-black text-center">{cell.time}</span>
+      <span className="font-normal opacity-75 text-black text-center">
+        {cell.startTime.slice(0, 5)} - {cell.endTime.slice(0, 5)}
+      </span>
       <span
         className="absolute right-0 bottom-0 border-0 w-full z-20 inline-block h-1"
         style={{ backgroundColor: color }}

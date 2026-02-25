@@ -1,28 +1,13 @@
 import type { PaginationMeta } from '.';
 import type { StaffPosition } from './global.type';
 
-export enum ShiftTypeEnum {
-  FIXED = 'FIXED', // Ca cố định
-  FLEXIBLE = 'FLEXIBLE', // Ca linh hoạt
-  ON_DUTY = 'ON_DUTY', // Ca trực
-  SPLIT = 'SPLIT', // Ca gãy
-}
-export interface Staff {
-  id: string;
-  code: string;
-  name: string;
-  avatar: string | null;
-  position: StaffPosition;
-  departmentId: string;
-  departmentName: string;
-}
-
 export interface ShiftManagementParams {
   page?: number;
   limit?: number;
   staffId?: string;
   staffCode?: string;
   departmentId?: string;
+  roomId?: string;
   startDate?: string;
   endDate?: string;
   position?: StaffPosition;
@@ -30,6 +15,53 @@ export interface ShiftManagementParams {
   month?: string;
 
   [key: string]: unknown;
+}
+
+export enum ShiftTypeEnum {
+  FIXED = 'FIXED', // Ca cố định
+  FLEXIBLE = 'FLEXIBLE', // Ca linh hoạt
+  ON_DUTY = 'ON_DUTY', // Ca trực
+  SPLIT = 'SPLIT', // Ca gãy
+}
+
+export interface DepartmentUser {
+  id: string;
+  name: string;
+}
+
+export interface RoomUser {
+  id: string;
+  name: string;
+}
+
+export interface Staff {
+  id: string;
+  code: string;
+  name: string;
+  birthday: string;
+  gender: 'MALE' | 'FEMALE' | string;
+  phone: string;
+  email: string;
+  avatar: string;
+  jobTitle: string;
+  position: string;
+  currentWorkType: string | null;
+  contractExpiryDate: string | null;
+  status: string;
+  activeStatus: string;
+  isExpiringSoon: boolean;
+  departments: DepartmentUser[];
+  rooms: RoomUser[];
+}
+
+export interface StaffWorkSchedule {
+  id: string;
+  code: string;
+  name: string;
+  avatar: string | null;
+  position: StaffPosition;
+  departmentId: string;
+  departmentName: string;
 }
 
 export interface Shift {
@@ -49,7 +81,7 @@ export interface DaySchedule {
 }
 
 export interface StaffSchedule {
-  staff: Staff;
+  staff: StaffWorkSchedule;
   schedules: DaySchedule[];
 }
 
@@ -57,6 +89,12 @@ export interface ShiftManagementResponse {
   schedules: StaffSchedule[];
   pagination: PaginationMeta;
   message: string;
+}
+
+export interface DaySchedule {
+  date: string;
+  dayOfWeek: number;
+  shifts: Shift[];
 }
 
 export interface CreateStaffSchedule {

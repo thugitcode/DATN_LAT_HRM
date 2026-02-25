@@ -1,36 +1,33 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useDrawer } from '@/store/useDrawer';
-import { Button, Form } from '@heroui/react';
+import { Button, DatePicker, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { CalendarDate, parseDate } from '@internationalized/date';
+import type { DateValue } from '@react-types/calendar';
+import { IconTrash } from '@tabler/icons-react';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
-import type { CreateStaffSchedule } from '@/types/shift-management.type';
+import type { Options } from '@/types/global.type';
+import type { CreateStaffSchedule, DepartmentUser, RoomUser } from '@/types/shift-management.type';
 import { icons } from '@/lib/icons';
 import { useCaseCategoryOptions } from '@/hooks/options/use-case-category-options';
+import { useDepartmentOptions } from '@/hooks/options/use-department-options';
+import { useRoomOptions } from '@/hooks/options/use-room-options';
 import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
+import { FormDatePicker } from '@/components/form-fields/form-date-picker';
 import { FormDateRangePicker } from '@/components/form-fields/form-daterange-picker';
 import { FormInput } from '@/components/form-fields/form-input';
 import { FormSelect } from '@/components/form-fields/form-select';
 import { WrapperBoxForm } from '@/components/wrapper-box-form';
 
-import { useCreateShiftManagement } from '../hooks/use-shift-management'; // 👈 đổi hook
+import { useCreateShiftManagement } from '../hooks/use-shift-management';
 import {
   workShiftAssignSchema,
   type WorkShiftAssignFormValues,
 } from '../schemas/work-shift-assign.schema';
-
-const MOCK_DEPARTMENTS = [
-  { key: 'D1', label: 'Khoa Nội' },
-  { key: 'D2', label: 'Khoa Ngoại' },
-];
-
-const MOCK_ROOMS = [
-  { key: 'R1', label: 'Phòng 101' },
-  { key: 'R2', label: 'Phòng 102' },
-];
 
 const normalizeTime = (time: string): string => {
   if (!time) return '';
@@ -44,8 +41,13 @@ const normalizeTime = (time: string): string => {
 export const WorkShiftsForm = () => {
   const closedDrawer = useDrawer((state) => state.onClose);
 
+  const [departmentUser, setDepartmentUser] = useState<Options[]>([]);
+  const [roomUser, setRoomUser] = useState<Options[]>([]);
+
   const { options: staffOptions } = useStaffOptions();
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
+  const { options: roomOptions } = useRoomOptions();
+  const { options: departmentOptions } = useDepartmentOptions();
 
   const { mutateAsync, isPending } = useCreateShiftManagement();
 
@@ -65,7 +67,8 @@ export const WorkShiftsForm = () => {
     handleSubmit,
     setValue,
     watch,
-    formState: { isSubmitting },
+    trigger,
+    formState: { isSubmitting, errors },
   } = useForm<WorkShiftAssignFormValues>({
     resolver: zodResolver(workShiftAssignSchema),
     defaultValues: {
@@ -76,7 +79,6 @@ export const WorkShiftsForm = () => {
       fromDate: '',
       toDate: '',
       note: '',
-      dateRangeSchema: '',
       details: [
         {
           startTime: '',
@@ -100,8 +102,6 @@ export const WorkShiftsForm = () => {
     const data: CreateStaffSchedule = {
       ...values,
       staffId: staffOptions.find((s) => s.code === values.staffId)?.key || '',
-      departmentId: '',
-      roomId: '',
     };
     try {
       await mutateAsync(data);
@@ -118,6 +118,9 @@ export const WorkShiftsForm = () => {
       className="w-full max-w-full space-y-6 pt-6 h-full flex flex-col justify-between"
       validationBehavior="aria"
       onSubmit={handleSubmit(onSubmit)}
+      // onSubmit={handleSubmit(onSubmit, (errors) => {
+      //   console.log('Validation errors:', errors);
+      // })}
     >
       <div className="w-full px-6 space-y-6 overflow-auto">
         <WrapperBoxForm title="Thông tin nhân sự">
@@ -146,6 +149,18 @@ export const WorkShiftsForm = () => {
                 const emp = optionsStaffCode.find((e) => e.id === id);
                 if (!emp) return;
                 setValue('staffId', emp.key, { shouldValidate: true });
+
+                const deparmentOptions = emp.departments.map((item) => ({
+                  label: item.name,
+                  key: item.id,
+                }));
+                const roomOptions = emp.rooms.map((item) => ({
+                  label: item.name,
+                  key: item.id,
+                }));
+
+                setDepartmentUser(deparmentOptions);
+                setRoomUser(roomOptions);
               }}
               disabled={isLoading}
             />
@@ -155,7 +170,7 @@ export const WorkShiftsForm = () => {
               name="departmentId"
               label="Khoa làm việc"
               isRequired
-              options={MOCK_DEPARTMENTS}
+              options={departmentUser}
               disabled={isLoading}
             />
 
@@ -163,7 +178,7 @@ export const WorkShiftsForm = () => {
               control={control}
               name="roomId"
               label="Phòng làm việc"
-              options={MOCK_ROOMS}
+              options={roomUser}
               disabled={isLoading}
             />
           </div>
@@ -171,48 +186,61 @@ export const WorkShiftsForm = () => {
 
         <WrapperBoxForm title="Thông tin ca làm việc">
           <div className="space-y-3 border-b border-[#11111126] pb-3 mb-3">
-            <FormDateRangePicker
-              control={control}
-              name="dateRangeSchema"
-              isRequired
-              label="Chọn ngày"
-              disabled={isLoading}
-              onChange={(rangeObj) => {
-                if (rangeObj?.start && rangeObj?.end) {
-                  setValue('dateRangeSchema', `${rangeObj.start}~${rangeObj.end}`, {
-                    shouldValidate: true,
-                  });
-                  setValue('fromDate', rangeObj.start.toString(), { shouldValidate: true });
-                  setValue('toDate', rangeObj.end.toString(), { shouldValidate: true });
-                } else {
-                  setValue('dateRangeSchema', '', { shouldValidate: true });
-                }
-              }}
-            />
+            <div className="grid grid-cols-2 gap-3">
+              <FormDatePicker
+                control={control}
+                name="fromDate"
+                label="Ngày bắt đầu"
+                isRequired
+                disabled={isLoading}
+                onTrigger={() => trigger('toDate')}
+              />
+
+              <FormDatePicker
+                control={control}
+                name="toDate"
+                label="Ngày kết thúc"
+                isRequired
+                disabled={isLoading}
+                onTrigger={() => trigger('fromDate')}
+              />
+            </div>
 
             {fields.map((item, index) => (
-              <div key={item.id}>
-                <div className="grid grid-cols-3 gap-3 items-stretch">
-                  <div className="pt-1">
-                    <FormSelect
-                      control={control}
-                      name={`details.${index}.shiftTemplateId`}
-                      label="Chọn ca"
-                      isRequired
-                      disabled={isLoading}
-                      options={caseCategoryOptions}
-                      onSelect={(id) => {
-                        const emp = caseCategoryOptions.find((e) => e.key === id);
-                        if (!emp) return;
-                        setValue(`details.${index}.startTime`, normalizeTime(emp.startTime), {
-                          shouldValidate: true,
-                        });
-                        setValue(`details.${index}.endTime`, normalizeTime(emp.endTime), {
-                          shouldValidate: true,
-                        });
-                      }}
-                    />
-                  </div>
+              <div
+                key={item.id}
+                className="relative p-3 rounded-lg border border-[#11111114] bg-[#FAFAFA]"
+              >
+                {fields.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => remove(index)}
+                    disabled={isLoading}
+                    className="absolute cursor-pointer top-2 right-2 text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                  >
+                    <IconTrash size={16} />
+                  </button>
+                )}
+
+                <div className="grid grid-cols-3 gap-3 items-start">
+                  <FormSelect
+                    control={control}
+                    name={`details.${index}.shiftTemplateId`}
+                    label="Chọn ca"
+                    isRequired
+                    disabled={isLoading}
+                    options={caseCategoryOptions}
+                    onSelect={(id) => {
+                      const emp = caseCategoryOptions.find((e) => e.key === id);
+                      if (!emp) return;
+                      setValue(`details.${index}.startTime`, normalizeTime(emp.startTime), {
+                        shouldValidate: true,
+                      });
+                      setValue(`details.${index}.endTime`, normalizeTime(emp.endTime), {
+                        shouldValidate: true,
+                      });
+                    }}
+                  />
 
                   <FormInput
                     control={control}
@@ -235,6 +263,14 @@ export const WorkShiftsForm = () => {
               </div>
             ))}
           </div>
+
+          {errors.details?.root?.message && (
+            <p className="text-red-500 text-xs mt-1">{errors.details.root.message}</p>
+          )}
+
+          {typeof errors.details?.message === 'string' && (
+            <p className="text-red-500 text-xs mt-1">{errors.details.message}</p>
+          )}
 
           <Button
             className="border-[#006FEE] border-2 bg-white text-[#006FEE] text-[14px] font-normal"
