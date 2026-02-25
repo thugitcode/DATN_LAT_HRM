@@ -14,7 +14,7 @@ export const hrmInstance = axios.create({
 });
 
 hrmInstance.interceptors.request.use((config) => {
-  config.headers['x-tenant-id'] = 'noiquoctuan5';
+  config.headers['x-tenant-id'] = 'DEEPCARE';
 
   if (!config.headers['Content-Type']) {
     config.headers['Content-Type'] = 'application/json';

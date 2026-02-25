@@ -28,6 +28,16 @@ interface PaginationParams {
   offset?: number;
 }
 
+export interface QueryOptionsListResponse<T, M = unknown> {
+  data: T[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  meta: M;
+}
+
 export type {
   Shift,
   StaffSchedule,

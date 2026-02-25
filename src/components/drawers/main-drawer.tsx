@@ -17,16 +17,19 @@ export function MainDrawer() {
       isOpen={isOpen}
       onClose={onClose}
       {...config.drawerProps}
-      classNames={config.classNames}
+      classNames={{
+        ...config.classNames,
+        closeButton: 'top-5 right-5 hover:bg-gray-100 z-50',
+      }}
       className="rounded-none"
     >
       <DrawerContent>
         {(onClose) => (
           <>
-            <DrawerHeader className="px-6 pt-6 pb-3 text-[30px] leading-9 font-semibold">
+            <DrawerHeader className="flex items-center px-6 py-5 text-[22px] font-bold text-gray-900">
               {config.title}
             </DrawerHeader>
-            <DrawerBody className="bg-[#F4F4F5] px-0 pt-0 pb-0">{config.component}</DrawerBody>
+            <DrawerBody className="bg-[#F4F4F5] px-0 py-0">{config.component}</DrawerBody>
           </>
         )}
       </DrawerContent>

@@ -3,6 +3,7 @@ import { create } from 'zustand';
 export enum DrawerType {
   WORK_SHIFTS = 'WORK_SHIFTS',
   CHANGE_SHIFT_DIVISION = 'CHANGE_SHIFT_DIVISION',
+  EXPLANATION_DETAIL = 'EXPLANATION_DETAIL',
 }
 
 interface DrawerState {
