@@ -1,11 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { LoginSuccess } from '@/features/login/login-success';
+import { idbPersister } from '@/lib/idb-persister';
 
 export const Route = createFileRoute('/authenticated')({
-  component: RouteComponent,
-});
+  beforeLoad: async () => {
+    await idbPersister.removeClient();
 
-function RouteComponent() {
-  return <LoginSuccess />;
-}
+    localStorage.removeItem('jwt');
+  },
+  component: () => <>CommonErrorComponent</>,
+});

@@ -12,9 +12,9 @@ import {
     TableHeader,
     TableRow,
     Chip,
-    Spinner,
 } from '@heroui/react';
 import { IconFileText, IconX } from '@tabler/icons-react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import type { ExplanationRecord } from '../types';
 
@@ -36,11 +36,12 @@ interface ExplanationTableProps {
     selectedRecords: ExplanationRecord[];
     onSelectionChange: (records: ExplanationRecord[]) => void;
     onRefresh?: () => void;
+    onApprove?: (id: string) => void;
+    onReject?: (id: string) => void;
 }
 
 export const ExplanationTable: FC<ExplanationTableProps> = ({
     data,
-    loading = false,
     page,
     limit,
     total,
@@ -48,28 +49,37 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
     onLimitChange,
     selectedRecords,
     onSelectionChange,
+    onApprove,
+    onReject,
 }) => {
     const totalPages = Math.ceil(total / limit);
+    const { onOpen } = useDrawer((state) => state);
 
-    const renderStatus = (status: ExplanationRecord['status']) => {
+    const renderStatus = (status: ExplanationRecord['status'], id: string) => {
         const statusUpper = status.toUpperCase();
         if (statusUpper === 'PENDING' || statusUpper === 'PENDING_HR') {
             return (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Button
-                        size="sm"
+                        size="md"
                         variant="flat"
                         color="danger"
                         isIconOnly
-                        className="rounded-lg h-8 w-8 min-w-8"
+                        className="rounded-lg h-[32px] w-[32px] min-w-[32px]"
                         title="Từ chối"
+                        onPress={() => {
+                            if (onReject) onReject(id);
+                        }}
                     >
                         <IconX size={16} />
                     </Button>
                     <Button
-                        size="sm"
+                        size="md"
                         color="primary"
-                        className="rounded-lg font-medium h-8 px-3 text-xs"
+                        className="rounded-lg font-medium h-[32px] px-3 text-[13px]"
+                        onPress={() => {
+                            if (onApprove) onApprove(id);
+                        }}
                     >
                         Xác nhận
                     </Button>
@@ -80,12 +90,15 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
         if (statusUpper === 'APPROVED') {
             return (
                 <Chip
-                    size="sm"
+                    size="md"
                     variant="flat"
                     color="success"
-                    className="text-xs"
+                    classNames={{
+                        base: "h-8 w-[116px] px-2",
+                        content: "text-[13px] font-medium flex-1 text-center"
+                    }}
                     startContent={
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
                             <circle cx="6" cy="6" r="6" fill="#17C964" />
                             <path d="M4 6L5.5 7.5L8 4.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
@@ -99,12 +112,15 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
         if (statusUpper === 'REJECTED') {
             return (
                 <Chip
-                    size="sm"
+                    size="md"
                     variant="flat"
                     color="danger"
-                    className="text-xs"
+                    classNames={{
+                        base: "h-8 w-[116px] px-2",
+                        content: "text-[13px] font-medium flex-1 text-center"
+                    }}
                     startContent={
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
                             <circle cx="6" cy="6" r="6" fill="#F31260" />
                             <path d="M4.5 4.5L7.5 7.5M7.5 4.5L4.5 7.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
                         </svg>
@@ -129,11 +145,15 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
 
     const handleSelectAll = (checked: boolean) => {
         if (checked) {
-            onSelectionChange(data);
+            const selectableRecords = data.filter(r => r.status.toUpperCase() === 'PENDING' || r.status.toUpperCase() === 'PENDING_HR');
+            onSelectionChange(selectableRecords);
         } else {
             onSelectionChange([]);
         }
     };
+
+    const selectableRecordsCount = data.filter(r => r.status.toUpperCase() === 'PENDING' || r.status.toUpperCase() === 'PENDING_HR').length;
+    const hasSelectable = selectableRecordsCount > 0;
 
     return (
         <div className="bg-white rounded-xl overflow-hidden">
@@ -143,14 +163,15 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
                     wrapper: 'shadow-none p-4',
                     th: 'text-[#71717A] text-xs font-semibold uppercase py-3 first:rounded-l-lg last:rounded-r-lg',
                     td: 'py-3 text-sm',
-                    tr: 'border-b border-[#F4F4F5] last:border-none hover:bg-[#FAFAFA] transition-colors',
+                    tr: 'border-b border-[#F4F4F5] last:border-none hover:bg-[#FAFAFA] transition-colors cursor-pointer',
                 }}
             >
                 <TableHeader>
                     <TableColumn width={50}>
                         <Checkbox
                             size="sm"
-                            isSelected={data.length > 0 && selectedRecords.length === data.length}
+                            isDisabled={!hasSelectable}
+                            isSelected={hasSelectable && selectedRecords.length === selectableRecordsCount}
                             onValueChange={handleSelectAll}
                         />
                     </TableColumn>
@@ -170,13 +191,19 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
                 // isLoading={loading}
                 >
                     {data.map((record) => (
-                        <TableRow key={record.id}>
+                        <TableRow
+                            key={record.id}
+                            onClick={() => onOpen(DrawerType.EXPLANATION_DETAIL, { id: record.id })}
+                        >
                             <TableCell>
-                                <Checkbox
-                                    size="sm"
-                                    isSelected={selectedRecords.some((r) => r.id === record.id)}
-                                    onValueChange={() => handleSelectionChange(record)}
-                                />
+                                <div onClick={(e) => e.stopPropagation()}>
+                                    <Checkbox
+                                        size="sm"
+                                        isDisabled={record.status.toUpperCase() !== 'PENDING' && record.status.toUpperCase() !== 'PENDING_HR'}
+                                        isSelected={selectedRecords.some((r) => r.id === record.id)}
+                                        onValueChange={() => handleSelectionChange(record)}
+                                    />
+                                </div>
                             </TableCell>
                             <TableCell>
                                 <span className="text-sm text-[#11181C]">{record.departmentName || record.roomName || '-'}</span>
@@ -219,7 +246,7 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
                                     {record.approvedByManagerName || '-'}
                                 </span>
                             </TableCell>
-                            <TableCell>{renderStatus(record.status)}</TableCell>
+                            <TableCell>{renderStatus(record.status, record.id)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

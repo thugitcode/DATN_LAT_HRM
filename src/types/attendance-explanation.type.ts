@@ -17,23 +17,71 @@ export enum AttendanceExplanationType {
     OTHER = 'OTHER',
 }
 
+export interface AttachmentResponse {
+    id: string;
+    fileUrl: string;
+    fileName: string;
+    fileType: string;
+    fileSize: number;
+}
+
 export interface AttendanceExplanation {
     id: string;
+
+    // Staff info
     staffId: string;
     staffCode: string;
     staffName: string;
+    staffAvatar?: string;
     departmentName: string;
     roomName: string;
     position: string;
+
+    // Shift info (snapshot)
+    shiftName?: string;
+    shiftStartTime?: string;
+    shiftEndTime?: string;
     date: string;
+    dateLabel?: string;
     type: AttendanceExplanationType;
     typeLabel: string;
+
+    // Actual time (snapshot)
+    actualCheckIn?: string;
+    actualCheckOut?: string;
+    totalWorkHours?: string;
+    totalActualWorkingHours?: string;
+    isCheckInLate?: boolean;
+    isCheckOutEarly?: boolean;
+
+    // Explanation content
     reason: string;
+    managerConfirmation?: string;
+    attachments?: AttachmentResponse[];
     attachmentCount: number;
     firstAttachmentName: string;
-    approvedByManagerName: string;
+
+    // HR input
+    hrComment?: string;
+
+    // Approval info
+    approvedByManagerId?: string;
+    approvedByManagerName?: string;
+    managerName?: string;
+    managerApprovedAt?: string;
+    approvedByHrId?: string;
+    approvedByHrName?: string;
+    hrApprovedAt?: string;
+
+    // Status
     status: AttendanceExplanationStatus;
+    rejectedById?: string;
+    rejectedByName?: string;
+    rejectedReason?: string;
+    rejectedAt?: string;
+
     createdAt: string;
+    updatedAt?: string;
 }
 
 export interface AttendanceExplanationTypeCount {

@@ -1,6 +1,5 @@
-import type { ExplanationRecord, ExplanationSummary, ExplanationTypeCount } from '../types';
 
-export const mockExplanationData: ExplanationRecord[] = [
+export const mockExplanationData: any[] = [
     {
         id: '1',
         departmentName: 'Khoa tai mũi họng',
@@ -94,22 +93,22 @@ export const mockExplanationData: ExplanationRecord[] = [
     },
 ];
 
-export const mockSummary: ExplanationSummary = {
+export const mockSummary: any = {
     totalRequests: 4,
     approved: 4,
     rejected: 4,
     pending: 4,
 };
 
-export const mockExplanationTypes: ExplanationTypeCount[] = [
+export const mockExplanationTypes: any[] = [
     { label: 'Nghỉ ốm', count: 4 },
     { label: 'Công tác', count: 12 },
     { label: 'Đi muộn', count: 24 },
 ];
 
 export const statusOptions = [
-    { key: 'all', label: 'Tất cả' },
-    { key: 'pending', label: 'Chờ xác nhận' },
-    { key: 'approved', label: 'Đã xác nhận' },
-    { key: 'rejected', label: 'Từ chối' },
+    { key: 'ALL', label: 'Tất cả' },
+    { key: 'PENDING', label: 'Chờ xác nhận' },
+    { key: 'APPROVED', label: 'Đã xác nhận' },
+    { key: 'REJECTED', label: 'Từ chối' },
 ];

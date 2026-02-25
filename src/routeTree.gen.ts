@@ -19,7 +19,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivateLogoutRouteImport } from './routes/_private/logout'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as PrivateAdminIndexRouteImport } from './routes/_private/admin/index'
+import { Route as AuthTimekeepingShiftSchedulingIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/index'
 import { Route as PrivateAdminDashboardRouteImport } from './routes/_private/admin/_dashboard'
+import { Route as AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/timekeeping-management/index'
+import { Route as AuthTimekeepingShiftSchedulingShiftManagementIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/shift-management/index'
+import { Route as AuthTimekeepingShiftSchedulingExplanationManagementIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/explanation-management/index'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/index'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/index'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/index'
@@ -70,11 +74,35 @@ const PrivateAdminIndexRoute = PrivateAdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => PrivateRoute,
 } as any)
+const AuthTimekeepingShiftSchedulingIndexRoute =
+  AuthTimekeepingShiftSchedulingIndexRouteImport.update({
+    id: '/timekeeping-shift-scheduling/',
+    path: '/timekeeping-shift-scheduling/',
+    getParentRoute: () => AuthRoute,
+  } as any)
 const PrivateAdminDashboardRoute = PrivateAdminDashboardRouteImport.update({
   id: '/admin/_dashboard',
   path: '/admin',
   getParentRoute: () => PrivateRoute,
 } as any)
+const AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRoute =
+  AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport.update({
+    id: '/timekeeping-shift-scheduling/timekeeping-management/',
+    path: '/timekeeping-shift-scheduling/timekeeping-management/',
+    getParentRoute: () => AuthRoute,
+  } as any)
+const AuthTimekeepingShiftSchedulingShiftManagementIndexRoute =
+  AuthTimekeepingShiftSchedulingShiftManagementIndexRouteImport.update({
+    id: '/timekeeping-shift-scheduling/shift-management/',
+    path: '/timekeeping-shift-scheduling/shift-management/',
+    getParentRoute: () => AuthRoute,
+  } as any)
+const AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute =
+  AuthTimekeepingShiftSchedulingExplanationManagementIndexRouteImport.update({
+    id: '/timekeeping-shift-scheduling/explanation-management/',
+    path: '/timekeeping-shift-scheduling/explanation-management/',
+    getParentRoute: () => AuthRoute,
+  } as any)
 const PrivateAdminDashboardDashboardLazyRoute =
   PrivateAdminDashboardDashboardLazyRouteImport.update({
     id: '/dashboard',
@@ -126,12 +154,17 @@ export interface FileRoutesByFullPath {
   '/unauthenticated': typeof UnauthenticatedRoute
   '/login': typeof AuthLoginRoute
   '/logout': typeof PrivateLogoutRoute
-  '/admin': typeof PrivateAdminIndexRoute
+  '/admin': typeof PrivateAdminDashboardRouteWithChildren
+  '/timekeeping-shift-scheduling/': typeof AuthTimekeepingShiftSchedulingIndexRoute
+  '/admin/': typeof PrivateAdminIndexRoute
   '/admin/dashboard': typeof PrivateAdminDashboardDashboardLazyRoute
-  '/admin/timekeeping-shift-scheduling': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
-  '/admin/timekeeping-shift-scheduling/explanation-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
-  '/admin/timekeeping-shift-scheduling/shift-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
-  '/admin/timekeeping-shift-scheduling/timekeeping-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute
+  '/timekeeping-shift-scheduling/explanation-management/': typeof AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute
+  '/timekeeping-shift-scheduling/shift-management/': typeof AuthTimekeepingShiftSchedulingShiftManagementIndexRoute
+  '/timekeeping-shift-scheduling/timekeeping-management/': typeof AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
+  '/admin/timekeeping-shift-scheduling/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
+  '/admin/timekeeping-shift-scheduling/explanation-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
+  '/admin/timekeeping-shift-scheduling/shift-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
+  '/admin/timekeeping-shift-scheduling/timekeeping-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -140,7 +173,11 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/logout': typeof PrivateLogoutRoute
   '/admin': typeof PrivateAdminIndexRoute
+  '/timekeeping-shift-scheduling': typeof AuthTimekeepingShiftSchedulingIndexRoute
   '/admin/dashboard': typeof PrivateAdminDashboardDashboardLazyRoute
+  '/timekeeping-shift-scheduling/explanation-management': typeof AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute
+  '/timekeeping-shift-scheduling/shift-management': typeof AuthTimekeepingShiftSchedulingShiftManagementIndexRoute
+  '/timekeeping-shift-scheduling/timekeeping-management': typeof AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
   '/admin/timekeeping-shift-scheduling': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   '/admin/timekeeping-shift-scheduling/explanation-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/shift-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -156,8 +193,12 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_private/logout': typeof PrivateLogoutRoute
   '/_private/admin/_dashboard': typeof PrivateAdminDashboardRouteWithChildren
+  '/_auth/timekeeping-shift-scheduling/': typeof AuthTimekeepingShiftSchedulingIndexRoute
   '/_private/admin/': typeof PrivateAdminIndexRoute
   '/_private/admin/_dashboard/dashboard': typeof PrivateAdminDashboardDashboardLazyRoute
+  '/_auth/timekeeping-shift-scheduling/explanation-management/': typeof AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute
+  '/_auth/timekeeping-shift-scheduling/shift-management/': typeof AuthTimekeepingShiftSchedulingShiftManagementIndexRoute
+  '/_auth/timekeeping-shift-scheduling/timekeeping-management/': typeof AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -172,11 +213,16 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/admin'
+    | '/timekeeping-shift-scheduling/'
+    | '/admin/'
     | '/admin/dashboard'
-    | '/admin/timekeeping-shift-scheduling'
-    | '/admin/timekeeping-shift-scheduling/explanation-management'
-    | '/admin/timekeeping-shift-scheduling/shift-management'
-    | '/admin/timekeeping-shift-scheduling/timekeeping-management'
+    | '/timekeeping-shift-scheduling/explanation-management/'
+    | '/timekeeping-shift-scheduling/shift-management/'
+    | '/timekeeping-shift-scheduling/timekeeping-management/'
+    | '/admin/timekeeping-shift-scheduling/'
+    | '/admin/timekeeping-shift-scheduling/explanation-management/'
+    | '/admin/timekeeping-shift-scheduling/shift-management/'
+    | '/admin/timekeeping-shift-scheduling/timekeeping-management/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -185,7 +231,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/admin'
+    | '/timekeeping-shift-scheduling'
     | '/admin/dashboard'
+    | '/timekeeping-shift-scheduling/explanation-management'
+    | '/timekeeping-shift-scheduling/shift-management'
+    | '/timekeeping-shift-scheduling/timekeeping-management'
     | '/admin/timekeeping-shift-scheduling'
     | '/admin/timekeeping-shift-scheduling/explanation-management'
     | '/admin/timekeeping-shift-scheduling/shift-management'
@@ -200,8 +250,12 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_private/logout'
     | '/_private/admin/_dashboard'
+    | '/_auth/timekeeping-shift-scheduling/'
     | '/_private/admin/'
     | '/_private/admin/_dashboard/dashboard'
+    | '/_auth/timekeeping-shift-scheduling/explanation-management/'
+    | '/_auth/timekeeping-shift-scheduling/shift-management/'
+    | '/_auth/timekeeping-shift-scheduling/timekeeping-management/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/'
@@ -235,14 +289,14 @@ declare module '@tanstack/react-router' {
     '/_private': {
       id: '/_private'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof PrivateRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth': {
       id: '/_auth'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -270,9 +324,16 @@ declare module '@tanstack/react-router' {
     '/_private/admin/': {
       id: '/_private/admin/'
       path: '/admin'
-      fullPath: '/admin'
+      fullPath: '/admin/'
       preLoaderRoute: typeof PrivateAdminIndexRouteImport
       parentRoute: typeof PrivateRoute
+    }
+    '/_auth/timekeeping-shift-scheduling/': {
+      id: '/_auth/timekeeping-shift-scheduling/'
+      path: '/timekeeping-shift-scheduling'
+      fullPath: '/timekeeping-shift-scheduling/'
+      preLoaderRoute: typeof AuthTimekeepingShiftSchedulingIndexRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_private/admin/_dashboard': {
       id: '/_private/admin/_dashboard'
@@ -280,6 +341,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof PrivateAdminDashboardRouteImport
       parentRoute: typeof PrivateRoute
+    }
+    '/_auth/timekeeping-shift-scheduling/timekeeping-management/': {
+      id: '/_auth/timekeeping-shift-scheduling/timekeeping-management/'
+      path: '/timekeeping-shift-scheduling/timekeeping-management'
+      fullPath: '/timekeeping-shift-scheduling/timekeeping-management/'
+      preLoaderRoute: typeof AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/timekeeping-shift-scheduling/shift-management/': {
+      id: '/_auth/timekeeping-shift-scheduling/shift-management/'
+      path: '/timekeeping-shift-scheduling/shift-management'
+      fullPath: '/timekeeping-shift-scheduling/shift-management/'
+      preLoaderRoute: typeof AuthTimekeepingShiftSchedulingShiftManagementIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/timekeeping-shift-scheduling/explanation-management/': {
+      id: '/_auth/timekeeping-shift-scheduling/explanation-management/'
+      path: '/timekeeping-shift-scheduling/explanation-management'
+      fullPath: '/timekeeping-shift-scheduling/explanation-management/'
+      preLoaderRoute: typeof AuthTimekeepingShiftSchedulingExplanationManagementIndexRouteImport
+      parentRoute: typeof AuthRoute
     }
     '/_private/admin/_dashboard/dashboard': {
       id: '/_private/admin/_dashboard/dashboard'
@@ -291,28 +373,28 @@ declare module '@tanstack/react-router' {
     '/_private/admin/_dashboard/timekeeping-shift-scheduling/': {
       id: '/_private/admin/_dashboard/timekeeping-shift-scheduling/'
       path: '/timekeeping-shift-scheduling'
-      fullPath: '/admin/timekeeping-shift-scheduling'
+      fullPath: '/admin/timekeeping-shift-scheduling/'
       preLoaderRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
     '/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/': {
       id: '/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/'
       path: '/timekeeping-shift-scheduling/timekeeping-management'
-      fullPath: '/admin/timekeeping-shift-scheduling/timekeeping-management'
+      fullPath: '/admin/timekeeping-shift-scheduling/timekeeping-management/'
       preLoaderRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
     '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/': {
       id: '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/'
       path: '/timekeeping-shift-scheduling/shift-management'
-      fullPath: '/admin/timekeeping-shift-scheduling/shift-management'
+      fullPath: '/admin/timekeeping-shift-scheduling/shift-management/'
       preLoaderRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
     '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/': {
       id: '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/'
       path: '/timekeeping-shift-scheduling/explanation-management'
-      fullPath: '/admin/timekeeping-shift-scheduling/explanation-management'
+      fullPath: '/admin/timekeeping-shift-scheduling/explanation-management/'
       preLoaderRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
@@ -321,10 +403,22 @@ declare module '@tanstack/react-router' {
 
 interface AuthRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthTimekeepingShiftSchedulingIndexRoute: typeof AuthTimekeepingShiftSchedulingIndexRoute
+  AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute: typeof AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute
+  AuthTimekeepingShiftSchedulingShiftManagementIndexRoute: typeof AuthTimekeepingShiftSchedulingShiftManagementIndexRoute
+  AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRoute: typeof AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
+  AuthTimekeepingShiftSchedulingIndexRoute:
+    AuthTimekeepingShiftSchedulingIndexRoute,
+  AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute:
+    AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute,
+  AuthTimekeepingShiftSchedulingShiftManagementIndexRoute:
+    AuthTimekeepingShiftSchedulingShiftManagementIndexRoute,
+  AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRoute:
+    AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

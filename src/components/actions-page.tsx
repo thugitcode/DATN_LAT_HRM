@@ -1,18 +1,34 @@
 import type { FC } from 'react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 import { Button, Tooltip } from '@heroui/react';
 
 import { icons } from '@/lib/icons';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
 
 import { LayoutSwitcher } from './layout-switcher';
 
 interface ActionsPageProps {}
 
 export const ActionsPage: FC<Readonly<ActionsPageProps>> = () => {
+  const onOpenDrawer = useDrawer((state) => state.onOpen);
+
+  const { clearFilters } = useQueryFilter({
+    replace: true,
+  });
+
+  const onReload = () => {
+    clearFilters();
+  };
+
+  const onCreate = () => {
+    onOpenDrawer(DrawerType.WORK_SHIFTS);
+  };
+
   return (
     <div className="flex items-stretch gap-3">
       <ul className="flex items-center gap-2">
         <li>
-          <Tooltip content="Tải lại" showArrow={true}>
+          <Tooltip content="Tải lại" showArrow={true} onClick={onReload}>
             <Button
               isIconOnly
               aria-label="Take a reload"
@@ -58,12 +74,12 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = () => {
 
       <span className="inline-block w-0.5 bg-[#11111126] flex-1" />
 
-      <Button color="primary" className="h-10 px-4">
+      <Button onPress={onCreate} color="primary" className="h-10 px-4">
         Thêm phân ca
       </Button>
-      <Button color="secondary" className="h-10 px-4">
+      {/* <Button color="secondary" className="h-10 px-4">
         Duyệt phân ca
-      </Button>
+      </Button> */}
     </div>
   );
 };

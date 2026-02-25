@@ -34,7 +34,11 @@ export const ExplanationFilter = ({
     }, [localFilters.departmentId, filters.departmentId]);
 
     const handleFilterChange = (key: keyof AttendanceExplanationFilters, value: any) => {
-        const newFilters = { ...localFilters, [key]: value || undefined };
+        let finalValue = value;
+        if (key === 'status' && value === 'ALL') {
+            finalValue = undefined;
+        }
+        const newFilters = { ...localFilters, [key]: finalValue || undefined };
         setLocalFilters(newFilters);
         onFiltersChange(newFilters);
     };
@@ -192,7 +196,7 @@ export const ExplanationFilter = ({
                     listbox: 'bg-white',
                 }}
             >
-                {departmentOptions.map((dept) => (
+                {departmentOptions.map((dept: any) => (
                     <SelectItem key={dept.value}>{dept.label}</SelectItem>
                 ))}
             </Select>
@@ -215,7 +219,7 @@ export const ExplanationFilter = ({
                     listbox: 'bg-white',
                 }}
             >
-                {roomOptions.map((room) => (
+                {roomOptions.map((room: any) => (
                     <SelectItem key={room.value}>{room.label}</SelectItem>
                 ))}
             </Select>

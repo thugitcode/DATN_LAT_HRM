@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import type { ApiResponse, FormSelectOptions } from '@/types';
-import { clinic40Api } from '@/lib/axios';
+import { hrmInstance } from '@/lib/axios';
 import { catalogTypes } from '@/lib/constants';
 
 interface Department {
@@ -18,7 +18,7 @@ export const useDepartmentOptions = (): {
     const { data, isLoading } = useQuery({
         queryKey: ['departments'],
         queryFn: async () => {
-            const res = await clinic40Api.get<ApiResponse<Department[]>>(
+            const res = await hrmInstance.get<ApiResponse<Department[]>>(
                 `/catalog/${catalogTypes.GENERAL.DEPARTMENT}`
             );
             return res.data.data;

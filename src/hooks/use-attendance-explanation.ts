@@ -1,6 +1,6 @@
 import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { clinic40Api } from '@/lib/axios';
+import { hrmInstance } from '@/lib/axios';
 import type { ApiResponse, QueryOptionsListResponse } from '@/types';
 import type {
     AttendanceExplanation,
@@ -12,19 +12,19 @@ import type {
 export const attendanceExplanationListQueryOptions = (params: {
     page: number;
     limit: number;
-    filters: AttendanceExplanationFilters;
+    filters: AttendanceExplanationFilters | Record<string, any>;
 }) => {
     return queryOptions({
         queryKey: ['attendance-explanation', 'list', params],
         queryFn: async (): Promise<QueryOptionsListResponse<AttendanceExplanation, AttendanceExplanationSummary>> => {
             const { page, limit, filters } = params;
-            const res = await clinic40Api.get<ApiResponse<AttendanceExplanation[]>>(
+            const res = await hrmInstance.get<ApiResponse<AttendanceExplanation[]>>(
                 '/attendance-explanation',
                 {
                     params: {
                         page,
                         limit,
-                        // ...filters,
+                        ...filters,
                     },
                 }
             );
@@ -32,11 +32,11 @@ export const attendanceExplanationListQueryOptions = (params: {
             return {
                 data: res.data.data,
                 pagination: {
-                    total: (res.data as any).total || 0,
-                    page: (res.data as any).page || page,
-                    limit: (res.data as any).limit || limit,
+                    total: res.data.pagination?.total || 0,
+                    page: res.data.pagination?.page || page,
+                    limit: res.data.pagination?.limit || limit,
                 },
-                meta: (res.data as any).metadata,
+                meta: res.data.metadata as any,
             };
         },
     });
@@ -47,7 +47,7 @@ export const attendanceExplanationDetailQueryOptions = (id: string) => {
     return queryOptions({
         queryKey: ['attendance-explanation', 'detail', id],
         queryFn: async () => {
-            const res = await clinic40Api.get<ApiResponse<AttendanceExplanation>>(
+            const res = await hrmInstance.get<ApiResponse<AttendanceExplanation>>(
                 `/attendance-explanation/${id}`
             );
             return res.data.data;
@@ -68,9 +68,35 @@ export const useApproveAttendanceExplanation = () => {
             id: string;
             hrComment?: string;
         }) => {
-            const res = await clinic40Api.post<ApiResponse<boolean>>(
+            const res = await hrmInstance.post<ApiResponse<boolean>>(
                 `/attendance-explanation/${id}/approve`,
                 { hrComment }
+            );
+            return res.data.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['attendance-explanation'],
+            });
+        },
+    });
+};
+
+// Mutation for manager approving
+export const useManagerApproveAttendanceExplanation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async ({
+            id,
+            managerConfirmation,
+        }: {
+            id: string;
+            managerConfirmation?: string;
+        }) => {
+            const res = await hrmInstance.post<ApiResponse<boolean>>(
+                `/attendance-explanation/${id}/manager-approve`,
+                { managerConfirmation }
             );
             return res.data.data;
         },
@@ -94,7 +120,7 @@ export const useRejectAttendanceExplanation = () => {
             id: string;
             reason: string;
         }) => {
-            const res = await clinic40Api.post<ApiResponse<boolean>>(
+            const res = await hrmInstance.post<ApiResponse<boolean>>(
                 `/attendance-explanation/${id}/reject`,
                 { reason }
             );
@@ -120,7 +146,7 @@ export const useBulkApproveAttendanceExplanation = () => {
             ids: string[];
             hrComment?: string;
         }) => {
-            const res = await clinic40Api.post<
+            const res = await hrmInstance.post<
                 ApiResponse<{ success: number; failed: number }>
             >('/attendance-explanation/bulk-approve', {
                 ids,

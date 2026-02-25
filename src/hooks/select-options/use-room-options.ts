@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
 import type { ApiResponse, FormSelectOptions } from '@/types';
-import { clinic40Api } from '@/lib/axios';
+import { hrmInstance } from '@/lib/axios';
 import { catalogTypes } from '@/lib/constants';
 
 interface Room {
@@ -19,7 +19,7 @@ export const useRoomOptions = (departmentId?: string): {
         queryKey: ['rooms', departmentId],
         queryFn: async () => {
             const params = departmentId ? { departmentId } : {};
-            const res = await clinic40Api.get<ApiResponse<Room[]>>(
+            const res = await hrmInstance.get<ApiResponse<Room[]>>(
                 `/catalog/${catalogTypes.GENERAL.ROOM}`,
                 { params }
             );
