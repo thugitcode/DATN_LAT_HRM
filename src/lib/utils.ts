@@ -10,6 +10,8 @@ import { logger } from './logger';
 
 export const DISABLE_AUTH = true;
 
+export const PAGE_SIZE_OPTIONS = [5, 10, 20, 50];
+
 export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }

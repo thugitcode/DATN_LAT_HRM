@@ -1,6 +1,6 @@
 import { memo, type FC } from 'react';
 
-import { formatWorkDate } from '../helper';
+import { formatWorkDate } from '../../helper';
 import { ShiftAvatar } from './shift-avatar';
 
 interface CardUserShiftProps {
@@ -11,10 +11,11 @@ interface CardUserShiftProps {
   endTime?: string;
   shiftTemplateName?: string;
   workDate?: string;
+  departmentName?: string;
 }
 
 export const CardUserShift: FC<Readonly<CardUserShiftProps>> = memo(
-  ({ avatarUrl, name, code, startTime, endTime, shiftTemplateName, workDate }) => {
+  ({ avatarUrl, name, code, startTime, endTime, shiftTemplateName, workDate, departmentName }) => {
     return (
       <div className="bg-white px-6 py-3">
         <div className="border border-[#11111126] rounded-xl overflow-hidden">
@@ -28,14 +29,14 @@ export const CardUserShift: FC<Readonly<CardUserShiftProps>> = memo(
                 </span>
               </div>
             </div>
-            <div className="text-[14px] font-medium">{/* Phòng phục hồi chức năng */}</div>
+            <div className="text-[14px] font-medium">{departmentName}</div>
           </div>
 
           <div className="bg-white p-3 flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-2xl text-[#11181C] font-medium">{shiftTemplateName}</span>
-              <span className="text-base text-[#A1A1AA]">
-                {startTime} - {endTime}
+              <span className="text-base font-medium text-[#A1A1AA]">
+                {startTime?.slice(0, 5)} - {endTime?.slice(0, 5)}
               </span>
             </div>
             <div className="text-base text-[#11181C] font-semibold">{formatWorkDate(workDate)}</div>

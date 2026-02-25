@@ -36,6 +36,10 @@ export function FormInput<T extends FieldValues>({
           errorMessage={fieldState.error?.message}
           classNames={{
             label: 'text-xs font-normal leading-4 text-[#52525B]',
+            inputWrapper: `
+  data-[invalid=true]:!bg-[#F4F4F5]
+  group-data-[invalid=true]:!bg-[#F4F4F5]
+`,
           }}
           step={60}
         />

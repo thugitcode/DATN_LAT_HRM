@@ -39,4 +39,11 @@ export enum StaffPosition {
 
 export enum Status {
   PENDING = 'PENDING',
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+}
+
+export interface Options {
+  key: string;
+  label: string;
 }

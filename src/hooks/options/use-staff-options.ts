@@ -10,9 +10,9 @@ export const useStaffOptions = () => {
       data?.data?.map((item) => ({
         key: item.id,
         label: item.name,
-        departmentName: item.departmentName,
-        departmentId: item.departmentId,
         code: item.code,
+        departments: item.departments,
+        rooms: item.rooms,
       })) ?? [],
   };
 };

@@ -1,51 +1,64 @@
-import type { ReactNode } from 'react';
+import type { HTMLAttributes, ReactNode, TdHTMLAttributes, ThHTMLAttributes } from 'react';
 
-export type RecordType = Record<string, unknown>;
+type Align = 'left' | 'center' | 'right';
+type Size = 'small' | 'middle' | 'large';
+type Fixed = 'left' | 'right';
 
-export interface BaseColumn<T = RecordType> {
+export type DataIndex<T> = keyof T & string;
+
+interface CellHandlers<T> {
+  onCell?: (record: T, index: number) => TdHTMLAttributes<HTMLTableCellElement>;
+  onHeaderCell?: () => ThHTMLAttributes<HTMLTableHeaderCellElement>;
+}
+
+export interface BaseColumn<T extends object = object> extends CellHandlers<T> {
   key: string;
-  dataIndex?: keyof T | string;
+  dataIndex?: DataIndex<T>;
   title?: ReactNode;
   width?: number | string;
-  align?: 'left' | 'center' | 'right';
+  align?: Align;
   className?: string;
-  fixed?: 'left' | 'right';
+  fixed?: Fixed;
   render?: (value: unknown, record: T, index: number) => ReactNode;
-  onCell?: (record: T, index: number) => React.TdHTMLAttributes<HTMLTableCellElement>;
-  onHeaderCell?: () => React.ThHTMLAttributes<HTMLTableHeaderCellElement>;
 }
 
-export interface ColumnGroup<T = RecordType> extends BaseColumn<T> {
-  children?: Column<T>[];
+export interface ColumnGroup<T extends object = object> extends BaseColumn<T> {
+  children: BaseColumn<T>[];
 }
 
-export type Column<T = RecordType> = BaseColumn<T> | ColumnGroup<T>;
+export type Column<T extends object = object> =
+  | (BaseColumn<T> & { children?: never })
+  | ColumnGroup<T>;
+
+export function isColumnGroup<T extends object>(col: Column<T>): col is ColumnGroup<T> {
+  return Array.isArray((col as ColumnGroup<T>).children);
+}
 
 export interface PaginationConfig {
   current?: number;
   pageSize?: number;
   total?: number;
+  totalPage?: number;
   showSizeChanger?: boolean;
   pageSizeOptions?: number[];
   onChange?: (page: number, pageSize: number) => void;
-  onShowSizeChange?: (current: number, size: number) => void;
 }
 
-export interface TableProps<T = RecordType> {
+export interface TableProps<T extends object = object> {
   columns: Column<T>[];
   dataSource: T[];
-  rowKey?: keyof T | string | ((record: T) => string);
+  rowKey?: DataIndex<T> | ((record: T) => string);
   className?: string;
   bordered?: boolean;
-  size?: 'small' | 'middle' | 'large';
+  size?: Size;
   loading?: boolean;
+  empty?: ReactNode;
+  onRow?: (record: T, index: number) => HTMLAttributes<HTMLTableRowElement>;
   rowClassName?: string | ((record: T, index: number) => string);
-  onRow?: (record: T, index: number) => React.HTMLAttributes<HTMLTableRowElement>;
   pagination?: false | PaginationConfig;
 }
 
-export interface HeaderStructure<T> {
-  rows: Array<Array<Column<T> & { colSpan?: number; rowSpan?: number }>>;
-  leafColumns: BaseColumn<T>[];
-  maxDepth: number;
+export interface HeaderCell<T extends object = object> extends BaseColumn<T> {
+  colSpan?: number;
+  rowSpan?: number;
 }

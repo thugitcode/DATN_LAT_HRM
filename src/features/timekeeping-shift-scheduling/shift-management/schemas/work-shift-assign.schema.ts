@@ -44,27 +44,29 @@ export const workShiftAssignSchema = z
 
     fromDate: z
       .string()
-      .min(1, 'Từ ngày không được để trống')
+      .min(1, 'Ngày bắt đầu không được để trống')
       .refine((v) => !isNaN(Date.parse(v)), 'Từ ngày không hợp lệ'),
 
     toDate: z
       .string()
-      .min(1, 'Đến ngày không được để trống')
+      .min(1, 'Ngày kết thúc không được để trống')
       .refine((v) => !isNaN(Date.parse(v)), 'Đến ngày không hợp lệ'),
-
-    // dateRangeSchema: z.array(z.date()).length(1, 'Phải chọn ngày bắt đầu và ngày kết thúc'),
-    // dateRangeSchema: z.string().optional(),
-    dateRangeSchema: z.string().min(1, 'Vui lòng chọn khoảng ngày'),
 
     note: z.string().optional(),
 
     details: z.array(shiftDetailSchema).min(1, 'Phải có ít nhất một ca làm việc'),
   })
 
-  .refine((v) => new Date(v.toDate) >= new Date(v.fromDate), {
-    message: 'Đến ngày phải sau hoặc bằng từ ngày',
-    path: ['toDate'],
-  })
+  .refine(
+    (v) => {
+      if (!v.fromDate || !v.toDate) return true;
+      return new Date(v.fromDate) <= new Date(v.toDate);
+    },
+    {
+      message: 'Ngày bắt đầu phải trước hoặc bằng ngày kết thúc',
+      path: ['fromDate'],
+    },
+  )
 
   .refine(
     (v) => {

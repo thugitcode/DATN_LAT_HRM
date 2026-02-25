@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Input } from '@heroui/react';
 
 interface SearchInputProps {
@@ -7,7 +7,10 @@ interface SearchInputProps {
   placeholder?: string;
   startIcon?: React.ReactNode;
   className?: string;
+  debounceMs?: number;
 }
+
+const INPUT_WRAPPER_CLASSES = 'h-[46px] min-h-[46px] bg-white border-none shadow-none';
 
 export const SearchInput: React.FC<SearchInputProps> = ({
   value,
@@ -15,33 +18,56 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   placeholder = 'Tìm kiếm...',
   startIcon,
   className = '',
+  debounceMs = 300,
 }) => {
+  const [localValue, setLocalValue] = useState(value ?? '');
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const onChangeRef = useRef(onChange);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  }, [onChange]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLocalValue(value ?? '');
+  }, [value]);
+
   const handleValueChange = useCallback(
     (newValue: string) => {
-      onChange(newValue || undefined);
+      setLocalValue(newValue);
+
+      if (timerRef.current) clearTimeout(timerRef.current);
+
+      timerRef.current = setTimeout(() => {
+        onChangeRef.current(newValue || undefined);
+      }, debounceMs);
     },
-    [onChange],
+    [debounceMs],
   );
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   return (
     <Input
       placeholder={placeholder}
       variant="flat"
       startContent={startIcon}
-      value={value ?? ''}
+      value={localValue}
       onValueChange={handleValueChange}
       className={className}
       classNames={{
-        inputWrapper: `
-          h-[46px]
-          min-h-[46px]
-          bg-white
-          border-none
-          shadow-none
-        `,
+        inputWrapper: INPUT_WRAPPER_CLASSES,
         input: 'text-black',
+        base: '[&>div]:focus-within:ring-0 [&>div]:focus-within:ring-offset-0',
       }}
       aria-label={placeholder}
+      isClearable
+      onClear={() => handleValueChange('')}
     />
   );
 };
