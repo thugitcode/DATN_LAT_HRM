@@ -8,9 +8,9 @@ BLUE="\e[34m"
 RESET="\e[0m"
 
 # Variables
-IMAGE_NAME="dc-partner-fe"
+IMAGE_NAME="hrm-web-ui"
 REGISTRY="registry.deepcare.vn"
-REPO="deepcare/cis/management/dc-partner-fe"
+REPO="deepcare/cis/hrm/hrm-web-ui"
 TAG="dev-latest"
 
 REMOTE_HOST="deepcare@10.8.0.184"

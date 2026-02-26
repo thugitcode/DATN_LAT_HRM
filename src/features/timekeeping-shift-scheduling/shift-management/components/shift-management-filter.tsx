@@ -1,18 +1,19 @@
 import { useCallback } from 'react';
 
+import type { ShiftManagementParams } from '@/types';
 import { icons } from '@/lib/icons';
+import { useDepartmentOptions } from '@/hooks/options/use-department-options';
+import { useRoomOptions } from '@/hooks/options/use-room-options';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { FilterSelect } from '@/components/filters/filter-select';
 import { MonthFilter } from '@/components/filters/month-filter';
 import { SearchInput } from '@/components/filters/search-input';
 
-import { KHOA_OPTIONS, PHONG_OPTIONS } from '../constants/data';
-import type { ShiftFilterParams } from '../types/filters.type';
-
 export const ShiftManagementFilter: React.FC = () => {
-  const { filters, setFilter } = useQueryFilter<ShiftFilterParams>({
-    replace: true,
-  });
+  const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
+
+  const { options: roomOptions } = useRoomOptions();
+  const { options: departmentOptions } = useDepartmentOptions();
 
   const handleMonthChange = useCallback(
     (value: string) => {
@@ -30,14 +31,14 @@ export const ShiftManagementFilter: React.FC = () => {
 
   const handleKhoaChange = useCallback(
     (value: string | undefined) => {
-      setFilter('khoa', value);
+      setFilter('departmentId', value);
     },
     [setFilter],
   );
 
   const handlePhongChange = useCallback(
     (value: string | undefined) => {
-      setFilter('phong', value);
+      setFilter('roomId', value);
     },
     [setFilter],
   );
@@ -49,15 +50,15 @@ export const ShiftManagementFilter: React.FC = () => {
       <SearchInput value={filters.search} onChange={handleSearchChange} startIcon={icons.search} />
 
       <FilterSelect
-        options={KHOA_OPTIONS}
-        value={filters.khoa}
+        options={departmentOptions}
+        value={filters.departmentId as string}
         onChange={handleKhoaChange}
         placeholder="Khoa"
       />
 
       <FilterSelect
-        options={PHONG_OPTIONS}
-        value={filters.phong}
+        options={roomOptions}
+        value={filters.roomId as string}
         onChange={handlePhongChange}
         placeholder="Phòng"
       />

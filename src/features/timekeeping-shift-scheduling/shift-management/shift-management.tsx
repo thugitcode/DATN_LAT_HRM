@@ -1,35 +1,27 @@
-import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useLocation } from '@tanstack/react-router';
-import { useShiftManagementQuery } from '@/query-options/shift-management';
-import { useLayoutStore } from '@/store/useLayoutStore';
+import { useMemo } from 'react';
 import dayjs from 'dayjs';
 
+import type { ShiftManagementParams } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionsPage } from '@/components/actions-page';
-import { FooterPageColor } from '@/components/footer-page-color';
-import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
-import { WrapperLoading } from '@/components/wrapper-loading';
 
+import { LayoutRenderer } from '../components/layout-renderer';
+import { WrapperToolBar } from '../components/wrapper-toolbar';
+import { TimekeepingManagementLegend } from '../timekeeping-management/components/timekeeping-management-legend';
+import { BtnCreateShift } from './components/btn-create-shift';
+import { ShiftManagementGrid } from './components/grid-layout/shift-management-grid';
 import { ShiftManagementFilter } from './components/shift-management-filter';
-import { ShiftManagementGrid } from './components/shift-management-grid';
 import { ShiftManagementListview } from './components/shift-management-listview';
+import { SHIFT_CA_LEGEND } from './constants/data';
+import { useShiftManagementList } from './hooks/use-shift-management';
 
 export const ShiftManagement = () => {
-  const location = useLocation();
-  const pathname = location.pathname || '/';
-  const currentLayout = useLayoutStore((state) => state.getLayout(pathname));
-
-  const { filters } = useQueryFilter();
+  const { filters } = useQueryFilter<ShiftManagementParams>();
 
   const { startDate, endDate } = useMemo(() => {
-    const monthStr =
-      typeof filters.month === 'string' && filters.month
-        ? filters.month
-        : dayjs().format('YYYY-MM');
-
+    const monthStr = filters.month ?? dayjs().format('YYYY-MM');
     const monthDate = dayjs(monthStr, 'YYYY-MM');
 
     return {
@@ -38,41 +30,49 @@ export const ShiftManagement = () => {
     };
   }, [filters.month]);
 
-  const [page, setPage] = useState(1);
-
-  const { data, isLoading, error, refetch, isFetching } = useQuery(
-    useShiftManagementQuery({
-      page,
-      limit: 10,
-      startDate,
-      endDate,
-    }),
-  );
+  const { data, isLoading } = useShiftManagementList({
+    page: filters.page ?? 1,
+    limit: filters.limit ?? 10,
+    startDate,
+    endDate,
+    search: filters.search,
+    departmentId: filters.departmentId,
+    roomId: filters.roomId,
+  });
 
   return (
-    // <WrapperLoading loading={isLoading}>
-    <div className="flex flex-col justify-baseline h-full gap-5">
-      <PageContainer className="flex flex-col justify-between overflow-hidden">
-        <div className="space-y-4 flex flex-col size-full">
+    <div className="flex flex-col justify-baseline h-full">
+      <div className="space-y-3">
+        <WrapperToolBar className="space-y-4 flex flex-col">
           <div className="flex items-center justify-between">
             <TitlePage title="Quản lý phân ca" />
-
-            <ActionsPage />
+            <ActionsPage actions={<BtnCreateShift />} />
           </div>
-
           <ShiftManagementFilter />
+        </WrapperToolBar>
 
-          <div className="flex-1 overflow-hidden h-full">
-            {currentLayout === LayoutSwitcherEnum.LIST ? (
-              <ShiftManagementListview data={data?.schedules} total={data?.pagination?.total} />
-            ) : (
-              <ShiftManagementGrid data={data?.schedules} />
-            )}
-          </div>
-        </div>
-      </PageContainer>
-      <FooterPageColor />
+        <LayoutRenderer
+          layouts={{
+            [LayoutSwitcherEnum.LIST]: {
+              component: ShiftManagementListview,
+              props: {
+                data: data?.data,
+                total: data?.pagination?.total,
+                page: filters.page,
+                isLoading,
+                pageSize: filters.limit,
+                totalPage: data?.pagination?.totalPage,
+              },
+            },
+            [LayoutSwitcherEnum.GRID]: {
+              component: ShiftManagementGrid,
+              props: { data: data?.data, isLoading: isLoading },
+            },
+          }}
+        />
+      </div>
+
+      <TimekeepingManagementLegend legendItems={SHIFT_CA_LEGEND} />
     </div>
-    // </WrapperLoading>
   );
 };

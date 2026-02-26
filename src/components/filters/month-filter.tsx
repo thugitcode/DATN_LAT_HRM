@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/set-state-in-render */
 import { useCallback, useMemo, useState } from 'react';
-import { Button, Popover, PopoverContent, PopoverTrigger, Select, SelectItem } from '@heroui/react';
+import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
-import { MONTH_NAMES, MONTHS } from './constants/data';
-import type { YearOption } from './types/type';
+import { MONTH_NAMES } from './constants/data';
 
 interface MonthFilterProps {
   value?: string;
@@ -15,7 +14,20 @@ interface MonthFilterProps {
   className?: string;
 }
 
-const YEAR_RANGE = 5;
+const MONTH_ABBR_VI = [
+  'Th.1',
+  'Th.2',
+  'Th.3',
+  'Th.4',
+  'Th.5',
+  'Th.6',
+  'Th.7',
+  'Th.8',
+  'Th.9',
+  'Th.10',
+  'Th.11',
+  'Th.12',
+];
 
 export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, className = '' }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -23,68 +35,42 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
   const currentMonth = useMemo<CalendarDate>(() => {
     if (value) {
       const [year, month] = value.split('-').map(Number);
-
-      return new CalendarDate(year, month, 1);
+      return new CalendarDate(year!, month!, 1);
     }
     const now = today(getLocalTimeZone());
     return new CalendarDate(now.year, now.month, 1);
   }, [value]);
 
-  const years = useMemo<YearOption[]>(() => {
-    const currentYear = new Date().getFullYear();
-    const yearList: YearOption[] = [];
-    for (let i = currentYear - YEAR_RANGE; i <= currentYear + YEAR_RANGE; i++) {
-      yearList.push({ key: String(i), label: String(i) });
-    }
-    return yearList;
-  }, []);
-
   const monthDisplay = useMemo<string>(() => {
     return `${MONTH_NAMES[currentMonth.month - 1]} ${currentMonth.year}`;
   }, [currentMonth]);
 
-  const [selectedMonth, setSelectedMonth] = useState<string>(String(currentMonth.month));
-  const [selectedYear, setSelectedYear] = useState<string>(String(currentMonth.year));
+  const [popoverYear, setPopoverYear] = useState<number>(currentMonth.year);
 
   useMemo(() => {
-    setSelectedMonth(String(currentMonth.month));
-    setSelectedYear(String(currentMonth.year));
-  }, [currentMonth]);
+    setPopoverYear(currentMonth.year);
+  }, [currentMonth.year]);
 
   const handlePreviousMonth = useCallback(() => {
     const prevMonth = currentMonth.subtract({ months: 1 });
-    const formattedMonth = `${prevMonth.year}-${String(prevMonth.month).padStart(2, '0')}`;
-    onChange(formattedMonth);
+    onChange(`${prevMonth.year}-${String(prevMonth.month).padStart(2, '0')}`);
   }, [currentMonth, onChange]);
 
   const handleNextMonth = useCallback(() => {
     const nextMonth = currentMonth.add({ months: 1 });
-    const formattedMonth = `${nextMonth.year}-${String(nextMonth.month).padStart(2, '0')}`;
-    onChange(formattedMonth);
+    onChange(`${nextMonth.year}-${String(nextMonth.month).padStart(2, '0')}`);
   }, [currentMonth, onChange]);
 
-  const handleMonthChange = useCallback((keys: 'all' | Set<React.Key>) => {
-    if (keys === 'all') return;
-    const selected = Array.from(keys)[0];
-    if (selected) {
-      setSelectedMonth(String(selected));
-    }
-  }, []);
+  const handleSelectMonth = useCallback(
+    (monthIndex: number) => {
+      const month = String(monthIndex + 1).padStart(2, '0');
+      onChange(`${popoverYear}-${month}`);
+      setIsOpen(false);
+    },
+    [popoverYear, onChange],
+  );
 
-  const handleYearChange = useCallback((keys: 'all' | Set<React.Key>) => {
-    if (keys === 'all') return;
-    const selected = Array.from(keys)[0];
-    if (selected) {
-      setSelectedYear(String(selected));
-    }
-  }, []);
-
-  const handleApply = useCallback(() => {
-    const month = selectedMonth.padStart(2, '0');
-    const formattedMonth = `${selectedYear}-${month}`;
-    onChange(formattedMonth);
-    setIsOpen(false);
-  }, [selectedMonth, selectedYear, onChange]);
+  const todayDate = today(getLocalTimeZone());
 
   return (
     <div
@@ -113,45 +99,62 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
             {monthDisplay}
           </button>
         </PopoverTrigger>
-        <PopoverContent className="p-4 bg-white rounded-xl shadow-lg">
-          <div className="flex flex-col gap-3 w-70">
-            <div className="text-sm font-semibold text-black">Chọn tháng và năm</div>
+        <PopoverContent className="p-4 bg-white rounded-xl shadow-xl mt-2.5">
+          <div className="flex flex-col gap-3 w-64">
+            <div className="flex items-center justify-between">
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                onPress={() => setPopoverYear((y) => y - 1)}
+                className="min-w-8 w-8 h-8"
+                aria-label="năm trước"
+              >
+                {icons.arrowLeft}
+              </Button>
 
-            <Select
-              label="Tháng"
-              placeholder="Chọn tháng"
-              selectedKeys={[selectedMonth]}
-              onSelectionChange={handleMonthChange}
-              classNames={{
-                trigger: 'bg-gray-50 border-none shadow-none rounded-lg',
-                value: 'text-black',
-                label: 'text-black text-xs',
-              }}
-            >
-              {MONTHS.map((month) => (
-                <SelectItem key={month.key}>{month.label}</SelectItem>
-              ))}
-            </Select>
+              <span className="text-sm font-bold text-black">{popoverYear}</span>
 
-            <Select
-              label="Năm"
-              placeholder="Chọn năm"
-              selectedKeys={[selectedYear]}
-              onSelectionChange={handleYearChange}
-              classNames={{
-                trigger: 'bg-gray-50 border-none shadow-none rounded-lg',
-                value: 'text-black',
-                label: 'text-black text-xs',
-              }}
-            >
-              {years.map((year) => (
-                <SelectItem key={year.key}>{year.label}</SelectItem>
-              ))}
-            </Select>
+              <Button
+                isIconOnly
+                size="sm"
+                variant="light"
+                onPress={() => setPopoverYear((y) => y + 1)}
+                className="min-w-8 w-8 h-8"
+                aria-label="năm sau"
+              >
+                {icons.arrowRight}
+              </Button>
+            </div>
 
-            <Button color="primary" onPress={handleApply} className="w-full">
-              Áp dụng
-            </Button>
+            {/* Lưới tháng 3x4 */}
+            <div className="grid grid-cols-3 gap-y-2 gap-x-1">
+              {MONTH_ABBR_VI.map((abbr, idx) => {
+                const isSelected =
+                  popoverYear === currentMonth.year && idx + 1 === currentMonth.month;
+                const isCurrentMonth =
+                  popoverYear === todayDate.year && idx + 1 === todayDate.month;
+
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => handleSelectMonth(idx)}
+                    aria-label={`Tháng ${idx + 1} ${popoverYear}`}
+                    aria-pressed={isSelected}
+                    className={cn(
+                      'h-9 rounded-lg text-sm font-medium transition-colors',
+                      isSelected
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : isCurrentMonth
+                          ? 'border border-blue-400 text-blue-600 hover:bg-blue-50'
+                          : 'text-gray-700 hover:bg-gray-100',
+                    )}
+                  >
+                    {abbr}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </PopoverContent>
       </Popover>

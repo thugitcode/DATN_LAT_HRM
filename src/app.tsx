@@ -59,6 +59,20 @@ const router = createRouter({
     queryClient,
     auth: undefined!,
   },
+
+  stringifySearch: (search) => {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(search)) {
+      if (value !== undefined && value !== null && value !== '') {
+        params.set(key, String(value));
+      }
+    }
+    const str = params.toString();
+    return str ? `?${str}` : '';
+  },
+  parseSearch: (search) => {
+    return Object.fromEntries(new URLSearchParams(search).entries());
+  },
 });
 
 declare module '@tanstack/react-router' {

@@ -49,6 +49,8 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
         listbox: 'bg-white',
       }}
       aria-label={label || placeholder}
+      onClear={() => onChange(undefined)}
+      isClearable
     >
       {options.map((option) => (
         <SelectItem key={option.key}>{option.label}</SelectItem>

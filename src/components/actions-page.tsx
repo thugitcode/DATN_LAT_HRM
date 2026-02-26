@@ -1,5 +1,4 @@
-import type { FC } from 'react';
-import { DrawerType, useDrawer } from '@/store/useDrawer';
+import type { FC, ReactNode } from 'react';
 import { Button, Tooltip } from '@heroui/react';
 
 import { icons } from '@/lib/icons';
@@ -7,21 +6,21 @@ import { useQueryFilter } from '@/hooks/useQueryFilter';
 
 import { LayoutSwitcher } from './layout-switcher';
 
-interface ActionsPageProps {}
+interface ActionsPageProps {
+  actions?: ReactNode;
+  hiddenLayoutSwitcher?: boolean;
+}
 
-export const ActionsPage: FC<Readonly<ActionsPageProps>> = () => {
-  const onOpenDrawer = useDrawer((state) => state.onOpen);
-
+export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
+  actions,
+  hiddenLayoutSwitcher = false,
+}) => {
   const { clearFilters } = useQueryFilter({
     replace: true,
   });
 
   const onReload = () => {
     clearFilters();
-  };
-
-  const onCreate = () => {
-    onOpenDrawer(DrawerType.WORK_SHIFTS);
   };
 
   return (
@@ -67,19 +66,17 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = () => {
           </Tooltip>
         </li>
       </ul>
-
       <span className="inline-block w-0.5 bg-[#11111126] flex-1" />
 
-      <LayoutSwitcher />
+      {!hiddenLayoutSwitcher && (
+        <>
+          <LayoutSwitcher />
 
-      <span className="inline-block w-0.5 bg-[#11111126] flex-1" />
+          <span className="inline-block w-0.5 bg-[#11111126] flex-1" />
+        </>
+      )}
 
-      <Button onPress={onCreate} color="primary" className="h-10 px-4">
-        Thêm phân ca
-      </Button>
-      {/* <Button color="secondary" className="h-10 px-4">
-        Duyệt phân ca
-      </Button> */}
+      {actions}
     </div>
   );
 };
