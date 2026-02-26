@@ -45,9 +45,22 @@ export enum StaffAcademicTitleEnum {
   ENGINEER = 'ENGINEER', // Kỹ sư
 }
 
+export enum ContractTypeEnum {
+  FULL_TIME = 'FULL_TIME',
+  PROBATION = 'PROBATION',
+  INTERNSHIP = 'INTERNSHIP',
+  EXPERT_COOPERATION = 'EXPERT_COOPERATION',
+}
+
 export interface StaffParams {
   page?: number;
   limit?: number;
+  search?: string;
+  status?: string;
+  jobTitle?: string;
+  departmentIds?: string[];
+  roomIds?: string[];
+  contractType?: ContractTypeEnum;
 }
 
 export interface Staff {
@@ -56,11 +69,38 @@ export interface Staff {
   name: string;
   birthday: string;
   gender: Gender;
-  phone: string;
-  jobTitle: StaffJobTitleEnum;
-  position: StaffPosition;
-  currentWorkType: null;
-  contractExpiryDate: null;
-  status: Status;
-  isExpiringSoon: false;
+  phone?: string;
+  email?: string;
+  avatar?: string;
+  jobTitle?: StaffJobTitleEnum;
+  position?: StaffPosition;
+  currentWorkType?: string;
+  workType?: string;
+  contractExpiryDate?: string;
+  endDate?: string;
+  status?: Status;
+  activeStatus?: 'ACTIVE' | 'INACTIVE';
+  isExpiringSoon?: boolean;
+  departments?: { id: string; name: string }[];
+  rooms?: { id: string; name: string }[];
+
+  // Detail fields
+  identity?: string;
+  identityIssueDate?: string;
+  identityIssuePlace?: string;
+  nationality?: string;
+  address?: string;
+  qualification?: string;
+  major?: string;
+  certificateNumber?: string;
+  certificateIssuePlace?: string;
+  certificateExpiryDate?: string;
+  taxCode?: string;
+  insuranceNumber?: string;
+  accountNumber?: string;
+  beneficiaryName?: string;
+  bankName?: string;
+  note?: string;
+  currentContractType?: string;
+  academicTitles?: StaffAcademicTitleEnum[];
 }

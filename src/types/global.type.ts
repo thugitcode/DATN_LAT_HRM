@@ -41,6 +41,8 @@ export enum Status {
   PENDING = 'PENDING',
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
+WORKING = 'WORKING',
+  RESIGNED = 'RESIGNED',
 }
 
 export interface Options {

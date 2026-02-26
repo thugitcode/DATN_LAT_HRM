@@ -19,3 +19,12 @@ export const fetchStaff = async (params?: StaffParams): Promise<ApiResponse<Staf
     throw normalizeAxiosError(err);
   }
 };
+
+export const fetchStaffDetail = async (id: string): Promise<ApiResponse<Staff>> => {
+  try {
+    const response = await hrmInstance.get(`/staff/${id}`);
+    return response.data;
+  } catch (err: unknown) {
+    throw normalizeAxiosError(err);
+  }
+};

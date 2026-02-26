@@ -38,6 +38,12 @@ export interface QueryOptionsListResponse<T, M = unknown> {
   meta: M;
 }
 
+type FormSelectOptions<T = unknown> = {
+  value: string;
+  label: string;
+  item: T;
+}[];
+
 export type {
   Shift,
   StaffSchedule,
@@ -46,4 +52,5 @@ export type {
   ShiftManagementResponse,
   ShiftManagementParams,
   PaginationParams,
+  FormSelectOptions,
 };
