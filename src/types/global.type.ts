@@ -39,4 +39,6 @@ export enum StaffPosition {
 
 export enum Status {
   PENDING = 'PENDING',
+  WORKING = 'WORKING',
+  RESIGNED = 'RESIGNED',
 }

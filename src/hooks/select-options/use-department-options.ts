@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import type { ApiResponse, FormSelectOptions } from '@/types';
 import { hrmInstance } from '@/lib/axios';
-import { catalogTypes } from '@/lib/constants';
 
 interface Department {
     id: string;
@@ -13,13 +12,16 @@ interface Department {
 
 export const useDepartmentOptions = (): {
     options: FormSelectOptions<Department>;
+    isLoading: boolean;
+    isError: boolean;
     disabled: boolean;
 } => {
-    const { data, isLoading } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['departments'],
         queryFn: async () => {
             const res = await hrmInstance.get<ApiResponse<Department[]>>(
-                `/catalog/${catalogTypes.GENERAL.DEPARTMENT}`
+                '/department',
+                { params: { getAll: true } },
             );
             return res.data.data;
         },
@@ -36,6 +38,8 @@ export const useDepartmentOptions = (): {
 
     return {
         options,
-        disabled: isLoading,
+        isLoading,
+        isError,
+        disabled: isLoading || isError,
     };
 };

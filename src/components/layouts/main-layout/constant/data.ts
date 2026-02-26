@@ -4,30 +4,30 @@ import { icons } from '@/lib/icons';
 export const menuSidebar: MenuItem[] = [
   {
     id: '1',
-    path: '/',
+    path: '/admin/dashboard',
     label: 'Tổng quan',
     icon: icons.home,
   },
   {
     id: '2',
-    path: '/timekeeping-shift-scheduling',
+    path: '/admin/timekeeping-shift-scheduling',
     label: 'Chấm công và phân ca',
     icon: icons.time,
     children: [
       {
         id: '1',
         label: 'Quản lý chấm công',
-        path: '/timekeeping-shift-scheduling/timekeeping-management',
+        path: '/admin/timekeeping-shift-scheduling/timekeeping-management',
       },
       {
         id: '2',
         label: 'Quản lý giải trình',
-        path: '/timekeeping-shift-scheduling/explanation-management',
+        path: '/admin/timekeeping-shift-scheduling/explanation-management',
       },
       {
         id: '3',
         label: 'Quản lý phân ca',
-        path: '/timekeeping-shift-scheduling/shift-management',
+        path: '/admin/timekeeping-shift-scheduling/shift-management',
       },
     ],
   },
@@ -37,12 +37,34 @@ export const menuSidebar: MenuItem[] = [
   //   label: 'Quản lý nghỉ',
   //   icon: icons.job,
   // },
-  // {
-  //   id: '4',
-  //   path: '/admin/dashboard',
-  //   label: 'Quản lý nhân sự',
-  //   icon: icons.plusUser,
-  // },
+  {
+    id: '4',
+    path: '/admin/staff-management',
+    label: 'Quản lý nhân sự',
+    icon: icons.plusUser,
+    children: [
+      {
+        id: '1',
+        label: 'Nhân viên chính thức',
+        path: '/admin/staff-management/official-staff' as any,
+      },
+      {
+        id: '2',
+        label: 'Nhân viên thử việc',
+        path: '/admin/staff-management/probationary-staff' as any,
+      },
+      {
+        id: '3',
+        label: 'Nhân viên học việc',
+        path: '/admin/staff-management/apprentice-staff' as any,
+      },
+      {
+        id: '4',
+        label: 'Nhân sự hợp tác',
+        path: '/admin/staff-management/partner-staff' as any,
+      },
+    ],
+  },
   // {
   //   id: '5',
   //   path: '/admin/dashboard',

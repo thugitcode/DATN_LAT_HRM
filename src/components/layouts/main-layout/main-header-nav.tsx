@@ -20,7 +20,7 @@ export const MainHeaderNav = () => {
   }
 
   return (
-    <ul className="flex items-center justify-center gap-2">
+    <ul className="flex items-center justify-center gap-1 flex-nowrap">
       {navItems.map((item) => (
         <MainNavItem key={item.id} {...item} />
       ))}
