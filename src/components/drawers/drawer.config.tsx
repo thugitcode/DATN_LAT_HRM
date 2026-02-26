@@ -4,6 +4,7 @@ import type { DrawerProps } from '@heroui/react';
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
 import { WorkShiftsForm } from '@/features/timekeeping-shift-scheduling/shift-management/components/work-shifts-form';
 import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling/explanation-management/components/explanation-detail-drawer';
+import { ShiftDetailsDrawer } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-drawer';
 
 type DrawerConfig = {
   title: string;
@@ -36,6 +37,17 @@ export const DRAWER_CONFIG: Record<DrawerType, DrawerConfig> = {
   [DrawerType.EXPLANATION_DETAIL]: {
     title: 'Giải trình ca',
     component: <ExplanationDetailDrawer />,
+    drawerProps: {
+      placement: 'right',
+      size: '2xl',
+      classNames: {
+        body: 'p-0 bg-[#F4F4F5]',
+      }
+    },
+  },
+  [DrawerType.TIME_SHEET_DETAIL]: {
+    title: 'Chi tiết ca',
+    component: <ShiftDetailsDrawer />,
     drawerProps: {
       placement: 'right',
       size: '2xl',
