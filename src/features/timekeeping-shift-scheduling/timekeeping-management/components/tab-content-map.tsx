@@ -1,5 +1,5 @@
 import { TAB_KEYS } from '../types/index.type';
-import { DetailedTimeSheet } from './detailed-time-sheet';
+import { DetailedTimeSheet } from './detailed-time-sheet/detailed-time-sheet';
 import { HourlyPayroll } from './hourly-payroll/hourly-payroll';
 import { WorkSheetByShift } from './work-sheet-by-shift/work-sheet-by-shift';
 

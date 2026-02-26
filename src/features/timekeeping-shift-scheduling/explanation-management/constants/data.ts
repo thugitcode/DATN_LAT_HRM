@@ -1,3 +1,6 @@
+import { AttendanceExplanationType } from "@/types/attendance-explanation.type";
+import { IconAlertCircle, IconAlertTriangleFilled, IconBriefcase, IconDots, IconLogin, IconLogout, IconStethoscope, IconUserOff, type IconProps } from "@tabler/icons-react";
+import type { ForwardRefExoticComponent, RefAttributes } from "react";
 
 export const mockExplanationData: any[] = [
     {
@@ -112,3 +115,67 @@ export const statusOptions = [
     { key: 'APPROVED', label: 'Đã xác nhận' },
     { key: 'REJECTED', label: 'Từ chối' },
 ];
+
+
+export const attendanceExplanationUI: Record<
+  AttendanceExplanationType,
+  {
+    label: string;
+    className: string;
+    icon: ForwardRefExoticComponent<IconProps & RefAttributes<SVGSVGElement>>;
+  }
+> = {
+  [AttendanceExplanationType.LATE]: {
+    label: "Đi muộn",
+    className: "bg-danger-50 text-danger",
+    icon: IconAlertTriangleFilled,
+  },
+
+  [AttendanceExplanationType.EARLY_LEAVE]: {
+    label: "Về sớm",
+    className: "bg-warning-100 text-warning-700",
+    icon: IconLogout,
+  },
+
+  [AttendanceExplanationType.MISSING_CHECK_IN]: {
+    label: "Thiếu check-in",
+    className: "bg-danger-50 text-danger",
+    icon: IconLogin,
+  },
+
+  [AttendanceExplanationType.MISSING_CHECK_OUT]: {
+    label: "Thiếu check-out",
+    className: "bg-danger-50 text-danger",
+    icon: IconLogout,
+  },
+
+  [AttendanceExplanationType.ABSENT]: {
+    label: "Vắng mặt",
+    className: "bg-danger-100 text-danger-700",
+    icon: IconUserOff,
+  },
+
+  [AttendanceExplanationType.MISSING_HOURS]: {
+    label: "Thiếu giờ làm",
+    className: "bg-warning-50 text-warning",
+    icon: IconAlertCircle,
+  },
+
+  [AttendanceExplanationType.BUSINESS_TRIP]: {
+    label: "Công tác",
+    className: "bg-primary-50 text-primary",
+    icon: IconBriefcase,
+  },
+
+  [AttendanceExplanationType.SICK]: {
+    label: "Nghỉ ốm",
+    className: "bg-secondary-50 text-secondary",
+    icon: IconStethoscope,
+  },
+
+  [AttendanceExplanationType.OTHER]: {
+    label: "Khác",
+    className: "bg-default-100 text-default-700",
+    icon: IconDots,
+  },
+};

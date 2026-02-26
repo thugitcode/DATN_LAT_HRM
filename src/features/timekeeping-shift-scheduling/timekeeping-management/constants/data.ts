@@ -51,6 +51,11 @@ export const DETAILED_TIME_SHEET_LEGEND_ITEMS: LegendItem[] = [
   { status: DetailedTimeSheetStatus.S, label: 'Về sớm', color: '#73C9C6' },
 ];
 
+export enum DetailedTimeSheetColor {
+  Late = '#D55829',
+  Early = '#73C9C6',
+}
+
 export const CELL_W = 52;
 export const PILL_INSET = 6;
 

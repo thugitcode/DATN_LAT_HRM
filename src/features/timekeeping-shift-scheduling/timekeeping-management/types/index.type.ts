@@ -71,6 +71,16 @@ export interface ShiftRun {
 export type HourlyPayrollDay = {
   date: string;
   hours: number | null;
+  shiftCode: string;           // "CA1", "CA2", "OFF",...
+  standardHours: number;       // thường 8
+  checkInTime: string | null;  // "08:05" hoặc null nếu nghỉ
+  checkOutTime: string | null;
+  lateMinutes: number;         // phút đi muộn
+  earlyLeaveMinutes: number;   // phút về sớm
+  workUnits: number;           // ngày công (1, 0.5, 0, ...)
+  totalHours: number | null;   // tổng giờ thực tế
+  overtimeHours: number;       // giờ tăng ca
+  compensatoryHours: number;
 };
 
 export type HourlyPayrollWeek = {

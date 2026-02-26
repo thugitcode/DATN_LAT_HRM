@@ -11,18 +11,39 @@ export const hourlyPayrollMock: HourlyPayrollRecord[] = Array.from({ length: 20 
     weekNumber: weekIndex + 1,
     from: `${1 + weekIndex * 7}/1/26`,
     to: `${7 + weekIndex * 7}/1/26`,
-    days: Array.from({ length: 7 }, (___, dayIndex) => {
-      const hours = Math.random() > 0.1 ? parseFloat((7 + Math.random() * 2).toFixed(1)) : null; // 10% nghỉ
-      let status: HourlyPayrollStatus;
-      if (hours === null) status = HourlyPayrollStatus.OFF;
-      else if (hours < 8) status = HourlyPayrollStatus.SHORTAGE;
-      else if (hours > 8) status = HourlyPayrollStatus.OVERTIME;
-      else status = HourlyPayrollStatus.FULL_HOURS;
+    days: Array.from({ length: 7 }, (_, dayIndex) => {
+      const isOff = Math.random() < 0.1;
+      if (isOff) {
+        return {
+          date: `${1 + weekIndex * 7 + dayIndex}/2/26`,
+          shiftCode: "OFF",
+          standardHours: 0,
+          checkInTime: null,
+          checkOutTime: null,
+          lateMinutes: 0,
+          earlyLeaveMinutes: 0,
+          workUnits: 0,
+          totalHours: null,
+          overtimeHours: 0,
+          compensatoryHours: 0,
+        };
+      }
+
+      const totalHours = parseFloat((7 + Math.random() * 3).toFixed(1)); // 7-10h
+      const overtimeHours = totalHours > 8 ? parseFloat((totalHours - 8).toFixed(1)) : 0;
 
       return {
-        date: `${1 + weekIndex * 7 + dayIndex}/1/26`,
-        hours,
-        status,
+        date: `${1 + weekIndex * 7 + dayIndex}/2/26`,
+        shiftCode: "CA1",
+        standardHours: 8,
+        checkInTime: "08:00",
+        checkOutTime: totalHours >= 8 ? "17:00" : "16:30",
+        lateMinutes: Math.random() < 0.15 ? Math.floor(Math.random() * 30) + 5 : 0,
+        earlyLeaveMinutes: totalHours < 8 ? Math.floor((8 - totalHours) * 60) : 0,
+        workUnits: totalHours >= 6 ? 1 : totalHours >= 4 ? 0.5 : 0,
+        totalHours,
+        overtimeHours,
+        compensatoryHours: 0,
       };
     }),
   })),
