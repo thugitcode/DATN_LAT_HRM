@@ -82,9 +82,10 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
                   <StaffInfo
                     avatarUrl={staff.avatar}
                     code={staff.code}
-                    departmentName={staff.departmentName}
                     name={staff.name}
                     role={staff.position}
+                    departments={staff?.departments}
+                    rooms={staff?.departments}
                   />
                 </div>
               </div>
@@ -109,7 +110,7 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
                     {Array.from({ length: visibleRowCount }).map((_, rIdx) => (
                       <div
                         key={rIdx}
-                        className="flex items-center justify-center "
+                        className="flex items-center justify-center px-2"
                         style={{ height: ROW_H }}
                       >
                         <ShiftCellBlock

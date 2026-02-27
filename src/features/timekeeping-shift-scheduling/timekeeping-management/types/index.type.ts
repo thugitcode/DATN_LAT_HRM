@@ -12,27 +12,29 @@ export interface TabItem {
 }
 
 export enum AttendanceStatus {
-  OnTime = 'D',
-  Absent = 'VM',
-  Late = 'M',
-  EarlyLeave = 'S',
-  Overtime = 'CT',
-  WorkFromHome = 'WFH',
-  ShortHours = 'TG',
-  MissingPunch = 'QCC',
-  DayOff = 'N',
+  OnTime = 'Đ', // Đúng giờ
+  Absent = 'VM', // Vắng mặt
+  Late = 'M', // Đi muộn
+  EarlyLeave = 'S', // Về sớm
+  LateAndEarly = 'M/S', // Vừa muộn vừa về sớm
+  Overtime = 'CT', // Công tác
+  WorkFromHome = 'WFH', // Làm tại nhà
+  ShortHours = 'TG', // Thiếu giờ
+  MissingPunch = 'QCC', // Quên chấm công
+  PaidLeave = 'P', // Nghỉ phép có lương
+  DayOff = 'N', // Ngày nghỉ
 }
 
 export enum HourlyPayrollStatus {
-  FULL_HOURS = 'FULL_HOURS', // ĐỦ
-  SHORTAGE = 'SHORTAGE', // Thiếu
-  OVERTIME = 'OVERTIME', // Thừa
-  OFF = 'OFF', // Nghỉ
+  FULL_HOURS = 'FULL_HOURS',
+  SHORTAGE = 'SHORTAGE',
+  OVERTIME = 'OVERTIME',
+  OFF = 'OFF',
 }
 
 export enum DetailedTimeSheetStatus {
-  M = 'M', // Đi muộn
-  S = 'S', // Về sớm
+  M = 'M',
+  S = 'S',
 }
 
 export interface LegendItem {
@@ -46,15 +48,18 @@ export type ShiftCode = `${AttendanceStatus}` | 'OFF';
 
 export interface DayCell {
   day: number;
-  weekday: string;
+  weekday: number;
   shift: ShiftCode;
 }
 
 export interface Employee {
-  id: number;
+  id: string;
   name: string;
   role: string;
   phone: string;
+  code: string;
+  avatar: string | null;
+  departmentName: string;
 }
 
 export interface EmployeeRow {

@@ -27,7 +27,7 @@ class ShiftManagementService extends BaseApiService<
 
   async create(data: CreateStaffSchedule) {
     return this.request(async () => {
-      const res = await hrmInstance.post('/work-schedule/range', data);
+      const res = await hrmInstance.post(API_ENDPOINTS.HRM.WORK_SCHEDULE_RANGE, data);
       return res.data;
     });
   }

@@ -35,11 +35,7 @@ export abstract class BaseApiService<
   }
 
   protected async request<R>(fn: () => Promise<R>): Promise<R> {
-    try {
-      return await fn();
-    } catch (err) {
-      throw normalizeAxiosError(err);
-    }
+    return fn();
   }
 
   async getAll(params?: TParams & Partial<PaginationParams>): Promise<ApiResponse<T[]>> {

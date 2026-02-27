@@ -1,5 +1,7 @@
 import axios, { AxiosError } from 'axios';
 
+import { config as configApp } from './config';
+
 export const apiTokens: {
   accessToken?: string;
   refreshToken?: string;
@@ -14,7 +16,7 @@ export const hrmInstance = axios.create({
 });
 
 hrmInstance.interceptors.request.use((config) => {
-  config.headers['x-tenant-id'] = 'DEEPCARE';
+  config.headers['x-tenant-id'] = configApp.X_TENANT_ID;
 
   if (!config.headers['Content-Type']) {
     config.headers['Content-Type'] = 'application/json';

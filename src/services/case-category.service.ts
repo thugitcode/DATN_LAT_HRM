@@ -5,10 +5,11 @@ import type { StaffParams } from '@/types/staff.type';
 import { hrmInstance } from '@/lib/axios';
 
 import { BaseApiService } from './base-api.service';
+import { API_ENDPOINTS } from './constants/endpoints';
 
 class CaseCategoryService extends BaseApiService<CaseCategory, StaffParams> {
   constructor() {
-    super(hrmInstance, '/shift-template');
+    super(hrmInstance, API_ENDPOINTS.HRM.SHIFT_TEMPLATE);
   }
 
   async getAll(params?: StaffParams) {

@@ -2,25 +2,20 @@
 
 import { useMemo, useState } from 'react';
 import { useDrawer } from '@/store/useDrawer';
-import { Button, DatePicker, Form } from '@heroui/react';
+import { Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CalendarDate, parseDate } from '@internationalized/date';
-import type { DateValue } from '@react-types/calendar';
 import { IconTrash } from '@tabler/icons-react';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 import type { Options } from '@/types/global.type';
-import type { CreateStaffSchedule, DepartmentUser, RoomUser } from '@/types/shift-management.type';
+import type { CreateStaffSchedule } from '@/types/shift-management.type';
 import { icons } from '@/lib/icons';
 import { useCaseCategoryOptions } from '@/hooks/options/use-case-category-options';
-import { useDepartmentOptions } from '@/hooks/options/use-department-options';
-import { useRoomOptions } from '@/hooks/options/use-room-options';
 import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
-import { FormDateRangePicker } from '@/components/form-fields/form-daterange-picker';
-import { FormInput } from '@/components/form-fields/form-input';
 import { FormSelect } from '@/components/form-fields/form-select';
+import { FormTimePicker } from '@/components/form-fields/form-time-picker';
 import { WrapperBoxForm } from '@/components/wrapper-box-form';
 
 import { useCreateShiftManagement } from '../hooks/use-shift-management';
@@ -28,32 +23,63 @@ import {
   workShiftAssignSchema,
   type WorkShiftAssignFormValues,
 } from '../schemas/work-shift-assign.schema';
+import type { CellDataShift } from '../types/type';
+
+const padTimePart = (part: string) => part.padStart(2, '0');
 
 const normalizeTime = (time: string): string => {
   if (!time) return '';
-  const parts = time.split(':');
-  if (parts.length >= 2) {
-    return `${parts?.[0]?.padStart(2, '0')}:${parts?.[1]?.padStart(2, '0')}`;
-  }
-  return time;
+  const [h, m] = time.split(':');
+  return h && m ? `${padTimePart(h)}:${padTimePart(m)}` : time;
 };
 
-export const WorkShiftsForm = () => {
-  const closedDrawer = useDrawer((state) => state.onClose);
+const autoFillSingle = (items: { id: string }[]) =>
+  items.length === 1 ? (items[0]?.id ?? '') : '';
 
-  const [departmentUser, setDepartmentUser] = useState<Options[]>([]);
-  const [roomUser, setRoomUser] = useState<Options[]>([]);
+const autoFillSingleOption = (items: Options[]) =>
+  items.length === 1 ? (items[0]?.key ?? '') : '';
+
+const DEFAULT_SHIFT_DETAIL = {
+  startTime: '',
+  endTime: '',
+  shiftTemplateId: '',
+  note: '',
+} as const;
+
+const DEFAULT_FORM_VALUES: WorkShiftAssignFormValues = {
+  name: '',
+  staffId: '',
+  departmentId: '',
+  roomId: '',
+  fromDate: '',
+  toDate: '',
+  note: '',
+  details: [{ ...DEFAULT_SHIFT_DETAIL }],
+};
+
+type UserOptions = {
+  departments: Options[];
+  rooms: Options[];
+};
+
+const toNameKeyOptions = (items: { name: string; id: string }[]): Options[] =>
+  items.map(({ name, id }) => ({ label: name, key: id }));
+
+export const WorkShiftsForm = () => {
+  const onClose = useDrawer((state) => state.onClose);
+  const data = useDrawer((state) => state.data) as CellDataShift | undefined;
+
+  const { record, shift, date } = data ?? {};
+  const { staff } = record ?? {};
 
   const { options: staffOptions } = useStaffOptions();
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
-  const { options: roomOptions } = useRoomOptions();
-  const { options: departmentOptions } = useDepartmentOptions();
 
-  const { mutateAsync, isPending } = useCreateShiftManagement();
+  const { mutate, isPending } = useCreateShiftManagement();
 
-  const optionsStaffCode = useMemo(
+  const staffByCodeOptions = useMemo(
     () =>
-      staffOptions?.map((item) => ({
+      staffOptions.map((item) => ({
         ...item,
         id: item.key,
         label: item.code,
@@ -62,67 +88,106 @@ export const WorkShiftsForm = () => {
     [staffOptions],
   );
 
+  const [userOptions, setUserOptions] = useState<UserOptions>(() =>
+    staff
+      ? { departments: toNameKeyOptions(staff.departments), rooms: toNameKeyOptions(staff.rooms) }
+      : { departments: [], rooms: [] },
+  );
+
+  const initialFormValues = useMemo<WorkShiftAssignFormValues>(() => {
+    if (!staff) return DEFAULT_FORM_VALUES;
+
+    return {
+      name: staff.id,
+      staffId: staff.code,
+      departmentId: autoFillSingle(staff.departments),
+      roomId: autoFillSingle(staff.rooms),
+      fromDate: date ?? '',
+      toDate: date ?? '',
+      note: '',
+      details: shift
+        ? [
+            {
+              startTime: normalizeTime(shift.startTime),
+              endTime: normalizeTime(shift.endTime),
+              shiftTemplateId: shift.shiftTemplateId ?? '',
+              note: '',
+            },
+          ]
+        : [{ ...DEFAULT_SHIFT_DETAIL }],
+    };
+  }, [date, shift, staff]);
+
   const {
     control,
     handleSubmit,
     setValue,
-    watch,
     trigger,
     formState: { isSubmitting, errors },
   } = useForm<WorkShiftAssignFormValues>({
     resolver: zodResolver(workShiftAssignSchema),
-    defaultValues: {
-      name: '',
-      staffId: '',
-      departmentId: '',
-      roomId: '',
-      fromDate: '',
-      toDate: '',
-      note: '',
-      details: [
-        {
-          startTime: '',
-          endTime: '',
-          shiftTemplateId: '',
-          note: '',
-        },
-      ],
-    },
+    defaultValues: initialFormValues,
     mode: 'onChange',
   });
 
-  const { fields, append, remove } = useFieldArray({
-    name: 'details',
-    control,
-  });
+  const { fields, append, remove } = useFieldArray({ name: 'details', control });
 
   const isLoading = isSubmitting || isPending;
 
-  const onSubmit = async (values: WorkShiftAssignFormValues) => {
-    const data: CreateStaffSchedule = {
-      ...values,
-      staffId: staffOptions.find((s) => s.code === values.staffId)?.key || '',
-    };
-    try {
-      await mutateAsync(data);
-      // eslint-disable-next-line no-empty
-    } catch {}
+  const handleSelectByCode = (code: string) => {
+    const emp = staffOptions.find((e) => e.code === code);
+    if (!emp) return;
+
+    setValue('name', emp.key, { shouldValidate: true });
+    applyStaffOptions(emp);
   };
 
-  const onAddCa = () => {
-    append({ startTime: '', endTime: '', shiftTemplateId: '', note: '' });
+  const handleSelectByName = (id: string) => {
+    const emp = staffByCodeOptions.find((e) => e.id === id);
+    if (!emp) return;
+
+    setValue('staffId', emp.key, { shouldValidate: true });
+    applyStaffOptions(emp);
+  };
+
+  const applyStaffOptions = (emp: (typeof staffOptions)[number]) => {
+    const departments = toNameKeyOptions(emp.departments);
+    const rooms = toNameKeyOptions(emp.rooms);
+
+    setUserOptions({ departments, rooms });
+
+    setValue('departmentId', autoFillSingleOption(departments), {
+      shouldValidate: departments.length === 1,
+    });
+    setValue('roomId', autoFillSingleOption(rooms), {
+      shouldValidate: rooms.length === 1,
+    });
+  };
+  const handleSelectShiftTemplate = (id: string, index: number) => {
+    const template = caseCategoryOptions.find((e) => e.key === id);
+    if (!template) return;
+
+    setValue(`details.${index}.startTime`, normalizeTime(template.startTime), {
+      shouldValidate: true,
+    });
+    setValue(`details.${index}.endTime`, normalizeTime(template.endTime), {
+      shouldValidate: true,
+    });
+  };
+
+  const onSubmit = (values: WorkShiftAssignFormValues) => {
+    const staffId = staffOptions.find((s) => s.code === values.staffId)?.key ?? '';
+    mutate({ ...values, staffId } satisfies CreateStaffSchedule);
   };
 
   return (
     <Form
-      className="w-full max-w-full space-y-6 pt-6 h-full flex flex-col justify-between"
+      className="flex h-full w-full max-w-full flex-col justify-between space-y-6 pt-6"
       validationBehavior="aria"
       onSubmit={handleSubmit(onSubmit)}
-      // onSubmit={handleSubmit(onSubmit, (errors) => {
-      //   console.log('Validation errors:', errors);
-      // })}
     >
-      <div className="w-full px-6 space-y-6 overflow-auto">
+      <div className="w-full space-y-6 overflow-auto px-6">
+        {/* Personnel Info */}
         <WrapperBoxForm title="Thông tin nhân sự">
           <div className="grid grid-cols-2 gap-4">
             <FormAutocomplete
@@ -130,12 +195,8 @@ export const WorkShiftsForm = () => {
               name="staffId"
               label="Mã nhân viên"
               isRequired
-              options={optionsStaffCode}
-              onSelect={(code) => {
-                const emp = staffOptions.find((e) => e.code === code);
-                if (!emp) return;
-                setValue('name', emp.key, { shouldValidate: true });
-              }}
+              options={staffByCodeOptions}
+              onSelect={handleSelectByCode}
               disabled={isLoading}
             />
 
@@ -145,23 +206,7 @@ export const WorkShiftsForm = () => {
               label="Tên nhân viên"
               isRequired
               options={staffOptions}
-              onSelect={(id) => {
-                const emp = optionsStaffCode.find((e) => e.id === id);
-                if (!emp) return;
-                setValue('staffId', emp.key, { shouldValidate: true });
-
-                const deparmentOptions = emp.departments.map((item) => ({
-                  label: item.name,
-                  key: item.id,
-                }));
-                const roomOptions = emp.rooms.map((item) => ({
-                  label: item.name,
-                  key: item.id,
-                }));
-
-                setDepartmentUser(deparmentOptions);
-                setRoomUser(roomOptions);
-              }}
+              onSelect={handleSelectByName}
               disabled={isLoading}
             />
 
@@ -170,7 +215,7 @@ export const WorkShiftsForm = () => {
               name="departmentId"
               label="Khoa làm việc"
               isRequired
-              options={departmentUser}
+              options={userOptions.departments}
               disabled={isLoading}
             />
 
@@ -178,14 +223,15 @@ export const WorkShiftsForm = () => {
               control={control}
               name="roomId"
               label="Phòng làm việc"
-              options={roomUser}
+              options={userOptions.rooms}
               disabled={isLoading}
             />
           </div>
         </WrapperBoxForm>
 
+        {/* Shift Info */}
         <WrapperBoxForm title="Thông tin ca làm việc">
-          <div className="space-y-3 border-b border-[#11111126] pb-3 mb-3">
+          <div className="mb-3 space-y-3 border-b border-[#11111126] pb-3">
             <div className="grid grid-cols-2 gap-3">
               <FormDatePicker
                 control={control}
@@ -195,7 +241,6 @@ export const WorkShiftsForm = () => {
                 disabled={isLoading}
                 onTrigger={() => trigger('toDate')}
               />
-
               <FormDatePicker
                 control={control}
                 name="toDate"
@@ -207,75 +252,31 @@ export const WorkShiftsForm = () => {
             </div>
 
             {fields.map((item, index) => (
-              <div
+              <ShiftDetailRow
                 key={item.id}
-                className="relative p-3 rounded-lg border border-[#11111114] bg-[#FAFAFA]"
-              >
-                {fields.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => remove(index)}
-                    disabled={isLoading}
-                    className="absolute cursor-pointer top-2 right-2 text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
-                  >
-                    <IconTrash size={16} />
-                  </button>
-                )}
-
-                <div className="grid grid-cols-3 gap-3 items-start">
-                  <FormSelect
-                    control={control}
-                    name={`details.${index}.shiftTemplateId`}
-                    label="Chọn ca"
-                    isRequired
-                    disabled={isLoading}
-                    options={caseCategoryOptions}
-                    onSelect={(id) => {
-                      const emp = caseCategoryOptions.find((e) => e.key === id);
-                      if (!emp) return;
-                      setValue(`details.${index}.startTime`, normalizeTime(emp.startTime), {
-                        shouldValidate: true,
-                      });
-                      setValue(`details.${index}.endTime`, normalizeTime(emp.endTime), {
-                        shouldValidate: true,
-                      });
-                    }}
-                  />
-
-                  <FormInput
-                    control={control}
-                    name={`details.${index}.startTime`}
-                    label="Giờ bắt đầu"
-                    type="time"
-                    isRequired
-                    disabled={isLoading}
-                  />
-
-                  <FormInput
-                    control={control}
-                    name={`details.${index}.endTime`}
-                    label="Giờ kết thúc"
-                    type="time"
-                    isRequired
-                    disabled={isLoading}
-                  />
-                </div>
-              </div>
+                index={index}
+                control={control}
+                isLoading={isLoading}
+                showRemove={fields.length > 1}
+                caseCategoryOptions={caseCategoryOptions}
+                onRemove={() => remove(index)}
+                onSelectTemplate={(id) => handleSelectShiftTemplate(id, index)}
+              />
             ))}
           </div>
 
-          {errors.details?.root?.message && (
-            <p className="text-red-500 text-xs mt-1">{errors.details.root.message}</p>
-          )}
-
-          {typeof errors.details?.message === 'string' && (
-            <p className="text-red-500 text-xs mt-1">{errors.details.message}</p>
-          )}
+          {/* Field array errors */}
+          <FieldError message={errors.details?.root?.message} />
+          <FieldError
+            message={
+              typeof errors.details?.message === 'string' ? errors.details.message : undefined
+            }
+          />
 
           <Button
-            className="border-[#006FEE] border-2 bg-white text-[#006FEE] text-[14px] font-normal"
+            className="border-2 border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
             type="button"
-            onPress={onAddCa}
+            onPress={() => append({ ...DEFAULT_SHIFT_DETAIL })}
             disabled={isLoading}
           >
             {icons.plusBlue}
@@ -284,11 +285,12 @@ export const WorkShiftsForm = () => {
         </WrapperBoxForm>
       </div>
 
-      <div className="flex justify-end gap-2 pt-3 pb-6 px-6 bg-white w-full">
+      {/* Footer Actions */}
+      <div className="flex w-full justify-end gap-2 bg-white px-6 pb-6 pt-3">
         <Button
           variant="light"
-          onPress={closedDrawer}
-          className="border-[#006FEE] border bg-white text-[#006FEE] text-[14px] font-normal"
+          onPress={onClose}
+          className="border border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
         >
           Hủy
         </Button>
@@ -299,3 +301,68 @@ export const WorkShiftsForm = () => {
     </Form>
   );
 };
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+type ShiftDetailRowProps = {
+  index: number;
+  control: ReturnType<typeof useForm<WorkShiftAssignFormValues>>['control'];
+  isLoading: boolean;
+  showRemove: boolean;
+  caseCategoryOptions: ReturnType<typeof useCaseCategoryOptions>['options'];
+  onRemove: () => void;
+  onSelectTemplate: (id: string) => void;
+};
+
+const ShiftDetailRow = ({
+  index,
+  control,
+  isLoading,
+  showRemove,
+  caseCategoryOptions,
+  onRemove,
+  onSelectTemplate,
+}: ShiftDetailRowProps) => (
+  <div className="relative rounded-lg border border-[#11111114] bg-[#FAFAFA] p-3">
+    {showRemove && (
+      <button
+        type="button"
+        onClick={onRemove}
+        disabled={isLoading}
+        aria-label="Xóa ca"
+        className="absolute right-2 top-2 cursor-pointer text-red-400 transition-colors hover:text-red-600 disabled:opacity-50"
+      >
+        <IconTrash size={16} />
+      </button>
+    )}
+
+    <div className="grid grid-cols-3 items-start gap-3">
+      <FormSelect
+        control={control}
+        name={`details.${index}.shiftTemplateId`}
+        label="Chọn ca"
+        isRequired
+        disabled={isLoading}
+        options={caseCategoryOptions}
+        onSelect={onSelectTemplate}
+      />
+      <FormTimePicker
+        control={control}
+        name={`details.${index}.startTime`}
+        label="Giờ bắt đầu"
+        isRequired
+        disabled={isLoading}
+      />
+      <FormTimePicker
+        control={control}
+        name={`details.${index}.endTime`}
+        label="Giờ kết thúc"
+        isRequired
+        disabled={isLoading}
+      />
+    </div>
+  </div>
+);
+
+const FieldError = ({ message }: { message?: string }) =>
+  message ? <p className="mt-1 text-xs text-red-500">{message}</p> : null;
