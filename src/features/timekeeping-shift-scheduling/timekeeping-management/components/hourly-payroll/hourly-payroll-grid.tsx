@@ -1,16 +1,17 @@
 import { useMemo, useState } from 'react';
 
-import { StaffPosition } from '@/types/global.type';
-import { cn } from '@/lib/utils';
 import { StaffInfo } from '@/features/timekeeping-shift-scheduling/components/staff-infor';
 import { getDaysInMonth } from '@/features/timekeeping-shift-scheduling/helper';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
+import { cn } from '@/lib/utils';
+import { StaffPosition } from '@/types/global.type';
 
 import { GridStickyHeaderRow } from '../work-sheet-by-shift/grid-sticky-header-row';
 import { GridHourlyPayrollScheduleRow, type DayRecord } from './grid-hourly-payroll-schedule-row';
-import { hourlyPayrollMock } from './moc/hourly-payroll.mock';
+import type { ApiResponse } from '@/types';
+import type { AttendanceByHoursResponse, DailyHourEntry } from '../../types/timekeeping-management.type';
 
-export const HourlyPayrollGrid = () => {
+export const HourlyPayrollGrid = (data: ApiResponse<AttendanceByHoursResponse[]>) => {
   const { month, year } = useYearMonth();
 
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
@@ -26,12 +27,12 @@ export const HourlyPayrollGrid = () => {
         <GridStickyHeaderRow days={days} hoveredDay={hoveredDay} setHoveredDay={setHoveredDay} />
 
         <tbody>
-          {[].map((row, ri) => {
-            const allDays: DayRecord[] = row.weeks.flatMap((week) => week.days);
+          {data?.data?.map((row, ri) => {
+            const allDays: DailyHourEntry[] = Object.values(row.days);
 
             return (
               <tr
-                key={row.id}
+                key={row.staffId}
                 className={cn(
                   'h-16 transition-colors duration-100 ',
                   hoveredRow === ri ? 'bg-blue-50/40' : 'bg-white',
@@ -49,7 +50,7 @@ export const HourlyPayrollGrid = () => {
                   <StaffInfo
                     avatarUrl=""
                     code={row.staffCode}
-                    departmentName={row.department}
+                    departmentName={(row.departments.map(ite=>ite.name)).join(", ")}
                     name={row.staffName}
                     role={StaffPosition.STAFF}
                   />

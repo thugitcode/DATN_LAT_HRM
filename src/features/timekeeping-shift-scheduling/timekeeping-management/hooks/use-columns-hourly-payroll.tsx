@@ -1,19 +1,22 @@
 import { useMemo } from 'react';
 
 import { cn } from '@/lib/utils';
-import type { Column } from '@/components/table/table';
+import type { Column } from '@/components/table/types';
 
 import { dayNames, getWeeksInMonth } from '../../helper';
 import { useYearMonth } from '../../hooks/use-year-month';
 import type { HourlyPayrollRecord } from '../types/index.type';
+import type { AttendanceByHoursResponse } from '../types/timekeeping-management.type';
+import { STAFF_POSITION } from '../../shift-management/constants/data';
+import type { StaffPosition } from '@/types/global.type';
 
 export const useColumnsHourlyPayroll = () => {
   const { month, year } = useYearMonth();
 
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
 
-  const columns: Column<HourlyPayrollRecord>[] = useMemo(() => {
-    const cols: Column<HourlyPayrollRecord>[] = [
+  const columns: Column<AttendanceByHoursResponse>[] = useMemo(() => {
+    const cols: Column<AttendanceByHoursResponse>[] = [
       {
         key: 'stt',
         title: 'STT',
@@ -25,8 +28,8 @@ export const useColumnsHourlyPayroll = () => {
         title: 'KHOA/PHÒNG',
         render: (_, record) => (
           <div className="flex flex-col w-75 text-[14px]">
-            <span className="font-medium text-[#11181C]">{record.department}</span>
-            <span className="font-normal text-[#52525B]">{record.room}</span>
+            <span className="font-medium text-[#11181C]">{record.departments?.map(item=>item.name).filter(Boolean).join(", ")}</span>
+            <span className="font-normal text-[#52525B]">{record.rooms?.map(item=>item.name).filter(Boolean).join(", ")}</span>
           </div>
         ),
       },
@@ -52,12 +55,12 @@ export const useColumnsHourlyPayroll = () => {
         width: 100,
         align: 'center',
         dataIndex: 'position',
-        render: (_, record) => <div className="w-32.5">{record?.position}</div>,
+        render: (_, record) => <div className="w-32.5">{record?.position ? STAFF_POSITION?.[record.position as StaffPosition] : '-'}</div>,
       },
     ];
 
     weeks.forEach((week, index) => {
-      const weekColumn: Column<HourlyPayrollRecord> = {
+      const weekColumn: Column<AttendanceByHoursResponse> = {
         key: `week-${week.weekNumber}`,
         title: (
           <div
@@ -73,9 +76,6 @@ export const useColumnsHourlyPayroll = () => {
           </div>
         ),
         children: week.days.map((day, dayIndex) => {
-          const dateObj = new Date(year, month, day.day);
-          const dateString = dateObj.toISOString().split('T')[0];
-
           return {
             key: `day-${week.weekNumber}-${day.day}`,
             title: (
@@ -90,17 +90,18 @@ export const useColumnsHourlyPayroll = () => {
             align: 'center',
             className: '',
             render: (_, record) => {
-              const day = record?.weeks?.[0]?.days[dayIndex];
 
-              if (!day || day.hours === null) {
+              const dayOfMonth = Object.values(record?.days)[day.day - 1];
+
+              if (!dayOfMonth || dayOfMonth.hours === null) {
                 return <span className="text-gray-400">--</span>;
               }
 
-              const isLow = day.hours < 8;
+              const isLow = dayOfMonth.hours < 8;
 
               return (
                 <span className={cn('font-medium', isLow ? 'text-red-500' : 'text-blue-600')}>
-                  {day.hours}h
+                  {dayOfMonth.hours}h
                 </span>
               );
             },
