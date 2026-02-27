@@ -1,13 +1,12 @@
 import { FormArea } from "@/components/form-fields/form-area";
 import { ShiftDetailsCard } from "@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-card";
+import { useDrawer } from "@/store/useDrawer";
+import { AttendanceExplanationType } from "@/types/attendance-explanation.type";
 import { Accordion, AccordionItem, Button, Form, Image, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { IconCaretRightFilled } from "@tabler/icons-react";
 import { useForm } from "react-hook-form";
 import { shiftDetailsSchema, type shiftDetailsFormValues } from "../../schemas/shift-details.schema";
-import { IconCaretRightFilled } from "@tabler/icons-react";
-import { AttendanceExplanationType } from "@/types/attendance-explanation.type";
-import { useDrawer } from "@/store/useDrawer";
-import { FormTimeInput } from "@/components/form-fields/form-time-input";
 const normalShift = {
     staffName: "Nguyễn Văn An",
     staffCode: "NV001",
@@ -16,7 +15,7 @@ const normalShift = {
     staffAvatar: "https://i.pravatar.cc/150?u=an.nguyen",
     shiftName: "Ca ngày (08:00 - 17:00)",
     dateLabel: "Thứ Tư, 25/02/2026",
-    typeLabel: AttendanceExplanationType.LATE,
+    typeLabel: AttendanceExplanationType.MISSING_HOURS,
     actualCheckIn: "08:02",
     actualCheckOut: "17:05",
     totalActualWorkingHours: 8.05,
@@ -115,7 +114,7 @@ export const ShiftDetailsDrawer = () => {
         control,
         handleSubmit,
         formState: { isSubmitting, errors },
-        getValues,
+        getValues
     } = useForm<shiftDetailsFormValues>({
         resolver: zodResolver(shiftDetailsSchema),
         defaultValues: {
@@ -130,8 +129,7 @@ export const ShiftDetailsDrawer = () => {
 
     const onSubmit = async (values: any) => {
         console.log('values', values);
-    };
-
+    };    
     return (
 
         <Form

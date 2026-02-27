@@ -29,7 +29,7 @@ export const StickyRowGroupStaff = ({ toggleGroup, row }: { toggleGroup: (id: st
             />
             <div className="text-sm font-medium">{row.index}</div>
 
-            <div className="flex items-center gap-3 pl-4 w-75">
+            <div className="flex items-center gap-3 pl-4 w-85">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                     {getInitials(row.staff.name)}
                 </div>

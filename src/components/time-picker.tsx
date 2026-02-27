@@ -51,6 +51,8 @@ export interface TimePickerProps {
   isInvalid?: boolean;
   /** aria-label cho accessibility */
   ariaLabel?: string;
+  classInput?: string;
+  showIcon?: boolean
 }
 
 // ─── Tiện ích ─────────────────────────────────────────────────────────────────
@@ -265,6 +267,8 @@ const TimePicker: FC<TimePickerProps> = ({
   disabled = false,
   isInvalid = false,
   ariaLabel = 'Chọn thời gian',
+  classInput = "",
+  showIcon = true
 }) => {
   const laDieuKhien = giaTriBenNgoai !== undefined;
 
@@ -339,7 +343,7 @@ const TimePicker: FC<TimePickerProps> = ({
       placement="bottom-start"
       // shouldBlockScroll ngăn drawer scroll nhưng KHÔNG đóng drawer
       shouldBlockScroll={false}
-      // HeroUI Popover tự handle portal + focus trap, không bubble lên drawer
+    // HeroUI Popover tự handle portal + focus trap, không bubble lên drawer
     >
       <PopoverTrigger>
         <button
@@ -364,17 +368,18 @@ const TimePicker: FC<TimePickerProps> = ({
             className={[
               'flex-1 text-left font-mono text-sm tracking-widest',
               chuaCoGiaTri ? 'text-default-400' : 'text-default-800',
+              classInput
             ].join(' ')}
           >
             {giaTriHienThi}
           </span>
 
-          <BieuTuongDongHo
+          {showIcon && <BieuTuongDongHo
             className={[
               'w-4 h-4 flex-shrink-0 transition-colors duration-150',
               isInvalid ? 'text-danger' : dangMo ? 'text-primary' : 'text-default-400',
             ].join(' ')}
-          />
+          />}
         </button>
       </PopoverTrigger>
 

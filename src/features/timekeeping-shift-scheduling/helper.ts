@@ -11,6 +11,7 @@ import {
   type ShiftRun,
 } from './timekeeping-management/types/index.type';
 import type { WorkSheetByShiftType } from './timekeeping-management/types/timekeeping-management.type';
+import type { DailyAttendance } from '@/types/shift-details.type';
 
 export const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
@@ -196,4 +197,45 @@ export function getInitials(name: string) {
     .join("")
     .toUpperCase()
     .slice(0, 2)
+}
+
+export function fillMissingDaysWithDayjs(
+  days: DailyAttendance[],
+  startDate: string,
+  endDate: string
+): DailyAttendance[] {
+  const existingMap = new Map(days.map(d => [d.date, d]));
+  const result: DailyAttendance[] = [];
+
+  let current = dayjs(startDate);
+  const end = dayjs(endDate);
+
+  while (current.isSame(end) || current.isBefore(end)) {
+    const dateStr = current.format("YYYY-MM-DD");
+
+    result.push(
+      existingMap.get(dateStr) ?? {
+        date: dateStr,
+        shiftCode: '',
+        standardTime: '',
+        checkInTime: '',
+        checkOutTime: '',
+        lateMinutes: 0,
+        earlyMinutes: 0,
+        workCount: 0,
+        totalWorkHours: 0,
+        overtimeHours: 0,
+        compHours: 0,
+      }
+    );
+
+    current = current.add(1, "day");
+  }
+
+  return result;
+}
+
+export function getTotalDaysInMonth(year: number, month: number) {
+  // month: 1 → 12
+  return new Date(year, month, 0).getDate();
 }

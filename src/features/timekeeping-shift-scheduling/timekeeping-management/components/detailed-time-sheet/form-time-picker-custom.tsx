@@ -1,10 +1,8 @@
 import { FormErrorText } from '@/components/form-fields/form-error-text';
 import type { BaseFieldProps } from '@/components/form-fields/types';
 import TimePicker from '@/components/time-picker';
-import type { FieldValues } from 'react-hook-form';
 import { Controller } from 'react-hook-form';
-
-import { FormLabel } from './form-label';
+import type { FieldValues } from 'react-hook-form';
 
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   disabled?: boolean;
@@ -34,7 +32,6 @@ export function FormTimePicker<T extends FieldValues>({
 
         return (
           <div className="flex flex-col gap-1 justify-between">
-            {label && <FormLabel label={label} isRequired={isRequired} isError={!!fieldState.error} />}
 
             <TimePicker
               value={field.value ?? ''}
