@@ -10,20 +10,28 @@ interface Room {
     name: string;
 }
 
-export const useRoomOptions = (departmentId?: string): {
+export const useRoomOptions = (departmentIds?: string | string[]): {
     options: FormSelectOptions<Room>;
     isLoading: boolean;
     isError: boolean;
     disabled: boolean;
 } => {
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['rooms', departmentId],
+        queryKey: ['rooms', departmentIds],
         queryFn: async () => {
-            const params: Record<string, unknown> = { getAll: true };
-            if (departmentId) params.departmentId = departmentId;
+            const queryParams = new URLSearchParams();
+            queryParams.append('getAll', 'true');
+
+            if (departmentIds) {
+                if (Array.isArray(departmentIds)) {
+                    departmentIds.forEach((id) => queryParams.append('departmentIds', id));
+                } else {
+                    queryParams.append('departmentId', departmentIds);
+                }
+            }
+
             const res = await hrmInstance.get<ApiResponse<Room[]>>(
-                '/room',
-                { params },
+                `/room?${queryParams.toString()}`
             );
             return res.data.data;
         },

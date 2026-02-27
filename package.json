@@ -67,6 +67,7 @@
     "recharts": "^3.5.1",
     "tailwindcss": "^4.1.18",
     "tippy.js": "^6.3.7",
+    "xlsx": "^0.18.5",
     "xstate": "^5.23.0",
     "zod": "^4.1.12",
     "zustand": "^5.0.8"

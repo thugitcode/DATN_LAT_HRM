@@ -45,11 +45,62 @@ export enum StaffAcademicTitleEnum {
   ENGINEER = 'ENGINEER', // Kỹ sư
 }
 
+export enum StaffQualificationEnum {
+  INTERMEDIATE = 'INTERMEDIATE', // Trung cấp
+  COLLEGE = 'COLLEGE', // Cao đẳng
+  BACHELOR = 'BACHELOR', // Cử nhân
+  DOCTOR = 'DOCTOR', // Bác sĩ
+  MASTER = 'MASTER', // Thạc sĩ
+  PHD = 'PHD', // Tiến sĩ
+  SPECIALIST_DOCTOR = 'SPECIALIST_DOCTOR', // Bác sĩ chuyên khoa
+  OTHER = 'OTHER', // Khác
+}
+
 export enum ContractTypeEnum {
-  FULL_TIME = 'FULL_TIME',
-  PROBATION = 'PROBATION',
-  INTERNSHIP = 'INTERNSHIP',
-  EXPERT_COOPERATION = 'EXPERT_COOPERATION',
+  FULL_TIME = 'FULL_TIME', // Nhân viên chính thức
+  PROBATION = 'PROBATION', // Nhân viên thử việc
+  INTERNSHIP = 'INTERNSHIP', // Nhân viên học việc
+  EXPERT_COOPERATION = 'EXPERT_COOPERATION', // Chuyên gia hợp tác
+}
+
+export enum ShiftTypeEnum {
+  FIXED = 'FIXED', // Ca cố định
+  FLEXIBLE = 'FLEXIBLE', // Ca linh hoạt
+  SPLIT = 'SPLIT', // Ca gãy
+}
+
+export enum ContractStatusEnum {
+  PENDING_APPROVAL = 'PENDING_APPROVAL', // Chờ duyệt
+  PENDING_SIGNATURE = 'PENDING_SIGNATURE', // Chờ ký
+  SIGNED = 'SIGNED', // Đã ký
+  EXPIRED = 'EXPIRED', // Đã hết hạn
+}
+
+export enum DurationUnitEnum {
+  YEAR = 'YEAR',
+  MONTH = 'MONTH',
+}
+
+export interface StaffContract {
+  id: string;
+  contractType: ContractTypeEnum;
+  workType: string;
+  contractNumber: string;
+  startDate: string;
+  endDate: string;
+  duration: number;
+  durationUnit: DurationUnitEnum;
+  jobTitle: StaffJobTitleEnum;
+  position: StaffPositionEnum;
+  department?: { id: string; name: string };
+  directManagerIds?: string[];
+  shiftType?: ShiftTypeEnum;
+  fixedShiftId?: string;
+  workingDays?: number[];
+  status: ContractStatusEnum;
+  approvedAt?: string;
+  approvedBy?: string;
+  signedAt?: string;
 }
 
 export interface StaffParams {
@@ -61,6 +112,7 @@ export interface StaffParams {
   departmentIds?: string[];
   roomIds?: string[];
   contractType?: ContractTypeEnum;
+  getAll?: boolean;
 }
 
 export interface Staff {
@@ -84,6 +136,10 @@ export interface Staff {
   departments?: { id: string; name: string }[];
   rooms?: { id: string; name: string }[];
 
+  // Detail API returns nested relation format
+  rlsStaffDepartments?: { id: string; department: { id: string; code?: string; name: string } }[];
+  rlsStaffRooms?: { id: string; room: { id: string; code?: string; name: string } }[];
+
   // Detail fields
   identity?: string;
   identityIssueDate?: string;
@@ -103,4 +159,8 @@ export interface Staff {
   note?: string;
   currentContractType?: string;
   academicTitles?: StaffAcademicTitleEnum[];
+  emergencyContact?: string;
+  emergencyContactPhone?: string;
+  emergencyContactAddress?: string;
+  emergencyContactRelationship?: string;
 }
