@@ -62,7 +62,7 @@ export const GridHourlyPayrollScheduleRow: FC<GridHourlyPayrollScheduleRowProps>
               className="h-full flex flex-col items-center justify-center "
               title={`${day.hours}`}
             >
-              <span className="text-xs font-medium" style={{ color: legend.color }}>
+              <span className="text-xs font-medium" style={{ color: legend?.color }}>
                 {day.hours ? `${day.hours}H` : '--'}
               </span>
             </div>

@@ -1,6 +1,6 @@
 import { calculateCompHours, formatTime } from "@/lib/utils"
 import { AttendanceBadge } from "./attendance-badge"
-import { FormTimeInput } from "@/components/form-fields/form-time-input"
+import { FormTimePicker } from "@/components/form-fields/form-time-picker"
 
 
 const totalWorkingHours = 8
@@ -59,27 +59,24 @@ export const ShiftDetailsCard = ({ shift, control }: any) => {
             <div className="grid grid-cols-2 divide-x divide-gray-100 text-center border-t border-dashed border-gray-200 p-3">
                 <div className="flex items-center gap-1">
                     <span className="text-xs text-gray-400 w-26 text-start">Giờ vào</span>
-                        <FormTimeInput
+                        <FormTimePicker
                             control={control}
                             name="actualCheckIn"
+                            classInput="!text-danger !font-medium text-[16px] w-22 !text-center"
                             isRequired
-                            classNames={{
-                                input: "flex justify-center", segment: "text-[16px] font-medium text-danger",
-                                base: "[&_[role=spinbutton]]:text-danger [&_[role=spinbutton]]:font-medium w-29 [&[data-has-helper=true]]:pb-8"
-                            }}
+                            showIcon={false}
                         />
                         {/* {formatTime(actualCheckIn)} */}
                 </div>
                 <div className="flex items-center gap-1 ml-12">
                     <span className="text-xs text-gray-400 w-26 text-start">Giờ ra</span>
                     {/* <span className=" bg-[#F4F4F5] rounded-xl w-29"> */}
-                        <FormTimeInput
+                        <FormTimePicker
                             control={control}
                             name="actualCheckOut"
+                            classInput="!font-medium text-[16px]  w-22 !text-center"
                             isRequired
-                            classNames={{
-                                input: "flex justify-center", segment: "text-[16px] font-medium", base:"w-29 [&[data-has-helper=true]]:pb-8"
-                            }}
+                            showIcon={false}
                         />
                         {/* {formatTime(actualCheckIn)} */}
                     {/* </span> */}

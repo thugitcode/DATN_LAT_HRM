@@ -9,12 +9,12 @@ export const shiftDetailsSchema = z.object({
 
   actualCheckIn: z
     .string()
-    .regex(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, "Không hợp lệ (HH:mm)")
+    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Không hợp lệ (HH:mm)")
     .optional(),
 
   actualCheckOut: z
     .string()
-    .regex(/^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/, "Không hợp lệ (HH:mm)")
+    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Không hợp lệ (HH:mm)")
     .optional(),
 
   // faceIdCheckIn: z.string().min(1, "Thiếu ảnh FaceID check-in").optional(),

@@ -17,21 +17,21 @@ import dayjs from "dayjs"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useDetailsTimeSheetList } from "../../hooks/use-detailed-time-sheet"
 import type { FlatRow } from "../../types/index.type"
-import { hourlyPayrollMock } from "../hourly-payroll/moc/hourly-payroll.mock"
 import { StickyRowGroupStaff } from "./sticky-row-group-staff"
+import { fillMissingDaysWithDayjs, getTotalDaysInMonth } from "@/features/timekeeping-shift-scheduling/helper"
 
 const columns = [
-  { textAlign: "left", key: "date", label: "NGÀY" },
-  { textAlign: "left", key: "shiftCode", label: "MÃ CA" },
-  { textAlign: "left", key: "standardHours", label: "GIỜ CÔNG CHUẨN" },
-  { textAlign: "center", key: "checkIn", label: "GIỜ VÀO" },
-  { textAlign: "center", key: "checkOut", label: "GIỜ RA" },
-  { textAlign: "center", key: "lateMinutes", label: "ĐI MUỘN" },
-  { textAlign: "center", key: "earlyMinutes", label: "VỀ SỚM" },
-  { textAlign: "center", key: "workCount", label: "CÔNG" },
-  { textAlign: "center", key: "totalWorkHours", label: "TỔNG GIỜ" },
-  { textAlign: "center", key: "overtimeHours", label: "TĂNG CA" },
-  { textAlign: "center", key: "compHours", label: "GIỜ BÙ" },
+  { className: "w-[150px] text-left", key: "date", label: "NGÀY" },
+  { className: "w-[125px] text-left", key: "shiftCode", label: "MÃ CA" },
+  { className: "w-[185px] text-left", key: "standardHours", label: "GIỜ CÔNG CHUẨN" },
+  { className: "text-center", key: "checkIn", label: "GIỜ VÀO" },
+  { className: "text-center", key: "checkOut", label: "GIỜ RA" },
+  { className: "text-center", key: "lateMinutes", label: "ĐI MUỘN" },
+  { className: "text-center", key: "earlyMinutes", label: "VỀ SỚM" },
+  { className: "text-center", key: "workCount", label: "CÔNG" },
+  { className: "text-center", key: "totalWorkHours", label: "TỔNG GIỜ" },
+  { className: "text-center", key: "overtimeHours", label: "TĂNG CA" },
+  { className: "text-center", key: "compHours", label: "GIỜ BÙ" },
 ]
 
 
@@ -75,7 +75,7 @@ export function GroupedTable() {
     data?.data.forEach((shift, idx) => {
       const staffIndex = idx + 1
       const isExpanded = expandedGroups.has(shift.staff?.code)
-      const allDays = shift.days
+      const allDays = fillMissingDaysWithDayjs(shift.days, data?.metadata?.fromDate as string, data?.metadata?.toDate as string)
 
       rows.push({
         type: "group",
@@ -177,11 +177,9 @@ export function GroupedTable() {
     })
   }, [])
 
-  const totalStaff = hourlyPayrollMock.length
-  const totalShifts = hourlyPayrollMock.reduce(
-    (sum, s) => sum + s.weeks.reduce((ws, w) => ws + w.days.length, 0),
-    0
-  )
+  const totalStaff = data?.data?.length ?? 0
+  const monthStr = typeof data?.metadata?.month === 'string' ? data?.metadata?.month : ''
+  const totalShifts = monthStr ? getTotalDaysInMonth(Number(monthStr.split("-")[0]), Number(monthStr.split("-")[1])) * totalStaff : 0
 
   const renderShiftCell = useCallback(
     (row: FlatRow, columnKey: React.Key) => {
@@ -299,7 +297,7 @@ export function GroupedTable() {
       <div className="overflow-x-auto relative" ref={wrapperRef}>
         {/* Sticky group header overlay */}
         {stickyGroup && <div
-          className="pointer-events-auto absolute right-0 left-0 z-20 flex items-center gap-1 from-group-header to-group-header/80 ps-4 pe-7.75"
+          className="pointer-events-auto absolute right-0 left-0 z-20 flex items-center gap-1 from-group-header to-group-header/80 ps-4 w-[97.7%] max-md:w-[96.7%]"
           style={{ top: 64, height: ROW_HEIGHT }}
         >
           <StickyRowGroupStaff row={stickyGroup} toggleGroup={toggleGroup} key={stickyGroup.key} />
@@ -332,8 +330,7 @@ export function GroupedTable() {
                 className={cn(
                   column.key === "date" && "rounded-tl-lg",
                   column.key === "compensatory" && "rounded-tr-lg text-center",
-                  column.textAlign === "center" && "text-center",
-                  column.textAlign === "left" && "text-left",
+                  column.className,
                 )}
               >
                 {column.label}
