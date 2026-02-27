@@ -85,7 +85,7 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
                     name={staff.name}
                     role={staff.position}
                     departments={staff?.departments}
-                    rooms={staff?.departments}
+                    rooms={staff?.rooms}
                   />
                 </div>
               </div>

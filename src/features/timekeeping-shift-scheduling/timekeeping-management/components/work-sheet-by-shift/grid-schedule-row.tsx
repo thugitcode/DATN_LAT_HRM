@@ -1,8 +1,9 @@
 import { Fragment, useCallback, type FC } from 'react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import { cn } from '@/lib/utils';
 
-import { CELL_W, PILL_INSET, PILL_SHIFTS } from '../../constants/data';
+import { CELL_W, isPillRun, PILL_INSET, PILL_SHIFTS } from '../../constants/data';
 import { type DayCell, type ShiftRun } from '../../types/index.type';
 import { NonPillBadge } from './non-pill-badge';
 import { ShiftPill } from './shift-pill';
@@ -24,6 +25,8 @@ export const GridScheduleRow: FC<GridScheduleRowProps> = ({
   onDayEnter,
   onDayLeave,
 }) => {
+  const open = useDrawer((state) => state.onOpen);
+
   const handlePillMouseMove = useCallback(
     (e: React.MouseEvent<HTMLTableCellElement>, run: ShiftRun) => {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -33,11 +36,13 @@ export const GridScheduleRow: FC<GridScheduleRowProps> = ({
     [onDayEnter],
   );
 
+  console.log('run___________________________________', runs);
+
   return (
     <Fragment>
       {runs.map((run) => {
-        const isPill = PILL_SHIFTS.has(run.shift);
         const { startIndex: di, span, shift } = run;
+        const isPill = isPillRun(run.shift, span);
         const isCN = schedule[di]?.day === 0;
         const isColHovered = hoveredDay !== null && hoveredDay >= di && hoveredDay < di + span;
         const hoveredOffset = isColHovered && hoveredDay !== null ? hoveredDay - di : null;
@@ -55,15 +60,17 @@ export const GridScheduleRow: FC<GridScheduleRowProps> = ({
               !isPill && !isColHovered && isCN && 'bg-red-50/30',
             )}
           >
-            {isPill ? (
-              <div className="flex items-center h-full px-1.5">
-                <ShiftPill shift={shift} span={span} hoveredOffset={hoveredOffset} />
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <NonPillBadge shift={shift} />
-              </div>
-            )}
+            <div onClick={() => open(DrawerType.TIME_SHEET_DETAIL)}>
+              {isPill ? (
+                <div className="flex items-center h-full">
+                  <ShiftPill shift={shift} span={span} hoveredOffset={hoveredOffset} />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <NonPillBadge shift={shift} />
+                </div>
+              )}
+            </div>
           </td>
         );
       })}

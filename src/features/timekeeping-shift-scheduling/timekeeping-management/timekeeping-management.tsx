@@ -28,7 +28,7 @@ export const TimekeepingManagement = () => {
   return (
     <div className="flex flex-col justify-between h-full">
       <div className="space-y-3">
-        <div className="space-y-3 px-6 pt-6">
+        <div className="space-y-3 px-6">
           <Tabs
             aria-label="Timekeeping tabs"
             variant="underlined"

@@ -4,30 +4,30 @@ import { icons } from '@/lib/icons';
 export const menuSidebar: MenuItem[] = [
   {
     id: '1',
-    path: '/admin/dashboard',
+    path: '/',
     label: 'Tổng quan',
     icon: icons.home,
   },
   {
     id: '2',
-    path: '/admin/timekeeping-shift-scheduling',
+    path: '/timekeeping-shift-scheduling',
     label: 'Chấm công và phân ca',
     icon: icons.calendar,
     children: [
       {
         id: '1',
         label: 'Quản lý chấm công',
-        path: '/admin/timekeeping-shift-scheduling/timekeeping-management',
+        path: '/timekeeping-shift-scheduling/timekeeping-management',
       },
       {
         id: '2',
         label: 'Quản lý giải trình',
-        path: '/admin/timekeeping-shift-scheduling/explanation-management',
+        path: '/timekeeping-shift-scheduling/explanation-management',
       },
       {
         id: '3',
         label: 'Quản lý phân ca',
-        path: '/admin/timekeeping-shift-scheduling/shift-management',
+        path: '/timekeeping-shift-scheduling/shift-management',
       },
     ],
   },
@@ -37,34 +37,12 @@ export const menuSidebar: MenuItem[] = [
   //   label: 'Quản lý nghỉ',
   //   icon: icons.job,
   // },
-  {
-    id: '4',
-    path: '/admin/staff-management',
-    label: 'Quản lý nhân sự',
-    icon: icons.userInfor,
-    children: [
-      {
-        id: '1',
-        label: 'Nhân viên chính thức',
-        path: '/admin/staff-management/official-staff' as any,
-      },
-      {
-        id: '2',
-        label: 'Nhân viên thử việc',
-        path: '/admin/staff-management/probationary-staff' as any,
-      },
-      {
-        id: '3',
-        label: 'Nhân viên học việc',
-        path: '/admin/staff-management/apprentice-staff' as any,
-      },
-      {
-        id: '4',
-        label: 'Nhân sự hợp tác',
-        path: '/admin/staff-management/partner-staff' as any,
-      },
-    ],
-  },
+  // {
+  //   id: '4',
+  //   path: '/admin/dashboard',
+  //   label: 'Quản lý nhân sự',
+  //   icon: icons.plusUser,
+  // },
   // {
   //   id: '5',
   //   path: '/admin/dashboard',
@@ -90,3 +68,26 @@ export const menuSidebar: MenuItem[] = [
   //   icon: icons.note,
   // },
 ];
+
+// import { memo, type FC } from 'react';
+// import { Link } from '@tanstack/react-router';
+
+// import type { MenuItem } from '@/types/global.type';
+
+// export const MainNavItem: FC<Readonly<MenuItem>> = memo(({ label, path }) => {
+//   return (
+//     <li>
+//       <Link
+//         to={path}
+//         className="px-3 py-1  text-medium font-normal text-[#71717A] hover:text-white duration-75 ease-in-out "
+//         activeProps={{
+//           className: 'text-white bg-[#006FEE] rounded-lg',
+//         }}
+//       >
+//         {label}
+//       </Link>
+//     </li>
+//   );
+// });
+
+// MainNavItem.displayName = 'MainNavItem';

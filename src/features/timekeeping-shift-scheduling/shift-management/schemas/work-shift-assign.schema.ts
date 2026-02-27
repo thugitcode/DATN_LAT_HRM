@@ -65,37 +65,37 @@ export const workShiftAssignSchema = z
       message: 'Ngày bắt đầu phải trước hoặc bằng ngày kết thúc',
       path: ['fromDate'],
     },
-  )
-
-  .refine(
-    (v) => {
-      const details = v.details;
-      if (!details || details.length <= 1) return true;
-
-      const sorted = [...details].sort(
-        (a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime),
-      );
-
-      for (let i = 0; i < sorted.length - 1; i++) {
-        const current = sorted[i];
-        const next = sorted[i + 1];
-
-        if (!current || !next) continue;
-
-        const currentEnd = timeToMinutes(current.endTime);
-        const nextStart = timeToMinutes(next.startTime);
-
-        if (currentEnd > nextStart) {
-          return false;
-        }
-      }
-
-      return true;
-    },
-    {
-      message: 'Các ca làm việc không được chồng giờ',
-      path: ['details'],
-    },
   );
+
+// .refine(
+//   (v) => {
+//     const details = v.details;
+//     if (!details || details.length <= 1) return true;
+
+//     const sorted = [...details].sort(
+//       (a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime),
+//     );
+
+//     for (let i = 0; i < sorted.length - 1; i++) {
+//       const current = sorted[i];
+//       const next = sorted[i + 1];
+
+//       if (!current || !next) continue;
+
+//       const currentEnd = timeToMinutes(current.endTime);
+//       const nextStart = timeToMinutes(next.startTime);
+
+//       if (currentEnd > nextStart) {
+//         return false;
+//       }
+//     }
+
+//     return true;
+//   },
+//   {
+//     message: 'Các ca làm việc không được chồng giờ',
+//     path: ['details'],
+//   },
+// );
 
 export type WorkShiftAssignFormValues = z.infer<typeof workShiftAssignSchema>;

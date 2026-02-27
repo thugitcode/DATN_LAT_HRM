@@ -58,3 +58,6 @@ export const STATUS_COLOR_MAP: Partial<Record<ShiftCode, string>> = Object.fromE
 // Những shift nào hiển thị dạng pill kéo dài (span > 1)
 // Hiện tại chỉ "Đ" (OnTime) mới pill, còn lại hiển thị badge tròn
 export const PILL_SHIFTS = new Set<ShiftCode>([AttendanceStatus.OnTime]);
+
+export const isPillRun = (shift: ShiftCode, span: number): boolean =>
+  PILL_SHIFTS.has(shift) && span >= 2;

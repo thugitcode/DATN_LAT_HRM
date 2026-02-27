@@ -18,16 +18,24 @@ export interface ShiftTimeKeeping {
   endTime: string; // HH:mm:ss
 }
 
+export interface Department {
+  id: string;
+  name: string;
+}
+
+export interface Room {
+  id: string;
+  name: string;
+}
+
 export interface StaffTimeKeeping {
   id: string;
   code: string;
   name: string;
   avatar: string | null;
-  departmentId: string;
-  departmentName: string;
-  position: string; // có thể enum nếu có danh sách cố định
+  departments: Department[];
+  rooms: Room[];
 }
-
 export interface Summary {
   totalWork: number;
   totalLateMinutes: number;

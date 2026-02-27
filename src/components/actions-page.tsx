@@ -43,7 +43,7 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
         </li>
 
         <li>
-          <Tooltip content="Nhập file excel" showArrow>
+          {/* <Tooltip content="Nhập file excel" showArrow>
             <Button
               isIconOnly
               aria-label="Import excel"
@@ -55,7 +55,7 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
             >
               I
             </Button>
-          </Tooltip>
+          </Tooltip> */}
 
           {/* {importConfig && (
             <input
@@ -68,7 +68,7 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
           )} */}
         </li>
 
-        <li>
+        {/* <li>
           <Tooltip content="Xuất file mẫu" showArrow>
             <Button
               isIconOnly
@@ -82,9 +82,9 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
               {icons.export}
             </Button>
           </Tooltip>
-        </li>
+        </li> */}
 
-        <li>
+        {/* <li>
           <Tooltip content="In" showArrow>
             <Button
               isIconOnly
@@ -96,7 +96,7 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
               {icons.print}
             </Button>
           </Tooltip>
-        </li>
+        </li> */}
       </ul>
 
       <span className="inline-block w-0.5 bg-[#11111126] flex-1" />
