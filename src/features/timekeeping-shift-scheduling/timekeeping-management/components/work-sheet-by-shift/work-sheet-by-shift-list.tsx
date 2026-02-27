@@ -1,26 +1,50 @@
+import { useMemo, type FC } from 'react';
+
+import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 import { Table } from '@/components/table/table';
+import { groupByStaff, mapToListRow } from '@/features/timekeeping-shift-scheduling/helper';
 
-import { useColumns } from '../../hooks/use-columns';
+import { useWorkSheetColumns } from '../../hooks/use-work-sheet-columns';
+import type { WorkSheetByShiftType } from '../../types/timekeeping-management.type';
 
-export const WorkSheetByShiftList = () => {
-  const { columns } = useColumns();
+interface WorkSheetByShiftListProps {
+  data?: WorkSheetByShiftType[];
+  total?: number;
+  page?: number;
+  pageSize?: number;
+  isLoading?: boolean;
+  totalPage?: number;
+}
+
+export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
+  data = [],
+  total,
+  page,
+  pageSize,
+  isLoading,
+  totalPage,
+}) => {
+  const { columns } = useWorkSheetColumns();
+
+  const dataSource = useMemo(() => {
+    const grouped = groupByStaff(data);
+    return Array.from(grouped.values()).map(mapToListRow);
+  }, [data]);
 
   return (
     <Table
       columns={columns}
-      dataSource={[]}
-      rowKey="id"
+      dataSource={dataSource}
       size="middle"
+      loading={isLoading}
       className="h-[calc(100vh-440px)]"
       pagination={{
-        current: 1,
-        pageSize: 10,
-        total: 0,
+        current: page,
+        pageSize,
+        total: total || 0,
         showSizeChanger: true,
-        pageSizeOptions: [5, 10, 20, 50],
-        onChange: (page, pageSize) => {
-          console.log('Page changed:', page, pageSize);
-        },
+        pageSizeOptions: PAGE_SIZE_OPTIONS,
+        totalPage,
       }}
     />
   );

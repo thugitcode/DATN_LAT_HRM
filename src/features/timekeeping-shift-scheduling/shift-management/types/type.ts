@@ -1,5 +1,5 @@
 import type { StaffPosition } from '@/types/global.type';
-import type { ShiftTypeEnum } from '@/types/shift-management.type';
+import type { Shift, ShiftTypeEnum, StaffSchedule } from '@/types/shift-management.type';
 
 export interface DayColumn {
   day: number;
@@ -24,4 +24,14 @@ export interface StaffRow {
   department?: string;
   avatar?: string;
   scheduleRows: Array<Array<ShiftCell | null>>;
+}
+
+export interface CellDataShift {
+  record: StaffSchedule;
+  shift: Shift;
+  date: string;
+  day: number;
+  month: number;
+  year: number;
+  dayOfWeek: number;
 }

@@ -54,14 +54,23 @@ export interface Staff {
   rooms: RoomUser[];
 }
 
+interface Department {
+  id: string;
+  name: string;
+}
+interface Room {
+  id: string;
+  name: string;
+}
+
 export interface StaffWorkSchedule {
   id: string;
   code: string;
   name: string;
   avatar: string | null;
   position: StaffPosition;
-  departmentId: string;
-  departmentName: string;
+  departments: Department[];
+  rooms: Room[];
 }
 
 export interface Shift {

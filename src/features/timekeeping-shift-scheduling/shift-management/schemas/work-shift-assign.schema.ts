@@ -15,25 +15,24 @@ const timeToMinutes = (time: string): number => {
 
 const isValidTimeFormat = (time: string) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
 
-export const shiftDetailSchema = z
-  .object({
-    startTime: z
-      .string()
-      .min(1, 'Giờ bắt đầu không được để trống')
-      .refine(isValidTimeFormat, 'Giờ bắt đầu không đúng định dạng HH:mm'),
+export const shiftDetailSchema = z.object({
+  startTime: z
+    .string()
+    .min(1, 'Giờ bắt đầu không được để trống')
+    .refine(isValidTimeFormat, 'Giờ bắt đầu không đúng định dạng HH:mm'),
 
-    endTime: z
-      .string()
-      .min(1, 'Giờ kết thúc không được để trống')
-      .refine(isValidTimeFormat, 'Giờ kết thúc không đúng định dạng HH:mm'),
+  endTime: z
+    .string()
+    .min(1, 'Giờ kết thúc không được để trống')
+    .refine(isValidTimeFormat, 'Giờ kết thúc không đúng định dạng HH:mm'),
 
-    shiftTemplateId: z.string().min(1, 'Ca không được để trống'),
-    note: z.string().optional(),
-  })
-  .refine((v) => timeToMinutes(v.startTime) < timeToMinutes(v.endTime), {
-    message: 'Giờ bắt đầu phải trước giờ kết thúc',
-    path: ['endTime'],
-  });
+  shiftTemplateId: z.string().min(1, 'Ca không được để trống'),
+  note: z.string().optional(),
+});
+// .refine((v) => timeToMinutes(v.startTime) < timeToMinutes(v.endTime), {
+//   message: 'Giờ bắt đầu phải trước giờ kết thúc',
+//   path: ['endTime'],
+// });
 
 export const workShiftAssignSchema = z
   .object({

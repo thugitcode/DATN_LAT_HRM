@@ -1,21 +1,39 @@
 import { useMemo } from 'react';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { IconLine } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 
 import type { StaffSchedule } from '@/types';
-import { cn } from '@/lib/utils';
 import type { Column } from '@/components/table/types';
 
+import { StaffInfo } from '../../components/staff-infor';
 import { dayNames, getWeeksInMonth } from '../../helper';
 import { useYearMonth } from '../../hooks/use-year-month';
 import { ShiftDepartment } from '../components/shift-department';
 import { SHIFT_CA_LEGEND } from '../constants/data';
 
-export const useColumns = () => {
+interface UseColumnsProps {
+  data?: StaffSchedule[];
+}
+
+export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
   const { month, year } = useYearMonth();
   const { onOpen } = useDrawer((state) => state);
 
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
+
+  const maxShiftsPerDate = useMemo(() => {
+    const map: Record<string, number> = {};
+    data.forEach((record) => {
+      record?.schedules?.forEach((schedule) => {
+        const count = schedule.shifts?.length ?? 0;
+        if (!map[schedule.date] || map[schedule.date] < count) {
+          map[schedule.date] = count;
+        }
+      });
+    });
+    return map;
+  }, [data]);
 
   const columns: Column<StaffSchedule>[] = useMemo(() => {
     const cols: Column<StaffSchedule>[] = [
@@ -23,36 +41,35 @@ export const useColumns = () => {
         key: 'stt',
         title: 'STT',
         width: 64,
-        // fixed: 'left',
         align: 'center',
         render: (_, __, index) => index + 1,
       },
       {
         key: 'doctor-info',
         title: 'KHOA/PHÒNG',
-        // width: 286,
         fixed: 'left',
         render: (_, record) => (
           <div className="w-75">
-            <ShiftDepartment staff={record?.staff} />
+            <StaffInfo
+              avatarUrl={record?.staff?.avatar}
+              code={record?.staff?.code}
+              rooms={record?.staff?.rooms}
+              departments={record?.staff?.rooms}
+              name={record?.staff?.name}
+              role={record?.staff?.position}
+            />
           </div>
         ),
       },
     ];
 
-    weeks.forEach((week, index) => {
+    weeks.forEach((week) => {
       const weekColumn: Column<StaffSchedule> = {
         key: `week-${week.weekNumber}`,
         title: (
-          <div
-            className={cn(
-              'flex items-center justify-center gap-1 font-semibold! text-xs uppercase! text-nowrap',
-              !!index,
-            )}
-          >
-            <span>TUẦN {week.weekNumber}:</span>
+          <div className="flex items-center justify-center gap-1 font-semibold text-xs uppercase text-nowrap">
             <span>
-              ({week.startDay}/{month + 1} - {week.endDay}/{month + 1})
+              TUẦN {week.weekNumber}: {week.startDay}/{month + 1} - {week.endDay}/{month + 1}
             </span>
           </div>
         ),
@@ -60,9 +77,13 @@ export const useColumns = () => {
           return {
             key: `day-${week.weekNumber}-${day.day}`,
             title: (
-              <div className="flex flex-col items-center gap-1 text-[14px] text-[#A1A1AA] font-normal">
-                <span>{dayNames[day.dayOfWeek]}</span>
-                <span>{dayjs(day.date).format('D/M/YY')}</span>
+              <div className="flex flex-col items-center gap-0.5">
+                <span className="text-sm font-medium text-[#A1A1AA]">
+                  {dayNames[day.dayOfWeek]}
+                </span>
+                <span className="text-xs font-normal text-[#A1A1AA]">
+                  {dayjs(day.date).format('D/M/YY')}
+                </span>
               </div>
             ),
             width: 100,
@@ -74,13 +95,39 @@ export const useColumns = () => {
                 (schedule) => schedule.date === dateString,
               );
 
+              const maxShifts = maxShiftsPerDate[dateString] ?? 1;
+
               if (!daySchedule?.shifts?.length) {
-                return <span className="text-gray-400">--</span>;
+                return (
+                  <div className="flex flex-col items-center gap-1.5">
+                    {Array.from({ length: maxShifts }).map((_, idx) => (
+                      <div key={idx} className="flex flex-col items-center gap-0.5">
+                        --
+                      </div>
+                    ))}
+                  </div>
+                );
               }
 
               return (
                 <div className="flex flex-col items-center gap-1.5">
-                  {daySchedule.shifts.map((shift, idx) => {
+                  {Array.from({ length: maxShifts }).map((_, idx) => {
+                    const shift = daySchedule.shifts[idx];
+
+                    if (!daySchedule?.shifts?.length) {
+                      return (
+                        <div className="flex flex-col items-center gap-1.5">
+                          {Array.from({ length: maxShifts }).map((_, idx) => (
+                            <div key={idx} className="flex flex-col items-center gap-0.5">
+                              <span className="inline-flex items-center justify-center px-2 py-1 text-sm text-gray-400">
+                                <IconLine />
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      );
+                    }
+
                     const color = SHIFT_CA_LEGEND.find(
                       (s) => s.status === shift?.shiftTemplateType,
                     )?.color;
@@ -121,7 +168,7 @@ export const useColumns = () => {
     });
 
     return cols;
-  }, [weeks, year, month, onOpen]);
+  }, [weeks, year, month, onOpen, maxShiftsPerDate]);
 
   return {
     columns,

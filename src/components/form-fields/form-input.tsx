@@ -35,12 +35,14 @@ export function FormInput<T extends FieldValues>({
           isInvalid={!!fieldState.error}
           errorMessage={fieldState.error?.message}
           classNames={{
-            label: 'text-xs font-normal leading-4 text-[#52525B]',
+            label: 'text-xs font-normal leading-4 text-[#52525B]!',
             inputWrapper: `
   data-[invalid=true]:!bg-[#F4F4F5]
   group-data-[invalid=true]:!bg-[#F4F4F5]
 `,
+            input: '[&::-webkit-datetime-edit-ampm-field]:hidden',
           }}
+          lang="en-GB"
           step={60}
         />
       )}

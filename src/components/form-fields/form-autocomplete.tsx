@@ -38,8 +38,9 @@ export function FormAutocomplete<T extends FieldValues>({
             isDisabled={disabled}
             placeholder={placeholder ?? 'Chọn'}
             onSelectionChange={(key) => {
-              field.onChange(key);
-              onSelect?.(String(key));
+              const value = key ?? '';
+              field.onChange(value);
+              if (value) onSelect?.(String(value));
             }}
           >
             {options.map((opt) => (

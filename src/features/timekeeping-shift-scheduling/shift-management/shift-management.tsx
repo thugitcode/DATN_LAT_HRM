@@ -17,13 +17,67 @@ import { ShiftManagementListview } from './components/shift-management-listview'
 import { SHIFT_CA_LEGEND } from './constants/data';
 import { useShiftManagementList } from './hooks/use-shift-management';
 
+interface ShiftImportRow {
+  employeeCode: string;
+  employeeName: string;
+  shiftDate: string;
+  shiftType: string;
+  departmentName: string;
+  note: string;
+}
+
+// const SHIFT_COLUMNS: ExcelColumnDef<ShiftImportRow>[] = [
+//   {
+//     header: 'Mã nhân viên',
+//     key: 'employeeCode',
+//     width: 16,
+//     required: true,
+//     example: 'NV001',
+//   },
+//   {
+//     header: 'Họ và tên',
+//     key: 'employeeName',
+//     width: 24,
+//     required: true,
+//     example: 'Nguyễn Văn A',
+//   },
+//   {
+//     header: 'Ngày phân ca',
+//     key: 'shiftDate',
+//     width: 16,
+//     required: true,
+//     example: '2025-07-01',
+//     exportFormatter: (v) => (v ? dayjs(String(v)).format('YYYY-MM-DD') : ''),
+//     importParser: (v) =>
+//       v ? dayjs(String(v), ['YYYY-MM-DD', 'DD/MM/YYYY']).format('YYYY-MM-DD') : '',
+//   },
+//   {
+//     header: 'Ca làm việc',
+//     key: 'shiftType',
+//     width: 16,
+//     required: true,
+//     example: 'Ca sáng',
+//   },
+//   {
+//     header: 'Phòng ban',
+//     key: 'departmentName',
+//     width: 20,
+//     example: 'Kế toán',
+//   },
+//   {
+//     header: 'Ghi chú',
+//     key: 'note',
+//     width: 28,
+//     example: '',
+//   },
+// ];
+
 export const ShiftManagement = () => {
   const { filters } = useQueryFilter<ShiftManagementParams>();
 
   const { startDate, endDate } = useMemo(() => {
     const monthStr = filters.month ?? dayjs().format('YYYY-MM');
     const monthDate = dayjs(monthStr, 'YYYY-MM');
-
     return {
       startDate: monthDate.startOf('month').format('YYYY-MM-DD'),
       endDate: monthDate.endOf('month').format('YYYY-MM-DD'),
@@ -40,13 +94,43 @@ export const ShiftManagement = () => {
     roomId: filters.roomId,
   });
 
+  // const exportConfig = useMemo(
+  //   () => ({
+  //     fileName: `mau_phan_ca_${dayjs().format('YYYYMMDD')}`,
+  //     sheetName: 'Phân ca',
+  //     columns: SHIFT_COLUMNS,
+  //     includeExampleRow: true,
+  //   }),
+  //   [],
+  // );
+
+  // const importConfig = useMemo(
+  //   () => ({
+  //     columns: SHIFT_COLUMNS,
+  //     onImport: async (rows: ShiftImportRow[]) => {
+  //       // Gọi API import tại đây
+  //       console.log('Rows to import:', rows);
+  //       console.log(`Nhập thành công ${rows.length} bản ghi`);
+  //     },
+  //     onError: (errors: ImportError[]) => {
+  //       errors.forEach((e) => console.log(`Dòng ${e.row} - ${e.column}: ${e.message}`));
+  //     },
+  //   }),
+  //   [],
+  // );
+
   return (
     <div className="flex flex-col justify-baseline h-full">
       <div className="space-y-3">
         <WrapperToolBar className="space-y-4 flex flex-col">
           <div className="flex items-center justify-between">
             <TitlePage title="Quản lý phân ca" />
-            <ActionsPage actions={<BtnCreateShift />} />
+
+            <ActionsPage
+              actions={<BtnCreateShift />}
+              // exportConfig={exportConfig}
+              // importConfig={importConfig}
+            />
           </div>
           <ShiftManagementFilter />
         </WrapperToolBar>
@@ -66,7 +150,7 @@ export const ShiftManagement = () => {
             },
             [LayoutSwitcherEnum.GRID]: {
               component: ShiftManagementGrid,
-              props: { data: data?.data, isLoading: isLoading },
+              props: { data: data?.data, isLoading },
             },
           }}
         />

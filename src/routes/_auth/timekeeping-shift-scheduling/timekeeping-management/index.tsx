@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 import { TimekeepingManagement } from '@/features/timekeeping-shift-scheduling/timekeeping-management/timekeeping-management';
 

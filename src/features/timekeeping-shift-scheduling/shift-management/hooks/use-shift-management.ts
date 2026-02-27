@@ -27,16 +27,15 @@ export function useCreateShiftManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
       addToast({
-        title: 'Thêm mới phân ca thành công.',
+        description: 'Thêm mới phân ca thành công.',
         color: 'success',
       });
       closedDrawer();
     },
     onError: (error: unknown) => {
-      console.log('error_______________', error);
       const { message } = normalizeAxiosError(error);
       addToast({
-        title: JSON.stringify(error),
+        description: message,
         color: 'danger',
       });
     },

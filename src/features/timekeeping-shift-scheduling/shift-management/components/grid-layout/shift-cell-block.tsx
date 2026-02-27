@@ -9,7 +9,7 @@ import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-
 import { isWeekend } from '../../../helper';
 import { COL_W, ROW_H } from '../../constants/constants';
 import { SHIFT_CA_LEGEND } from '../../constants/data';
-import type { DayColumn, ShiftCell } from '../../types/type';
+import type { DayColumn } from '../../types/type';
 
 interface ShiftCellBlockProps {
   cell: Shift | null;
@@ -23,16 +23,24 @@ export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record }) =
   const h = ROW_H - 8;
   const { month, year } = useYearMonth();
   const color = SHIFT_CA_LEGEND.find((s) => s.status === cell?.shiftTemplateType)?.color;
+  const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
 
   const onOpenDrawer = useDrawer((state) => state.onOpen);
 
   const onCreate = () => {
-    onOpenDrawer(DrawerType.WORK_SHIFTS);
+    onOpenDrawer(DrawerType.WORK_SHIFTS, {
+      record,
+      shift: cell,
+      date: dateString,
+      day: day.day,
+      month: month + 1,
+      year,
+      dayOfWeek: day.dayOfWeek,
+    });
   };
 
   const onOpenShiftDrawer = () => {
     if (!cell) return;
-    const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
     onOpenDrawer(DrawerType.CHANGE_SHIFT_DIVISION, {
       record,
       shift: cell,
