@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState, type FC } from 'react';
 
 import { StaffPosition } from '@/types/global.type';
 import { cn } from '@/lib/utils';
+import { TableEmpty } from '@/components/table/table-empty';
 import { TableLoading } from '@/components/table/table-loading';
 import { StaffInfo } from '@/features/timekeeping-shift-scheduling/components/staff-infor';
 import {
@@ -54,30 +55,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
 
         <tbody>
           {isEmpty ? (
-            <tr>
-              <td colSpan={days.length + 1} className="border-0 p-0">
-                <div className="flex flex-col items-center justify-center gap-2 py-20 text-gray-600">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="size-14 text-gray-200"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={1.2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 10h18M3 6h18M3 14h10m-7 4h4"
-                    />
-                  </svg>
-                  <span className="text-lg font-medium">Không có dữ liệu</span>
-                  <span className="text-base text-gray-400">
-                    Thử thay đổi bộ lọc hoặc khoảng thời gian
-                  </span>
-                </div>
-              </td>
-            </tr>
+            <TableEmpty />
           ) : (
             rows.map((row, ri) => {
               const isRowHovered = hoveredRow === ri;
@@ -94,7 +72,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                   onMouseLeave={() => setHoveredRow(null)}
                 >
                   <td
-                    style={{ minWidth: COL_W, width: COL_W }}
+                    style={{ minWidth: 320, width: 320 }}
                     className={cn(
                       'sticky left-0 z-10 p-0 border-b px-2.5 border-r border-gray-100',
                       'transition-colors duration-100',

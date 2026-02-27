@@ -167,11 +167,11 @@ export function mapToRow(
     employee: {
       id: item.staff.id,
       name: item.staff.name,
-      role: item.staff.position,
+      role: item.staff.departments[0]?.name ?? '',
       phone: '',
       code: item.staff.code,
       avatar: item.staff.avatar,
-      departmentName: item.staff.departmentName ?? '',
+      departmentName: item.staff.departments[0]?.name ?? '',
     },
     schedule,
     runs: buildRuns(schedule),
@@ -184,19 +184,20 @@ export function mapToListRow(item: WorkSheetByShiftType): WorkSheetByShiftRow {
     code: item.staff.code,
     name: item.staff.name,
     avatar: item.staff.avatar,
-    departmentName: item.staff.departmentName ?? '',
-    position: item.staff.position,
+    departmentName: item.staff.departments[0]?.name ?? '',
+    position: item.staff.rooms[0]?.name ?? '',
     days: item.days,
     summary: item.summary,
   };
 }
+
 export function getInitials(name: string) {
   return name
-    .split(" ")
+    .split(' ')
     .map((n) => n[0])
-    .join("")
+    .join('')
     .toUpperCase()
-    .slice(0, 2)
+    .slice(0, 2);
 }
 
 export function fillMissingDaysWithDayjs(

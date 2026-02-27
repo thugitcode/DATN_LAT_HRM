@@ -16,9 +16,9 @@ export const GridStickyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> = ({
   days,
 }) => {
   return (
-    <thead className="sticky top-0 z-20 ">
+    <thead className="sticky top-0 z-30">
       <tr>
-        <th className="sticky left-0 z-30 w-52 h-17.5 bg-[#F4F4F5] border-0 p-0" />
+        <th className="sticky left-0 z-40 w-52 h-17.5 bg-[#F4F4F5] border-0 p-0" />
 
         {days.map((day, di) => {
           const isCN = isWeekend(day.dayOfWeek);
@@ -33,6 +33,8 @@ export const GridStickyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> = ({
                 'first-of-type:rounded-tl-xl last-of-type:rounded-tr-xl',
                 hoveredDay === di ? 'bg-blue-50' : 'bg-white',
                 isCN && 'bg-red-50/60',
+                di === 0 && 'rounded-tl-[14px]',
+                di === days.length - 1 && 'rounded-tr-[14px]',
               )}
             >
               <div className="flex flex-col gap-3 items-center justify-center h-full ">
