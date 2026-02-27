@@ -33,13 +33,25 @@ export enum HourlyPayrollStatus {
   OFF = 'OFF',
 }
 
+export enum HoursStatusEnum {
+  ON_TIME = 'ON_TIME',
+  LATE = 'LATE',
+  EARLY = 'EARLY',
+  OVERTIME = 'OVERTIME',
+  ABSENT = 'ABSENT',
+  OFF = 'OFF',
+  FULL = 'FULL',
+  MISSING = 'MISSING',
+  ERROR = 'ERROR',
+}
+
 export enum DetailedTimeSheetStatus {
   M = 'M',
   S = 'S',
 }
 
 export interface LegendItem {
-  status: AttendanceStatus | HourlyPayrollStatus | DetailedTimeSheetStatus | ShiftTypeEnum | null;
+  status: AttendanceStatus | HourlyPayrollStatus | DetailedTimeSheetStatus | ShiftTypeEnum | HoursStatusEnum | null;
   label: string;
   color: string;
   shape?: 'circle' | 'ring' | 'line';
@@ -97,13 +109,12 @@ export type HourlyPayrollWeek = {
 };
 
 export type HourlyPayrollRecord = {
-  id: string;
-  department: string;
-  room: string;
   staffCode: string;
   staffName: string;
-  position: string;
-  weeks: HourlyPayrollWeek[];
+  staffId: string,
+  standardHours: number,
+  totalHours: number,
+  days: HourlyPayrollDay[];
 };
 
 export type FlatRow =

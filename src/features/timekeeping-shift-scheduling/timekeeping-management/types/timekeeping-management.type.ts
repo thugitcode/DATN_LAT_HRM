@@ -1,3 +1,7 @@
+import type { Department } from "@/types/deparment.type";
+import type { StaffPosition } from "@/types/global.type";
+import type { Room } from "@/types/room.type";
+
 export interface WorkDay {
   workScheduleDetailId: string;
   date: string; // format: YYYY-MM-DD
@@ -56,4 +60,24 @@ export interface WorkSheetByShiftType {
   shift: ShiftTimeKeeping;
   staff: StaffTimeKeeping;
   summary: Summary;
+}
+
+
+export interface AttendanceByHoursResponse {
+  departments: Department[];
+  rooms: Room[];
+  position: StaffPosition
+  staffId: string;
+  staffCode: string;
+  staffName: string;
+  days: Record<string, DailyHourEntry>;
+  totalHours: number;
+  standardHours: number;
+}
+
+export interface DailyHourEntry {
+  date: string;
+  dayOfWeek: number;
+  hours: number;
+  status: 'OFF' | 'FULL' | 'OVERTIME' | 'MISSING';
 }

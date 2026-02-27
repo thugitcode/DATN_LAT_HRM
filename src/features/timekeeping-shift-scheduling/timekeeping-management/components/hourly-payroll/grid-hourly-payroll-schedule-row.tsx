@@ -3,31 +3,32 @@ import { Fragment, type FC } from 'react';
 import { cn } from '@/lib/utils';
 
 import { HOURLY_PAYROLL_LEGEND_ITEMS } from '../../constants/data';
-import type { HourlyPayrollStatus } from '../../types/index.type';
+import type { HoursStatusEnum } from '../../types/index.type';
+import type { DailyHourEntry } from '../../types/timekeeping-management.type';
 
 export interface DayRecord {
   date: string;
   hours: number | null;
-  status: HourlyPayrollStatus;
+  status: HoursStatusEnum;
 }
 
 export interface LegendItem {
-  status: HourlyPayrollStatus;
+  status: HoursStatusEnum;
   label: string;
   color: string;
   shape?: 'line' | 'square';
 }
 
-const statusColorMap: Record<HourlyPayrollStatus, LegendItem> = HOURLY_PAYROLL_LEGEND_ITEMS.reduce(
+const statusColorMap: Record<HoursStatusEnum, LegendItem> = HOURLY_PAYROLL_LEGEND_ITEMS.reduce(
   (acc, item) => {
     acc[item.status] = item;
     return acc;
   },
-  {} as Record<HourlyPayrollStatus, LegendItem>,
+  {} as Record<HoursStatusEnum, LegendItem>,
 );
 
 interface GridHourlyPayrollScheduleRowProps {
-  days: DayRecord[];
+  days: DailyHourEntry[];
   isHovered: boolean;
   hoveredDay: number | null;
   onDayEnter: (di: number) => void;
@@ -40,7 +41,7 @@ export const GridHourlyPayrollScheduleRow: FC<GridHourlyPayrollScheduleRowProps>
   hoveredDay,
   onDayEnter,
   onDayLeave,
-}) => {
+}) => {  
   return (
     <Fragment>
       {days.map((day, di) => {

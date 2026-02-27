@@ -1,16 +1,17 @@
 import { Table } from '@/components/table/table';
 
+import type { ApiResponse } from '@/types';
 import { useColumnsHourlyPayroll } from '../../hooks/use-columns-hourly-payroll';
-import { hourlyPayrollMock } from './moc/hourly-payroll.mock';
+import type { AttendanceByHoursResponse } from '../../types/timekeeping-management.type';
 
-export const HourlyPayrollList = () => {
+export const HourlyPayrollList = (data: ApiResponse<AttendanceByHoursResponse[]>) => {
   const { columns } = useColumnsHourlyPayroll();
 
   return (
     <Table
       columns={columns}
-      dataSource={[]}
-      rowKey="id"
+      dataSource={data?.data ?? []}
+      rowKey="staffId"
       size="middle"
       className="h-[calc(100vh-440px)]"
       pagination={{

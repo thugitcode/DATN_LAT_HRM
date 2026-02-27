@@ -7,6 +7,6 @@ export function useAttendanceTable(params?: ShiftManagementParams) {
   return useQuery(timekeepingManagementQueryOptions.attendanceTable(params));
 }
 
-// export function useAttendanceByHours(params?: ShiftManagementParams) {
-//   return useQuery(timekeepingManagementQueryOptions.attendanceByHours(params));
-// }
+export function useAttendanceByHours(params?: ShiftManagementParams) {
+  return useQuery(timekeepingManagementQueryOptions.attendanceByHours(params));
+}

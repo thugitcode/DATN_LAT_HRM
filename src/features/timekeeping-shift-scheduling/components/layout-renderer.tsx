@@ -21,8 +21,7 @@ export const LayoutRenderer = ({ layouts, wrapperClassName }: LayoutRendererProp
 
   if (!layout) return null;
 
-  const { component: Component, props } = layout;
-
+  const { component: Component, props } = layout;  
   return (
     <div className={cn(wrapperClassName, currentLayout === LayoutSwitcherEnum.LIST && 'px-6')}>
       <Component {...props} />

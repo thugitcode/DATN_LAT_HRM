@@ -4,7 +4,7 @@ import type { ApiResponse } from '@/types';
 import type { CreateStaffSchedule, UpdateStaffSchedule } from '@/types/shift-management.type';
 import type { StaffParams } from '@/types/staff.type';
 import { hrmInstance } from '@/lib/axios';
-import type { WorkSheetByShiftType } from '@/features/timekeeping-shift-scheduling/timekeeping-management/types/timekeeping-management.type';
+import type { AttendanceByHoursResponse, WorkSheetByShiftType } from '@/features/timekeeping-shift-scheduling/timekeeping-management/types/timekeeping-management.type';
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
@@ -33,7 +33,7 @@ class TimekeepingManagementService extends BaseApiService<
 
   async getAttendanceByHours(params?: StaffParams) {
     return this.request(async () => {
-      const res = await hrmInstance.get(API_ENDPOINTS.HRM._WORK_SCHEDULE.ATTENDANCE_BY_HOURS, {
+      const res = await hrmInstance.get<ApiResponse<AttendanceByHoursResponse[]>>(API_ENDPOINTS.HRM._WORK_SCHEDULE.ATTENDANCE_BY_HOURS, {
         params: { ...DEFAULT_PAGINATION, ...params },
       });
       return res.data;
