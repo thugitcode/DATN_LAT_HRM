@@ -17,6 +17,7 @@ import { IconFileText, IconX } from '@tabler/icons-react';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import type { ExplanationRecord } from '../types';
+import { icons } from '@/lib/icons';
 
 // Helper function to format date from YYYY-MM-DD to DD/MM/YYYY
 const formatDate = (dateString: string): string => {
@@ -63,7 +64,7 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
                     <Button
                         size="md"
                         variant="flat"
-                        color="danger"
+                        // color="danger"
                         isIconOnly
                         className="rounded-lg h-[32px] w-[32px] min-w-[32px]"
                         title="Từ chối"
@@ -71,12 +72,12 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
                             if (onReject) onReject(id);
                         }}
                     >
-                        <IconX size={16} />
+                        <IconX size={16} color='red'/>
                     </Button>
                     <Button
                         size="md"
                         color="primary"
-                        className="rounded-lg font-medium h-[32px] px-3 text-[13px]"
+                        className="rounded-lg font-medium h-[32px] px-3 text-sm"
                         onPress={() => {
                             if (onApprove) onApprove(id);
                         }}
@@ -95,13 +96,10 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
                     color="success"
                     classNames={{
                         base: "h-8 w-[116px] px-2",
-                        content: "text-[13px] font-medium flex-1 text-center"
+                        content: "text-sm font-medium flex-1 text-center"
                     }}
                     startContent={
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                            <circle cx="6" cy="6" r="6" fill="#17C964" />
-                            <path d="M4 6L5.5 7.5L8 4.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
+                        <icons.tickCircle width={17} height={17}/>
                     }
                 >
                     Đã xác nhận
@@ -117,13 +115,10 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
                     color="danger"
                     classNames={{
                         base: "h-8 w-[116px] px-2",
-                        content: "text-[13px] font-medium flex-1 text-center"
+                        content: "text-sm font-medium flex-1 text-center"
                     }}
                     startContent={
-                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-                            <circle cx="6" cy="6" r="6" fill="#F31260" />
-                            <path d="M4.5 4.5L7.5 7.5M7.5 4.5L4.5 7.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" />
-                        </svg>
+                      <icons.closeSquare className='rounded-full' width={17} height={17} />
                     }
                 >
                     Từ chối

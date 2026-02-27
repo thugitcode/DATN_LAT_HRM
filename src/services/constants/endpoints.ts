@@ -13,6 +13,7 @@ export const API_ENDPOINTS = {
       ATTENDANCE_TABLE: '/work-schedule/attendance-table',
       ATTENDANCE_BY_HOURS: '/work-schedule/attendance-by-hours',
     },
+    SHIFT_DETAILS: '/work-schedule/detailed-attendance-table',
   },
   OTHER_SERVICE: {
     // Sau nhỡ sang CIS thì thêm
