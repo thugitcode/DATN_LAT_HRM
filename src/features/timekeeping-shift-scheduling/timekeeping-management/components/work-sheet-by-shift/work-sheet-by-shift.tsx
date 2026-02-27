@@ -1,8 +1,6 @@
-import { useMemo } from 'react';
-import dayjs from 'dayjs';
-
 import type { ShiftManagementParams } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
+import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { LayoutRenderer } from '@/features/timekeeping-shift-scheduling/components/layout-renderer';
 
@@ -12,16 +10,7 @@ import { WorkSheetByShiftList } from './work-sheet-by-shift-list';
 
 export const WorkSheetByShift = () => {
   const { filters } = useQueryFilter<ShiftManagementParams>();
-
-  const { startDate, endDate } = useMemo(() => {
-    const monthStr = filters.month ?? dayjs().format('YYYY-MM');
-    const monthDate = dayjs(monthStr, 'YYYY-MM');
-
-    return {
-      startDate: monthDate.startOf('month').format('YYYY-MM-DD'),
-      endDate: monthDate.endOf('month').format('YYYY-MM-DD'),
-    };
-  }, [filters.month]);
+  const { startDate, endDate } = useMonthDateRange(filters.month);
 
   const { data, isLoading } = useAttendanceTable({
     page: filters.page ?? 1,

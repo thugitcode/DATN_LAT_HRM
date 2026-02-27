@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
     },
     SHIFT_DETAILS: '/work-schedule/detailed-attendance-table',
   },
+
   OTHER_SERVICE: {
     // Sau nhỡ sang CIS thì thêm
   },

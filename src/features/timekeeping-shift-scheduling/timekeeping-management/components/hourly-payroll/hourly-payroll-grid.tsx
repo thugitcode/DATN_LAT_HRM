@@ -26,7 +26,7 @@ export const HourlyPayrollGrid = () => {
         <GridStickyHeaderRow days={days} hoveredDay={hoveredDay} setHoveredDay={setHoveredDay} />
 
         <tbody>
-          {hourlyPayrollMock.map((row, ri) => {
+          {[].map((row, ri) => {
             const allDays: DayRecord[] = row.weeks.flatMap((week) => week.days);
 
             return (

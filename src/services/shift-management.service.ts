@@ -3,7 +3,8 @@ import { DEFAULT_PAGINATION } from '@/query-options/constants';
 import type {
   CreateStaffSchedule,
   StaffSchedule,
-  UpdateStaffSchedule,
+  UpdateShift,
+  UpdateShiftData,
 } from '@/types/shift-management.type';
 import type { StaffParams } from '@/types/staff.type';
 import { hrmInstance } from '@/lib/axios';
@@ -14,7 +15,7 @@ import { API_ENDPOINTS } from './constants/endpoints';
 class ShiftManagementService extends BaseApiService<
   StaffSchedule,
   CreateStaffSchedule,
-  UpdateStaffSchedule,
+  UpdateShiftData,
   StaffParams
 > {
   constructor() {
@@ -30,6 +31,12 @@ class ShiftManagementService extends BaseApiService<
       const res = await hrmInstance.post(API_ENDPOINTS.HRM.WORK_SCHEDULE_RANGE, data);
       return res.data;
     });
+  }
+
+  async update({ id, data }: UpdateShift) {
+    console.log('{ id, data }________________update', { id, data });
+
+    return super.update(id, data);
   }
 }
 

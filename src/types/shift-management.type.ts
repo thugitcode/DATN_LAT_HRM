@@ -13,6 +13,7 @@ export interface ShiftManagementParams {
   position?: StaffPosition;
   search?: string;
   month?: string;
+  status?: string;
 
   [key: string]: unknown;
 }
@@ -81,6 +82,8 @@ export interface Shift {
   shiftTemplateCode?: string;
   shiftTemplateId?: string;
   shiftTemplateType: ShiftTypeEnum;
+  workScheduleId: string;
+  workScheduleDetailId: string;
 }
 
 export interface DaySchedule {
@@ -120,4 +123,24 @@ export interface CreateStaffSchedule {
     note?: string;
   }[];
 }
-export interface UpdateStaffSchedule {}
+
+export enum StatusUpdateShift {
+  SCHEDULED = 'SCHEDULED',
+}
+
+export interface UpdateShiftData {
+  note: string;
+  roomId: string;
+  status: StatusUpdateShift | null;
+  details: {
+    startTime: string;
+    endTime: string;
+    shiftTemplateId: string;
+    note?: string;
+  }[];
+}
+
+export interface UpdateShift {
+  id: string;
+  data: UpdateShiftData;
+}

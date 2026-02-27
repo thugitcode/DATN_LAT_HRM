@@ -13,6 +13,6 @@ export const Route = createFileRoute('/')({
       throw redirect({ to: '/authenticated' });
     }
 
-    throw redirect({ to: '/timekeeping-shift-scheduling' });
+    throw redirect({ to: '/admin/timekeeping-shift-scheduling' });
   },
 });
