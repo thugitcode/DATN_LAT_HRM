@@ -61,7 +61,7 @@ export abstract class BaseApiService<
 
   async update(id: ID, data: TUpdate, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
     return this.request(async () => {
-      const res = await this.instance.put(this.url(id), data, config);
+      const res = await this.instance.patch(this.url(id), data, config);
       return res.data;
     });
   }

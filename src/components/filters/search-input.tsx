@@ -10,7 +10,7 @@ interface SearchInputProps {
   debounceMs?: number;
 }
 
-const INPUT_WRAPPER_CLASSES = 'h-[46px] min-h-[46px] bg-white border-none shadow-none';
+const INPUT_WRAPPER_CLASSES = 'bg-white border-none shadow-none h-10 min-h-10';
 
 export const SearchInput: React.FC<SearchInputProps> = ({
   value,

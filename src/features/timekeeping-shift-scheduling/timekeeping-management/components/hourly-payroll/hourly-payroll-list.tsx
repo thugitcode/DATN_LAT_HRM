@@ -9,7 +9,7 @@ export const HourlyPayrollList = () => {
   return (
     <Table
       columns={columns}
-      dataSource={hourlyPayrollMock ?? []}
+      dataSource={[]}
       rowKey="id"
       size="middle"
       className="h-[calc(100vh-440px)]"

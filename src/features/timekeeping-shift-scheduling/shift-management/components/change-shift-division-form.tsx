@@ -4,15 +4,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import type { Options } from '@/types/global.type';
-import { ShiftTypeEnum, type Shift, type StaffWorkSchedule } from '@/types/shift-management.type';
+import {
+  StatusUpdateShift,
+  type Shift,
+  type StaffWorkSchedule,
+  type UpdateShift,
+} from '@/types/shift-management.type';
 import { useCaseCategoryOptions } from '@/hooks/options/use-case-category-options';
 import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { FormArea } from '@/components/form-fields/form-area';
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
-import { FormInput } from '@/components/form-fields/form-input';
 import { FormSelect } from '@/components/form-fields/form-select';
-import { FormTimeInput } from '@/components/form-fields/form-time-input';
+import { FormTimePicker } from '@/components/form-fields/form-time-picker';
 
+import { useUpdateShiftManagement } from '../hooks/use-shift-management';
 import { shiftDivisinSchema, type ShiftDivisinFormValues } from '../schemas/shift-division.schema';
 import { FooterFrawer } from './footer-drawer';
 
@@ -28,6 +33,8 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
   const { options: staffOptions } = useStaffOptions();
 
+  const { mutate } = useUpdateShiftManagement();
+
   const {
     control,
     handleSubmit,
@@ -42,25 +49,34 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
       departmentId: staff?.departments?.length === 1 ? staff?.departments?.[0]?.id : '',
       caId: shift?.shiftTemplateId ?? '',
       roomId: staff?.rooms?.length === 1 ? staff?.rooms?.[0]?.id : '',
-      // fromDate: '',
-      // toDate: '',
+
       startTime: shift?.startTime?.slice(0, 5),
       endTime: shift?.endTime?.slice(0, 5),
-
-      // details: [
-      //   {
-      //     startTime: '',
-      //     endTime: '',
-      //     shiftTemplateId: '',
-      //     note: '',
-      //   },
-      // ],
     },
     mode: 'onChange',
   });
 
   const onSubmit = async (values: ShiftDivisinFormValues) => {
-    console.log('values', values);
+    if (shift?.workScheduleId) {
+      const payload: UpdateShift = {
+        id: shift.workScheduleId,
+        data: {
+          note: values.note ?? '',
+          roomId: values.roomId,
+          status: StatusUpdateShift.SCHEDULED,
+          details: [
+            {
+              startTime: values.startTime,
+              endTime: values.endTime,
+              shiftTemplateId: values.caId ?? '',
+              note: values?.note,
+            },
+          ],
+        },
+      };
+
+      mutate(payload);
+    }
   };
 
   const departmentStaffOptions: Options[] = useMemo(
@@ -106,20 +122,20 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
           />
 
           <div className="py-0.5 flex  gap-3">
-            <FormTimeInput
+            <FormTimePicker
               control={control}
               name={`startTime`}
               label="Ghi chú giờ vào"
               isRequired
-              disabled={shift?.shiftTemplateType === ShiftTypeEnum.FIXED}
+              // disabled={caId === ShiftTypeEnum.FIXED}
             />
 
-            <FormTimeInput
+            <FormTimePicker
               control={control}
               name={`endTime`}
               label="Ghi chú giờ ra"
               isRequired
-              disabled={shift?.shiftTemplateType === ShiftTypeEnum.FIXED}
+              // disabled={caId === ShiftTypeEnum.FIXED}
             />
           </div>
           <FormArea
