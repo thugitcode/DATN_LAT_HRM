@@ -1,4 +1,5 @@
-import type { ShiftTypeEnum } from '@/types/shift-management.type';
+import type { DailyAttendance, IStaff } from '@/types/shift-details.type';
+import type { ShiftTypeEnum, Staff } from '@/types/shift-management.type';
 
 export enum TAB_KEYS {
   WORKSHEET_BY_SHIFT = 'WORKSHEET_BY_SHIFT',
@@ -104,3 +105,19 @@ export type HourlyPayrollRecord = {
   position: string;
   weeks: HourlyPayrollWeek[];
 };
+
+export type FlatRow =
+  | {
+    type: "group"
+    key: string
+    staff: IStaff
+    index: number
+    isExpanded: boolean
+  }
+  | {
+    type: "shift"
+    key: string
+    staffId: string
+    shift: DailyAttendance
+    isLast: boolean
+  }

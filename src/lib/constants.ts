@@ -99,3 +99,5 @@ export const ALLOWED_TYPES =
   'application/vnd.openxmlformats-officedocument.presentationml.presentation,' +
   'image/jpeg,' +
   'image/png';
+
+export const STANDARD_HOURS = "07:00 - 17:00"

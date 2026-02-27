@@ -1,5 +1,7 @@
 import type { FC } from 'react';
 
+import { icons } from '@/lib/icons';
+import { IconCircleCheckFilled } from '@tabler/icons-react';
 import type { ExplanationSummary, ExplanationTypeCount } from '../types';
 
 interface ExplanationSummaryCardProps {
@@ -12,17 +14,14 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
     explanationTypes,
 }) => {
     return (
-        <div className="flex items-stretch gap-6 bg-white rounded-xl p-5">
+        <div className="flex items-stretch gap-6 bg-white rounded-xl p-5 flex-wrap">
             {/* Tổng quát */}
             <div className="flex items-center gap-4">
                 <span className="text-sm font-semibold text-[#11181C] whitespace-nowrap">Tổng quát:</span>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
                     <SummaryBadge
                         icon={
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="8" cy="8" r="8" fill="#006FEE" />
-                                <path d="M5.5 8L7.5 10L11 6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+                            icons.questionCircle
                         }
                         label="Tổng yêu cầu"
                         count={summary.totalRequests}
@@ -32,10 +31,7 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
                     <div className="w-px h-8 bg-[#E4E4E7]" />
                     <SummaryBadge
                         icon={
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="8" cy="8" r="8" fill="#17C964" />
-                                <path d="M5.5 8L7.5 10L11 6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
+                            <icons.tickCircle />
                         }
                         label="Đã xác nhận"
                         count={summary.approved}
@@ -45,10 +41,7 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
                     <div className="w-px h-8 bg-[#E4E4E7]" />
                     <SummaryBadge
                         icon={
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="8" cy="8" r="8" fill="#F31260" />
-                                <path d="M6 6L10 10M10 6L6 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                            </svg>
+                            <icons.closeSquare />
                         }
                         label="Từ chối"
                         count={summary.rejected}
@@ -58,10 +51,7 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
                     <div className="w-px h-8 bg-[#E4E4E7]" />
                     <SummaryBadge
                         icon={
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="8" cy="8" r="8" fill="#F5A524" />
-                                <circle cx="8" cy="8" r="3" fill="white" />
-                            </svg>
+                            icons.refreshCircle
                         }
                         label="Chờ xác nhận"
                         count={summary.pending}
@@ -72,18 +62,14 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
             </div>
 
             {/* Divider */}
-            <div className="w-px bg-[#E4E4E7]" />
+            <div className="w-px bg-[#E4E4E7] max-xl:hidden" />
 
             {/* Loại lỗi giải trình */}
             <div className="flex flex-col gap-2 flex-1">
                 {/* Title */}
-                <div className="flex items-center gap-1">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="8" cy="8" r="7" stroke="#006FEE" strokeWidth="2" />
-                        <circle cx="8" cy="6" r="1" fill="#006FEE" />
-                        <path d="M8 8.5V11" stroke="#006FEE" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                    <span className="text-sm font-semibold text-[#11181C] whitespace-nowrap">
+                <div className="flex items-center gap-2.25">
+                    {icons.alarm}
+                    <span className="text-base font-medium text-[#11181C] whitespace-nowrap">
                         Loại lỗi giải trình:
                     </span>
                 </div>
@@ -116,9 +102,9 @@ const SummaryBadge: FC<Readonly<SummaryBadgeProps>> = ({ icon, label, count, col
         <div className="flex flex-col items-start gap-1 rounded-lg px-4 py-2" style={{ backgroundColor: bgColor }}>
             <div className="flex items-center gap-2">
                 {icon}
-                <span className="text-xs text-[#71717A] whitespace-nowrap">{label}</span>
+                <span className="text-base text-black font-medium whitespace-nowrap">{label}</span>
             </div>
-            <span className="text-lg font-bold" style={{ color }}>
+            <span className="text-lg font-medium" style={{ color }}>
                 {count}
             </span>
         </div>
@@ -139,7 +125,7 @@ const ExplanationTypeRow: FC<Readonly<ExplanationTypeRowProps>> = ({
 
     return (
         <div className="flex items-center gap-3">
-            <span className="text-xs text-[#71717A] w-28 whitespace-nowrap">{label}</span>
+            <span className="text-sm w-28 whitespace-nowrap">{label}</span>
             <div className="w-20 h-[8px] bg-[#E4E4E7] rounded-full relative">
                 <div
                     className="absolute inset-y-0 left-0 rounded-full"

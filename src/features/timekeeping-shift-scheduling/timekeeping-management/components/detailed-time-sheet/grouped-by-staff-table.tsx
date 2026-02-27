@@ -1,22 +1,24 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useQueryFilter } from "@/hooks/useQueryFilter"
+import { STANDARD_HOURS } from "@/lib/constants"
+import { cn } from "@/lib/utils"
+import { DrawerType, useDrawer } from "@/store/useDrawer"
+import type { ShiftManagementParams } from "@/types"
 import {
   Table,
-  TableHeader,
-  TableColumn,
   TableBody,
-  TableRow,
   TableCell,
-  Chip,
-  Button,
+  TableColumn,
+  TableHeader,
+  TableRow
 } from "@heroui/react"
-import { cn } from "@/lib/utils"
+import dayjs from "dayjs"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useDetailsTimeSheetList } from "../../hooks/use-detailed-time-sheet"
+import type { FlatRow } from "../../types/index.type"
 import { hourlyPayrollMock } from "../hourly-payroll/moc/hourly-payroll.mock"
-import type { HourlyPayrollRecord, HourlyPayrollDay } from "../../types/index.type"
-import { IconCaretRightFilled } from "@tabler/icons-react"
-import { DetailedTimeSheetColor } from "../../constants/data"
-import { DrawerType, useDrawer } from "@/store/useDrawer"
+import { StickyRowGroupStaff } from "./sticky-row-group-staff"
 
 const columns = [
   { textAlign: "left", key: "date", label: "NGÀY" },
@@ -24,45 +26,147 @@ const columns = [
   { textAlign: "left", key: "standardHours", label: "GIỜ CÔNG CHUẨN" },
   { textAlign: "center", key: "checkIn", label: "GIỜ VÀO" },
   { textAlign: "center", key: "checkOut", label: "GIỜ RA" },
-  { textAlign: "center", key: "late", label: "ĐI MUỘN" },
-  { textAlign: "center", key: "early", label: "VỀ SỚM" },
-  { textAlign: "center", key: "workUnits", label: "CÔNG" },
-  { textAlign: "center", key: "totalHours", label: "TỔNG GIỜ" },
-  { textAlign: "center", key: "overtime", label: "TĂNG CA" },
-  { textAlign: "center", key: "compensatory", label: "GIỜ BÙ" },
+  { textAlign: "center", key: "lateMinutes", label: "ĐI MUỘN" },
+  { textAlign: "center", key: "earlyMinutes", label: "VỀ SỚM" },
+  { textAlign: "center", key: "workCount", label: "CÔNG" },
+  { textAlign: "center", key: "totalWorkHours", label: "TỔNG GIỜ" },
+  { textAlign: "center", key: "overtimeHours", label: "TĂNG CA" },
+  { textAlign: "center", key: "compHours", label: "GIỜ BÙ" },
 ]
 
-type FlatRow =
-  | {
-    type: "group"
-    key: string
-    staff: HourlyPayrollRecord
-    index: number
-    isExpanded: boolean
-  }
-  | {
-    type: "shift"
-    key: string
-    staffId: string
-    shift: HourlyPayrollDay
-    isLast: boolean
-  }
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2)
-}
 
 export function GroupedTable() {
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
     // () => new Set(hourlyPayrollMock.map((staff) => staff.id))
     () => new Set()
   )
+
+  const { filters } = useQueryFilter<ShiftManagementParams>();
+
+  const { startDate, endDate } = useMemo(() => {
+    const monthStr = filters.month ?? dayjs().format('YYYY-MM');
+    const monthDate = dayjs(monthStr, 'YYYY-MM');
+
+    return {
+      startDate: monthDate.startOf('month').format('YYYY-MM-DD'),
+      endDate: monthDate.endOf('month').format('YYYY-MM-DD'),
+    };
+  }, [filters.month]);
+
+  const ROW_HEIGHT = 52
+  const TABLE_HEIGHT = 500
   const { onOpen } = useDrawer((state) => state);
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const [stickyGroup, setStickyGroup] = useState<FlatRow | null>(null)
+
+  const { data, isLoading } = useDetailsTimeSheetList({
+    page: filters.page ?? 1,
+    limit: filters.limit ?? 10,
+    fromDate: startDate,
+    toDate: endDate,
+    search: filters.search,
+    departmentId: filters.departmentId,
+    roomId: filters.roomId,
+  });
+
+  const flatRows = useMemo<FlatRow[]>(() => {
+    const rows: FlatRow[] = []
+
+    data?.data.forEach((shift, idx) => {
+      const staffIndex = idx + 1
+      const isExpanded = expandedGroups.has(shift.staff?.code)
+      const allDays = shift.days
+
+      rows.push({
+        type: "group",
+        key: `group-${shift.staff?.code}`,
+        staff: shift.staff,
+        index: staffIndex,
+        isExpanded,
+      })
+
+      if (isExpanded) {
+        allDays.forEach((day, dayIdx) => {
+          rows.push({
+            type: "shift",
+            key: `shift-${shift.staff?.code}-${dayIdx}`,
+            staffId: shift.staff?.code,
+            shift: day,
+            isLast: dayIdx === allDays.length - 1,
+          })
+        })
+      }
+    })
+
+    return rows
+  }, [expandedGroups, isLoading])
+
+  // Build an index: for each flat-row index, which group does it belong to?
+  const groupIndexMap = useMemo(() => {
+    const map: FlatRow[] = []
+    let currentGroup: FlatRow | null = null
+    for (const row of flatRows) {
+      if (row.type === "group") {
+        currentGroup = {
+          type: "group",
+          key: `group-${row.staff.code}`,
+          staff: row.staff,
+          index: row.index,
+          isExpanded: row.isExpanded,
+        }
+      }
+      map.push(currentGroup!)
+    }
+    return map
+  }, [flatRows, expandedGroups])
+  // Attach a scroll listener to the virtualized scroll container
+  useEffect(() => {
+    const wrapper = wrapperRef.current
+    if (!wrapper) return
+
+    // Find the actual scrollable element in the HeroUI Table
+    let actualScroller: HTMLElement | null = null
+
+    // Try multiple selectors to find the scroll container
+    const candidates = [
+      wrapper.querySelector('[role="table"]') as HTMLElement | null,
+      wrapper.querySelector('[style*="overflow"]') as HTMLElement | null,
+      wrapper.querySelector('div[class*="overflow"]') as HTMLElement | null,
+    ]
+
+    // Find the first element with scrollTop property (indicating it's scrollable)
+    for (const candidate of candidates) {
+      if (candidate && candidate.scrollHeight > candidate.clientHeight) {
+        actualScroller = candidate
+        break
+      }
+    }
+
+    if (!actualScroller) {
+      return
+    }
+
+    function handleScroll() {
+      const scrollTop = actualScroller!.scrollTop
+      const topRowIndex = Math.floor(scrollTop / ROW_HEIGHT)
+      const clampedIndex = Math.max(0, Math.min(topRowIndex, groupIndexMap.length - 1))
+
+      // Find which group header is currently being scrolled past
+      let currentGroup: FlatRow | null = null
+      // for (let i = clampedIndex; i >= 0; i--) {
+      //   const row = flatRows[i]
+      //   if (row && row.type === "group") {
+      currentGroup = groupIndexMap[clampedIndex] ?? null
+      //     break
+      //   }
+      // }
+
+      setStickyGroup(currentGroup)
+    }
+
+    actualScroller.addEventListener("scroll", handleScroll, { passive: true })
+    return () => actualScroller.removeEventListener("scroll", handleScroll)
+  }, [groupIndexMap, flatRows])
 
   const toggleGroup = useCallback((staffId: string) => {
     setExpandedGroups((prev) => {
@@ -72,38 +176,6 @@ export function GroupedTable() {
       return next
     })
   }, [])
-
-  const flatRows = useMemo<FlatRow[]>(() => {
-    const rows: FlatRow[] = []
-
-    hourlyPayrollMock.forEach((staff, idx) => {
-      const staffIndex = idx + 1
-      const isExpanded = expandedGroups.has(staff.id)
-      const allDays = staff.weeks.flatMap((week) => week.days)
-
-      rows.push({
-        type: "group",
-        key: `group-${staff.id}`,
-        staff,
-        index: staffIndex,
-        isExpanded,
-      })
-
-      if (isExpanded) {
-        allDays.forEach((shift, shiftIdx) => {
-          rows.push({
-            type: "shift",
-            key: `shift-${staff.id}-${shiftIdx}`,
-            staffId: staff.id,
-            shift,
-            isLast: shiftIdx === allDays.length - 1,
-          })
-        })
-      }
-    })
-
-    return rows
-  }, [expandedGroups])
 
   const totalStaff = hourlyPayrollMock.length
   const totalShifts = hourlyPayrollMock.reduce(
@@ -117,43 +189,7 @@ export function GroupedTable() {
         if (columnKey !== "date") return null
 
         return (
-          <div
-            className="flex w-full items-center gap-3 cursor-pointer px-4 py-2 bg-[#E4E4E7] hover:bg-accent transition-colors"
-            onClick={() => toggleGroup(row.staff.id)}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault()
-                toggleGroup(row.staff.id)
-              }
-            }}
-          >
-            <IconCaretRightFilled
-              className={cn(
-                "h-4 w-4 text-muted-foreground transition-transform duration-200",
-                row.isExpanded && "rotate-90"
-              )}
-            />
-            <div className="text-sm font-medium">{row.index}.</div>
-
-            <div className="flex items-center gap-3 pl-4">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                {getInitials(row.staff.staffName)}
-              </div>
-              <div className="flex flex-col gap-0.5">
-                <div className="text-sm font-medium text-foreground">
-                  {row.staff.staffName} - {row.staff.staffCode}
-                </div>
-                <div className="text-sm font-medium text-gray-600">{row.staff.position}</div>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-0.5 pl-8">
-              <div className="text-sm font-medium text-foreground">{row.staff.department}</div>
-              <div className="text-sm font-medium text-gray-600">{row.staff.room}</div>
-            </div>
-          </div>
+          <StickyRowGroupStaff row={row} toggleGroup={toggleGroup} key={row.staff.code} />
         )
       }
 
@@ -167,7 +203,7 @@ export function GroupedTable() {
         case "date":
           return (
             <span className={cn("flex font-medium text-foreground", "pl-6", "py-2.5 px-4")}>
-              {shift.date}
+              {dayjs(shift.date).format("DD/MM/YYYY")}
             </span>
           );
 
@@ -181,7 +217,7 @@ export function GroupedTable() {
         case "standardHours":
           return (
             <span className={cn("flex text-muted-foreground py-2.5 px-4", "hidden sm:flex")}>
-              {shift.standardHours ? `${shift.standardHours}h` : "--"}
+              {STANDARD_HOURS}
             </span>
           );
 
@@ -199,7 +235,7 @@ export function GroupedTable() {
             </span>
           );
 
-        case "late":
+        case "lateMinutes":
           return (
             <span
               className={cn(
@@ -211,43 +247,43 @@ export function GroupedTable() {
             </span>
           );
 
-        case "early":
+        case "earlyMinutes":
           return (
             <span
               className={cn(
-                shift.earlyLeaveMinutes > 0 ? colorEarly : "text-muted-foreground",
+                shift.earlyMinutes > 0 ? colorEarly : "text-muted-foreground",
                 "hidden md:flex justify-center py-2.5 px-4"
               )}
             >
-              {shift.earlyLeaveMinutes > 0 ? `${shift.earlyLeaveMinutes}` : "--"}
+              {shift.earlyMinutes > 0 ? `${shift.earlyMinutes}` : "--"}
             </span>
           );
 
-        case "workUnits":
+        case "workCount":
           return (
             <span className={cn("flex text-foreground py-2.5 px-4", "justify-center")}>
-              {shift.workUnits ? shift.workUnits.toFixed(1) : "0"}
+              {shift.workCount ? shift.workCount.toFixed(1) : "0"}
             </span>
           );
 
-        case "totalHours":
+        case "totalWorkHours":
           return (
             <span className={cn("flex text-muted-foreground py-2.5 px-4", "hidden lg:flex justify-center")}>
-              {shift.totalHours !== null ? `${shift.totalHours.toFixed(1)}` : "--"}
+              {shift.totalWorkHours !== null ? `${shift?.totalWorkHours.toFixed(1)}` : "--"}
             </span>
           );
 
-        case "overtime":
+        case "overtimeHours":
           return (
             <span className={cn("flex py-2.5 px-4", "hidden lg:flex justify-center")}>
               {shift.overtimeHours > 0 ? `${shift.overtimeHours.toFixed(1)}` : "--"}
             </span>
           );
 
-        case "compensatory":
+        case "compHours":
           return (
             <span className={cn("flex py-2.5 px-4", "hidden xl:flex justify-center")}>
-              {shift.compensatoryHours > 0 ? `${shift.compensatoryHours.toFixed(1)}` : "--"}
+              {shift.compHours > 0 ? `${shift.compHours.toFixed(1)}` : "--"}
             </span>
           );
 
@@ -260,16 +296,23 @@ export function GroupedTable() {
 
   return (
     <div className="w-full overflow-hidden rounded-xl bg-card shadow-sm bg-white p-4">
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto relative" ref={wrapperRef}>
+        {/* Sticky group header overlay */}
+        {stickyGroup && <div
+          className="pointer-events-auto absolute right-0 left-0 z-20 flex items-center gap-1 from-group-header to-group-header/80 ps-4 pe-7.75"
+          style={{ top: 64, height: ROW_HEIGHT }}
+        >
+          <StickyRowGroupStaff row={stickyGroup} toggleGroup={toggleGroup} key={stickyGroup.key} />
+        </div>}
         <Table
-          isStriped
+          // isStriped
           isVirtualized
           isHeaderSticky
-          maxTableHeight={500}
-          rowHeight={52}
+          maxTableHeight={TABLE_HEIGHT}
+          rowHeight={ROW_HEIGHT}
           radius="none"
           classNames={{
-            wrapper: "border-0 rounded-none",
+            wrapper: "border-0 rounded-none pt-0",
             th: cn(
               "h-14 bg-[#F4F4F5] text-[#71717A] text-xs font-semibold uppercase tracking-wider px-4 py-2.5 text-left",
               // "!rounded-none",
