@@ -99,7 +99,10 @@ export function Table<T extends object = object>({
                 return (
                   <tr
                     key={rKey}
-                    className={cn('hover:bg-gray-50 transition-colors', rClass)}
+                    className={cn(
+                      'hover:bg-gray-50 transition-colors group border-b border-gray-200',
+                      rClass,
+                    )}
                     {...rowProps}
                   >
                     {leafColumns.map((col, colIndex) => {
@@ -115,7 +118,8 @@ export function Table<T extends object = object>({
                           key={`${rKey}-${col.key}`}
                           className={cn(
                             tdBase,
-                            col.fixed && 'sticky z-20 bg-white',
+                            col.fixed && 'sticky z-20 bg-white group-hover:bg-gray-50',
+
                             ALIGN_CLASS[col.align ?? 'left'],
                             sizeClass,
                             col.className,

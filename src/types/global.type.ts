@@ -41,7 +41,7 @@ export enum Status {
   PENDING = 'PENDING',
   ACTIVE = 'ACTIVE',
   INACTIVE = 'INACTIVE',
-WORKING = 'WORKING',
+  WORKING = 'WORKING',
   RESIGNED = 'RESIGNED',
 }
 

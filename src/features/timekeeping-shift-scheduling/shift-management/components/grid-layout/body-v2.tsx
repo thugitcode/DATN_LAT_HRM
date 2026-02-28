@@ -25,8 +25,6 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
 
   const dateStrs = useMemo(() => days.map((d) => d.date), [days]);
 
-  console.log('dateStrs', dateStrs);
-
   const toggleExpand = (id: string) => {
     setExpandedIds((prev) => {
       const next = new Set(prev);
@@ -69,7 +67,7 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
                 {hasMultipleRows && (
                   <button
                     className={cn(
-                      'absolute left-2.5 top-5  z-20 transition-transform duration-200',
+                      'absolute left-2.5 top-5 z-20 transition-transform duration-200',
                       isExpanded ? 'rotate-0 text-[#3B82F6]' : '-rotate-90 text-[#A1A1AA]',
                     )}
                     onClick={() => toggleExpand(staff.id)}

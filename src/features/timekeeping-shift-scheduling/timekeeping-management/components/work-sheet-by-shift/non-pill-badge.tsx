@@ -1,4 +1,5 @@
 import { memo, type FC } from 'react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import { STATUS_COLOR_MAP, WORK_SHEET_LEGEND_ITEMS } from '../../constants/data';
 import { AttendanceStatus, type ShiftCode } from '../../types/index.type';
@@ -14,10 +15,21 @@ const getLabel = (shift: ShiftCode): string => {
 
 interface NonPillBadgeProps {
   shift: ShiftCode;
+  workScheduleDetailId?: string;
 }
 
-export const NonPillBadge: FC<NonPillBadgeProps> = memo(({ shift }) => {
+export const NonPillBadge: FC<NonPillBadgeProps> = memo(({ shift, workScheduleDetailId }) => {
   const label = getLabel(shift);
+
+  const open = useDrawer((state) => state.onOpen);
+
+  const onClick = () => {
+    open(
+      DrawerType.TIME_SHEET_DETAIL,
+
+      workScheduleDetailId,
+    );
+  };
 
   if (shift === AttendanceStatus.DayOff) {
     return (
@@ -48,6 +60,7 @@ export const NonPillBadge: FC<NonPillBadgeProps> = memo(({ shift }) => {
       title={label}
       className={`${BASE_CLASS} flex items-center justify-center text-xs font-bold text-white`}
       style={{ backgroundColor: STATUS_COLOR_MAP[shift] ?? '#94a3b8' }}
+      onClick={onClick}
     >
       {shift}
     </div>

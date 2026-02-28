@@ -50,7 +50,6 @@ export const HOURLY_PAYROLL_LEGEND_ITEMS: LegendItem[] = [
   { status: HoursStatusEnum.ERROR, label: 'Lỗi dữ liệu', color: '#EF4444' },
 ];
 
-
 // export const HOURLY_PAYROLL_LEGEND_ITEMS: LegendItem[] = [
 //   { status: HourlyPayrollStatus.FULL_HOURS, label: 'Đủ giờ', color: '#006FEE' },
 //   { status: HourlyPayrollStatus.SHORTAGE, label: 'Thiếu', color: '#F31260' },
@@ -70,6 +69,7 @@ export enum DetailedTimeSheetColor {
 
 export const CELL_W = 52;
 export const PILL_INSET = 6;
+export const STICKY_COL_W = 400;
 
 export const STATUS_COLOR_MAP: Partial<Record<ShiftCode, string>> = Object.fromEntries(
   WORK_SHEET_LEGEND_ITEMS.filter((item) => item.color !== 'transparent').map((item) => [
@@ -78,8 +78,6 @@ export const STATUS_COLOR_MAP: Partial<Record<ShiftCode, string>> = Object.fromE
   ]),
 );
 
-// Những shift nào hiển thị dạng pill kéo dài (span > 1)
-// Hiện tại chỉ "Đ" (OnTime) mới pill, còn lại hiển thị badge tròn
 export const PILL_SHIFTS = new Set<ShiftCode>([AttendanceStatus.OnTime]);
 
 export const isPillRun = (shift: ShiftCode, span: number): boolean =>

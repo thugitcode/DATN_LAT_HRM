@@ -41,7 +41,7 @@ export const GridHourlyPayrollScheduleRow: FC<GridHourlyPayrollScheduleRowProps>
   hoveredDay,
   onDayEnter,
   onDayLeave,
-}) => {  
+}) => {
   return (
     <Fragment>
       {days.map((day, di) => {

@@ -1,4 +1,7 @@
-import { memo, type FC } from 'react';
+import { memo, useEffect, useRef, type FC } from 'react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
+
+import { getLabelShift } from '@/features/timekeeping-shift-scheduling/helper';
 
 import {
   CELL_W,
@@ -12,49 +15,74 @@ interface ShiftPillProps {
   shift: ShiftCode;
   span: number;
   hoveredOffset: number | null;
+  workScheduleDetailId?: string;
 }
 
-const getLabel = (shift: ShiftCode): string => {
-  return WORK_SHEET_LEGEND_ITEMS.find((i) => i.status === shift)?.label ?? shift;
-};
+export const ShiftPill: FC<ShiftPillProps> = memo(
+  ({ shift, span, hoveredOffset, workScheduleDetailId }) => {
+    const pillRef = useRef<HTMLDivElement>(null);
 
-const getCells = (span: number): number[] => {
-  return Array.from({ length: span }, (_, i) => i);
-};
+    const open = useDrawer((state) => state.onOpen);
 
-export const ShiftPill: FC<ShiftPillProps> = memo(({ shift, span, hoveredOffset }) => {
-  return (
-    <div
-      title={getLabel(shift)}
-      className="relative flex items-center rounded-4xl text-white font-bold text-xs select-none cursor-default transition-all duration-150 hover:brightness-110 hover:shadow-lg overflow-hidden"
-      style={{
-        width: span * CELL_W - PILL_INSET * 2,
-        height: 36,
-        backgroundColor: STATUS_COLOR_MAP[shift] ?? '#94a3b8',
-        flexShrink: 0,
-      }}
-    >
-      {hoveredOffset !== null && (
+    const onClick = () => {
+      open(
+        DrawerType.TIME_SHEET_DETAIL,
+
+        workScheduleDetailId,
+      );
+    };
+
+    // useEffect(() => {
+    //   if (pillRef.current)
+    //     const td = pillRef.current.closest('td');
+    //     console.log({
+    //       pillWidth: pillRef.current.getBoundingClientRect().width,
+    //       tdWidth: td?.getBoundingClientRect().width,
+    //       expectedTdWidth: span * CELL_W,
+    //       CELL_W,
+    //       PILL_INSET,
+    //       span,
+    //     });
+    //   }
+    // }, [span]);
+
+    return (
+      <div className="w-full" style={{ paddingLeft: PILL_INSET, paddingRight: PILL_INSET }}>
         <div
-          className="absolute inset-y-0 bg-white/20 pointer-events-none"
+          ref={pillRef}
+          title={getLabelShift(shift)}
+          className="relative flex items-center rounded-4xl text-white font-bold text-xs select-none cursor-default transition-all duration-150 hover:brightness-110 hover:shadow-lg overflow-hidden"
           style={{
-            left: hoveredOffset * CELL_W - PILL_INSET,
-            width: CELL_W,
+            height: 36,
+            backgroundColor: STATUS_COLOR_MAP[shift] ?? '#94a3b8',
           }}
-        />
-      )}
-
-      {getCells(span).map((i) => (
-        <span
-          key={i}
-          className="flex items-center justify-center shrink-0"
-          style={{ width: CELL_W }}
+          onClick={onClick}
         >
-          {shift}
-        </span>
-      ))}
-    </div>
-  );
-});
+          {hoveredOffset !== null && (
+            <div
+              className="absolute inset-y-0 bg-white/20 pointer-events-none"
+              style={{
+                left: hoveredOffset * CELL_W - PILL_INSET,
+                width: CELL_W,
+              }}
+            />
+          )}
+
+          <div className="flex" style={{ marginLeft: -PILL_INSET, marginRight: -PILL_INSET }}>
+            {Array.from({ length: span }, (_, i) => (
+              <span
+                key={i}
+                className="flex items-center justify-center shrink-0"
+                style={{ width: CELL_W, height: 36 }}
+              >
+                {shift}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  },
+);
 
 ShiftPill.displayName = 'ShiftPill';

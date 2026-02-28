@@ -27,4 +27,11 @@ export const timekeepingManagementQueryOptions = {
       queryKey: timekeepingManagementKeys.attendanceByHours(params),
       queryFn: () => timekeepingManagementService.getAttendanceByHours(params),
     }),
+
+  detail: (id: string) =>
+    queryOptions({
+      queryKey: timekeepingManagementKeys.detail(id),
+      queryFn: () => timekeepingManagementService.getDetail(id),
+      enabled: !!id,
+    }),
 } as const;

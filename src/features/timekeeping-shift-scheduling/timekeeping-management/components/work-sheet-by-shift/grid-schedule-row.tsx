@@ -3,7 +3,7 @@ import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import { cn } from '@/lib/utils';
 
-import { CELL_W, isPillRun, PILL_INSET, PILL_SHIFTS } from '../../constants/data';
+import { CELL_W, PILL_SHIFTS } from '../../constants/data';
 import { type DayCell, type ShiftRun } from '../../types/index.type';
 import { NonPillBadge } from './non-pill-badge';
 import { ShiftPill } from './shift-pill';
@@ -25,8 +25,6 @@ export const GridScheduleRow: FC<GridScheduleRowProps> = ({
   onDayEnter,
   onDayLeave,
 }) => {
-  const open = useDrawer((state) => state.onOpen);
-
   const handlePillMouseMove = useCallback(
     (e: React.MouseEvent<HTMLTableCellElement>, run: ShiftRun) => {
       const rect = e.currentTarget.getBoundingClientRect();
@@ -36,13 +34,11 @@ export const GridScheduleRow: FC<GridScheduleRowProps> = ({
     [onDayEnter],
   );
 
-  console.log('run___________________________________', runs);
-
   return (
     <Fragment>
       {runs.map((run) => {
+        const isPill = PILL_SHIFTS.has(run.shift) && run.span >= 2;
         const { startIndex: di, span, shift } = run;
-        const isPill = isPillRun(run.shift, span);
         const isCN = schedule[di]?.day === 0;
         const isColHovered = hoveredDay !== null && hoveredDay >= di && hoveredDay < di + span;
         const hoveredOffset = isColHovered && hoveredDay !== null ? hoveredDay - di : null;
@@ -55,19 +51,24 @@ export const GridScheduleRow: FC<GridScheduleRowProps> = ({
             onMouseEnter={!isPill ? () => onDayEnter(di) : undefined}
             onMouseLeave={onDayLeave}
             className={cn(
-              'border-b border-gray-50 p-0 transition-colors duration-100',
+              'border-b border-gray-50 p-0 transition-colors duration-100 relative',
               !isPill && isColHovered && (isHovered ? 'bg-blue-100/60' : 'bg-blue-50/60'),
               !isPill && !isColHovered && isCN && 'bg-red-50/30',
             )}
           >
-            <div onClick={() => open(DrawerType.TIME_SHEET_DETAIL)}>
+            <div>
               {isPill ? (
                 <div className="flex items-center h-full">
-                  <ShiftPill shift={shift} span={span} hoveredOffset={hoveredOffset} />
+                  <ShiftPill
+                    shift={shift}
+                    span={span}
+                    hoveredOffset={hoveredOffset}
+                    workScheduleDetailId={run.workScheduleDetailId}
+                  />
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-full">
-                  <NonPillBadge shift={shift} />
+                  <NonPillBadge shift={shift} workScheduleDetailId={run.workScheduleDetailId} />
                 </div>
               )}
             </div>

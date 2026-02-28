@@ -14,6 +14,8 @@ export const API_ENDPOINTS = {
       ATTENDANCE_BY_HOURS: '/work-schedule/attendance-by-hours',
     },
     SHIFT_DETAILS: '/work-schedule/detailed-attendance-table',
+
+    ATTENDANCE_EXPLANATION: '/attendance-explanation',
   },
 
   OTHER_SERVICE: {
