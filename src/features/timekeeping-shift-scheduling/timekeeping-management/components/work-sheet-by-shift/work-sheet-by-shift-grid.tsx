@@ -11,12 +11,9 @@ import {
   mapToRow,
 } from '@/features/timekeeping-shift-scheduling/helper';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
-import {
-  COL_W,
-  ROW_H,
-} from '@/features/timekeeping-shift-scheduling/shift-management/constants/constants';
+import { ROW_H } from '@/features/timekeeping-shift-scheduling/shift-management/constants/constants';
 
-import { CELL_W } from '../../constants/data';
+import { CELL_W, STICKY_COL_W } from '../../constants/data';
 import type { WorkSheetByShiftType } from '../../types/timekeeping-management.type';
 import { GridScheduleRow } from './grid-schedule-row';
 import { GridStickyHeaderRow } from './grid-sticky-header-row';
@@ -49,7 +46,10 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
     <div className="h-[calc(100vh-356px)] overflow-auto relative">
       <table
         className="border-separate border-spacing-0"
-        style={{ width: 400 + days.length * CELL_W }}
+        style={{
+          width: STICKY_COL_W + days.length * CELL_W,
+          tableLayout: 'fixed',
+        }}
       >
         <GridStickyHeaderRow days={days} hoveredDay={hoveredDay} setHoveredDay={setHoveredDay} />
 
@@ -65,7 +65,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                   key={row.employee.id}
                   style={{ height: ROW_H }}
                   className={cn(
-                    'transition-colors duration-100',
+                    'transition-colors duration-100 bg-white',
                     isRowHovered ? 'bg-blue-50/40' : 'bg-white',
                   )}
                   onMouseEnter={() => setHoveredRow(ri)}
@@ -74,9 +74,9 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                   <td
                     style={{ minWidth: 320, width: 320 }}
                     className={cn(
-                      'sticky left-0 z-10 p-0 border-b px-2.5 border-r border-gray-100',
+                      'sticky left-0 z-50 p-0 border-b px-2.5 border-r border-gray-100 bg-white',
                       'transition-colors duration-100',
-                      isRowHovered ? 'bg-blue-50/60' : 'bg-white',
+                      // isRowHovered ? 'bg-blue-50/60!' : '',
                     )}
                   >
                     <StaffInfo
@@ -85,6 +85,8 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                       departmentName={row.employee.departmentName}
                       name={row.employee.name}
                       role={row.employee.role as StaffPosition}
+                      departments={row.employee.departments}
+                      rooms={row.employee.rooms}
                     />
                   </td>
 

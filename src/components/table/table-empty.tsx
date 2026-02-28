@@ -16,7 +16,7 @@ export const TableEmpty = () => {
             <span className="absolute -bottom-1 -left-1 w-2 h-2 rounded-full bg-[#E4E4E7]" />
           </div>
 
-          <p className="text-[15px] font-semibold text-[#18181B] mb-1">Chưa có dữ liệu</p>
+          <p className="text-[15px] font-semibold text-[#18181B] mb-1">Không có dữ liệu</p>
         </div>
       </td>
     </tr>

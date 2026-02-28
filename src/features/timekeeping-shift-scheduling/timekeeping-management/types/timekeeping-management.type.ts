@@ -1,16 +1,26 @@
-import type { Department } from "@/types/deparment.type";
-import type { StaffPosition } from "@/types/global.type";
-import type { Room } from "@/types/room.type";
+import type { StaffPosition } from '@/types/global.type';
+
+export interface WorkSheetByShiftRow {
+  id: string;
+  code: string;
+  name: string;
+  avatar: string | null;
+  departments: { id: string; name: string }[];
+  rooms: { id: string; name: string }[];
+  days: Record<string, WorkDay>;
+  summary: Summary;
+  position: StaffPosition;
+}
 
 export interface WorkDay {
   workScheduleDetailId: string;
-  date: string; // format: YYYY-MM-DD
+  date: string;
   displayCode: string;
-  shiftStartTime: string; // HH:mm:ss
-  shiftEndTime: string; // HH:mm:ss
+  shiftStartTime: string;
+  shiftEndTime: string;
   checkInTime: string | null;
   checkOutTime: string | null;
-  status: string; // có thể enum nếu cần
+  status: string;
   workWeight: number;
 }
 
@@ -18,8 +28,8 @@ export interface ShiftTimeKeeping {
   id: string;
   code: string;
   name: string;
-  startTime: string; // HH:mm:ss
-  endTime: string; // HH:mm:ss
+  startTime: string;
+  endTime: string;
 }
 
 export interface Department {
@@ -39,6 +49,7 @@ export interface StaffTimeKeeping {
   avatar: string | null;
   departments: Department[];
   rooms: Room[];
+  position: StaffPosition;
 }
 export interface Summary {
   totalWork: number;
@@ -56,17 +67,16 @@ export interface Summary {
 }
 
 export interface WorkSheetByShiftType {
-  days: Record<string, WorkDay>; // key dạng "YYYY-MM-DD"
+  days: Record<string, WorkDay>;
   shift: ShiftTimeKeeping;
   staff: StaffTimeKeeping;
   summary: Summary;
 }
 
-
 export interface AttendanceByHoursResponse {
   departments: Department[];
   rooms: Room[];
-  position: StaffPosition
+  position: StaffPosition;
   staffId: string;
   staffCode: string;
   staffName: string;

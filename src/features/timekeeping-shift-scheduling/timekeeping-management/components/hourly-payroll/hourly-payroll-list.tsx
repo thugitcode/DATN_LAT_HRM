@@ -1,28 +1,45 @@
+import type { FC } from 'react';
+
+import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 import { Table } from '@/components/table/table';
 
-import type { ApiResponse } from '@/types';
 import { useColumnsHourlyPayroll } from '../../hooks/use-columns-hourly-payroll';
 import type { AttendanceByHoursResponse } from '../../types/timekeeping-management.type';
 
-export const HourlyPayrollList = (data: ApiResponse<AttendanceByHoursResponse[]>) => {
+interface HourlyPayrollListProps {
+  data?: AttendanceByHoursResponse[];
+  total?: number;
+  page?: number;
+  pageSize?: number;
+  isLoading?: boolean;
+  totalPage?: number;
+}
+
+export const HourlyPayrollList: FC<HourlyPayrollListProps> = ({
+  data = [],
+  isLoading,
+  page,
+  pageSize,
+  total,
+  totalPage,
+}) => {
   const { columns } = useColumnsHourlyPayroll();
 
   return (
     <Table
+      loading={isLoading}
       columns={columns}
-      dataSource={data?.data ?? []}
+      dataSource={data ?? []}
       rowKey="staffId"
       size="middle"
       className="h-[calc(100vh-440px)]"
       pagination={{
-        current: 1,
-        pageSize: 10,
-        total: 0,
+        current: page,
+        pageSize,
+        total: total || 0,
         showSizeChanger: true,
-        pageSizeOptions: [5, 10, 20, 50],
-        onChange: (page, pageSize) => {
-          console.log('Page changed:', page, pageSize);
-        },
+        pageSizeOptions: PAGE_SIZE_OPTIONS,
+        totalPage,
       }}
     />
   );

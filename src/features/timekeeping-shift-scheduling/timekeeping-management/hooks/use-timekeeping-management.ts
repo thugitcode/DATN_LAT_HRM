@@ -10,3 +10,7 @@ export function useAttendanceTable(params?: ShiftManagementParams) {
 export function useAttendanceByHours(params?: ShiftManagementParams) {
   return useQuery(timekeepingManagementQueryOptions.attendanceByHours(params));
 }
+
+export function useAttendanceDetail(id: string) {
+  return useQuery(timekeepingManagementQueryOptions.detail(id));
+}

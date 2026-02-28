@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
 
+import type { DailyAttendance } from '@/types/shift-details.type';
+
 import type { DayColumn } from './shift-management/types/type';
-import { PILL_SHIFTS } from './timekeeping-management/constants/data';
+import { PILL_SHIFTS, WORK_SHEET_LEGEND_ITEMS } from './timekeeping-management/constants/data';
 import type { WorkSheetByShiftRow } from './timekeeping-management/hooks/use-work-sheet-columns';
 import {
   AttendanceStatus,
@@ -11,7 +13,6 @@ import {
   type ShiftRun,
 } from './timekeeping-management/types/index.type';
 import type { WorkSheetByShiftType } from './timekeeping-management/types/timekeeping-management.type';
-import type { DailyAttendance } from '@/types/shift-details.type';
 
 export const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
@@ -92,7 +93,12 @@ function buildRuns(schedule: DayCell[]): ShiftRun[] {
     const { shift } = schedule[i];
 
     if (!PILL_SHIFTS.has(shift)) {
-      runs.push({ shift, startIndex: i, span: 1 });
+      runs.push({
+        shift,
+        startIndex: i,
+        span: 1,
+        workScheduleDetailId: schedule[i].workScheduleDetailId,
+      });
       i++;
       continue;
     }
@@ -100,7 +106,13 @@ function buildRuns(schedule: DayCell[]): ShiftRun[] {
     let j = i + 1;
     while (j < schedule.length && schedule[j].shift === shift) j++;
 
-    runs.push({ shift, startIndex: i, span: j - i });
+    runs.push({
+      shift,
+      startIndex: i,
+      span: j - i,
+      workScheduleDetailId: schedule[i].workScheduleDetailId,
+    });
+
     i = j;
   }
 
@@ -161,17 +173,20 @@ export function mapToRow(
     day: d.day,
     dayOfWeek: d.dayOfWeek,
     shift: (item.days[d.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
+    workScheduleDetailId: item.days[d.date]?.workScheduleDetailId,
   }));
 
   return {
     employee: {
       id: item.staff.id,
       name: item.staff.name,
-      role: item.staff.departments[0]?.name ?? '',
+      role: item.staff.position,
       phone: '',
       code: item.staff.code,
       avatar: item.staff.avatar,
-      departmentName: item.staff.departments[0]?.name ?? '',
+      departments: item.staff.departments,
+      rooms: item.staff.rooms,
+      departmentName: '',
     },
     schedule,
     runs: buildRuns(schedule),
@@ -184,10 +199,11 @@ export function mapToListRow(item: WorkSheetByShiftType): WorkSheetByShiftRow {
     code: item.staff.code,
     name: item.staff.name,
     avatar: item.staff.avatar,
-    departmentName: item.staff.departments[0]?.name ?? '',
-    position: item.staff.rooms[0]?.name ?? '',
+    departments: item.staff.departments,
+    rooms: item.staff.rooms,
     days: item.days,
     summary: item.summary,
+    position: item.staff.position,
   };
 }
 
@@ -203,16 +219,16 @@ export function getInitials(name: string) {
 export function fillMissingDaysWithDayjs(
   days: DailyAttendance[],
   startDate: string,
-  endDate: string
+  endDate: string,
 ): DailyAttendance[] {
-  const existingMap = new Map(days.map(d => [d.date, d]));
+  const existingMap = new Map(days.map((d) => [d.date, d]));
   const result: DailyAttendance[] = [];
 
   let current = dayjs(startDate);
   const end = dayjs(endDate);
 
   while (current.isSame(end) || current.isBefore(end)) {
-    const dateStr = current.format("YYYY-MM-DD");
+    const dateStr = current.format('YYYY-MM-DD');
 
     result.push(
       existingMap.get(dateStr) ?? {
@@ -227,16 +243,19 @@ export function fillMissingDaysWithDayjs(
         totalWorkHours: 0,
         overtimeHours: 0,
         compHours: 0,
-      }
+      },
     );
 
-    current = current.add(1, "day");
+    current = current.add(1, 'day');
   }
 
   return result;
 }
 
+export function getLabelShift(shift: ShiftCode): string {
+  return WORK_SHEET_LEGEND_ITEMS.find((i) => i.status === shift)?.label ?? shift;
+}
+
 export function getTotalDaysInMonth(year: number, month: number) {
-  // month: 1 → 12
   return new Date(year, month, 0).getDate();
 }

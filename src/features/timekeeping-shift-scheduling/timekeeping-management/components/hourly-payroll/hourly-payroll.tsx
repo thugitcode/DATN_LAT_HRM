@@ -4,7 +4,7 @@ import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { LayoutRenderer } from '@/features/timekeeping-shift-scheduling/components/layout-renderer';
 
-import { useAttendanceTable, useAttendanceByHours } from '../../hooks/use-timekeeping-management';
+import { useAttendanceByHours } from '../../hooks/use-timekeeping-management';
 import { HourlyPayrollGrid } from './hourly-payroll-grid';
 import { HourlyPayrollList } from './hourly-payroll-list';
 
@@ -22,18 +22,23 @@ export const HourlyPayroll = () => {
     roomId: filters.roomId,
   });
 
-  console.log('useAttendanceTable_____________data', data);
-
   return (
     <LayoutRenderer
       layouts={{
         [LayoutSwitcherEnum.LIST]: {
           component: HourlyPayrollList,
-          props: { data: data?.data },
+          props: {
+            data: data?.data,
+            isLoading,
+            total: data?.pagination?.total,
+            page: filters.page,
+            pageSize: filters.limit,
+            totalPage: data?.pagination?.totalPage,
+          },
         },
         [LayoutSwitcherEnum.GRID]: {
           component: HourlyPayrollGrid,
-          props: { data: data?.data },
+          props: { data: data?.data, isLoading },
         },
       }}
     />
