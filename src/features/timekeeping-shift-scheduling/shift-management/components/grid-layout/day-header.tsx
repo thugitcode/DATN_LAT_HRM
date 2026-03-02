@@ -51,7 +51,7 @@ export const DayHeader: FC<DayHeaderProps> = memo(({ data }) => {
               <span className="text-xs text-[#71717A] font-semibold">
                 {d.day} ({dayNames[d.dayOfWeek]})
               </span>
-              <span className="flex items-center gap-0.5 text-[10px] text-[#71717A]">
+              <span className="flex items-center gap-2 text-sm text-[#71717A]">
                 {icons.users}
                 {staffCountByDate[d.date] || 0}
               </span>

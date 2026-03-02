@@ -3,6 +3,8 @@
 import { useDrawer } from '@/store/useDrawer';
 import { Drawer, DrawerBody, DrawerContent, DrawerHeader } from '@heroui/react';
 
+import { cn } from '@/lib/utils';
+
 import { DRAWER_CONFIG } from './drawer.config';
 
 export function MainDrawer() {
@@ -26,7 +28,12 @@ export function MainDrawer() {
       <DrawerContent>
         {(onClose) => (
           <>
-            <DrawerHeader className="flex items-center px-6 py-5 text-[22px] font-bold text-gray-900">
+            <DrawerHeader
+              className={cn(
+                'flex items-center px-6 py-5 text-[22px] font-bold text-gray-900',
+                config.classNames?.header,
+              )}
+            >
               {config.title}
             </DrawerHeader>
             <DrawerBody className="bg-[#F4F4F5] px-0 py-0">{config.component}</DrawerBody>

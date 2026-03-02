@@ -15,7 +15,7 @@ interface UseColumnsProps {
   data?: StaffSchedule[];
 }
 
-const H_SHIFT = 78;
+const H_SHIFT = 58;
 
 export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
   const { month, year } = useYearMonth();
@@ -31,6 +31,20 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
         if (!map[schedule.date]) map[schedule.date] = {};
         map[schedule.date][staffId] = schedule.shifts?.length ?? 0;
       });
+    });
+    return map;
+  }, [data]);
+
+  const maxShiftsPerRow = useMemo(() => {
+    const map: Record<string, number> = {};
+    data.forEach((record) => {
+      const staffId = record.staff.id;
+      let max = 0;
+      record?.schedules?.forEach((schedule) => {
+        const count = schedule.shifts?.length ?? 0;
+        if (count > max) max = count;
+      });
+      map[staffId] = max;
     });
     return map;
   }, [data]);
@@ -95,13 +109,18 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
                 (schedule) => schedule.date === dateString,
               );
 
-              const maxShifts = maxShiftsPerDate[dateString]?.[record.staff.id] ?? 0;
+              // const maxShifts = maxShiftsPerDate[dateString]?.[record.staff.id] ?? 0;
+              const maxShifts = maxShiftsPerRow[record.staff.id] ?? 0;
 
               if (!daySchedule?.shifts?.length) {
                 return (
-                  <div className="flex flex-col items-center gap-1.5 h-full">
+                  <div className="flex flex-col items-center gap-1.5 h-full ">
                     {Array.from({ length: maxShifts }).map((_, idx) => (
-                      <div key={idx} className="flex flex-col items-center gap-0.5">
+                      <div
+                        key={idx}
+                        className="flex flex-col items-center gap-0.5 justify-center"
+                        style={{ height: H_SHIFT }}
+                      >
                         <span className="inline-flex items-center justify-center px-2 py-1 rounded-md text-sm h-7">
                           --
                         </span>
@@ -112,13 +131,17 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
               }
 
               return (
-                <div className="flex flex-col items-center gap-1.5">
+                <div className="flex flex-col items-start gap-1.5  h-full!">
                   {Array.from({ length: maxShifts }).map((_, idx) => {
                     const shift = daySchedule.shifts[idx];
 
                     if (!shift) {
                       return (
-                        <div key={idx} className="flex flex-col items-center gap-0.5">
+                        <div
+                          key={idx}
+                          className="flex flex-col items-center justify-center gap-0.5 w-full"
+                          style={{ height: H_SHIFT }}
+                        >
                           <span className="inline-flex items-center justify-center px-2 py-1 text-sm text-gray-400">
                             --
                           </span>
@@ -131,7 +154,11 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
                     )?.color;
 
                     return (
-                      <div key={shift.id || idx} className="flex flex-col items-center gap-0.5 ">
+                      <div
+                        key={shift.id || idx}
+                        className="flex flex-col items-center gap-0.5 h-full "
+                        style={{ height: H_SHIFT }}
+                      >
                         <span
                           className="max-w-25 truncate px-2 py-1 rounded-md text-sm cursor-pointer transition-transform hover:scale-105"
                           title={shift.shiftTemplateName}
@@ -166,7 +193,7 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
     });
 
     return cols;
-  }, [weeks, year, month, onOpen, maxShiftsPerDate]);
+  }, [weeks, month, year, maxShiftsPerRow, onOpen]);
 
   return {
     columns,

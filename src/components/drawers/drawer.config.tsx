@@ -14,6 +14,7 @@ type DrawerConfig = {
     base?: string;
     wrapper?: string;
     content?: string;
+    header?: string;
   };
 };
 
@@ -25,6 +26,9 @@ export const DRAWER_CONFIG: Record<DrawerType, DrawerConfig> = {
       placement: 'right',
       size: '2xl',
     },
+    classNames: {
+      header: 'text-[30px] px-6 pt-6 pb-3',
+    },
   },
   [DrawerType.CHANGE_SHIFT_DIVISION]: {
     title: 'Thay đổi phân ca',
@@ -32,6 +36,9 @@ export const DRAWER_CONFIG: Record<DrawerType, DrawerConfig> = {
     drawerProps: {
       placement: 'right',
       size: '2xl',
+    },
+    classNames: {
+      header: 'text-[30px] px-6 pt-6 pb-3',
     },
   },
   [DrawerType.EXPLANATION_DETAIL]: {

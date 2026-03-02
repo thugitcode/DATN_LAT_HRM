@@ -90,10 +90,10 @@ interface Staff extends BaseEntity {
   managementModule: unknown | null;
 }
 
-interface ShiftTemplate extends BaseEntity {
+export interface ShiftTemplateWorkScheduleDetail extends BaseEntity {
   code: string;
   name: string;
-  type: string;
+  type: ShiftTypeEnum;
   startTime: string;
   endTime: string;
   coefficient: string;
@@ -111,7 +111,7 @@ interface ShiftTemplate extends BaseEntity {
   status: string;
 }
 
-interface Department extends BaseEntity {
+export interface DepartmentWorkScheduleDetail extends BaseEntity {
   externalId: string;
   hospitalId: string;
   code: string;
@@ -155,7 +155,7 @@ export interface WorkScheduleDetail extends BaseEntity {
   note: string;
   assignedBy: string | null;
   staff: Staff;
-  shiftTemplate: ShiftTemplate;
-  department: Department;
-  room: Room;
+  shiftTemplate: ShiftTemplateWorkScheduleDetail;
+  department: DepartmentWorkScheduleDetail;
+  room: Room[];
 }
