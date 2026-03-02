@@ -114,7 +114,7 @@ export const ShiftManagement = () => {
   // );
 
   return (
-    <div className="flex flex-col justify-baseline h-full">
+    <div className="flex flex-col justify-between h-full">
       <div className="space-y-3">
         <WrapperToolBar className="space-y-4 flex flex-col">
           <div className="flex items-center justify-between">

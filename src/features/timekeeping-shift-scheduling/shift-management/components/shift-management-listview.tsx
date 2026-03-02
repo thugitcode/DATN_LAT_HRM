@@ -31,7 +31,7 @@ export const ShiftManagementListview: FC<Readonly<ShiftManagementListviewProps>>
       columns={columns}
       dataSource={data ?? []}
       size="middle"
-      className="h-[calc(100vh-384px)]"
+      className="h-[calc(100vh-362px)]"
       pagination={{
         current: page,
         pageSize,

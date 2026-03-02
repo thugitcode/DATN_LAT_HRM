@@ -40,8 +40,8 @@ const autoFillSingle = (items: { id: string }[]) =>
 const autoFillSingleOption = (items: Options[]) =>
   items.length === 1 ? (items[0]?.key ?? '') : '';
 
-const toNameKeyOptions = (items: { name: string; id: string }[]): Options[] =>
-  items.map(({ name, id }) => ({ label: name, key: id }));
+const toNameKeyOptions = (items?: { name: string; id: string }[]): Options[] =>
+  items?.map(({ name, id }) => ({ label: name, key: id })) ?? [];
 
 const toDateStr = (date: Date): string => date.toISOString().split('T')[0] ?? '';
 
@@ -194,8 +194,8 @@ export const WorkShiftsForm = () => {
   };
 
   const applyStaffOptions = (emp: (typeof staffOptions)[number]) => {
-    const departments = toNameKeyOptions(emp.departments);
-    const rooms = toNameKeyOptions(emp.rooms);
+    const departments = toNameKeyOptions(emp?.departments);
+    const rooms = toNameKeyOptions(emp?.rooms);
     setUserOptions({ departments, rooms });
     setValue('departmentId', autoFillSingleOption(departments), {
       shouldValidate: departments.length === 1,
@@ -407,9 +407,19 @@ const ShiftDetailRow = ({
   const selectedCa = caseCategoryOptions.find((ca) => ca.key === shiftTemplateId);
   const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
 
+  // Nếu là ca dạng ShiftTypeEnum.SPLIT thì không fill ngày tháng
+
   const handleSelectShiftTemplate = (id: string) => {
     const template = caseCategoryOptions.find((e) => e.key === id);
+
     if (!template) return;
+
+    if (template.type === ShiftTypeEnum.SPLIT) {
+      setValue(`${baseName}.startTime`, '');
+      setValue(`${baseName}.endTime`, '');
+      return;
+    }
+
     setValue(`${baseName}.startTime`, normalizeTime(template.startTime), { shouldValidate: true });
     setValue(`${baseName}.endTime`, normalizeTime(template.endTime), { shouldValidate: true });
   };

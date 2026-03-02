@@ -20,7 +20,7 @@ const LegendDot = memo(({ color, shape = 'circle' }: Pick<LegendItem, 'color' | 
       <span
         className="inline-block shrink-0 "
         style={{
-          color: color,
+          color: 'black',
         }}
       >
         --
@@ -63,7 +63,7 @@ export const TimekeepingManagementLegend: FC<Readonly<TimekeepingManagementLegen
   showStatus,
 }) => {
   return (
-    <div className="h-20.5 px-6 flex items-center justify-end bg-white border-t border-[#11111126]">
+    <div className="h-15 px-6 flex items-center justify-end bg-white border-t border-[#11111126]">
       <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 ">
         {legendItems.map((item) => (
           <LegendBadge key={item.status} item={item} showStatus={showStatus} />

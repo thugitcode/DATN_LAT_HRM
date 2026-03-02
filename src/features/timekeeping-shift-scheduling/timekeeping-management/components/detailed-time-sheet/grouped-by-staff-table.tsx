@@ -51,7 +51,7 @@ export function GroupedTable() {
   }, [filters.month]);
 
   const ROW_HEIGHT = 52;
-  const TABLE_HEIGHT = 500;
+  const TABLE_HEIGHT = 560;
   const { onOpen } = useDrawer((state) => state);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [stickyGroup, setStickyGroup] = useState<FlatRow | null>(null);
