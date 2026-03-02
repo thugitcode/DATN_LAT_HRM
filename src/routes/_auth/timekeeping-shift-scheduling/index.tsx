@@ -1,9 +1,15 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_auth/timekeeping-shift-scheduling/')({
   component: RouteComponent,
+
+  beforeLoad: () => {
+    throw redirect({
+      to: '/timekeeping-shift-scheduling/timekeeping-management',
+    });
+  },
 });
 
 function RouteComponent() {
-  return <div>Hello "/_auth/timekeeping-shift-scheduling/"!</div>;
+  return null;
 }

@@ -12,7 +12,7 @@ export const menuSidebar: MenuItem[] = [
     id: '2',
     path: '/admin/timekeeping-shift-scheduling',
     label: 'Chấm công và phân ca',
-    icon: icons.time,
+    icon: icons.calendar,
     children: [
       {
         id: '1',
@@ -41,27 +41,27 @@ export const menuSidebar: MenuItem[] = [
     id: '4',
     path: '/admin/staff-management',
     label: 'Quản lý nhân sự',
-    icon: icons.plusUser,
+    icon: icons.userInfor,
     children: [
       {
         id: '1',
         label: 'Nhân viên chính thức',
-        path: '/admin/staff-management/official-staff' as any,
+        path: '/admin/staff-management/official-staff',
       },
       {
         id: '2',
         label: 'Nhân viên thử việc',
-        path: '/admin/staff-management/probationary-staff' as any,
+        path: '/admin/staff-management/probationary-staff',
       },
       {
         id: '3',
         label: 'Nhân viên học việc',
-        path: '/admin/staff-management/apprentice-staff' as any,
+        path: '/admin/staff-management/apprentice-staff',
       },
       {
         id: '4',
         label: 'Nhân sự hợp tác',
-        path: '/admin/staff-management/partner-staff' as any,
+        path: '/admin/staff-management/partner-staff',
       },
     ],
   },

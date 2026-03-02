@@ -14,11 +14,19 @@ interface PaginationMeta {
   hasNextPage: boolean;
 }
 
-interface ApiResponse<T> {
+// interface ApiResponse<T> {
+//   statusCode: number;
+//   data: T;
+//   pagination: PaginationMeta | null;
+//   metadata: Record<string, unknown> | null;
+//   message: string;
+// }
+
+interface ApiResponse<T, TMeta = Record<string, unknown>> {
   statusCode: number;
   data: T;
   pagination: PaginationMeta | null;
-  metadata: Record<string, unknown> | null;
+  metadata: TMeta | null;
   message: string;
 }
 

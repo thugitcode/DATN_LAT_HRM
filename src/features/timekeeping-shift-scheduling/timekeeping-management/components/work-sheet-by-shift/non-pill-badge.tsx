@@ -1,28 +1,66 @@
 import { memo, type FC } from 'react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 
-import { STATUS_COLOR_MAP } from '../../constants/data';
+import { STATUS_COLOR_MAP, WORK_SHEET_LEGEND_ITEMS } from '../../constants/data';
 import { AttendanceStatus, type ShiftCode } from '../../types/index.type';
+
+const HATCH_PATTERN_ID = 'non-pill-hatch';
+
+const BASE_CLASS =
+  'size-9 rounded-full select-none cursor-default transition-all duration-150 hover:scale-110 hover:shadow-md';
+
+const getLabel = (shift: ShiftCode): string => {
+  return WORK_SHEET_LEGEND_ITEMS.find((item) => item.status === shift)?.label ?? shift;
+};
 
 interface NonPillBadgeProps {
   shift: ShiftCode;
+  workScheduleDetailId?: string;
 }
 
-export const NonPillBadge: FC<NonPillBadgeProps> = memo(({ shift }) => {
-  if (shift === 'OFF') {
+export const NonPillBadge: FC<NonPillBadgeProps> = memo(({ shift, workScheduleDetailId }) => {
+  const label = getLabel(shift);
+
+  const open = useDrawer((state) => state.onOpen);
+
+  const onClick = () => {
+    open(
+      DrawerType.TIME_SHEET_DETAIL,
+
+      workScheduleDetailId,
+    );
+  };
+
+  if (shift === AttendanceStatus.DayOff) {
     return (
-      <div className="w-9 h-9 rounded-full bg-gray-100 border-2 border-dashed border-gray-200" />
+      <div title={label} className={`${BASE_CLASS} relative overflow-hidden bg-gray-100`}>
+        <svg className="absolute inset-0 size-full" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern
+              id={HATCH_PATTERN_ID}
+              patternUnits="userSpaceOnUse"
+              width="6"
+              height="6"
+              patternTransform="rotate(45)"
+            >
+              <line x1="0" y1="0" x2="0" y2="6" stroke="#d1d5db" strokeWidth="1.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${HATCH_PATTERN_ID})`} />
+        </svg>
+        <span className="absolute inset-0 z-10 flex items-center justify-center text-xs font-semibold text-gray-600">
+          N
+        </span>
+      </div>
     );
   }
 
-  if (shift === AttendanceStatus.DayOff) {
-    return <span className="text-gray-400 font-semibold text-sm tracking-wide select-none">N</span>;
-  }
-
-  const hexColor = STATUS_COLOR_MAP[shift] ?? '#94a3b8';
   return (
     <div
-      className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white select-none shadow-sm transition-all duration-150 hover:scale-110 hover:shadow-md cursor-default"
-      style={{ backgroundColor: hexColor }}
+      title={label}
+      className={`${BASE_CLASS} flex items-center justify-center text-xs font-bold text-white`}
+      style={{ backgroundColor: STATUS_COLOR_MAP[shift] ?? '#94a3b8' }}
+      onClick={onClick}
     >
       {shift}
     </div>

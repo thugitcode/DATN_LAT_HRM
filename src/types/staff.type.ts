@@ -108,13 +108,11 @@ export interface StaffContract {
   durationUnit: DurationUnitEnum;
   jobTitle: StaffJobTitleEnum;
   position: StaffPositionEnum;
-  staff?: { id: string; code: string; name: string };
+  staff?: Staff;
   department?: { id: string; name: string };
   directManagerIds?: string[];
   shiftType?: ShiftTypeEnum;
   fixedShiftId?: string;
-  workTimeValue?: number;
-  workTimeUnit?: 'DAY' | 'WEEK' | 'MONTH';
   workingDays?: number[];
   status: ContractStatusEnum;
   approvedAt?: string;
@@ -158,7 +156,7 @@ export interface Staff {
 
   // Detail API returns nested relation format
   rlsStaffDepartments?: { id: string; department: { id: string; code?: string; name: string } }[];
-  rlsStaffRooms?: { id: string; room: { id: string; code?: string; name: string } }[];
+  rlsStaffRooms?: { id: string; room: { id: string; code?: string; name: string; department?: { id: string; name: string } } }[];
 
   // Detail fields
   identity?: string;

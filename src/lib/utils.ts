@@ -309,3 +309,45 @@ export function randomUUID() {
     return v.toString(16);
   });
 }
+
+export const formatTime = (time: string | undefined) => {
+  if (!time) return '--:--';
+  return time.substring(0, 5);
+};
+
+export function calculateWorkingHours(
+  checkIn: string,
+  checkOut: string,
+  breakMinutes: number
+) {
+  const [inHour, inMin] = checkIn.split(":").map(Number);
+  const [outHour, outMin] = checkOut.split(":").map(Number);
+
+  const checkInMinutes = (inHour ?? 0) * 60 + (inMin ?? 0);
+  const checkOutMinutes = (outHour ?? 0) * 60 + (outMin ?? 0);
+
+  const totalMinutes = checkOutMinutes - checkInMinutes - breakMinutes;
+
+  return +(totalMinutes / 60).toFixed(2);
+}
+
+interface Shift {
+  id: string;
+  name: string;
+  startTime: string;
+  endTime: string;
+  breakMinutes: number;
+  convertCompHours?: boolean; // có quy đổi giờ bù không
+  compHourRate?: number; // tỷ lệ quy đổi (vd: 1h OT = 1.5h bù)
+}
+
+export function calculateCompHours(
+  overtimeHours: number,
+  shift: Shift
+) {
+  if (!shift.convertCompHours || !shift.compHourRate) {
+    return 0;
+  }
+
+  return +(overtimeHours * shift.compHourRate).toFixed(2);
+}

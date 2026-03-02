@@ -1,8 +1,9 @@
-import { Fragment, type FC } from 'react';
+import { Fragment, useCallback, type FC } from 'react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import { cn } from '@/lib/utils';
 
-import { PILL_INSET, PILL_SHIFTS } from '../../constants/data';
+import { CELL_W, PILL_SHIFTS } from '../../constants/data';
 import { type DayCell, type ShiftRun } from '../../types/index.type';
 import { NonPillBadge } from './non-pill-badge';
 import { ShiftPill } from './shift-pill';
@@ -24,39 +25,53 @@ export const GridScheduleRow: FC<GridScheduleRowProps> = ({
   onDayEnter,
   onDayLeave,
 }) => {
+  const handlePillMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLTableCellElement>, run: ShiftRun) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const offset = Math.min(Math.floor((e.clientX - rect.left) / CELL_W), run.span - 1);
+      onDayEnter(run.startIndex + offset);
+    },
+    [onDayEnter],
+  );
+
   return (
     <Fragment>
       {runs.map((run) => {
-        const isPill = PILL_SHIFTS.has(run.shift);
-        const di = run.startIndex;
-        const isCN = schedule?.[di]?.weekday === 'CN';
-        const isColHovered = hoveredDay !== null && hoveredDay >= di && hoveredDay < di + run.span;
+        const isPill = PILL_SHIFTS.has(run.shift) && run.span >= 2;
+        const { startIndex: di, span, shift } = run;
+        const isCN = schedule[di]?.day === 0;
+        const isColHovered = hoveredDay !== null && hoveredDay >= di && hoveredDay < di + span;
+        const hoveredOffset = isColHovered && hoveredDay !== null ? hoveredDay - di : null;
 
         return (
           <td
             key={di}
-            colSpan={run.span}
-            onMouseEnter={() => onDayEnter(di)}
+            colSpan={span}
+            onMouseMove={isPill ? (e) => handlePillMouseMove(e, run) : undefined}
+            onMouseEnter={!isPill ? () => onDayEnter(di) : undefined}
             onMouseLeave={onDayLeave}
             className={cn(
-              'border-b border-gray-50 p-0 transition-colors duration-100',
-              isHovered && isColHovered && 'bg-blue-100/60',
-              !isHovered && isColHovered && 'bg-blue-50/60',
-              !isColHovered && isCN && !isPill && 'bg-red-50/30',
+              'border-b border-gray-50 p-0 transition-colors duration-100 relative',
+              !isPill && isColHovered && (isHovered ? 'bg-blue-100/60' : 'bg-blue-50/60'),
+              !isPill && !isColHovered && isCN && 'bg-red-50/30',
             )}
           >
-            {isPill ? (
-              <div
-                className="flex items-center h-full"
-                style={{ paddingLeft: PILL_INSET, paddingRight: PILL_INSET }}
-              >
-                <ShiftPill shift={run.shift} span={run.span} />
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <NonPillBadge shift={run.shift} />
-              </div>
-            )}
+            <div>
+              {isPill ? (
+                <div className="flex items-center h-full">
+                  <ShiftPill
+                    shift={shift}
+                    span={span}
+                    hoveredOffset={hoveredOffset}
+                    workScheduleDetailId={run.workScheduleDetailId}
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <NonPillBadge shift={shift} workScheduleDetailId={run.workScheduleDetailId} />
+                </div>
+              )}
+            </div>
           </td>
         );
       })}

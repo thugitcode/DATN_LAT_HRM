@@ -15,6 +15,7 @@ export const useCaseCategoryOptions = () => {
     page: 1,
     limit: 100,
   });
+
   return {
     options:
       data?.data?.map((item) => ({
@@ -22,6 +23,7 @@ export const useCaseCategoryOptions = () => {
         label: item.name,
         startTime: item.startTime,
         endTime: item.endTime,
+        type: item.type,
       })) ?? [],
   };
 };

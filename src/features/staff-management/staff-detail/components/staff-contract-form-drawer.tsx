@@ -1,4 +1,4 @@
-﻿import type { FC } from 'react';
+﻿import { type FC, useState, useCallback } from 'react';
 import {
     Drawer,
     DrawerContent,
@@ -10,9 +10,12 @@ import {
     Select,
     SelectItem,
     Checkbox,
-    RadioGroup,
-    Radio,
-    Divider,
+    Autocomplete,
+    AutocompleteItem,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
 } from '@heroui/react';
 import {
     IconFileDescription,
@@ -21,10 +24,16 @@ import {
     IconBeach,
     IconReceiptTax,
     IconShieldCheck,
-    IconBuildingHospital,
     IconPlus,
-    IconTrash
+    IconTrash,
+    IconChevronDown
 } from '@tabler/icons-react';
+
+interface WorkingAreaRow {
+    id: number;
+    departmentId: string;
+    roomId: string;
+}
 
 interface StaffContractFormDrawerProps {
     isOpen: boolean;
@@ -37,6 +46,18 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
     onClose,
     staffId,
 }) => {
+    const [workingAreas, setWorkingAreas] = useState<WorkingAreaRow[]>([
+        { id: Date.now(), departmentId: '', roomId: '' },
+    ]);
+
+    const addWorkingArea = useCallback(() => {
+        setWorkingAreas((prev) => [...prev, { id: Date.now(), departmentId: '', roomId: '' }]);
+    }, []);
+
+    const removeWorkingArea = useCallback((id: number) => {
+        setWorkingAreas((prev) => prev.filter((a) => a.id !== id));
+    }, []);
+
     return (
         <Drawer
             isOpen={isOpen}
@@ -65,79 +86,105 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             <h3 className="text-[15px] font-bold text-[#11181C]">Thông tin hợp đồng</h3>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <Select label="Loại hợp đồng" labelPlacement="outside" placeholder="Hợp tác" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                <SelectItem key="HT">Hợp tác</SelectItem>
-                                            </Select>
-                                            <Select label="Loại hình" labelPlacement="outside" placeholder="Fulltime" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                <SelectItem key="FT">Fulltime</SelectItem>
-                                            </Select>
+                                        <div className="pr-12 flex flex-col gap-4">
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <Select label="Loại hợp đồng" labelPlacement="outside" placeholder="Hợp tác" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
+                                                    <SelectItem key="HT">Hợp tác</SelectItem>
+                                                </Select>
+                                                <Select label="Loại hình" labelPlacement="outside" placeholder="Fulltime" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
+                                                    <SelectItem key="FT">Fulltime</SelectItem>
+                                                </Select>
 
-                                            <Select label="Chức danh" labelPlacement="outside" placeholder="Bác sĩ" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                <SelectItem key="BS">Bác sĩ</SelectItem>
-                                            </Select>
-                                            <Select label="Cấp bậc" labelPlacement="outside" placeholder="Nhân viên" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                <SelectItem key="NV">Nhân viên</SelectItem>
-                                            </Select>
+                                                <Select label="Chức danh" labelPlacement="outside" placeholder="Bác sĩ" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
+                                                    <SelectItem key="BS">Bác sĩ</SelectItem>
+                                                </Select>
+                                                <Select label="Cấp bậc" labelPlacement="outside" placeholder="Nhân viên" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
+                                                    <SelectItem key="NV">Nhân viên</SelectItem>
+                                                </Select>
 
-                                            <div className="flex items-end gap-2">
-                                                <Input label="Thời hạn hợp đồng" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none flex-1" }} isRequired />
-                                                <Select defaultSelectedKeys={["Năm"]} className="w-[100px]" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} aria-label="Đơn vị">
-                                                    <SelectItem key="Năm">Năm</SelectItem>
-                                                    <SelectItem key="Tháng">Tháng</SelectItem>
+                                                <Input
+                                                    label="Thời hạn hợp đồng"
+                                                    labelPlacement="outside"
+                                                    placeholder="Nhập"
+                                                    classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }}
+                                                    isRequired
+                                                    endContent={
+                                                        <Dropdown>
+                                                            <DropdownTrigger>
+                                                                <Button
+                                                                    variant="bordered"
+                                                                    className="h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white transition-all hover:bg-gray-50"
+                                                                    endContent={<IconChevronDown size={14} />}
+                                                                >
+                                                                    Năm
+                                                                </Button>
+                                                            </DropdownTrigger>
+                                                            <DropdownMenu aria-label="Chọn đơn vị" disallowEmptySelection selectionMode="single" selectedKeys={new Set(["YEAR"])}>
+                                                                <DropdownItem key="YEAR">Năm</DropdownItem>
+                                                                <DropdownItem key="MONTH">Tháng</DropdownItem>
+                                                            </DropdownMenu>
+                                                        </Dropdown>
+                                                    }
+                                                />
+                                                <Input label="Số hợp đồng" labelPlacement="outside" defaultValue="2336365" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
+
+                                                <Input type="date" label="Ngày bắt đầu" labelPlacement="outside" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired />
+                                                <Input type="date" label="Ngày kết thúc" labelPlacement="outside" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired />
+
+                                                <Select label="Khoa quản lý" labelPlacement="outside" placeholder="Chọn khoa" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
+                                                    <SelectItem key="K1">Khoa Xét Nghiệm</SelectItem>
+                                                </Select>
+                                                <Select label="Phòng quản lý" labelPlacement="outside" placeholder="Chọn phòng" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}>
+                                                    <SelectItem key="P1">Phòng Xét Nghiệm</SelectItem>
                                                 </Select>
                                             </div>
-                                            <Input label="Số hợp đồng" labelPlacement="outside" defaultValue="2336365" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
 
-                                            <Input type="date" label="Ngày bắt đầu" labelPlacement="outside" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired />
-                                            <Input type="date" label="Ngày kết thúc" labelPlacement="outside" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired />
-                                        </div>
+                                            {workingAreas.map((area, idx) => (
+                                                <div key={area.id} className="relative">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <Select label="Khoa làm việc" labelPlacement="outside" placeholder="Chọn khoa" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
+                                                            <SelectItem key="K1">Khoa Xét Nghiệm</SelectItem>
+                                                        </Select>
+                                                        <Select label="Phòng làm việc" labelPlacement="outside" placeholder="Chọn phòng" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}>
+                                                            <SelectItem key="P1">Phòng Xét Nghiệm</SelectItem>
+                                                        </Select>
+                                                    </div>
+                                                    <Button
+                                                        isIconOnly
+                                                        variant="light"
+                                                        className={`absolute -right-12 bottom-0 h-10 text-[#71717A] min-w-10 ${idx === 0 ? 'invisible' : ''}`}
+                                                        onPress={() => removeWorkingArea(area.id)}
+                                                    >
+                                                        <IconTrash size={18} />
+                                                    </Button>
+                                                </div>
+                                            ))}
 
-                                        <div className="grid grid-cols-2 gap-4 mt-2">
-                                            <Select label="Khoa quản lý" labelPlacement="outside" placeholder="Phụ sản" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                <SelectItem key="PS">Phụ sản</SelectItem>
-                                            </Select>
-                                            <Select label="Phòng quản lý" labelPlacement="outside" placeholder="Phụ sản" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}>
-                                                <SelectItem key="PS">Phụ sản</SelectItem>
-                                            </Select>
-                                        </div>
-
-                                        <div className="flex items-end gap-2 mt-2">
-                                            <div className="grid grid-cols-2 gap-4 flex-1">
-                                                <Select label="Khoa làm việc" labelPlacement="outside" placeholder="Khoa Phụ Sản" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                    <SelectItem key="PS">Khoa Phụ Sản</SelectItem>
-                                                </Select>
-                                                <Select label="Phòng làm việc" labelPlacement="outside" placeholder="Phòng CĐHA" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}>
-                                                    <SelectItem key="CDHA">Phòng CĐHA</SelectItem>
-                                                </Select>
-                                            </div>
-                                            <Button isIconOnly variant="light" className="h-10 text-[#71717A] min-w-10">
-                                                <IconTrash size={18} />
+                                            <Button variant="light" color="primary" className="justify-start px-0 font-medium text-[14px] w-fit" startContent={<IconPlus size={16} />} onPress={addWorkingArea}>
+                                                Thêm mới
                                             </Button>
-                                        </div>
 
-                                        <Button variant="light" color="primary" className="justify-start px-0 font-medium text-[14px] w-fit" startContent={<IconPlus size={16} />}>
-                                            Thêm mới
-                                        </Button>
-
-                                        <div className="grid grid-cols-2 gap-4 mt-2">
-                                            <Select label="Quản lý trực tiếp" labelPlacement="outside" placeholder="Chọn" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                <SelectItem key="MGR">Manager</SelectItem>
-                                            </Select>
-                                            <Select label="Loại hình làm việc theo ca" labelPlacement="outside" placeholder="Chọn" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                <SelectItem key="CA">Theo ca</SelectItem>
-                                            </Select>
-
-                                            <Select label="Ca làm việc" labelPlacement="outside" placeholder="Chọn" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                <SelectItem key="C1">Ca 1</SelectItem>
-                                            </Select>
-
-                                            <div className="flex items-end gap-2">
-                                                <Input label="Thời gian làm việc" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none flex-1" }} />
-                                                <Select defaultSelectedKeys={["Ngày"]} className="w-[100px]" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} aria-label="Đơn vị thời gian">
-                                                    <SelectItem key="Ngày">Ngày</SelectItem>
-                                                    <SelectItem key="Giờ">Giờ</SelectItem>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <Select label="Quản lý trực tiếp" labelPlacement="outside" placeholder="Chọn" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
+                                                    <SelectItem key="MGR">Manager</SelectItem>
                                                 </Select>
+                                                <Select label="Loại hình làm việc theo ca" labelPlacement="outside" placeholder="Chọn" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
+                                                    <SelectItem key="CA">Theo ca</SelectItem>
+                                                </Select>
+
+                                                <Autocomplete
+                                                    label="Ca làm việc"
+                                                    isRequired
+                                                    labelPlacement="outside"
+                                                    placeholder="Tìm theo mã ca hoặc tên ca"
+                                                    classNames={{ base: "w-full" }}
+                                                    inputProps={{ classNames: { inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" } }}
+                                                >
+                                                    <AutocompleteItem key="C1">Ca 1</AutocompleteItem>
+                                                    <AutocompleteItem key="C2">Ca 2</AutocompleteItem>
+                                                </Autocomplete>
+
+
                                             </div>
                                         </div>
 
@@ -214,13 +261,29 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             <Input label="Phụ cấp chức vụ" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
 
                                             <Input label="Phụ cấp độc hại, nguy hiểm" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
-                                            <div className="flex items-end gap-2">
-                                                <Input label="Phụ cấp ăn ca" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none flex-1" }} />
-                                                <Select defaultSelectedKeys={["Ngày"]} className="w-[85px]" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} aria-label="Đơn vị phụ cấp">
-                                                    <SelectItem key="Ngày">Ngày</SelectItem>
-                                                    <SelectItem key="Tháng">Tháng</SelectItem>
-                                                </Select>
-                                            </div>
+                                            <Input
+                                                label="Phụ cấp ăn ca"
+                                                labelPlacement="outside"
+                                                placeholder="Nhập"
+                                                classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }}
+                                                endContent={
+                                                    <Dropdown>
+                                                        <DropdownTrigger>
+                                                            <Button
+                                                                variant="bordered"
+                                                                className="h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white transition-all hover:bg-gray-50"
+                                                                endContent={<IconChevronDown size={14} />}
+                                                            >
+                                                                Ngày
+                                                            </Button>
+                                                        </DropdownTrigger>
+                                                        <DropdownMenu aria-label="Chọn đơn vị" disallowEmptySelection selectionMode="single" selectedKeys={new Set(["DAY"])}>
+                                                            <DropdownItem key="DAY">Ngày</DropdownItem>
+                                                            <DropdownItem key="MONTH">Tháng</DropdownItem>
+                                                        </DropdownMenu>
+                                                    </Dropdown>
+                                                }
+                                            />
 
                                             <Input label="Phụ cấp xăng xe" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
                                             <Input label="Phụ cấp điện thoại" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
@@ -242,9 +305,9 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             <SelectItem key="NET">Lương Net</SelectItem>
                                         </Select>
 
-                                        <div className="grid grid-cols-2 gap-4 mt-2">
-                                            <Input label="Lương net" labelPlacement="outside" placeholder="" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
-                                            <Input label="Lương gross" labelPlacement="outside" placeholder="" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
+                                        <div className="grid grid-cols-2 gap-x-4 gap-y-10 mt-8">
+                                            <Input label="Lương net" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
+                                            <Input label="Lương gross" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} />
                                         </div>
                                     </div>
 

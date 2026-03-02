@@ -42,8 +42,8 @@ export const DayHeader: FC<DayHeaderProps> = memo(({ data }) => {
             key={d.day}
             className={cn(
               'bg-white pb-2 pt-1 font-normal',
-              di === 0 && 'rounded-tl-xl',
-              di === days.length - 1 && 'rounded-tr-xl',
+              di === 0 && 'rounded-tl-[14px]',
+              di === days.length - 1 && 'rounded-tr-[14px]',
             )}
             style={{ width: COL_W, minWidth: COL_W }}
           >

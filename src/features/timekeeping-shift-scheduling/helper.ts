@@ -1,6 +1,18 @@
 import dayjs from 'dayjs';
 
+import type { DailyAttendance } from '@/types/shift-details.type';
+
 import type { DayColumn } from './shift-management/types/type';
+import { PILL_SHIFTS, WORK_SHEET_LEGEND_ITEMS } from './timekeeping-management/constants/data';
+import type { WorkSheetByShiftRow } from './timekeeping-management/hooks/use-work-sheet-columns';
+import {
+  AttendanceStatus,
+  type DayCell,
+  type EmployeeRow,
+  type ShiftCode,
+  type ShiftRun,
+} from './timekeeping-management/types/index.type';
+import type { WorkSheetByShiftType } from './timekeeping-management/types/timekeeping-management.type';
 
 export const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
@@ -72,3 +84,178 @@ export const getDaysInMonth = (year: number, month: number): DayColumn[] => {
 export const isWeekend = (dow: number) => {
   return dow === 0 || dow === 6;
 };
+
+function buildRuns(schedule: DayCell[]): ShiftRun[] {
+  const runs: ShiftRun[] = [];
+  let i = 0;
+
+  while (i < schedule.length) {
+    const { shift } = schedule[i];
+
+    if (!PILL_SHIFTS.has(shift)) {
+      runs.push({
+        shift,
+        startIndex: i,
+        span: 1,
+        workScheduleDetailId: schedule[i].workScheduleDetailId,
+      });
+      i++;
+      continue;
+    }
+
+    let j = i + 1;
+    while (j < schedule.length && schedule[j].shift === shift) j++;
+
+    runs.push({
+      shift,
+      startIndex: i,
+      span: j - i,
+      workScheduleDetailId: schedule[i].workScheduleDetailId,
+    });
+
+    i = j;
+  }
+
+  return runs;
+}
+
+export function groupByStaff(data: WorkSheetByShiftType[]): Map<string, WorkSheetByShiftType> {
+  const map = new Map<string, WorkSheetByShiftType>();
+
+  for (const item of data) {
+    const existing = map.get(item.staff.id);
+
+    if (!existing) {
+      map.set(item.staff.id, { ...item, days: { ...item.days } });
+      continue;
+    }
+
+    for (const [date, incoming] of Object.entries(item.days)) {
+      const current = existing.days[date];
+
+      existing.days[date] = current
+        ? {
+            ...current,
+            displayCode:
+              current.displayCode === incoming.displayCode
+                ? current.displayCode
+                : `${current.displayCode}/${incoming.displayCode}`,
+          }
+        : incoming;
+    }
+
+    const s = existing.summary;
+    const t = item.summary;
+    existing.summary = {
+      totalWork: s.totalWork + t.totalWork,
+      totalLateMinutes: s.totalLateMinutes + t.totalLateMinutes,
+      totalEarlyMinutes: s.totalEarlyMinutes + t.totalEarlyMinutes,
+      absentDays: s.absentDays + t.absentDays,
+      workDays: s.workDays + t.workDays,
+      actualWorkDays: s.actualWorkDays + t.actualWorkDays,
+      paidLeave: s.paidLeave + t.paidLeave,
+      otherLeave: s.otherLeave + t.otherLeave,
+      onCall: s.onCall + t.onCall,
+      holiday: s.holiday + t.holiday,
+      overtimeHours: s.overtimeHours + t.overtimeHours,
+      totalAttendance: s.totalAttendance + t.totalAttendance,
+    };
+  }
+
+  return map;
+}
+
+export function mapToRow(
+  item: WorkSheetByShiftType,
+  days: ReturnType<typeof getDaysInMonth>,
+): EmployeeRow & { runs: ShiftRun[] } {
+  const schedule: DayCell[] = days.map((d) => ({
+    day: d.day,
+    dayOfWeek: d.dayOfWeek,
+    shift: (item.days[d.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
+    workScheduleDetailId: item.days[d.date]?.workScheduleDetailId,
+  }));
+
+  return {
+    employee: {
+      id: item.staff.id,
+      name: item.staff.name,
+      role: item.staff.position,
+      phone: '',
+      code: item.staff.code,
+      avatar: item.staff.avatar,
+      departments: item.staff.departments,
+      rooms: item.staff.rooms,
+      departmentName: '',
+    },
+    schedule,
+    runs: buildRuns(schedule),
+  };
+}
+
+export function mapToListRow(item: WorkSheetByShiftType): WorkSheetByShiftRow {
+  return {
+    id: item.staff.id,
+    code: item.staff.code,
+    name: item.staff.name,
+    avatar: item.staff.avatar,
+    departments: item.staff.departments,
+    rooms: item.staff.rooms,
+    days: item.days,
+    summary: item.summary,
+    position: item.staff.position,
+  };
+}
+
+export function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map((n) => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+}
+
+export function fillMissingDaysWithDayjs(
+  days: DailyAttendance[],
+  startDate: string,
+  endDate: string,
+): DailyAttendance[] {
+  const existingMap = new Map(days.map((d) => [d.date, d]));
+  const result: DailyAttendance[] = [];
+
+  let current = dayjs(startDate);
+  const end = dayjs(endDate);
+
+  while (current.isSame(end) || current.isBefore(end)) {
+    const dateStr = current.format('YYYY-MM-DD');
+
+    result.push(
+      existingMap.get(dateStr) ?? {
+        date: dateStr,
+        shiftCode: '',
+        standardTime: '',
+        checkInTime: '',
+        checkOutTime: '',
+        lateMinutes: 0,
+        earlyMinutes: 0,
+        workCount: 0,
+        totalWorkHours: 0,
+        overtimeHours: 0,
+        compHours: 0,
+      },
+    );
+
+    current = current.add(1, 'day');
+  }
+
+  return result;
+}
+
+export function getLabelShift(shift: ShiftCode): string {
+  return WORK_SHEET_LEGEND_ITEMS.find((i) => i.status === shift)?.label ?? shift;
+}
+
+export function getTotalDaysInMonth(year: number, month: number) {
+  return new Date(year, month, 0).getDate();
+}

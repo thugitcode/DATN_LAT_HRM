@@ -4,6 +4,7 @@ import {
     approveContract,
     signContract,
     deleteContract,
+    updateContract,
 } from '@/services/staff-contract';
 
 export const STAFF_CONTRACT_QUERY_KEY = {
@@ -43,6 +44,16 @@ export const useDeleteContract = (staffId: string) => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (contractId: string) => deleteContract(contractId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: STAFF_CONTRACT_QUERY_KEY.byStaff(staffId) });
+        },
+    });
+};
+
+export const useUpdateContract = (staffId: string) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, data }: { id: string; data: any }) => updateContract(id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: STAFF_CONTRACT_QUERY_KEY.byStaff(staffId) });
         },

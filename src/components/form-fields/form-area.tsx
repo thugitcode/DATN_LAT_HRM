@@ -1,4 +1,4 @@
-import { Textarea } from '@heroui/react';
+import { Textarea, type SlotsToClasses } from '@heroui/react';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
 
@@ -8,6 +8,20 @@ type Props<T extends FieldValues> = BaseFieldProps<T> & {
   placeholder?: string;
   minRows?: number;
   maxRows?: number;
+  classNames?:
+    | SlotsToClasses<
+        | 'label'
+        | 'base'
+        | 'input'
+        | 'description'
+        | 'errorMessage'
+        | 'mainWrapper'
+        | 'inputWrapper'
+        | 'innerWrapper'
+        | 'clearButton'
+        | 'helperWrapper'
+      >
+    | undefined;
 };
 
 export function FormArea<T extends FieldValues>({
@@ -19,6 +33,7 @@ export function FormArea<T extends FieldValues>({
   disabled,
   minRows = 3,
   maxRows = 8,
+  classNames,
 }: Props<T>) {
   return (
     <Controller
@@ -38,7 +53,8 @@ export function FormArea<T extends FieldValues>({
           minRows={minRows}
           maxRows={maxRows}
           classNames={{
-            label: 'text-xs font-normal leading-4 text-[#52525B]',
+            label: 'text-base! font-normal leading-4 text-[#52525B]!',
+            ...classNames,
           }}
         />
       )}

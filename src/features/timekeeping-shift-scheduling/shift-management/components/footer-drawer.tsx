@@ -4,9 +4,10 @@ import { Button } from '@heroui/react';
 
 interface FooterFrawerProps {
   isLoading?: boolean;
+  submitLabel?: string;
 }
 
-export const FooterFrawer: FC<FooterFrawerProps> = ({ isLoading }) => {
+export const FooterFrawer: FC<FooterFrawerProps> = ({ isLoading, submitLabel = 'Lưu' }) => {
   const closedDrawer = useDrawer((state) => state.onClose);
 
   return (
@@ -19,7 +20,7 @@ export const FooterFrawer: FC<FooterFrawerProps> = ({ isLoading }) => {
         Hủy
       </Button>
       <Button type="submit" color="primary" isLoading={isLoading}>
-        Lưu
+        {submitLabel}
       </Button>
     </div>
   );

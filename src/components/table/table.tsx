@@ -3,6 +3,7 @@ import { Spinner } from '@heroui/react';
 
 import { cn } from '@/lib/utils';
 
+import { TableEmpty } from './table-empty';
 import { TableLoading } from './table-loading';
 import { TablePagination } from './table-pagination';
 import type { TableProps } from './types';
@@ -46,7 +47,7 @@ export function Table<T extends object = object>({
 
   const tdBase = cn('px-4 py-3', bordered && 'border border-gray-300');
 
-  const isEmpty = !loading && dataSource.length === 0;
+  const isEmpty = !loading && !dataSource.length;
 
   return (
     <div className="flex flex-col gap-4 justify-between h-full flex-1 bg-white rounded-[14px] p-4">
@@ -85,10 +86,7 @@ export function Table<T extends object = object>({
 
           <tbody className="relative ">
             {isEmpty ? (
-              <TablePlaceholder
-                colSpan={leafColumns.length}
-                message={empty ?? 'Không có dữ liệu'}
-              />
+              <TableEmpty />
             ) : (
               dataSource.map((record, rowIndex) => {
                 const rowProps = onRow?.(record, rowIndex) ?? {};
@@ -101,7 +99,10 @@ export function Table<T extends object = object>({
                 return (
                   <tr
                     key={rKey}
-                    className={cn('hover:bg-gray-50 transition-colors', rClass)}
+                    className={cn(
+                      'hover:bg-gray-50 transition-colors group border-b border-gray-200',
+                      rClass,
+                    )}
                     {...rowProps}
                   >
                     {leafColumns.map((col, colIndex) => {
@@ -117,7 +118,8 @@ export function Table<T extends object = object>({
                           key={`${rKey}-${col.key}`}
                           className={cn(
                             tdBase,
-                            col.fixed && 'sticky z-20 bg-white',
+                            col.fixed && 'sticky z-20 bg-white group-hover:bg-gray-50',
+
                             ALIGN_CLASS[col.align ?? 'left'],
                             sizeClass,
                             col.className,
@@ -141,15 +143,5 @@ export function Table<T extends object = object>({
 
       {pagination !== false && pagination && <TablePagination total={pagination.totalPage} />}
     </div>
-  );
-}
-
-function TablePlaceholder({ colSpan, message }: { colSpan: number; message: ReactNode }) {
-  return (
-    <tr>
-      <td colSpan={colSpan} className="text-center py-8 text-gray-500">
-        {message}
-      </td>
-    </tr>
   );
 }

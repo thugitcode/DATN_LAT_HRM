@@ -1,29 +1,30 @@
 import { useDrawer } from '@/store/useDrawer';
 
-import type { Shift, StaffSchedule } from '@/types';
-
+import type { CellDataShift } from '../types/type';
 import { CardUserShift } from './card-user-shift';
 import { ChangeShiftDivisionForm } from './change-shift-division-form';
 
-export interface ChangeShiftDivisionData {
-  record: StaffSchedule;
-  shift: Shift;
-  date: string;
-  day: number;
-  month: number;
-  year: number;
-  dayOfWeek: number;
-}
-
 export const ChangeShiftDivision = () => {
-  const data = useDrawer((state) => state.data) as ChangeShiftDivisionData | undefined;
+  const data = useDrawer((state) => state.data) as CellDataShift | undefined;
 
-  console.log('data in ChangeShiftDivisionForm', data);
   const { record, shift, date, day, month, year, dayOfWeek } = data ?? {};
 
-  const { staff } = record || {};
+  const { staff, schedules } = record || {};
+
+  const matchedSchedule = schedules?.find((schedule) => schedule.date === date);
+
+  // const matchedShift = matchedSchedule?.shifts?.find(
+  //   (s) => s.workScheduleId === shift?.workScheduleId,
+  // );
+
+  console.log('_______________________', {
+    shift,
+    schedules,
+    matchedSchedule,
+  });
+
   return (
-    <div className="flex flex-col justify-between">
+    <div className="flex flex-col justify-between size-full">
       <CardUserShift
         avatarUrl={staff?.avatar}
         name={staff?.name}
@@ -32,10 +33,9 @@ export const ChangeShiftDivision = () => {
         endTime={shift?.endTime}
         shiftTemplateName={shift?.shiftTemplateName}
         workDate={date}
-        departmentName={staff?.departmentName}
       />
 
-      <ChangeShiftDivisionForm shift={shift} staff={staff} />
+      <ChangeShiftDivisionForm shift={shift} staff={staff} matchedSchedule={matchedSchedule} />
     </div>
   );
 };

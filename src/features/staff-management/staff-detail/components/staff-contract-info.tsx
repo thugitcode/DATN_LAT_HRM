@@ -44,6 +44,7 @@ import {
     useApproveContract,
     useSignContract,
     useDeleteContract,
+    useUpdateContract,
 } from '@/query-options/staff-contract';
 import { ContractStatusEnum } from '@/types/staff.type';
 import type { StaffContract } from '@/types/staff.type';
@@ -53,7 +54,7 @@ import { useQuery } from '@tanstack/react-query';
 import { departmentQueryOptions } from '@/services/query-options/department.query';
 import { roomQueryOptions } from '@/services/query-options/room.query';
 import { shiftTemplateQueryOptions } from '@/services/query-options/shift-template.query';
-import { hrmInstance, normalizeAxiosError } from '@/lib/axios';
+import { normalizeAxiosError } from '@/lib/axios';
 
 interface StaffContractInfoProps {
     staffId: string;
@@ -167,26 +168,34 @@ interface EditFormData {
     directManagerIds: string[];
     shiftType: string;
     fixedShiftId: string;
-    workTimeValue: string;
-    workTimeUnit: string;
     workingDays: number[];
 }
 
-const initFormFromContract = (contract: StaffContract | undefined): EditFormData => ({
-    jobTitle: contract?.jobTitle || '',
-    position: contract?.position || '',
-    duration: contract?.duration || 1,
-    durationUnit: contract?.durationUnit || 'YEAR',
-    departmentId: contract?.department?.id || '',
-    roomId: '',
-    workingAreas: [{ departmentId: contract?.department?.id || '', roomIds: [] }],
-    directManagerIds: contract?.directManagerIds || [],
-    shiftType: contract?.shiftType || '',
-    fixedShiftId: contract?.fixedShiftId || '',
-    workTimeValue: contract?.workTimeValue ? String(contract.workTimeValue) : '',
-    workTimeUnit: contract?.workTimeUnit || 'DAY',
-    workingDays: contract?.workingDays || [1, 2, 3, 4, 5],
-});
+const initFormFromContract = (contract: StaffContract | undefined): EditFormData => {
+    const staff = contract?.staff;
+    const rlsDepts = staff?.rlsStaffDepartments || [];
+    const rlsRooms = staff?.rlsStaffRooms || [];
+
+    const workingAreas: WorkingArea[] = rlsDepts.map((rd: any) => {
+        const deptId = rd.department?.id || '';
+        const roomIds = rlsRooms.filter((rr: any) => rr.room?.department?.id === deptId).map((rr: any) => rr.room?.id as string);
+        return { departmentId: deptId, roomIds };
+    });
+
+    return {
+        jobTitle: contract?.jobTitle || '',
+        position: contract?.position || '',
+        duration: contract?.duration || 1,
+        durationUnit: contract?.durationUnit || 'YEAR',
+        departmentId: contract?.department?.id || '',
+        roomId: '',
+        workingAreas: workingAreas.length > 0 ? workingAreas : [{ departmentId: contract?.department?.id || '', roomIds: [] }],
+        directManagerIds: contract?.directManagerIds || [],
+        shiftType: contract?.shiftType || '',
+        fixedShiftId: contract?.fixedShiftId || '',
+        workingDays: contract?.workingDays || [1, 2, 3, 4, 5],
+    };
+};
 
 export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -197,6 +206,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     const approveMutation = useApproveContract(staffId);
     const signMutation = useSignContract(staffId);
     const deleteMutation = useDeleteContract(staffId);
+    const updateMutation = useUpdateContract(staffId);
 
     const [isEditing, setIsEditing] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
@@ -253,6 +263,10 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
         if (formData.workingAreas.length > 0 && firstArea && !firstArea.departmentId) {
             newErrors.workingAreaDept0 = 'Khoa làm việc không được để trống.';
         }
+        if (!formData.shiftType) newErrors.shiftType = 'Loại hình làm việc theo ca không được để trống.';
+        if (!formData.directManagerIds || formData.directManagerIds.length === 0) {
+            newErrors.directManagerIds = 'Quản lý trực tiếp không được để trống.';
+        }
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     }, [formData]);
@@ -261,28 +275,29 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
         if (!validateForm() || !currentContract) return;
         setIsSaving(true);
         try {
-            await hrmInstance.patch(`/staff-contract/${currentContract.id}`, {
-                jobTitle: formData.jobTitle,
-                position: formData.position,
-                duration: formData.duration,
-                durationUnit: formData.durationUnit,
-                departmentId: formData.departmentId,
-                shiftType: formData.shiftType || undefined,
-                fixedShiftId: formData.fixedShiftId || undefined,
-                workTimeValue: formData.workTimeValue ? Number(formData.workTimeValue) : undefined,
-                workTimeUnit: formData.workTimeUnit || undefined,
-                workingDays: formData.workingDays,
+            await updateMutation.mutateAsync({
+                id: currentContract.id,
+                data: {
+                    jobTitle: formData.jobTitle,
+                    position: formData.position,
+                    duration: formData.duration,
+                    durationUnit: formData.durationUnit,
+                    departmentId: formData.departmentId,
+                    workingAreas: formData.workingAreas,
+                    directManagerIds: formData.directManagerIds,
+                    shiftType: formData.shiftType || undefined,
+                    fixedShiftId: formData.fixedShiftId || undefined,
+                    workingDays: formData.workingDays,
+                },
             });
             addToast({ title: 'Cập nhật thông tin nhân viên thành công.', color: 'success' });
             setIsEditing(false);
-            // Trigger refetch
-            window.location.reload();
         } catch (err) {
             addToast({ title: normalizeAxiosError(err).message, color: 'danger' });
         } finally {
             setIsSaving(false);
         }
-    }, [validateForm, currentContract, formData]);
+    }, [validateForm, currentContract, formData, updateMutation]);
 
     const handleApprove = useCallback((contractId: string) => {
         approveMutation.mutate(contractId, {
@@ -404,9 +419,6 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                             </>
                         ) : (
                             <>
-                                <Button variant="flat" size="sm" isIconOnly className="bg-[#F4F4F5] text-[#11181C] h-9 w-9 rounded-xl" onPress={() => currentContract && openDeleteModal(currentContract.id)}>
-                                    <IconTrash size={18} />
-                                </Button>
                                 <Button variant="flat" size="sm" startContent={<IconPencil size={18} />} className="bg-[#F4F4F5] text-[#11181C] font-semibold h-9 rounded-xl px-4" onPress={handleStartEdit}>
                                     Chỉnh sửa
                                 </Button>
@@ -419,13 +431,15 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                 </CardHeader>
                 <CardBody className="p-6">
                     {isEditing ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8 md:pr-12">
+                        <div className="pr-12 flex flex-col gap-6">
                             {/* Row 1: Loại hợp đồng + Loại hình (readonly) */}
-                            <Input label="Loại hợp đồng" labelPlacement="outside" value={translateContractType(currentContract?.contractType as string)} isReadOnly isRequired classNames={inputClassNames} />
-                            <Input label="Loại hình" labelPlacement="outside" value={translateWorkType(currentContract?.workType as string)} isReadOnly isRequired classNames={inputClassNames} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Input label="Loại hợp đồng" labelPlacement="outside" value={translateContractType(currentContract?.contractType as string)} isReadOnly isRequired classNames={inputClassNames} />
+                                <Input label="Loại hình" labelPlacement="outside" value={translateWorkType(currentContract?.workType as string)} isReadOnly isRequired classNames={inputClassNames} />
+                            </div>
 
                             {/* Row 2: Chức danh + Cấp bậc */}
-                            <div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <Select
                                     label="Chức danh"
                                     isRequired
@@ -442,8 +456,6 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 >
                                     {JOB_TITLE_OPTIONS.map((o) => <SelectItem key={o.key}>{o.label}</SelectItem>)}
                                 </Select>
-                            </div>
-                            <div>
                                 <Select
                                     label="Cấp bậc"
                                     isRequired
@@ -462,101 +474,108 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 </Select>
                             </div>
 
-                            <Input
-                                label="Thời gian hợp đồng"
-                                isRequired
-                                labelPlacement="outside"
-                                placeholder="Nhập"
-                                type="number"
-                                value={String(formData.duration)}
-                                onValueChange={(v) => setFormData((p) => ({ ...p, duration: Number(v) || 0 }))}
-                                classNames={inputClassNames}
-                                isInvalid={!!errors.duration}
-                                errorMessage={errors.duration}
-                                endContent={
-                                    <Dropdown>
-                                        <DropdownTrigger>
-                                            <Button
-                                                variant="bordered"
-                                                className="h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white"
-                                                endContent={<IconChevronDown size={14} />}
+                            {/* Row 3: Thời hạn + Số hợp đồng */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Input
+                                    label="Thời hạn hợp đồng"
+                                    isRequired
+                                    labelPlacement="outside"
+                                    placeholder="Nhập"
+                                    type="number"
+                                    value={String(formData.duration)}
+                                    onValueChange={(v) => setFormData((p) => ({ ...p, duration: Number(v) || 0 }))}
+                                    classNames={inputClassNames}
+                                    isInvalid={!!errors.duration}
+                                    errorMessage={errors.duration}
+                                    endContent={
+                                        <Dropdown>
+                                            <DropdownTrigger>
+                                                <Button
+                                                    variant="bordered"
+                                                    className="h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white"
+                                                    endContent={<IconChevronDown size={14} />}
+                                                >
+                                                    {formData.durationUnit === 'YEAR' ? 'Năm' : 'Tháng'}
+                                                </Button>
+                                            </DropdownTrigger>
+                                            <DropdownMenu
+                                                aria-label="Chọn đơn vị"
+                                                disallowEmptySelection
+                                                selectionMode="single"
+                                                selectedKeys={new Set([formData.durationUnit])}
+                                                onSelectionChange={(keys) => {
+                                                    const val = Array.from(keys)[0] as string;
+                                                    setFormData((p) => ({ ...p, durationUnit: val }));
+                                                }}
                                             >
-                                                {formData.durationUnit === 'YEAR' ? 'Năm' : 'Tháng'}
-                                            </Button>
-                                        </DropdownTrigger>
-                                        <DropdownMenu
-                                            aria-label="Chọn đơn vị"
-                                            disallowEmptySelection
-                                            selectionMode="single"
-                                            selectedKeys={new Set([formData.durationUnit])}
-                                            onSelectionChange={(keys) => {
-                                                const val = Array.from(keys)[0] as string;
-                                                setFormData((p) => ({ ...p, durationUnit: val }));
-                                            }}
-                                        >
-                                            <DropdownItem key="YEAR">Năm</DropdownItem>
-                                            <DropdownItem key="MONTH">Tháng</DropdownItem>
-                                        </DropdownMenu>
-                                    </Dropdown>
-                                }
-                            />
-                            <Input label="Số hợp đồng" labelPlacement="outside" value={currentContract?.contractNumber || ''} isReadOnly classNames={inputClassNames} />
+                                                <DropdownItem key="YEAR">Năm</DropdownItem>
+                                                <DropdownItem key="MONTH">Tháng</DropdownItem>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                    }
+                                />
+                                <Input label="Số hợp đồng" labelPlacement="outside" value={currentContract?.contractNumber || ''} isReadOnly classNames={inputClassNames} />
+                            </div>
 
                             {/* Row 4: Ngày bắt đầu + Ngày kết thúc */}
-                            <Input label="Ngày bắt đầu" labelPlacement="outside" value={currentContract?.startDate ? dayjs(currentContract.startDate).format('D/M/YYYY') : ''} isReadOnly isRequired classNames={inputClassNames} />
-                            <Input label="Ngày kết thúc" labelPlacement="outside" value={currentContract?.endDate ? dayjs(currentContract.endDate).format('D/M/YYYY') : ''} isReadOnly isRequired classNames={inputClassNames} />
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Input label="Ngày bắt đầu" labelPlacement="outside" value={currentContract?.startDate ? dayjs(currentContract.startDate).format('D/M/YYYY') : ''} isReadOnly isRequired classNames={inputClassNames} />
+                                <Input label="Ngày kết thúc" labelPlacement="outside" value={currentContract?.endDate ? dayjs(currentContract.endDate).format('D/M/YYYY') : ''} isReadOnly isRequired classNames={inputClassNames} />
+                            </div>
 
                             {/* Row 5: Khoa quản lý + Phòng quản lý */}
-                            <Select
-                                label="Khoa quản lý"
-                                isRequired
-                                labelPlacement="outside"
-                                placeholder="Chọn khoa"
-                                selectedKeys={formData.departmentId ? [formData.departmentId] : []}
-                                onSelectionChange={(keys) => {
-                                    const val = Array.from(keys)[0] as string;
-                                    setFormData((p) => ({ ...p, departmentId: val }));
-                                }}
-                                classNames={selectClassNames}
-                                isInvalid={!!errors.departmentId}
-                                errorMessage={errors.departmentId}
-                            >
-                                {departments.map((d) => <SelectItem key={d.id}>{d.name}</SelectItem>)}
-                            </Select>
-                            <Select
-                                label="Phòng quản lý"
-                                labelPlacement="outside"
-                                placeholder="Chọn phòng"
-                                selectedKeys={formData.roomId ? [formData.roomId] : []}
-                                onSelectionChange={(keys) => {
-                                    const val = Array.from(keys)[0] as string;
-                                    setFormData((p) => ({ ...p, roomId: val }));
-                                }}
-                                classNames={selectClassNames}
-                            >
-                                {rooms.map((r) => <SelectItem key={r.id}>{r.name}</SelectItem>)}
-                            </Select>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Select
+                                    label="Khoa quản lý"
+                                    isRequired
+                                    labelPlacement="outside"
+                                    placeholder="Chọn khoa"
+                                    selectedKeys={formData.departmentId ? [formData.departmentId] : []}
+                                    onSelectionChange={(keys) => {
+                                        const val = Array.from(keys)[0] as string;
+                                        setFormData((p) => ({ ...p, departmentId: val }));
+                                    }}
+                                    classNames={selectClassNames}
+                                    isInvalid={!!errors.departmentId}
+                                    errorMessage={errors.departmentId}
+                                >
+                                    {departments.map((d) => <SelectItem key={d.id}>{d.name}</SelectItem>)}
+                                </Select>
+                                <Select
+                                    label="Phòng quản lý"
+                                    labelPlacement="outside"
+                                    placeholder="Chọn phòng"
+                                    selectedKeys={formData.roomId ? [formData.roomId] : []}
+                                    onSelectionChange={(keys) => {
+                                        const val = Array.from(keys)[0] as string;
+                                        setFormData((p) => ({ ...p, roomId: val }));
+                                    }}
+                                    classNames={selectClassNames}
+                                >
+                                    {rooms.map((r) => <SelectItem key={r.id}>{r.name}</SelectItem>)}
+                                </Select>
+                            </div>
 
                             {/* Khoa/phòng làm việc (dynamic rows) */}
                             {formData.workingAreas.map((area, idx) => (
-                                <Fragment key={idx}>
-                                    <Select
-                                        label="Khoa làm việc"
-                                        isRequired
-                                        labelPlacement="outside"
-                                        placeholder="Chọn khoa"
-                                        selectedKeys={area.departmentId ? [area.departmentId] : []}
-                                        onSelectionChange={(keys) => {
-                                            const val = Array.from(keys)[0] as string;
-                                            updateWorkingArea(idx, 'departmentId', val);
-                                        }}
-                                        classNames={selectClassNames}
-                                        isInvalid={!!errors[`workingAreaDept${idx}`]}
-                                        errorMessage={errors[`workingAreaDept${idx}`]}
-                                    >
-                                        {departments.map((d) => <SelectItem key={d.id}>{d.name}</SelectItem>)}
-                                    </Select>
-                                    <div className="relative">
+                                <div key={idx} className="relative">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <Select
+                                            label="Khoa làm việc"
+                                            isRequired
+                                            labelPlacement="outside"
+                                            placeholder="Chọn khoa"
+                                            selectedKeys={area.departmentId ? [area.departmentId] : []}
+                                            onSelectionChange={(keys) => {
+                                                const val = Array.from(keys)[0] as string;
+                                                updateWorkingArea(idx, 'departmentId', val);
+                                            }}
+                                            classNames={selectClassNames}
+                                            isInvalid={!!errors[`workingAreaDept${idx}`]}
+                                            errorMessage={errors[`workingAreaDept${idx}`]}
+                                        >
+                                            {departments.map((d) => <SelectItem key={d.id}>{d.name}</SelectItem>)}
+                                        </Select>
                                         <Select
                                             label="Phòng làm việc"
                                             labelPlacement="outside"
@@ -570,112 +589,88 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                         >
                                             {rooms.filter(r => !area.departmentId || r.department?.id === area.departmentId).map((r) => <SelectItem key={r.id}>{r.name}</SelectItem>)}
                                         </Select>
-                                        {formData.workingAreas.length > 1 && (
-                                            <Button
-                                                isIconOnly
-                                                variant="light"
-                                                className={`absolute -right-12 bottom-0 h-10 text-[#71717A] min-w-10 ${idx === 0 ? 'invisible' : ''}`}
-                                                onPress={() => removeWorkingArea(idx)}
-                                            >
-                                                <IconTrash size={18} />
-                                            </Button>
-                                        )}
                                     </div>
-                                </Fragment>))}
-                            <div className="col-span-1 md:col-span-2 -mt-2">
+                                    <Button
+                                        isIconOnly
+                                        variant="light"
+                                        className={`absolute -right-12 bottom-0 h-10 text-[#71717A] min-w-10 ${formData.workingAreas.length <= 1 || idx === 0 ? 'invisible' : ''}`}
+                                        onPress={() => removeWorkingArea(idx)}
+                                    >
+                                        <IconTrash size={18} />
+                                    </Button>
+                                </div>
+                            ))}
+
+                            <div className="-mt-2">
                                 <Button variant="light" color="primary" className="justify-start px-0 font-medium text-[14px] w-fit" startContent={<IconPlus size={16} />} onPress={addWorkingArea}>
                                     Thêm mới
                                 </Button>
                             </div>
 
                             {/* Quản lý trực tiếp + Loại hình ca */}
-                            <Select label="Quản lý trực tiếp" labelPlacement="outside" placeholder="Chọn" isRequired classNames={selectClassNames}>
-                                <SelectItem key="none">—</SelectItem>
-                            </Select>
-                            <Select
-                                label="Loại hình làm việc theo ca"
-                                isRequired
-                                labelPlacement="outside"
-                                placeholder="Chọn"
-                                selectedKeys={formData.shiftType ? [formData.shiftType] : []}
-                                onSelectionChange={(keys) => {
-                                    const val = Array.from(keys)[0] as string;
-                                    setFormData((p) => ({ ...p, shiftType: val }));
-                                }}
-                                classNames={selectClassNames}
-                            >
-                                {SHIFT_TYPE_OPTIONS.map((o) => <SelectItem key={o.key}>{o.label}</SelectItem>)}
-                            </Select>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <Select
+                                    label="Quản lý trực tiếp"
+                                    labelPlacement="outside"
+                                    placeholder="Chọn"
+                                    isRequired
+                                    selectedKeys={new Set(formData.directManagerIds)}
+                                    onSelectionChange={(keys) => {
+                                        setFormData((p) => ({ ...p, directManagerIds: Array.from(keys).map(String) }));
+                                    }}
+                                    selectionMode="multiple"
+                                    classNames={selectClassNames}
+                                    isInvalid={!!errors.directManagerIds}
+                                    errorMessage={errors.directManagerIds}
+                                >
+                                    <SelectItem key="none">—</SelectItem>
+                                </Select>
+                                <Select
+                                    label="Loại hình làm việc theo ca"
+                                    isRequired
+                                    labelPlacement="outside"
+                                    placeholder="Chọn"
+                                    selectedKeys={formData.shiftType ? [formData.shiftType] : []}
+                                    onSelectionChange={(keys) => {
+                                        const val = Array.from(keys)[0] as string;
+                                        setFormData((p) => ({ ...p, shiftType: val }));
+                                    }}
+                                    classNames={selectClassNames}
+                                    isInvalid={!!errors.shiftType}
+                                    errorMessage={errors.shiftType}
+                                >
+                                    {SHIFT_TYPE_OPTIONS.map((o) => <SelectItem key={o.key}>{o.label}</SelectItem>)}
+                                </Select>
+                            </div>
 
                             {/* Ca làm việc - chỉ hiển thị khi Ca cố định */}
                             {formData.shiftType === 'FIXED' && (
-                                <Autocomplete
-                                    label="Ca làm việc"
-                                    isRequired
-                                    labelPlacement="outside"
-                                    placeholder="Tìm theo mã ca hoặc tên ca"
-                                    selectedKey={formData.fixedShiftId || null}
-                                    onSelectionChange={(key) => {
-                                        setFormData((p) => ({ ...p, fixedShiftId: key ? String(key) : '' }));
-                                    }}
-                                    classNames={{ base: 'w-full' }}
-                                    inputProps={{ classNames: { inputWrapper: 'bg-[#F4F4F5] rounded-xl shadow-none' } }}
-                                >
-                                    {shifts.map((s) => (
-                                        <AutocompleteItem key={s.id} textValue={`${s.code} - ${s.name}`}>
-                                            {s.code} - {s.name}
-                                        </AutocompleteItem>
-                                    ))}
-                                </Autocomplete>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <Autocomplete
+                                        label="Ca làm việc"
+                                        isRequired
+                                        labelPlacement="outside"
+                                        placeholder="Tìm theo mã ca hoặc tên ca"
+                                        selectedKey={formData.fixedShiftId || null}
+                                        onSelectionChange={(key) => {
+                                            setFormData((p) => ({ ...p, fixedShiftId: key ? String(key) : '' }));
+                                        }}
+                                        classNames={{ base: 'w-full' }}
+                                        inputProps={{ classNames: { inputWrapper: 'bg-[#F4F4F5] rounded-xl shadow-none' } }}
+                                    >
+                                        {shifts.map((s) => (
+                                            <AutocompleteItem key={s.id} textValue={`${s.code} - ${s.name}`}>
+                                                {s.code} - {s.name}
+                                            </AutocompleteItem>
+                                        ))}
+                                    </Autocomplete>
+                                </div>
                             )}
-
-                            {/* Thời gian làm việc */}
-                            <Input
-                                label="Thời gian làm việc"
-                                labelPlacement="outside"
-                                placeholder="Nhập"
-                                type="number"
-                                min={1}
-                                value={formData.workTimeValue}
-                                onValueChange={(v) => {
-                                    const intVal = v.replace(/[^0-9]/g, '');
-                                    setFormData((p) => ({ ...p, workTimeValue: intVal }));
-                                }}
-                                classNames={inputClassNames}
-                                className={formData.shiftType === 'FIXED' ? '' : 'md:col-span-2'}
-                                endContent={
-                                    <Dropdown>
-                                        <DropdownTrigger>
-                                            <Button
-                                                variant="bordered"
-                                                className="h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white"
-                                                endContent={<IconChevronDown size={14} />}
-                                            >
-                                                {formData.workTimeUnit === 'DAY' ? 'Ngày' : formData.workTimeUnit === 'WEEK' ? 'Tuần' : 'Tháng'}
-                                            </Button>
-                                        </DropdownTrigger>
-                                        <DropdownMenu
-                                            aria-label="Chọn đơn vị"
-                                            disallowEmptySelection
-                                            selectionMode="single"
-                                            selectedKeys={new Set([formData.workTimeUnit])}
-                                            onSelectionChange={(keys) => {
-                                                const val = Array.from(keys)[0] as string;
-                                                setFormData((p) => ({ ...p, workTimeUnit: val }));
-                                            }}
-                                        >
-                                            <DropdownItem key="DAY">Ngày</DropdownItem>
-                                            <DropdownItem key="WEEK">Tuần</DropdownItem>
-                                            <DropdownItem key="MONTH">Tháng</DropdownItem>
-                                        </DropdownMenu>
-                                    </Dropdown>
-                                }
-                            />
 
                             {/* Ngày làm việc - chỉ hiển thị khi Ca cố định */}
                             {formData.shiftType === 'FIXED' && (
-                                <div className="col-span-1 md:col-span-2">
-                                    <label className="text-sm font-medium text-[#11181C] flex gap-1 mb-2">Ngày làm việc <span className="text-danger">*</span></label>
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-sm font-medium text-[#11181C] flex gap-1">Ngày làm việc <span className="text-danger">*</span></label>
                                     <div className="flex flex-wrap gap-4">
                                         {WORKING_DAYS.map((day) => (
                                             <Checkbox key={day.key} isSelected={formData.workingDays.includes(day.key)} onValueChange={() => toggleWorkingDay(day.key)} size="sm" classNames={{ label: 'text-sm text-[#3F3F46]' }}>
@@ -703,10 +698,6 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                             <InfoRow label="Quản lý trực tiếp" value="—" />
                             <InfoRow label="Loại hình làm việc theo ca" value={currentContract?.shiftType ? translateShiftType(currentContract.shiftType) : '—'} />
                             <InfoRow label="Ca làm việc" value={currentContract?.fixedShiftId ? (() => { const found = shifts.find((s) => s.id === currentContract.fixedShiftId); return found ? `${found.code} - ${found.name}` : '—'; })() : '—'} />
-                            <InfoRow
-                                label="Thời gian làm việc"
-                                value={currentContract?.workTimeValue ? `${currentContract.workTimeValue} ${currentContract.workTimeUnit === 'DAY' ? 'ngày' : currentContract.workTimeUnit === 'WEEK' ? 'tuần' : 'tháng'}` : '—'}
-                            />
                             <div className="col-span-1 md:col-span-2">
                                 <InfoRow label="Ngày làm việc" value={formatWorkingDays(currentContract?.workingDays)} />
                             </div>
@@ -740,7 +731,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                         <TableColumn>LOẠI HỢP ĐỒNG</TableColumn>
                         <TableColumn>LOẠI HÌNH</TableColumn>
                         <TableColumn>THỜI GIAN</TableColumn>
-                        <TableColumn>NGÀY BẮT ĐẦU</TableColumn>
+                        <TableColumn>NGÀY BẤT ĐẦU</TableColumn>
                         <TableColumn>NGÀY KẾT THÚC</TableColumn>
                         <TableColumn>TRẠNG THÁI</TableColumn>
                         <TableColumn align="center">{''}</TableColumn>
@@ -831,3 +822,4 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
         </div>
     );
 };
+

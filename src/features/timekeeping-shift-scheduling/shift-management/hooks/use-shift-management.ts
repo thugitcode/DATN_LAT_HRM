@@ -7,7 +7,11 @@ import { shiftManagementService } from '@/services/shift-management.service';
 import { useDrawer } from '@/store/useDrawer';
 import { addToast } from '@heroui/react';
 
-import type { CreateStaffSchedule, ShiftManagementParams } from '@/types/shift-management.type';
+import type {
+  CreateStaffSchedule,
+  ShiftManagementParams,
+  UpdateShift,
+} from '@/types/shift-management.type';
 import { normalizeAxiosError } from '@/lib/axios';
 
 export function useShiftManagementList(params?: ShiftManagementParams) {
@@ -27,16 +31,39 @@ export function useCreateShiftManagement() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
       addToast({
-        title: 'Thêm mới phân ca thành công.',
+        description: 'Thêm mới phân ca thành công.',
         color: 'success',
       });
       closedDrawer();
     },
     onError: (error: unknown) => {
-      console.log('error_______________', error);
       const { message } = normalizeAxiosError(error);
       addToast({
-        title: JSON.stringify(error),
+        description: message,
+        color: 'danger',
+      });
+    },
+  });
+}
+
+export function useUpdateShiftManagement() {
+  const queryClient = useQueryClient();
+  const closedDrawer = useDrawer((state) => state.onClose);
+
+  return useMutation({
+    mutationFn: ({ id, data }: UpdateShift) => shiftManagementService.update({ id, data }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
+      addToast({
+        description: 'Thay đổi phân ca thành công.',
+        color: 'success',
+      });
+      closedDrawer();
+    },
+    onError: (error: unknown) => {
+      const { message } = normalizeAxiosError(error);
+      addToast({
+        description: message,
         color: 'danger',
       });
     },
