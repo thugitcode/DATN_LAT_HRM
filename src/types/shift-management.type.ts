@@ -129,7 +129,7 @@ export enum StatusUpdateShift {
 }
 
 export interface UpdateShiftData {
-  note: string;
+  note?: string;
   roomId: string;
   status: StatusUpdateShift | null;
   details: {

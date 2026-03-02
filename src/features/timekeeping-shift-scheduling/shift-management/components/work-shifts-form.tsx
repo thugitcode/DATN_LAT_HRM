@@ -9,7 +9,7 @@ import { IconTrash } from '@tabler/icons-react';
 import { FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
 
 import type { Options } from '@/types/global.type';
-import type { CreateStaffSchedule } from '@/types/shift-management.type';
+import { ShiftTypeEnum, type CreateStaffSchedule } from '@/types/shift-management.type';
 import { icons } from '@/lib/icons';
 import { useCaseCategoryOptions } from '@/hooks/options/use-case-category-options';
 import { useStaffOptions } from '@/hooks/options/use-staff-options';
@@ -399,9 +399,13 @@ const ShiftDetailRow = ({
   caseCategoryOptions,
   onRemove,
 }: ShiftDetailRowProps) => {
-  const { control, setValue } = useFormContext<ExtendedFormValues>();
+  const { control, setValue, watch } = useFormContext<ExtendedFormValues>();
 
   const baseName = `days.${dayIndex}.shifts.${shiftIndex}` as const;
+
+  const shiftTemplateId = watch(`${baseName}.shiftTemplateId`);
+  const selectedCa = caseCategoryOptions.find((ca) => ca.key === shiftTemplateId);
+  const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
 
   const handleSelectShiftTemplate = (id: string) => {
     const template = caseCategoryOptions.find((e) => e.key === id);
@@ -439,14 +443,14 @@ const ShiftDetailRow = ({
           name={`${baseName}.startTime`}
           label="Giờ bắt đầu"
           isRequired
-          disabled={isLoading}
+          disabled={isLoading || isFixed}
         />
         <FormTimePicker
           control={control}
           name={`${baseName}.endTime`}
           label="Giờ kết thúc"
           isRequired
-          disabled={isLoading}
+          disabled={isLoading || isFixed}
         />
       </div>
     </div>

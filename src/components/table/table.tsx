@@ -68,6 +68,7 @@ export function Table<T extends object = object>({
                       rowSpan={col.rowSpan}
                       className={cn(
                         thBase,
+
                         col.fixed && 'sticky z-40',
                         ALIGN_CLASS[col.align ?? 'left'],
                         sizeClass,
@@ -118,6 +119,7 @@ export function Table<T extends object = object>({
                           key={`${rKey}-${col.key}`}
                           className={cn(
                             tdBase,
+                            'h-full align-top',
                             col.fixed && 'sticky z-20 bg-white group-hover:bg-gray-50',
 
                             ALIGN_CLASS[col.align ?? 'left'],

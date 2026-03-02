@@ -5,14 +5,13 @@ import { useForm } from 'react-hook-form';
 
 import type { Options } from '@/types/global.type';
 import {
+  ShiftTypeEnum,
   StatusUpdateShift,
   type DaySchedule,
-  type Shift,
   type StaffWorkSchedule,
   type UpdateShift,
 } from '@/types/shift-management.type';
 import { useCaseCategoryOptions } from '@/hooks/options/use-case-category-options';
-import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { FormArea } from '@/components/form-fields/form-area';
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
 import { FormSelect } from '@/components/form-fields/form-select';
@@ -20,21 +19,23 @@ import { FormTimePicker } from '@/components/form-fields/form-time-picker';
 
 import { useUpdateShiftManagement } from '../hooks/use-shift-management';
 import { shiftDivisinSchema, type ShiftDivisinFormValues } from '../schemas/shift-division.schema';
+import type { ShiftTemplateWorkScheduleDetail } from '../types/type';
 import { FooterFrawer } from './footer-drawer';
 
 interface ChangeShiftDivisionFormProps {
-  shift?: Shift;
+  shift?: ShiftTemplateWorkScheduleDetail;
   staff?: StaffWorkSchedule;
   matchedSchedule?: DaySchedule;
+  workScheduleId?: string;
 }
 
 export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>> = ({
   shift,
   staff,
   matchedSchedule,
+  workScheduleId,
 }) => {
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
-  const { options: staffOptions } = useStaffOptions();
 
   const { mutate } = useUpdateShiftManagement();
 
@@ -50,31 +51,46 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
       name: staff?.name ?? '',
       staffId: staff?.id ?? '',
       departmentId: staff?.departments?.length === 1 ? staff?.departments?.[0]?.id : '',
-      caId: shift?.shiftTemplateId ?? '',
+      caId: shift?.id ?? '',
       roomId: staff?.rooms?.length === 1 ? staff?.rooms?.[0]?.id : '',
 
       startTime: shift?.startTime?.slice(0, 5),
       endTime: shift?.endTime?.slice(0, 5),
+      note: shift?.note ?? '',
     },
     mode: 'onChange',
   });
 
+  const caId = watch('caId');
+
+  const selectedCa = caseCategoryOptions.find((ca) => ca.key === caId);
+  const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
+
   const onSubmit = async (values: ShiftDivisinFormValues) => {
-    if (shift?.workScheduleId) {
+    if (shift?.id && workScheduleId) {
+      const otherDetails =
+        matchedSchedule?.shifts
+          ?.filter((s) => s.workScheduleId !== workScheduleId)
+          ?.map((s) => ({
+            startTime: s.startTime,
+            endTime: s.endTime,
+            shiftTemplateId: s.shiftTemplateId ?? '',
+            // note: s.note ?? '',
+          })) ?? [];
+
+      const updatedDetail = {
+        startTime: values.startTime,
+        endTime: values.endTime,
+        shiftTemplateId: values.caId ?? '',
+        note: values?.note ?? '',
+      };
+
       const payload: UpdateShift = {
-        id: shift.workScheduleId,
+        id: workScheduleId,
         data: {
-          note: values.note ?? '',
           roomId: values.roomId,
           status: StatusUpdateShift.SCHEDULED,
-          details: [
-            {
-              startTime: values.startTime,
-              endTime: values.endTime,
-              shiftTemplateId: values.caId ?? '',
-              note: values?.note,
-            },
-          ],
+          details: [...otherDetails, updatedDetail],
         },
       };
 
@@ -130,6 +146,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
             label="Ghi chú giờ vào"
             isRequired
             // disabled={caId === ShiftTypeEnum.FIXED}
+            disabled={isFixed}
           />
 
           <FormTimePicker
@@ -138,6 +155,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
             label="Ghi chú giờ ra"
             isRequired
             // disabled={caId === ShiftTypeEnum.FIXED}
+            disabled={isFixed}
           />
 
           <FormArea

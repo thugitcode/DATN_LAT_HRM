@@ -14,6 +14,7 @@ export const useCaseCategoryOptions = () => {
   const { data } = useCaseCategoryList({
     page: 1,
     limit: 100,
+    status: 'ACTIVE',
   });
 
   return {
