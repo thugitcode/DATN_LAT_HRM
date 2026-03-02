@@ -121,23 +121,21 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
             options={caseCategoryOptions}
           />
 
-          <div className="py-0.5 flex  gap-3">
-            <FormTimePicker
-              control={control}
-              name={`startTime`}
-              label="Ghi chú giờ vào"
-              isRequired
-              // disabled={caId === ShiftTypeEnum.FIXED}
-            />
+          <FormTimePicker
+            control={control}
+            name={`startTime`}
+            label="Ghi chú giờ vào"
+            isRequired
+            // disabled={caId === ShiftTypeEnum.FIXED}
+          />
 
-            <FormTimePicker
-              control={control}
-              name={`endTime`}
-              label="Ghi chú giờ ra"
-              isRequired
-              // disabled={caId === ShiftTypeEnum.FIXED}
-            />
-          </div>
+          <FormTimePicker
+            control={control}
+            name={`endTime`}
+            label="Ghi chú giờ ra"
+            isRequired
+            // disabled={caId === ShiftTypeEnum.FIXED}
+          />
           <FormArea
             control={control}
             name={'note'}
