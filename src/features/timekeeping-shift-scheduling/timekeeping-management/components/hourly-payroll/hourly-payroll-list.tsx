@@ -32,7 +32,7 @@ export const HourlyPayrollList: FC<HourlyPayrollListProps> = ({
       dataSource={data ?? []}
       rowKey="staffId"
       size="middle"
-      className="h-[calc(100vh-440px)]"
+      className="h-[calc(100vh-390px)]"
       pagination={{
         current: page,
         pageSize,

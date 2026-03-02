@@ -30,7 +30,7 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
   const isEmpty = !isLoading && data.length === 0;
 
   return (
-    <div className="h-[calc(100vh-356px)] overflow-auto relative">
+    <div className="h-[calc(100vh-300px)] overflow-auto relative">
       <table className="table-fixed w-full border-separate border-spacing-0">
         <GridStickyHeaderRow days={days} hoveredDay={hoveredDay} setHoveredDay={setHoveredDay} />
 

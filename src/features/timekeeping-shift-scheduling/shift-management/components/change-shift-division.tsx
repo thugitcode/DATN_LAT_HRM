@@ -1,5 +1,4 @@
 import { useDrawer } from '@/store/useDrawer';
-import { Spinner } from '@heroui/react';
 
 import { LoadingWrapper } from '@/components/loading-wrapper';
 
@@ -14,8 +13,6 @@ export const ChangeShiftDivision = () => {
   const { record, shift, date, day, month, year, dayOfWeek } = dataRow ?? {};
 
   const { staff, schedules } = record || {};
-
-  console.log('dataRow____________', dataRow);
 
   const matchedSchedule = schedules?.find((schedule) => schedule.date === date);
 
@@ -41,6 +38,7 @@ export const ChangeShiftDivision = () => {
         staff={staff}
         matchedSchedule={matchedSchedule}
         workScheduleId={shift?.workScheduleId}
+        shiftRow={shift}
       />
     </LoadingWrapper>
   );

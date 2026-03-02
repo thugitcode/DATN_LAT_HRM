@@ -8,6 +8,7 @@ import {
   ShiftTypeEnum,
   StatusUpdateShift,
   type DaySchedule,
+  type Shift,
   type StaffWorkSchedule,
   type UpdateShift,
 } from '@/types/shift-management.type';
@@ -27,6 +28,7 @@ interface ChangeShiftDivisionFormProps {
   staff?: StaffWorkSchedule;
   matchedSchedule?: DaySchedule;
   workScheduleId?: string;
+  shiftRow?: Shift;
 }
 
 export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>> = ({
@@ -34,6 +36,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
   staff,
   matchedSchedule,
   workScheduleId,
+  shiftRow,
 }) => {
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
 
@@ -54,8 +57,8 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
       caId: shift?.id ?? '',
       roomId: staff?.rooms?.length === 1 ? staff?.rooms?.[0]?.id : '',
 
-      startTime: shift?.startTime?.slice(0, 5),
-      endTime: shift?.endTime?.slice(0, 5),
+      startTime: shiftRow?.startTime?.slice(0, 5),
+      endTime: shiftRow?.endTime?.slice(0, 5),
       note: shift?.note ?? '',
     },
     mode: 'onChange',

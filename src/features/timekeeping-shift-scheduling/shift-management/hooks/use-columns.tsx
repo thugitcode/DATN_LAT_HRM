@@ -37,17 +37,25 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
 
   const maxShiftsPerRow = useMemo(() => {
     const map: Record<string, number> = {};
+
     data.forEach((record) => {
       const staffId = record.staff.id;
       let max = 0;
+
       record?.schedules?.forEach((schedule) => {
+        // Chỉ tính shifts thuộc tháng/năm hiện tại
+        const scheduleDate = dayjs(schedule.date);
+        if (scheduleDate.month() !== month || scheduleDate.year() !== year) return;
+
         const count = schedule.shifts?.length ?? 0;
         if (count > max) max = count;
       });
+
       map[staffId] = max;
     });
+
     return map;
-  }, [data]);
+  }, [data, month, year]);
 
   const columns: Column<StaffSchedule>[] = useMemo(() => {
     const cols: Column<StaffSchedule>[] = [

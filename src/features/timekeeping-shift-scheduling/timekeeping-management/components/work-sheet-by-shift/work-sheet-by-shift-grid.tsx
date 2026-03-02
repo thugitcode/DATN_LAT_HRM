@@ -43,7 +43,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
   const isEmpty = !isLoading && rows.length === 0;
 
   return (
-    <div className="h-[calc(100vh-356px)] overflow-auto relative">
+    <div className="h-[calc(100vh-290px)] overflow-auto relative">
       <table
         className="border-separate border-spacing-0"
         style={{

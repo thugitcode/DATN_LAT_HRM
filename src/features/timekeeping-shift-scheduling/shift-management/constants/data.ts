@@ -40,6 +40,7 @@ export const SHIFT_CA_LEGEND: LegendItem[] = [
     label: 'Nghỉ',
     color: '#F4F4F5',
     status: null,
+    shape: 'line',
   },
 ];
 

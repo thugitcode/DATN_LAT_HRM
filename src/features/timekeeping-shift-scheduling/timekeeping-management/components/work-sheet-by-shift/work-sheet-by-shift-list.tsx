@@ -37,7 +37,7 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
       dataSource={dataSource}
       size="middle"
       loading={isLoading}
-      className="h-[calc(100vh-440px)]"
+      className="h-[calc(100vh-390px)]"
       pagination={{
         current: page,
         pageSize,
