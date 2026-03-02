@@ -9,14 +9,44 @@ import {
 } from '@heroui/react';
 import { IconPencil, IconArrowRight } from '@tabler/icons-react';
 
-import type { Staff, StaffJobTitleEnum } from '@/types/staff.type';
+import type { Staff } from '@/types/staff.type';
 
-const translateJobTitle = (title: StaffJobTitleEnum) => {
+const translateJobTitle = (title: string) => {
     const titles: Record<string, string> = {
         'DOCTOR': 'Bác sĩ',
         'NURSE': 'Điều dưỡng',
+        'TECHNICIAN': 'Kỹ thuật viên',
+        'MIDWIFE': 'Hộ sinh',
+        'PHYSICIAN_ASSISTANT': 'Y sĩ',
+        'OFFICE_STAFF': 'Nhân viên văn phòng',
+        'MANAGEMENT': 'Quản lý',
+        'LAB_TECHNICIAN': 'Kỹ thuật viên xét nghiệm',
+        'IMAGING_TECHNICIAN': 'Kỹ thuật viên chẩn đoán hình ảnh',
+        'CASHIER': 'Thu ngân',
+        'RECEPTIONIST': 'Lễ tân',
+        'WAREHOUSE_KEEPER': 'Thủ kho',
+        'PHARMACIST': 'Dược sĩ',
+        'SALES': 'Sale',
+        'TELESALES': 'Telesale',
+        'MARKETING': 'Marketing',
+        'CUSTOMER_SUPPORT': 'Chăm sóc khách hàng',
+        'MARKETING_LEAD': 'Trưởng nhóm marketing',
+        'CUSTOMER_SUPPORT_LEAD': 'Trưởng nhóm CSKH',
     };
-    return titles[title as string] || title || 'Bác sĩ';
+    return titles[title] || title || '—';
+};
+
+const translatePosition = (position: string) => {
+    const positions: Record<string, string> = {
+        'STAFF': 'Nhân viên',
+        'HEAD_OF_DEPARTMENT': 'Trưởng khoa',
+        'DEPUTY_HEAD_OF_DEPARTMENT': 'Phó khoa',
+        'CHIEF_NURSE': 'Điều dưỡng trưởng',
+        'MANAGER': 'Trưởng phòng',
+        'HEAD_OF_UNIT': 'Trưởng bộ phận',
+        'DEPUTY_MANAGER': 'Phó phòng',
+    };
+    return positions[position] || position || '—';
 };
 
 const renderStatusChip = (status?: string) => {
@@ -41,6 +71,7 @@ interface StaffGridProps {
     onPageChange: (page: number) => void;
     onLimitChange: (limit: number) => void;
     onViewDetail?: (id: string) => void;
+    onEdit?: (staff: Staff) => void;
 }
 
 export const StaffGrid: FC<StaffGridProps> = ({
@@ -52,6 +83,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
     onPageChange,
     onLimitChange,
     onViewDetail,
+    onEdit,
 }) => {
     const totalPages = Math.ceil((total || 1) / limit);
 
@@ -76,7 +108,13 @@ export const StaffGrid: FC<StaffGridProps> = ({
                                     {renderStatusChip(staff.status as unknown as string)}
                                     <div className="flex items-center gap-2">
                                         <Switch size="sm" isSelected={(staff.activeStatus as unknown as string) === 'ACTIVE'} />
-                                        <Button isIconOnly size="sm" variant="light" className="text-[#71717A] min-w-6 w-6 h-6">
+                                        <Button
+                                            isIconOnly
+                                            size="sm"
+                                            variant="light"
+                                            className="text-[#71717A] min-w-6 w-6 h-6"
+                                            onClick={() => onEdit?.(staff)}
+                                        >
                                             <IconPencil size={16} stroke={1.5} />
                                         </Button>
                                     </div>
@@ -95,11 +133,11 @@ export const StaffGrid: FC<StaffGridProps> = ({
                                 <div className="bg-[#FAFAFA] rounded-xl p-3 border border-[#F4F4F5] mt-4 space-y-2">
                                     <div className="font-medium text-[13px] text-[#11181C]"># {staff.code}</div>
                                     <div className="grid grid-cols-2 gap-2 text-xs text-[#11181C]">
-                                        <div className="flex items-center gap-1.5 line-clamp-1" title={translateJobTitle(staff.jobTitle as any)}>
-                                            <span className="text-base text-[#71717A]">💼</span> {translateJobTitle(staff.jobTitle as any)}
+                                        <div className="flex items-center gap-1.5 line-clamp-1" title={translatePosition(staff.position as string)}>
+                                            <span className="text-base text-[#71717A]">🎖️</span> {translatePosition(staff.position as string)}
                                         </div>
                                         <div className="flex items-center gap-1.5 line-clamp-1">
-                                            <span className="text-base text-[#71717A]">🕒</span> {staff.workType || staff.currentWorkType}
+                                            <span className="text-base text-[#71717A]">🕒</span> {staff.workType === 'FULL_TIME' ? 'Toàn thời gian' : staff.workType === 'PART_TIME' ? 'Bán thời gian' : (staff.workType || staff.currentWorkType || '—')}
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-1.5 text-xs text-[#006FEE]">

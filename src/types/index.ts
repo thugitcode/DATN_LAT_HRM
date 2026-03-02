@@ -34,6 +34,7 @@ interface PaginationParams {
   page?: number;
   limit?: number;
   offset?: number;
+  getAll?: boolean;
 }
 
 export interface QueryOptionsListResponse<T, M = unknown> {

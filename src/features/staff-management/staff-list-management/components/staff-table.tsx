@@ -15,15 +15,44 @@ import {
 } from '@heroui/react';
 import { IconPencil } from '@tabler/icons-react';
 
-import type { Staff, StaffJobTitleEnum } from '@/types/staff.type';
+import type { Staff } from '@/types/staff.type';
 
-const translateJobTitle = (title: StaffJobTitleEnum) => {
+const translateJobTitle = (title: string) => {
     const titles: Record<string, string> = {
         'DOCTOR': 'Bác sĩ',
         'NURSE': 'Điều dưỡng',
-
+        'TECHNICIAN': 'Kỹ thuật viên',
+        'MIDWIFE': 'Hộ sinh',
+        'PHYSICIAN_ASSISTANT': 'Y sĩ',
+        'OFFICE_STAFF': 'Nhân viên văn phòng',
+        'MANAGEMENT': 'Quản lý',
+        'LAB_TECHNICIAN': 'Kỹ thuật viên xét nghiệm',
+        'IMAGING_TECHNICIAN': 'Kỹ thuật viên chẩn đoán hình ảnh',
+        'CASHIER': 'Thu ngân',
+        'RECEPTIONIST': 'Lễ tân',
+        'WAREHOUSE_KEEPER': 'Thủ kho',
+        'PHARMACIST': 'Dược sĩ',
+        'SALES': 'Sale',
+        'TELESALES': 'Telesale',
+        'MARKETING': 'Marketing',
+        'CUSTOMER_SUPPORT': 'Chăm sóc khách hàng',
+        'MARKETING_LEAD': 'Trưởng nhóm marketing',
+        'CUSTOMER_SUPPORT_LEAD': 'Trưởng nhóm CSKH',
     };
-    return titles[title as string] || title || 'Bác sĩ';
+    return titles[title] || title || '—';
+};
+
+const translatePosition = (position: string) => {
+    const positions: Record<string, string> = {
+        'STAFF': 'Nhân viên',
+        'HEAD_OF_DEPARTMENT': 'Trưởng khoa',
+        'DEPUTY_HEAD_OF_DEPARTMENT': 'Phó khoa',
+        'CHIEF_NURSE': 'Điều dưỡng trưởng',
+        'MANAGER': 'Trưởng phòng',
+        'HEAD_OF_UNIT': 'Trưởng bộ phận',
+        'DEPUTY_MANAGER': 'Phó phòng',
+    };
+    return positions[position] || position || '—';
 };
 
 const renderStatusChip = (status?: string) => {
@@ -48,6 +77,7 @@ interface StaffTableProps {
     onPageChange: (page: number) => void;
     onLimitChange: (limit: number) => void;
     onViewDetail?: (id: string) => void;
+    onEdit?: (staff: Staff) => void;
 }
 
 export const StaffTable: FC<StaffTableProps> = ({
@@ -59,6 +89,7 @@ export const StaffTable: FC<StaffTableProps> = ({
     onPageChange,
     onLimitChange,
     onViewDetail,
+    onEdit,
 }) => {
     const totalPages = Math.ceil((total || 1) / limit);
 
@@ -134,13 +165,13 @@ export const StaffTable: FC<StaffTableProps> = ({
                                     <span className="text-sm text-[#11181C]">{translateJobTitle(staff.jobTitle as any)}</span>
                                 </TableCell>
                                 <TableCell>
-                                    <span className="text-sm text-[#11181C]">{staff.position || '—'}</span>
+                                    <span className="text-sm text-[#11181C]">{translatePosition(staff.position as string)}</span>
                                 </TableCell>
                                 <TableCell>
                                     <span className="text-sm text-[#11181C]">{staff.departments?.map((d: { id: string; name: string }) => d.name).join(', ') || '—'}</span>
                                 </TableCell>
                                 <TableCell>
-                                    <span className="text-sm text-[#11181C]">{staff.workType || '—'}</span>
+                                    <span className="text-sm text-[#11181C]">{staff.workType === 'FULL_TIME' ? 'Toàn thời gian' : staff.workType === 'PART_TIME' ? 'Bán thời gian' : (staff.workType || '—')}</span>
                                 </TableCell>
                                 <TableCell>
                                     <span className="text-sm text-[#11181C]">{staff.endDate ? new Date(staff.endDate).toLocaleDateString('vi-VN') : '—'}</span>
@@ -148,7 +179,16 @@ export const StaffTable: FC<StaffTableProps> = ({
                                 <TableCell>
                                     <div className="flex items-center gap-3">
                                         <Switch size="sm" isSelected={staff.activeStatus === 'ACTIVE'} />
-                                        <Button isIconOnly size="sm" variant="light" className="text-[#71717A]">
+                                        <Button
+                                            isIconOnly
+                                            size="sm"
+                                            variant="light"
+                                            className="text-[#71717A]"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onEdit?.(staff);
+                                            }}
+                                        >
                                             <IconPencil size={18} stroke={1.5} />
                                         </Button>
                                     </div>
