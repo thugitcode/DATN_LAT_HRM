@@ -19,3 +19,30 @@ export const fetchContractDetail = async (id: string): Promise<ApiResponse<Staff
         throw normalizeAxiosError(err);
     }
 };
+
+export const approveContract = async (id: string): Promise<ApiResponse<boolean>> => {
+    try {
+        const response = await hrmInstance.post(`/staff-contract/${id}/approve`, {});
+        return response.data;
+    } catch (err: unknown) {
+        throw normalizeAxiosError(err);
+    }
+};
+
+export const signContract = async (id: string): Promise<ApiResponse<boolean>> => {
+    try {
+        const response = await hrmInstance.post(`/staff-contract/${id}/sign`, {});
+        return response.data;
+    } catch (err: unknown) {
+        throw normalizeAxiosError(err);
+    }
+};
+
+export const deleteContract = async (id: string): Promise<ApiResponse<boolean>> => {
+    try {
+        const response = await hrmInstance.delete(`/staff-contract/${id}`);
+        return response.data;
+    } catch (err: unknown) {
+        throw normalizeAxiosError(err);
+    }
+};

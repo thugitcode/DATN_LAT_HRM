@@ -41,7 +41,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
         <Drawer
             isOpen={isOpen}
             onOpenChange={(open) => !open && onClose()}
-            size="5xl"
+            size="full"
             placement="right"
             classNames={{
                 base: "bg-[#FAFAFA]",

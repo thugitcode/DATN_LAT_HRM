@@ -81,6 +81,22 @@ export enum DurationUnitEnum {
   MONTH = 'MONTH',
 }
 
+export interface StaffWorkHistory {
+  id: string;
+  jobTitle: StaffJobTitleEnum;
+  position: StaffPositionEnum;
+  contractNumber: string;
+  contractType: ContractTypeEnum;
+  workType: string;
+  duration: number;
+  durationUnit: DurationUnitEnum;
+  startDate: string;
+  endDate: string;
+  contractStatus: ContractStatusEnum;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface StaffContract {
   id: string;
   contractType: ContractTypeEnum;
@@ -92,15 +108,19 @@ export interface StaffContract {
   durationUnit: DurationUnitEnum;
   jobTitle: StaffJobTitleEnum;
   position: StaffPositionEnum;
+  staff?: { id: string; code: string; name: string };
   department?: { id: string; name: string };
   directManagerIds?: string[];
   shiftType?: ShiftTypeEnum;
   fixedShiftId?: string;
+  workTimeValue?: number;
+  workTimeUnit?: 'DAY' | 'WEEK' | 'MONTH';
   workingDays?: number[];
   status: ContractStatusEnum;
   approvedAt?: string;
   approvedBy?: string;
   signedAt?: string;
+  staffWorkHistory?: StaffWorkHistory[];
 }
 
 export interface StaffParams {

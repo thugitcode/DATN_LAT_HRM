@@ -1,4 +1,4 @@
-import { type FC } from 'react';
+import { type FC, useState, useMemo, useCallback, Fragment } from 'react';
 import {
     Card,
     CardHeader,
@@ -12,23 +12,87 @@ import {
     TableCell,
     Chip,
     useDisclosure,
+    Modal,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    addToast,
+    Input,
+    Select,
+    SelectItem,
+    Checkbox,
+    Autocomplete,
+    AutocompleteItem,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
 } from '@heroui/react';
 import {
-    IconPencil,
-    IconPlus,
     IconFileDescription,
     IconHistory,
-    IconCheck,
+    IconPencil,
+    IconPlus,
     IconTrash,
+    IconX,
+    IconAlertCircle,
+    IconChevronDown,
 } from '@tabler/icons-react';
-import { useStaffContracts } from '@/query-options/staff-contract';
+import {
+    useStaffContracts,
+    useApproveContract,
+    useSignContract,
+    useDeleteContract,
+} from '@/query-options/staff-contract';
 import { ContractStatusEnum } from '@/types/staff.type';
+import type { StaffContract } from '@/types/staff.type';
 import dayjs from 'dayjs';
 import { StaffContractFormDrawer } from './staff-contract-form-drawer';
+import { useQuery } from '@tanstack/react-query';
+import { departmentQueryOptions } from '@/services/query-options/department.query';
+import { roomQueryOptions } from '@/services/query-options/room.query';
+import { shiftTemplateQueryOptions } from '@/services/query-options/shift-template.query';
+import { hrmInstance, normalizeAxiosError } from '@/lib/axios';
 
 interface StaffContractInfoProps {
     staffId: string;
 }
+
+const JOB_TITLE_OPTIONS = [
+    { key: 'DOCTOR', label: 'Bác sĩ' },
+    { key: 'NURSE', label: 'Điều dưỡng' },
+    { key: 'TECHNICIAN', label: 'Kỹ thuật viên' },
+    { key: 'MIDWIFE', label: 'Hộ sinh' },
+    { key: 'PHYSICIAN_ASSISTANT', label: 'Y sĩ' },
+    { key: 'OFFICE_STAFF', label: 'Nhân viên văn phòng' },
+];
+
+const POSITION_OPTIONS = [
+    { key: 'STAFF', label: 'Nhân viên' },
+    { key: 'HEAD_OF_DEPARTMENT', label: 'Trưởng khoa' },
+    { key: 'DEPUTY_HEAD_OF_DEPARTMENT', label: 'Phó khoa' },
+    { key: 'CHIEF_NURSE', label: 'Điều dưỡng trưởng' },
+    { key: 'MANAGER', label: 'Trưởng phòng' },
+    { key: 'HEAD_OF_UNIT', label: 'Trưởng bộ phận' },
+    { key: 'DEPUTY_MANAGER', label: 'Phó phòng' },
+];
+
+const SHIFT_TYPE_OPTIONS = [
+    { key: 'FIXED', label: 'Ca cố định' },
+    { key: 'FLEXIBLE', label: 'Ca linh hoạt' },
+    { key: 'SPLIT', label: 'Ca gãy' },
+];
+
+const WORKING_DAYS = [
+    { key: 1, label: 'Thứ 2' },
+    { key: 2, label: 'Thứ 3' },
+    { key: 3, label: 'Thứ 4' },
+    { key: 4, label: 'Thứ 5' },
+    { key: 5, label: 'Thứ 6' },
+    { key: 6, label: 'Thứ 7' },
+    { key: 0, label: 'Chủ nhật' },
+];
 
 const translateContractType = (type: string) => {
     const types: Record<string, string> = {
@@ -49,85 +113,27 @@ const translateWorkType = (type: string) => {
 };
 
 const translateJobTitle = (title: string) => {
-    const titles: Record<string, string> = {
-        DOCTOR: 'Bác sĩ',
-        NURSE: 'Điều dưỡng',
-        TECHNICIAN: 'Kỹ thuật viên',
-        MIDWIFE: 'Hộ sinh',
-        PHYSICIAN_ASSISTANT: 'Y sĩ',
-        OFFICE_STAFF: 'Nhân viên văn phòng',
-        MANAGEMENT: 'Quản lý',
-        LAB_TECHNICIAN: 'Kỹ thuật viên xét nghiệm',
-        IMAGING_TECHNICIAN: 'Kỹ thuật viên chẩn đoán hình ảnh',
-        CASHIER: 'Thu ngân',
-        RECEPTIONIST: 'Lễ tân',
-        WAREHOUSE_KEEPER: 'Thủ kho',
-        PHARMACIST: 'Dược sĩ',
-        SALES: 'Sale',
-        TELESALES: 'Telesale',
-        MARKETING: 'Marketing',
-        CUSTOMER_SUPPORT: 'Chăm sóc khách hàng',
-        MARKETING_LEAD: 'Trưởng nhóm marketing',
-        CUSTOMER_SUPPORT_LEAD: 'Trưởng nhóm CSKH',
-    };
-    return titles[title] || title || '—';
+    return JOB_TITLE_OPTIONS.find((o) => o.key === title)?.label || title || '—';
 };
 
 const translatePosition = (position: string) => {
-    const positions: Record<string, string> = {
-        STAFF: 'Nhân viên',
-        HEAD_OF_DEPARTMENT: 'Trưởng khoa',
-        DEPUTY_HEAD_OF_DEPARTMENT: 'Phó khoa',
-        CHIEF_NURSE: 'Điều dưỡng trưởng',
-        MANAGER: 'Trưởng phòng',
-        HEAD_OF_UNIT: 'Trưởng bộ phận',
-        DEPUTY_MANAGER: 'Phó phòng',
-    };
-    return positions[position] || position || '—';
+    return POSITION_OPTIONS.find((o) => o.key === position)?.label || position || '—';
+};
+
+const translateShiftType = (type: string) => {
+    return SHIFT_TYPE_OPTIONS.find((o) => o.key === type)?.label || type || '—';
 };
 
 const getStatusChip = (status: ContractStatusEnum) => {
     switch (status) {
         case ContractStatusEnum.PENDING_APPROVAL:
-            return (
-                <Chip
-                    size="sm"
-                    variant="flat"
-                    className="bg-[#FFF7ED] text-[#EA580C] border-none font-medium text-xs px-2"
-                >
-                    CHỜ DUYỆT
-                </Chip>
-            );
+            return <Chip size="sm" variant="flat" className="bg-[#FFF7ED] text-[#EA580C] border-none font-medium text-xs px-2">Chờ duyệt</Chip>;
         case ContractStatusEnum.PENDING_SIGNATURE:
-            return (
-                <Chip
-                    size="sm"
-                    variant="flat"
-                    className="bg-[#EFF6FF] text-[#006FEE] border-none font-medium text-xs px-2"
-                >
-                    CHỜ KÝ
-                </Chip>
-            );
+            return <Chip size="sm" variant="flat" className="bg-[#EFF6FF] text-[#006FEE] border-none font-medium text-xs px-2">Chờ ký</Chip>;
         case ContractStatusEnum.SIGNED:
-            return (
-                <Chip
-                    size="sm"
-                    variant="flat"
-                    className="bg-[#F0FDF4] text-[#16A34A] border-none font-medium text-xs px-2"
-                >
-                    ĐÃ KÝ
-                </Chip>
-            );
+            return <Chip size="sm" variant="flat" className="bg-[#F0FDF4] text-[#16A34A] border-none font-medium text-xs px-2">Đã ký</Chip>;
         case ContractStatusEnum.EXPIRED:
-            return (
-                <Chip
-                    size="sm"
-                    variant="flat"
-                    className="bg-[#FEF2F2] text-[#DC2626] border-none font-medium text-xs px-2"
-                >
-                    HẾT HẠN
-                </Chip>
-            );
+            return <Chip size="sm" variant="flat" className="bg-[#FEF2F2] text-[#DC2626] border-none font-medium text-xs px-2">Hết hạn</Chip>;
         default:
             return null;
     }
@@ -135,20 +141,217 @@ const getStatusChip = (status: ContractStatusEnum) => {
 
 const InfoRow = ({ label, value }: { label: string; value: any }) => (
     <div className="flex flex-col gap-1.5">
-        <span className="text-[12px] text-[#71717A] uppercase font-semibold">
-            {label}
-        </span>
-        <span className="text-[14px] text-[#11181C] font-semibold">
-            {value || '—'}
-        </span>
+        <span className="text-[12px] text-[#71717A] uppercase font-semibold">{label}</span>
+        <span className="text-[14px] text-[#11181C] font-semibold">{value || '—'}</span>
     </div>
 );
+
+const formatWorkingDays = (days?: number[]) => {
+    if (!days || days.length === 0) return '—';
+    return days.map((d) => WORKING_DAYS.find((wd) => wd.key === d)?.label || `Thứ ${d}`).join(', ');
+};
+
+interface WorkingArea {
+    departmentId: string;
+    roomIds: string[];
+}
+
+interface EditFormData {
+    jobTitle: string;
+    position: string;
+    duration: number;
+    durationUnit: string;
+    departmentId: string;
+    roomId: string;
+    workingAreas: WorkingArea[];
+    directManagerIds: string[];
+    shiftType: string;
+    fixedShiftId: string;
+    workTimeValue: string;
+    workTimeUnit: string;
+    workingDays: number[];
+}
+
+const initFormFromContract = (contract: StaffContract | undefined): EditFormData => ({
+    jobTitle: contract?.jobTitle || '',
+    position: contract?.position || '',
+    duration: contract?.duration || 1,
+    durationUnit: contract?.durationUnit || 'YEAR',
+    departmentId: contract?.department?.id || '',
+    roomId: '',
+    workingAreas: [{ departmentId: contract?.department?.id || '', roomIds: [] }],
+    directManagerIds: contract?.directManagerIds || [],
+    shiftType: contract?.shiftType || '',
+    fixedShiftId: contract?.fixedShiftId || '',
+    workTimeValue: contract?.workTimeValue ? String(contract.workTimeValue) : '',
+    workTimeUnit: contract?.workTimeUnit || 'DAY',
+    workingDays: contract?.workingDays || [1, 2, 3, 4, 5],
+});
 
 export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { data: response, isLoading } = useStaffContracts(staffId);
     const contracts = response?.data || [];
-    const currentContract = contracts.find(c => c.status === ContractStatusEnum.SIGNED) || contracts[0];
+    const currentContract = contracts.find((c) => c.status === ContractStatusEnum.SIGNED) || contracts[0];
+
+    const approveMutation = useApproveContract(staffId);
+    const signMutation = useSignContract(staffId);
+    const deleteMutation = useDeleteContract(staffId);
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [formData, setFormData] = useState<EditFormData>(() => initFormFromContract(currentContract));
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+    const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+
+    // Data queries for dropdowns
+    const { data: departmentsRes } = useQuery({ ...departmentQueryOptions.list({ getAll: true } as any) });
+    const { data: roomsRes } = useQuery({ ...roomQueryOptions.list({ getAll: true } as any) });
+    const { data: shiftsRes } = useQuery({
+        ...shiftTemplateQueryOptions.list({ getAll: true, type: 'FIXED', status: 'ACTIVE' }),
+        enabled: formData.shiftType === 'FIXED',
+    });
+
+    const departments = departmentsRes?.data || [];
+    const rooms = roomsRes?.data || [];
+    const shifts = (shiftsRes?.data || []) as any[];
+
+    const workHistories = useMemo(() => {
+        return contracts
+            .flatMap((c) =>
+                (c.staffWorkHistory || []).map((wh) => ({
+                    ...wh,
+                    _contractId: c.id,
+                    _staffCode: c.staff?.code,
+                    _staffName: c.staff?.name,
+                    _departmentName: c.department?.name,
+                })),
+            )
+            .sort((a, b) => dayjs(b.createdAt).valueOf() - dayjs(a.createdAt).valueOf());
+    }, [contracts]);
+
+    const handleStartEdit = useCallback(() => {
+        setFormData(initFormFromContract(currentContract));
+        setErrors({});
+        setIsEditing(true);
+    }, [currentContract]);
+
+    const handleCancelEdit = useCallback(() => {
+        setIsEditing(false);
+        setErrors({});
+    }, []);
+
+    const validateForm = useCallback(() => {
+        const newErrors: Record<string, string> = {};
+        if (!formData.jobTitle) newErrors.jobTitle = 'Chức danh không được để trống.';
+        if (!formData.position) newErrors.position = 'Cấp bậc không được để trống.';
+        if (!formData.duration || formData.duration <= 0) newErrors.duration = 'Thời gian hợp đồng không được để trống.';
+        if (!formData.departmentId) newErrors.departmentId = 'Khoa quản lý không được để trống.';
+        const firstArea = formData.workingAreas[0];
+        if (formData.workingAreas.length > 0 && firstArea && !firstArea.departmentId) {
+            newErrors.workingAreaDept0 = 'Khoa làm việc không được để trống.';
+        }
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    }, [formData]);
+
+    const handleSave = useCallback(async () => {
+        if (!validateForm() || !currentContract) return;
+        setIsSaving(true);
+        try {
+            await hrmInstance.patch(`/staff-contract/${currentContract.id}`, {
+                jobTitle: formData.jobTitle,
+                position: formData.position,
+                duration: formData.duration,
+                durationUnit: formData.durationUnit,
+                departmentId: formData.departmentId,
+                shiftType: formData.shiftType || undefined,
+                fixedShiftId: formData.fixedShiftId || undefined,
+                workTimeValue: formData.workTimeValue ? Number(formData.workTimeValue) : undefined,
+                workTimeUnit: formData.workTimeUnit || undefined,
+                workingDays: formData.workingDays,
+            });
+            addToast({ title: 'Cập nhật thông tin nhân viên thành công.', color: 'success' });
+            setIsEditing(false);
+            // Trigger refetch
+            window.location.reload();
+        } catch (err) {
+            addToast({ title: normalizeAxiosError(err).message, color: 'danger' });
+        } finally {
+            setIsSaving(false);
+        }
+    }, [validateForm, currentContract, formData]);
+
+    const handleApprove = useCallback((contractId: string) => {
+        approveMutation.mutate(contractId, {
+            onSuccess: () => addToast({ title: 'Duyệt hợp đồng thành công', color: 'success' }),
+            onError: (error) => addToast({ title: 'Duyệt hợp đồng thất bại', description: error.message, color: 'danger' }),
+        });
+    }, [approveMutation]);
+
+    const handleSign = useCallback((contractId: string) => {
+        signMutation.mutate(contractId, {
+            onSuccess: () => addToast({ title: 'Ký hợp đồng thành công', color: 'success' }),
+            onError: (error) => addToast({ title: 'Ký hợp đồng thất bại', description: error.message, color: 'danger' }),
+        });
+    }, [signMutation]);
+
+    const handleDeleteConfirm = useCallback(() => {
+        if (!deleteTargetId) return;
+        deleteMutation.mutate(deleteTargetId, {
+            onSuccess: () => {
+                addToast({ title: 'Xóa hợp đồng thành công', color: 'success' });
+                onDeleteClose();
+                setDeleteTargetId(null);
+            },
+            onError: (error) => addToast({ title: 'Xóa hợp đồng thất bại', description: error.message, color: 'danger' }),
+        });
+    }, [deleteTargetId, deleteMutation, onDeleteClose]);
+
+    const openDeleteModal = useCallback((contractId: string) => {
+        setDeleteTargetId(contractId);
+        onDeleteOpen();
+    }, [onDeleteOpen]);
+
+    const addWorkingArea = useCallback(() => {
+        setFormData((prev) => ({
+            ...prev,
+            workingAreas: [...prev.workingAreas, { departmentId: '', roomIds: [] }],
+        }));
+    }, []);
+
+    const removeWorkingArea = useCallback((index: number) => {
+        setFormData((prev) => ({
+            ...prev,
+            workingAreas: prev.workingAreas.filter((_, i) => i !== index),
+        }));
+    }, []);
+
+    const updateWorkingArea = useCallback((index: number, field: 'departmentId' | 'roomIds', value: string | string[]) => {
+        setFormData((prev) => {
+            const updated: WorkingArea[] = [...prev.workingAreas];
+            const current = updated[index];
+            if (current) {
+                if (field === 'departmentId') {
+                    updated[index] = { ...current, departmentId: value as string };
+                } else {
+                    updated[index] = { ...current, roomIds: value as string[] };
+                }
+            }
+            return { ...prev, workingAreas: updated };
+        });
+    }, []);
+
+    const toggleWorkingDay = useCallback((day: number) => {
+        setFormData((prev) => ({
+            ...prev,
+            workingDays: prev.workingDays.includes(day)
+                ? prev.workingDays.filter((d) => d !== day)
+                : [...prev.workingDays, day],
+        }));
+    }, []);
 
     if (isLoading) {
         return (
@@ -158,6 +361,28 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
         );
     }
 
+    if (contracts.length === 0) {
+        return (
+            <div className="space-y-6 mt-4">
+                <Card className="shadow-none border border-[#F4F4F5] rounded-2xl overflow-hidden bg-white">
+                    <CardBody className="flex flex-col items-center justify-center py-16 gap-4">
+                        <IconAlertCircle size={48} className="text-[#A1A1AA]" />
+                        <p className="text-[15px] text-[#71717A] text-center">
+                            Nhân viên chưa có dữ liệu hợp đồng, vui lòng thêm mới hợp đồng.
+                        </p>
+                        <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={onOpen}>
+                            Thêm mới hợp đồng
+                        </Button>
+                    </CardBody>
+                </Card>
+                <StaffContractFormDrawer isOpen={isOpen} onClose={onClose} staffId={staffId} />
+            </div>
+        );
+    }
+
+    const inputClassNames = { inputWrapper: 'bg-[#F4F4F5] rounded-xl shadow-none' };
+    const selectClassNames = { trigger: 'bg-[#F4F4F5] rounded-xl shadow-none' };
+
     return (
         <div className="space-y-6 mt-4">
             {/* Contract Details */}
@@ -165,85 +390,328 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                 <CardHeader className="flex items-center justify-between px-6 py-4 bg-white border-b border-[#F4F4F5]">
                     <div className="flex items-center gap-2">
                         <IconFileDescription size={20} className="text-[#11181C]" />
-                        <h3 className="text-[16px] font-bold text-[#11181C]">
-                            Thông tin hợp đồng
-                        </h3>
+                        <h3 className="text-[16px] font-bold text-[#11181C]">Thông tin hợp đồng</h3>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Button
-                            variant="flat"
-                            size="sm"
-                            startContent={<IconPencil size={18} />}
-                            className="bg-[#F4F4F5] text-[#11181C] font-semibold h-9 rounded-xl px-4"
-                        >
-                            Chỉnh sửa
-                        </Button>
-                        <Button
-                            color="primary"
-                            size="sm"
-                            startContent={<IconPlus size={18} />}
-                            className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4"
-                            onPress={onOpen}
-                        >
-                            Thêm mới hợp đồng
-                        </Button>
+                        {isEditing ? (
+                            <>
+                                <Button variant="bordered" size="sm" className="border-[#E4E4E7] text-[#11181C] font-semibold h-9 rounded-xl px-4" onPress={handleCancelEdit}>
+                                    Hủy
+                                </Button>
+                                <Button color="primary" size="sm" className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" isLoading={isSaving} onPress={handleSave}>
+                                    Lưu
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button variant="flat" size="sm" isIconOnly className="bg-[#F4F4F5] text-[#11181C] h-9 w-9 rounded-xl" onPress={() => currentContract && openDeleteModal(currentContract.id)}>
+                                    <IconTrash size={18} />
+                                </Button>
+                                <Button variant="flat" size="sm" startContent={<IconPencil size={18} />} className="bg-[#F4F4F5] text-[#11181C] font-semibold h-9 rounded-xl px-4" onPress={handleStartEdit}>
+                                    Chỉnh sửa
+                                </Button>
+                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={onOpen}>
+                                    Thêm mới hợp đồng
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </CardHeader>
                 <CardBody className="p-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-                        <InfoRow
-                            label="Loại hợp đồng"
-                            value={translateContractType(currentContract?.contractType as string)}
-                        />
-                        <InfoRow
-                            label="Loại hình"
-                            value={translateWorkType(currentContract?.workType as string)}
-                        />
-                        <InfoRow
-                            label="Chức danh"
-                            value={translateJobTitle(currentContract?.jobTitle as string)}
-                        />
-                        <InfoRow
-                            label="Cấp bậc"
-                            value={translatePosition(currentContract?.position as string)}
-                        />
-                        <InfoRow
-                            label="Thời hạn hợp đồng"
-                            value={
-                                currentContract
-                                    ? `${currentContract.duration} ${currentContract.durationUnit === 'YEAR' ? 'năm' : 'tháng'}`
-                                    : ''
-                            }
-                        />
-                        <InfoRow
-                            label="Ngày bắt đầu"
-                            value={
-                                currentContract?.startDate
-                                    ? dayjs(currentContract.startDate).format('DD/MM/YYYY')
-                                    : ''
-                            }
-                        />
-                        <InfoRow
-                            label="Ngày kết thúc"
-                            value={
-                                currentContract?.endDate
-                                    ? dayjs(currentContract.endDate).format('DD/MM/YYYY')
-                                    : ''
-                            }
-                        />
-                        <InfoRow label="Số hợp đồng" value={currentContract?.contractNumber} />
-                        <InfoRow label="Khoa quản lý" value={currentContract?.department?.name} />
-                        <InfoRow label="Phòng quản lý" value="—" />
-                        <InfoRow label="Khoa làm việc" value={currentContract?.department?.name} />
-                        <InfoRow label="Phòng làm việc" value="—" />
-                        <InfoRow label="Quản lý trực tiếp" value="—" />
-                        <InfoRow label="Loại hình làm việc theo ca" value={currentContract?.shiftType || '—'} />
-                        <InfoRow label="Địa điểm làm việc" value="—" />
-                        <InfoRow label="Thời gian làm việc" value="—" />
-                        <div className="col-span-1 md:col-span-2">
-                            <InfoRow label="Ngày làm việc" value={currentContract?.workingDays?.map(d => `Thứ ${d}`).join(', ') || '—'} />
+                    {isEditing ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-5 gap-x-8 md:pr-12">
+                            {/* Row 1: Loại hợp đồng + Loại hình (readonly) */}
+                            <Input label="Loại hợp đồng" labelPlacement="outside" value={translateContractType(currentContract?.contractType as string)} isReadOnly isRequired classNames={inputClassNames} />
+                            <Input label="Loại hình" labelPlacement="outside" value={translateWorkType(currentContract?.workType as string)} isReadOnly isRequired classNames={inputClassNames} />
+
+                            {/* Row 2: Chức danh + Cấp bậc */}
+                            <div>
+                                <Select
+                                    label="Chức danh"
+                                    isRequired
+                                    labelPlacement="outside"
+                                    placeholder="Chọn chức danh"
+                                    selectedKeys={formData.jobTitle ? [formData.jobTitle] : []}
+                                    onSelectionChange={(keys) => {
+                                        const val = Array.from(keys)[0] as string;
+                                        setFormData((p) => ({ ...p, jobTitle: val }));
+                                    }}
+                                    classNames={selectClassNames}
+                                    isInvalid={!!errors.jobTitle}
+                                    errorMessage={errors.jobTitle}
+                                >
+                                    {JOB_TITLE_OPTIONS.map((o) => <SelectItem key={o.key}>{o.label}</SelectItem>)}
+                                </Select>
+                            </div>
+                            <div>
+                                <Select
+                                    label="Cấp bậc"
+                                    isRequired
+                                    labelPlacement="outside"
+                                    placeholder="Chọn cấp bậc"
+                                    selectedKeys={formData.position ? [formData.position] : []}
+                                    onSelectionChange={(keys) => {
+                                        const val = Array.from(keys)[0] as string;
+                                        setFormData((p) => ({ ...p, position: val }));
+                                    }}
+                                    classNames={selectClassNames}
+                                    isInvalid={!!errors.position}
+                                    errorMessage={errors.position}
+                                >
+                                    {POSITION_OPTIONS.map((o) => <SelectItem key={o.key}>{o.label}</SelectItem>)}
+                                </Select>
+                            </div>
+
+                            <Input
+                                label="Thời gian hợp đồng"
+                                isRequired
+                                labelPlacement="outside"
+                                placeholder="Nhập"
+                                type="number"
+                                value={String(formData.duration)}
+                                onValueChange={(v) => setFormData((p) => ({ ...p, duration: Number(v) || 0 }))}
+                                classNames={inputClassNames}
+                                isInvalid={!!errors.duration}
+                                errorMessage={errors.duration}
+                                endContent={
+                                    <Dropdown>
+                                        <DropdownTrigger>
+                                            <Button
+                                                variant="bordered"
+                                                className="h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white"
+                                                endContent={<IconChevronDown size={14} />}
+                                            >
+                                                {formData.durationUnit === 'YEAR' ? 'Năm' : 'Tháng'}
+                                            </Button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu
+                                            aria-label="Chọn đơn vị"
+                                            disallowEmptySelection
+                                            selectionMode="single"
+                                            selectedKeys={new Set([formData.durationUnit])}
+                                            onSelectionChange={(keys) => {
+                                                const val = Array.from(keys)[0] as string;
+                                                setFormData((p) => ({ ...p, durationUnit: val }));
+                                            }}
+                                        >
+                                            <DropdownItem key="YEAR">Năm</DropdownItem>
+                                            <DropdownItem key="MONTH">Tháng</DropdownItem>
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                }
+                            />
+                            <Input label="Số hợp đồng" labelPlacement="outside" value={currentContract?.contractNumber || ''} isReadOnly classNames={inputClassNames} />
+
+                            {/* Row 4: Ngày bắt đầu + Ngày kết thúc */}
+                            <Input label="Ngày bắt đầu" labelPlacement="outside" value={currentContract?.startDate ? dayjs(currentContract.startDate).format('D/M/YYYY') : ''} isReadOnly isRequired classNames={inputClassNames} />
+                            <Input label="Ngày kết thúc" labelPlacement="outside" value={currentContract?.endDate ? dayjs(currentContract.endDate).format('D/M/YYYY') : ''} isReadOnly isRequired classNames={inputClassNames} />
+
+                            {/* Row 5: Khoa quản lý + Phòng quản lý */}
+                            <Select
+                                label="Khoa quản lý"
+                                isRequired
+                                labelPlacement="outside"
+                                placeholder="Chọn khoa"
+                                selectedKeys={formData.departmentId ? [formData.departmentId] : []}
+                                onSelectionChange={(keys) => {
+                                    const val = Array.from(keys)[0] as string;
+                                    setFormData((p) => ({ ...p, departmentId: val }));
+                                }}
+                                classNames={selectClassNames}
+                                isInvalid={!!errors.departmentId}
+                                errorMessage={errors.departmentId}
+                            >
+                                {departments.map((d) => <SelectItem key={d.id}>{d.name}</SelectItem>)}
+                            </Select>
+                            <Select
+                                label="Phòng quản lý"
+                                labelPlacement="outside"
+                                placeholder="Chọn phòng"
+                                selectedKeys={formData.roomId ? [formData.roomId] : []}
+                                onSelectionChange={(keys) => {
+                                    const val = Array.from(keys)[0] as string;
+                                    setFormData((p) => ({ ...p, roomId: val }));
+                                }}
+                                classNames={selectClassNames}
+                            >
+                                {rooms.map((r) => <SelectItem key={r.id}>{r.name}</SelectItem>)}
+                            </Select>
+
+                            {/* Khoa/phòng làm việc (dynamic rows) */}
+                            {formData.workingAreas.map((area, idx) => (
+                                <Fragment key={idx}>
+                                    <Select
+                                        label="Khoa làm việc"
+                                        isRequired
+                                        labelPlacement="outside"
+                                        placeholder="Chọn khoa"
+                                        selectedKeys={area.departmentId ? [area.departmentId] : []}
+                                        onSelectionChange={(keys) => {
+                                            const val = Array.from(keys)[0] as string;
+                                            updateWorkingArea(idx, 'departmentId', val);
+                                        }}
+                                        classNames={selectClassNames}
+                                        isInvalid={!!errors[`workingAreaDept${idx}`]}
+                                        errorMessage={errors[`workingAreaDept${idx}`]}
+                                    >
+                                        {departments.map((d) => <SelectItem key={d.id}>{d.name}</SelectItem>)}
+                                    </Select>
+                                    <div className="relative">
+                                        <Select
+                                            label="Phòng làm việc"
+                                            labelPlacement="outside"
+                                            placeholder="Chọn phòng"
+                                            selectionMode="multiple"
+                                            selectedKeys={new Set(area.roomIds)}
+                                            onSelectionChange={(keys) => {
+                                                updateWorkingArea(idx, 'roomIds', Array.from(keys).map(String));
+                                            }}
+                                            classNames={selectClassNames}
+                                        >
+                                            {rooms.filter(r => !area.departmentId || r.department?.id === area.departmentId).map((r) => <SelectItem key={r.id}>{r.name}</SelectItem>)}
+                                        </Select>
+                                        {formData.workingAreas.length > 1 && (
+                                            <Button
+                                                isIconOnly
+                                                variant="light"
+                                                className={`absolute -right-12 bottom-0 h-10 text-[#71717A] min-w-10 ${idx === 0 ? 'invisible' : ''}`}
+                                                onPress={() => removeWorkingArea(idx)}
+                                            >
+                                                <IconTrash size={18} />
+                                            </Button>
+                                        )}
+                                    </div>
+                                </Fragment>))}
+                            <div className="col-span-1 md:col-span-2 -mt-2">
+                                <Button variant="light" color="primary" className="justify-start px-0 font-medium text-[14px] w-fit" startContent={<IconPlus size={16} />} onPress={addWorkingArea}>
+                                    Thêm mới
+                                </Button>
+                            </div>
+
+                            {/* Quản lý trực tiếp + Loại hình ca */}
+                            <Select label="Quản lý trực tiếp" labelPlacement="outside" placeholder="Chọn" isRequired classNames={selectClassNames}>
+                                <SelectItem key="none">—</SelectItem>
+                            </Select>
+                            <Select
+                                label="Loại hình làm việc theo ca"
+                                isRequired
+                                labelPlacement="outside"
+                                placeholder="Chọn"
+                                selectedKeys={formData.shiftType ? [formData.shiftType] : []}
+                                onSelectionChange={(keys) => {
+                                    const val = Array.from(keys)[0] as string;
+                                    setFormData((p) => ({ ...p, shiftType: val }));
+                                }}
+                                classNames={selectClassNames}
+                            >
+                                {SHIFT_TYPE_OPTIONS.map((o) => <SelectItem key={o.key}>{o.label}</SelectItem>)}
+                            </Select>
+
+                            {/* Ca làm việc - chỉ hiển thị khi Ca cố định */}
+                            {formData.shiftType === 'FIXED' && (
+                                <Autocomplete
+                                    label="Ca làm việc"
+                                    isRequired
+                                    labelPlacement="outside"
+                                    placeholder="Tìm theo mã ca hoặc tên ca"
+                                    selectedKey={formData.fixedShiftId || null}
+                                    onSelectionChange={(key) => {
+                                        setFormData((p) => ({ ...p, fixedShiftId: key ? String(key) : '' }));
+                                    }}
+                                    classNames={{ base: 'w-full' }}
+                                    inputProps={{ classNames: { inputWrapper: 'bg-[#F4F4F5] rounded-xl shadow-none' } }}
+                                >
+                                    {shifts.map((s) => (
+                                        <AutocompleteItem key={s.id} textValue={`${s.code} - ${s.name}`}>
+                                            {s.code} - {s.name}
+                                        </AutocompleteItem>
+                                    ))}
+                                </Autocomplete>
+                            )}
+
+                            {/* Thời gian làm việc */}
+                            <Input
+                                label="Thời gian làm việc"
+                                labelPlacement="outside"
+                                placeholder="Nhập"
+                                type="number"
+                                min={1}
+                                value={formData.workTimeValue}
+                                onValueChange={(v) => {
+                                    const intVal = v.replace(/[^0-9]/g, '');
+                                    setFormData((p) => ({ ...p, workTimeValue: intVal }));
+                                }}
+                                classNames={inputClassNames}
+                                className={formData.shiftType === 'FIXED' ? '' : 'md:col-span-2'}
+                                endContent={
+                                    <Dropdown>
+                                        <DropdownTrigger>
+                                            <Button
+                                                variant="bordered"
+                                                className="h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white"
+                                                endContent={<IconChevronDown size={14} />}
+                                            >
+                                                {formData.workTimeUnit === 'DAY' ? 'Ngày' : formData.workTimeUnit === 'WEEK' ? 'Tuần' : 'Tháng'}
+                                            </Button>
+                                        </DropdownTrigger>
+                                        <DropdownMenu
+                                            aria-label="Chọn đơn vị"
+                                            disallowEmptySelection
+                                            selectionMode="single"
+                                            selectedKeys={new Set([formData.workTimeUnit])}
+                                            onSelectionChange={(keys) => {
+                                                const val = Array.from(keys)[0] as string;
+                                                setFormData((p) => ({ ...p, workTimeUnit: val }));
+                                            }}
+                                        >
+                                            <DropdownItem key="DAY">Ngày</DropdownItem>
+                                            <DropdownItem key="WEEK">Tuần</DropdownItem>
+                                            <DropdownItem key="MONTH">Tháng</DropdownItem>
+                                        </DropdownMenu>
+                                    </Dropdown>
+                                }
+                            />
+
+                            {/* Ngày làm việc - chỉ hiển thị khi Ca cố định */}
+                            {formData.shiftType === 'FIXED' && (
+                                <div className="col-span-1 md:col-span-2">
+                                    <label className="text-sm font-medium text-[#11181C] flex gap-1 mb-2">Ngày làm việc <span className="text-danger">*</span></label>
+                                    <div className="flex flex-wrap gap-4">
+                                        {WORKING_DAYS.map((day) => (
+                                            <Checkbox key={day.key} isSelected={formData.workingDays.includes(day.key)} onValueChange={() => toggleWorkingDay(day.key)} size="sm" classNames={{ label: 'text-sm text-[#3F3F46]' }}>
+                                                {day.label}
+                                            </Checkbox>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
-                    </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
+                            <InfoRow label="Loại hợp đồng" value={translateContractType(currentContract?.contractType as string)} />
+                            <InfoRow label="Loại hình" value={translateWorkType(currentContract?.workType as string)} />
+                            <InfoRow label="Chức danh" value={translateJobTitle(currentContract?.jobTitle as string)} />
+                            <InfoRow label="Cấp bậc" value={translatePosition(currentContract?.position as string)} />
+                            <InfoRow label="Thời hạn hợp đồng" value={currentContract ? `${currentContract.duration} ${currentContract.durationUnit === 'YEAR' ? 'năm' : 'tháng'}` : ''} />
+                            <InfoRow label="Ngày bắt đầu" value={currentContract?.startDate ? dayjs(currentContract.startDate).format('DD/MM/YYYY') : ''} />
+                            <InfoRow label="Ngày kết thúc" value={currentContract?.endDate ? dayjs(currentContract.endDate).format('DD/MM/YYYY') : ''} />
+                            <InfoRow label="Số hợp đồng" value={currentContract?.contractNumber} />
+                            <InfoRow label="Khoa quản lý" value={currentContract?.department?.name} />
+                            <InfoRow label="Phòng quản lý" value="—" />
+                            <InfoRow label="Khoa làm việc" value={currentContract?.department?.name} />
+                            <InfoRow label="Phòng làm việc" value="—" />
+                            <InfoRow label="Quản lý trực tiếp" value="—" />
+                            <InfoRow label="Loại hình làm việc theo ca" value={currentContract?.shiftType ? translateShiftType(currentContract.shiftType) : '—'} />
+                            <InfoRow label="Ca làm việc" value={currentContract?.fixedShiftId ? (() => { const found = shifts.find((s) => s.id === currentContract.fixedShiftId); return found ? `${found.code} - ${found.name}` : '—'; })() : '—'} />
+                            <InfoRow
+                                label="Thời gian làm việc"
+                                value={currentContract?.workTimeValue ? `${currentContract.workTimeValue} ${currentContract.workTimeUnit === 'DAY' ? 'ngày' : currentContract.workTimeUnit === 'WEEK' ? 'tuần' : 'tháng'}` : '—'}
+                            />
+                            <div className="col-span-1 md:col-span-2">
+                                <InfoRow label="Ngày làm việc" value={formatWorkingDays(currentContract?.workingDays)} />
+                            </div>
+                        </div>
+                    )}
                 </CardBody>
             </Card>
 
@@ -256,10 +724,10 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                 <Table
                     aria-label="Work history table"
                     classNames={{
-                        base: "shadow-none border border-[#F4F4F5] rounded-2xl overflow-hidden bg-white",
-                        thead: "bg-[#F8FAFC]",
-                        th: "bg-[#F8FAFC] text-[#71717A] font-bold text-[13px] border-b border-[#F4F4F5] h-12 uppercase",
-                        td: "py-4 text-[14px] text-[#11181C] border-b border-[#F4F4F5]"
+                        base: 'shadow-none border border-[#F4F4F5] rounded-2xl overflow-hidden bg-white',
+                        thead: 'bg-[#F8FAFC]',
+                        th: 'bg-[#F8FAFC] text-[#71717A] font-bold text-[13px] border-b border-[#F4F4F5] h-12 uppercase',
+                        td: 'py-4 text-[14px] text-[#11181C] border-b border-[#F4F4F5]',
                     }}
                     shadow="none"
                 >
@@ -275,48 +743,91 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                         <TableColumn>NGÀY BẮT ĐẦU</TableColumn>
                         <TableColumn>NGÀY KẾT THÚC</TableColumn>
                         <TableColumn>TRẠNG THÁI</TableColumn>
-                        <TableColumn align="center">HÀNH ĐỘNG</TableColumn>
+                        <TableColumn align="center">{''}</TableColumn>
                     </TableHeader>
                     <TableBody emptyContent="Chưa có dữ liệu lịch sử làm việc">
-                        {contracts.map((contract) => (
-                            <TableRow key={contract.id}>
-                                <TableCell>#123456</TableCell>
-                                <TableCell>Nguyễn Văn A</TableCell>
-                                <TableCell>{translateJobTitle(contract.jobTitle)}</TableCell>
-                                <TableCell>{translatePosition(contract.position)}</TableCell>
-                                <TableCell>{contract.department?.name || '—'}</TableCell>
-                                <TableCell>{translateContractType(contract.contractType)}</TableCell>
-                                <TableCell>{translateWorkType(contract.workType)}</TableCell>
-                                <TableCell>{contract.duration} {contract.durationUnit === 'YEAR' ? 'năm' : 'tháng'}</TableCell>
-                                <TableCell>{dayjs(contract.startDate).format('DD/MM/YYYY')}</TableCell>
-                                <TableCell>{dayjs(contract.endDate).format('DD/MM/YYYY')}</TableCell>
-                                <TableCell>{getStatusChip(contract.status)}</TableCell>
-                                <TableCell>
-                                    <div className="flex items-center justify-center gap-1">
-                                        {contract.status === ContractStatusEnum.PENDING_APPROVAL && (
-                                            <Button isIconOnly size="sm" variant="light" title="Duyệt">
-                                                <IconCheck size={18} className="text-[#006FEE]" />
-                                            </Button>
-                                        )}
-                                        <Button isIconOnly size="sm" variant="light" title="Xóa">
-                                            <IconTrash size={18} className="text-[#F31260]" />
-                                        </Button>
-                                        <Button isIconOnly size="sm" variant="light">
-                                            <IconPencil size={18} className="text-[#71717A]" />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {workHistories.map((history) => {
+                            const contractStatus = history.contractStatus as unknown as string;
+                            const canEdit = contractStatus === 'PENDING_APPROVAL' || contractStatus === 'PENDING_SIGNATURE';
+                            const canDelete = canEdit;
+                            return (
+                                <TableRow key={history.id}>
+                                    <TableCell>#{history._staffCode || '—'}</TableCell>
+                                    <TableCell>{history._staffName || '—'}</TableCell>
+                                    <TableCell>{translateJobTitle(history.jobTitle)}</TableCell>
+                                    <TableCell>{translatePosition(history.position)}</TableCell>
+                                    <TableCell>{history._departmentName || '—'}</TableCell>
+                                    <TableCell>{translateContractType(history.contractType)}</TableCell>
+                                    <TableCell>{translateWorkType(history.workType)}</TableCell>
+                                    <TableCell>{history.duration} {history.durationUnit === 'YEAR' ? 'năm' : 'tháng'}</TableCell>
+                                    <TableCell>{dayjs(history.startDate).format('DD/MM/YYYY')}</TableCell>
+                                    <TableCell>{dayjs(history.endDate).format('DD/MM/YYYY')}</TableCell>
+                                    <TableCell>{getStatusChip(history.contractStatus as unknown as ContractStatusEnum)}</TableCell>
+                                    <TableCell>
+                                        <div className="flex items-center justify-end gap-2">
+                                            {contractStatus === 'PENDING_APPROVAL' && (
+                                                <>
+                                                    <Button isIconOnly size="sm" variant="flat" className="bg-[#FEE2E2] text-[#EF4444] min-w-8 w-8 h-8 rounded-lg" onPress={() => openDeleteModal(history._contractId)}>
+                                                        <IconX size={16} />
+                                                    </Button>
+                                                    <Button size="sm" color="primary" className="bg-[#006FEE] text-white font-semibold h-8 rounded-lg px-4" isLoading={approveMutation.isPending} onPress={() => handleApprove(history._contractId)}>
+                                                        Duyệt
+                                                    </Button>
+                                                </>
+                                            )}
+                                            {contractStatus === 'PENDING_SIGNATURE' && (
+                                                <>
+                                                    <Button isIconOnly size="sm" variant="flat" className="bg-[#FEE2E2] text-[#EF4444] min-w-8 w-8 h-8 rounded-lg" onPress={() => openDeleteModal(history._contractId)}>
+                                                        <IconX size={16} />
+                                                    </Button>
+                                                    <Button size="sm" className="bg-[#020617] text-white font-semibold h-8 rounded-lg px-4" isLoading={signMutation.isPending} onPress={() => handleSign(history._contractId)}>
+                                                        Ký hợp đồng
+                                                    </Button>
+                                                </>
+                                            )}
+                                            {canEdit && (
+                                                <Button isIconOnly size="sm" variant="light" className="min-w-8 w-8 h-8 text-[#71717A]" onPress={onOpen}>
+                                                    <IconPencil size={18} />
+                                                </Button>
+                                            )}
+                                            {canDelete && (
+                                                <Button isIconOnly size="sm" variant="light" className="min-w-8 w-8 h-8 text-[#71717A]" onPress={() => openDeleteModal(history._contractId)}>
+                                                    <IconTrash size={18} />
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
                     </TableBody>
                 </Table>
             </div>
 
-            <StaffContractFormDrawer
-                isOpen={isOpen}
-                onClose={onClose}
-                staffId={staffId}
-            />
+            {/* Delete Confirmation Modal */}
+            <Modal isOpen={isDeleteOpen} onClose={onDeleteClose} size="md">
+                <ModalContent>
+                    <ModalHeader className="flex items-center gap-2">
+                        <IconAlertCircle size={20} className="text-[#EF4444]" />
+                        <span>Xác nhận xóa hợp đồng</span>
+                    </ModalHeader>
+                    <ModalBody>
+                        <p className="text-[14px] text-[#3F3F46]">
+                            Thông tin hợp đồng sau khi xóa không thể hoàn tác, bạn có chắc chắn muốn xóa hợp đồng?
+                        </p>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="bordered" className="border-[#E4E4E7] text-[#11181C] font-semibold h-10 px-6 rounded-xl" onPress={onDeleteClose}>
+                            Hủy
+                        </Button>
+                        <Button color="danger" className="font-semibold h-10 px-6 rounded-xl" isLoading={deleteMutation.isPending} onPress={handleDeleteConfirm}>
+                            Xóa
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+
+            <StaffContractFormDrawer isOpen={isOpen} onClose={onClose} staffId={staffId} />
         </div>
     );
 };
