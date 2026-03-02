@@ -13,15 +13,14 @@ export const ChangeShiftDivision = () => {
 
   const matchedSchedule = schedules?.find((schedule) => schedule.date === date);
 
-  const matchedShift = matchedSchedule?.shifts?.find(
-    (s) => s.workScheduleId === shift?.workScheduleId,
-  );
+  // const matchedShift = matchedSchedule?.shifts?.find(
+  //   (s) => s.workScheduleId === shift?.workScheduleId,
+  // );
 
   console.log('_______________________', {
     shift,
     schedules,
     matchedSchedule,
-    matchedShift,
   });
 
   return (

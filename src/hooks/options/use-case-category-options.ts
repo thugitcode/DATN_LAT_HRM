@@ -16,7 +16,6 @@ export const useCaseCategoryOptions = () => {
     limit: 100,
   });
 
-  console.log('data_case_category____________', data);
   return {
     options:
       data?.data?.map((item) => ({
