@@ -15,6 +15,8 @@ export const useCaseCategoryOptions = () => {
     page: 1,
     limit: 100,
   });
+
+  console.log('data_case_category____________', data);
   return {
     options:
       data?.data?.map((item) => ({
@@ -22,6 +24,7 @@ export const useCaseCategoryOptions = () => {
         label: item.name,
         startTime: item.startTime,
         endTime: item.endTime,
+        type: item.type,
       })) ?? [],
   };
 };

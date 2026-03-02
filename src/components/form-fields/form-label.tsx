@@ -12,7 +12,7 @@ export const FormLabel: FC<Readonly<FormLabelProps>> = ({ label, isRequired, isE
   return (
     <label
       className={cn(
-        'text-xs font-normal leading-4 text-[#52525B]',
+        'text-base font-normal leading-4 text-[#52525B]',
         isError ? 'text-[#F31260]' : 'text-[#52525B]',
       )}
     >

@@ -9,12 +9,13 @@ import type { Column } from '@/components/table/types';
 import { StaffInfo } from '../../components/staff-infor';
 import { dayNames, getWeeksInMonth } from '../../helper';
 import { useYearMonth } from '../../hooks/use-year-month';
-import { ShiftDepartment } from '../components/shift-department';
 import { SHIFT_CA_LEGEND } from '../constants/data';
 
 interface UseColumnsProps {
   data?: StaffSchedule[];
 }
+
+const H_SHIFT = 78;
 
 export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
   const { month, year } = useYearMonth();
@@ -23,13 +24,12 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
 
   const maxShiftsPerDate = useMemo(() => {
-    const map: Record<string, number> = {};
+    const map: Record<string, Record<string, number>> = {};
     data.forEach((record) => {
+      const staffId = record.staff.id;
       record?.schedules?.forEach((schedule) => {
-        const count = schedule.shifts?.length ?? 0;
-        if (!map[schedule.date] || map[schedule.date] < count) {
-          map[schedule.date] = count;
-        }
+        if (!map[schedule.date]) map[schedule.date] = {};
+        map[schedule.date][staffId] = schedule.shifts?.length ?? 0;
       });
     });
     return map;
@@ -54,7 +54,7 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
               avatarUrl={record?.staff?.avatar}
               code={record?.staff?.code}
               rooms={record?.staff?.rooms}
-              departments={record?.staff?.rooms}
+              departments={record?.staff?.departments}
               name={record?.staff?.name}
               role={record?.staff?.position}
             />
@@ -95,14 +95,16 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
                 (schedule) => schedule.date === dateString,
               );
 
-              const maxShifts = maxShiftsPerDate[dateString] ?? 1;
+              const maxShifts = maxShiftsPerDate[dateString]?.[record.staff.id] ?? 0;
 
               if (!daySchedule?.shifts?.length) {
                 return (
-                  <div className="flex flex-col items-center gap-1.5">
+                  <div className="flex flex-col items-center gap-1.5 h-full">
                     {Array.from({ length: maxShifts }).map((_, idx) => (
                       <div key={idx} className="flex flex-col items-center gap-0.5">
-                        --
+                        <span className="inline-flex items-center justify-center px-2 py-1 rounded-md text-sm h-7">
+                          --
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -114,16 +116,12 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
                   {Array.from({ length: maxShifts }).map((_, idx) => {
                     const shift = daySchedule.shifts[idx];
 
-                    if (!daySchedule?.shifts?.length) {
+                    if (!shift) {
                       return (
-                        <div className="flex flex-col items-center gap-1.5">
-                          {Array.from({ length: maxShifts }).map((_, idx) => (
-                            <div key={idx} className="flex flex-col items-center gap-0.5">
-                              <span className="inline-flex items-center justify-center px-2 py-1 text-sm text-gray-400">
-                                <IconLine />
-                              </span>
-                            </div>
-                          ))}
+                        <div key={idx} className="flex flex-col items-center gap-0.5">
+                          <span className="inline-flex items-center justify-center px-2 py-1 text-sm text-gray-400">
+                            --
+                          </span>
                         </div>
                       );
                     }
@@ -133,10 +131,10 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
                     )?.color;
 
                     return (
-                      <div key={shift.id || idx} className="flex flex-col items-center gap-0.5">
+                      <div key={shift.id || idx} className="flex flex-col items-center gap-0.5 ">
                         <span
-                          className="inline-flex items-center justify-center px-2 py-1 rounded-md text-sm cursor-pointer transition-transform hover:scale-105"
-                          title={`Ca làm việc ${idx + 1}`}
+                          className="max-w-[100px] truncate px-2 py-1 rounded-md text-sm cursor-pointer transition-transform hover:scale-105"
+                          title={shift.shiftTemplateName}
                           style={{ color }}
                           onClick={() =>
                             onOpen(DrawerType.CHANGE_SHIFT_DIVISION, {

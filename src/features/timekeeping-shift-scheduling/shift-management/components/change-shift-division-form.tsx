@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import type { Options } from '@/types/global.type';
 import {
   StatusUpdateShift,
+  type DaySchedule,
   type Shift,
   type StaffWorkSchedule,
   type UpdateShift,
@@ -24,11 +25,13 @@ import { FooterFrawer } from './footer-drawer';
 interface ChangeShiftDivisionFormProps {
   shift?: Shift;
   staff?: StaffWorkSchedule;
+  matchedSchedule?: DaySchedule;
 }
 
 export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>> = ({
   shift,
   staff,
+  matchedSchedule,
 }) => {
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
   const { options: staffOptions } = useStaffOptions();

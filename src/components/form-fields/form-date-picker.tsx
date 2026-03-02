@@ -43,6 +43,7 @@ export function FormDatePicker<T extends FieldValues>({
               data-[invalid=true]:!bg-[#F4F4F5]
               group-data-[invalid=true]:!bg-[#F4F4F5]
             `,
+            label: 'text-base! font-normal leading-4 text-[#52525B]!',
           }}
         />
       )}

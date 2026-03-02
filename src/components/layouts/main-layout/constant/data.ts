@@ -46,22 +46,22 @@ export const menuSidebar: MenuItem[] = [
       {
         id: '1',
         label: 'Nhân viên chính thức',
-        path: '/admin/staff-management/official-staff' as any,
+        path: '/admin/staff-management/official-staff',
       },
       {
         id: '2',
         label: 'Nhân viên thử việc',
-        path: '/admin/staff-management/probationary-staff' as any,
+        path: '/admin/staff-management/probationary-staff',
       },
       {
         id: '3',
         label: 'Nhân viên học việc',
-        path: '/admin/staff-management/apprentice-staff' as any,
+        path: '/admin/staff-management/apprentice-staff',
       },
       {
         id: '4',
         label: 'Nhân sự hợp tác',
-        path: '/admin/staff-management/partner-staff' as any,
+        path: '/admin/staff-management/partner-staff',
       },
     ],
   },

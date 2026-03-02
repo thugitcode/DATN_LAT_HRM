@@ -7,6 +7,7 @@ window.KEYCLOAK_URL = 'http://10.8.0.184:8080/';
 window.KEYCLOAK_REALM = 'deepcare';
 window.KEYCLOAK_CLIENT_ID = 'api-gateway';
 window.KHOANG_NGAY_TINH_NGAY_SAP_HET_HAN_LICENSE = 30;
+
 // dev
 // window.GATEWAY = "https://gateway.deepcare-dev.io.vn/";
 // window.CIS_WEB_UI_URL = "https://online.deepcare-dev.io.vn/";
