@@ -133,7 +133,7 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
                     return (
                       <div key={shift.id || idx} className="flex flex-col items-center gap-0.5 ">
                         <span
-                          className="max-w-[100px] truncate px-2 py-1 rounded-md text-sm cursor-pointer transition-transform hover:scale-105"
+                          className="max-w-25 truncate px-2 py-1 rounded-md text-sm cursor-pointer transition-transform hover:scale-105"
                           title={shift.shiftTemplateName}
                           style={{ color }}
                           onClick={() =>

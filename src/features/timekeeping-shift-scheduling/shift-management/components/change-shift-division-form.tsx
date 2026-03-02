@@ -139,6 +139,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
             isRequired
             // disabled={caId === ShiftTypeEnum.FIXED}
           />
+
           <FormArea
             control={control}
             name={'note'}
