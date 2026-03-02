@@ -11,7 +11,7 @@ export const apiTokens: {
 };
 
 export const hrmInstance = axios.create({
-  baseURL: window.GATEWAY + '/api',
+  baseURL: window.GATEWAY + 'api',
   timeout: 15000,
 });
 
