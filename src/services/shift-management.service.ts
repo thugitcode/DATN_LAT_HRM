@@ -1,5 +1,6 @@
 import { DEFAULT_PAGINATION } from '@/query-options/constants';
 
+import type { ApiResponse } from '@/types';
 import type {
   CreateStaffSchedule,
   StaffSchedule,
@@ -8,6 +9,7 @@ import type {
 } from '@/types/shift-management.type';
 import type { StaffParams } from '@/types/staff.type';
 import { hrmInstance } from '@/lib/axios';
+import type { WorkScheduleDetail } from '@/features/timekeeping-shift-scheduling/shift-management/types/type';
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
@@ -34,9 +36,15 @@ class ShiftManagementService extends BaseApiService<
   }
 
   async update({ id, data }: UpdateShift) {
-    console.log('{ id, data }________________update', { id, data });
-
     return super.update(id, data);
+  }
+
+  async getDetail(id: string): Promise<ApiResponse<WorkScheduleDetail>> {
+    return this.request(async () => {
+      const res = await this.instance.get(`${this.url(id)}`);
+
+      return res.data;
+    });
   }
 }
 

@@ -23,7 +23,7 @@ export const ShiftManagementListview: FC<Readonly<ShiftManagementListviewProps>>
   isLoading,
   totalPage,
 }) => {
-  const { columns } = useColumns();
+  const { columns } = useColumns({ data: data });
 
   return (
     <Table

@@ -9,7 +9,21 @@ export const ChangeShiftDivision = () => {
 
   const { record, shift, date, day, month, year, dayOfWeek } = data ?? {};
 
-  const { staff } = record || {};
+  const { staff, schedules } = record || {};
+
+  const matchedSchedule = schedules?.find((schedule) => schedule.date === date);
+
+  const matchedShift = matchedSchedule?.shifts?.find(
+    (s) => s.workScheduleId === shift?.workScheduleId,
+  );
+
+  console.log('_______________________', {
+    shift,
+    schedules,
+    matchedSchedule,
+    matchedShift,
+  });
+
   return (
     <div className="flex flex-col justify-between size-full">
       <CardUserShift
@@ -22,7 +36,7 @@ export const ChangeShiftDivision = () => {
         workDate={date}
       />
 
-      <ChangeShiftDivisionForm shift={shift} staff={staff} />
+      <ChangeShiftDivisionForm shift={shift} staff={staff} matchedSchedule={matchedSchedule} />
     </div>
   );
 };
