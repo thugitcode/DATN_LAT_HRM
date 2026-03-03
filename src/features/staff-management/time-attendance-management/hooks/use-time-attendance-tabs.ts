@@ -1,16 +1,32 @@
-import { useState } from 'react';
+// stores/timeAttendanceTabs.store.ts
+import { create } from "zustand"
+import { TAB_KEYS, tabs } from "../contants/data"
+import { useMemo } from "react"
 
-import { TAB_KEYS, tabs } from '../contants/data';
+type TimeAttendanceTabsState = {
+  activeKey: TAB_KEYS
+  setActiveKey: (key: TAB_KEYS) => void
+}
+
+export const useTimeAttendanceTabsStore = create<TimeAttendanceTabsState>((set) => ({
+  activeKey: TAB_KEYS.WORKSHEET_BY_SHIFT,
+  setActiveKey: (key) => set({ activeKey: key }),
+}))
+
 
 export const useTimeAttendanceTabs = () => {
-  const [activeKey, setActiveKey] = useState<TAB_KEYS>(TAB_KEYS.WORKSHEET_BY_SHIFT);
+  const activeKey = useTimeAttendanceTabsStore((s) => s.activeKey)
+  const setActiveKey = useTimeAttendanceTabsStore((s) => s.setActiveKey)
 
-  const activeTab = tabs.find((tab) => tab.key === activeKey)!;
+  const activeTab = useMemo(
+    () => tabs.find((tab) => tab.key === activeKey)!,
+    [activeKey]
+  )
 
   return {
     tabs,
     activeKey,
     activeTab,
     setActiveKey,
-  };
-};
+  }
+}

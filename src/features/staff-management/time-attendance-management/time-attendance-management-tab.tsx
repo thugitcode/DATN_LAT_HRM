@@ -1,5 +1,13 @@
-import { ShiftEntry } from './shift-entry';
-import { StatsSection } from './stats-section';
+import { ExplanationManagement } from '@/features/timekeeping-shift-scheduling/explanation-management/explanation-management';
+import { TAB_KEYS } from './contants/data';
+import { useTimeAttendanceTabs } from './hooks/use-time-attendance-tabs';
+import AttendanceSummary from './components/attendance-summary';
+import { ShiftEntry } from './components/shift-entry';
+import { Header } from './components/header';
+import { ShiftExplanation } from './components/shift-explanation';
+import { PageFilter } from '@/features/timekeeping-shift-scheduling/components/page-filter';
+import { ShiftManagementGrid } from '@/features/timekeeping-shift-scheduling/shift-management/components/grid-layout/shift-management-grid';
+import { ShiftManagementContainer } from './components/shift-management-container';
 const mockShifts = [
   {
     date: 'Monday, 26/1/2026',
@@ -70,14 +78,29 @@ const mockShifts = [
   },
 ]
 export const TimeAttendanceManagementTab = () => {
+  const { activeKey } = useTimeAttendanceTabs()
+
   return (
-    <div className='flex flex-col gap-6'>
-      <StatsSection />
-      <div className="space-y-4">
+    <div className='flex flex-col'>
+      <div className='mb-5'>
+        <PageFilter />
+      </div>
+      <Header />
+      {
+        TAB_KEYS.WORKSHEET_BY_SHIFT === activeKey && <div className="space-y-4">
+          <AttendanceSummary />
+
           {mockShifts.map((shift, idx) => (
             <ShiftEntry key={idx} {...shift} />
           ))}
         </div>
+      }
+      {
+        TAB_KEYS.SHIFT_EXPLANATION === activeKey && <ShiftExplanation />
+      }
+      {
+        TAB_KEYS.SHIFT_ASSIGNMENT === activeKey && <ShiftManagementContainer />
+      }
     </div>
   );
 };

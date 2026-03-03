@@ -342,12 +342,19 @@ interface Shift {
 }
 
 export function calculateCompHours(
-  overtimeHours: number,
-  shift: Shift
+  totalWorkHours: number,
+  standardHours: number,
+  convertRate: number
 ) {
-  if (!shift.convertCompHours || !shift.compHourRate) {
-    return 0;
-  }
+  if (totalWorkHours <= standardHours) return 0
 
-  return +(overtimeHours * shift.compHourRate).toFixed(2);
+  const overtime = totalWorkHours - standardHours
+
+  return overtime * convertRate
+}
+
+export function formatDateVN(d: string | Date) {
+  const date = dayjs(d)
+  const weekdays = ["Chủ nhật","Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7"]
+  return `${weekdays[date.day()]}, ngày ${date.format("DD/MM/YYYY")}`
 }

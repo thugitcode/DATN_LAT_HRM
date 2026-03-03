@@ -3,6 +3,7 @@ import { useDrawer } from '@/store/useDrawer';
 import {
   Accordion,
   AccordionItem,
+  addToast,
   Button,
   Form,
   Image,
@@ -21,11 +22,14 @@ import { AttendanceExplanationType } from '@/types/attendance-explanation.type';
 import { FormArea } from '@/components/form-fields/form-area';
 import { ShiftDetailsCard } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-card';
 
-import { useAttendanceDetail } from '../../hooks/use-timekeeping-management';
+import { useAttendanceDetail, useUpdateAttendanceMutation } from '../../hooks/use-timekeeping-management';
 import {
   shiftDetailsSchema,
   type shiftDetailsFormValues,
 } from '../../schemas/shift-details.schema';
+import { CheckInMethodEnum } from './type';
+import { useEffect } from 'react';
+import dayjs from 'dayjs';
 
 const columns = [
   { key: 'createdBy', label: 'NGƯỜI ĐIỀU CHỈNH' },
@@ -39,28 +43,53 @@ export const ShiftDetailsDrawer = () => {
   const workScheduleDetailId = useDrawer((state) => state.data) as string;
 
   const { data, isLoading } = useAttendanceDetail(workScheduleDetailId);
+  const { mutate: updateAttendance } = useUpdateAttendanceMutation()
 
   const detailData = data?.data;
 
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting, errors },
-    getValues,
+    formState: { isSubmitting },
+    reset
   } = useForm<shiftDetailsFormValues>({
     resolver: zodResolver(shiftDetailsSchema),
     defaultValues: {
-      reason: '',
-      actualCheckIn: '',
-      actualCheckOut: '',
+      reason: "",
+      actualCheckIn: "",
+      actualCheckOut: "",
       // faceIdCheckIn: undefined,
       // faceIdCheckOut: undefined,
     },
     mode: 'onChange',
   });
-
+  useEffect(() => {
+    reset({
+      reason: detailData?.note ?? undefined,
+      actualCheckIn: detailData?.attendance?.checkInTime ?? undefined,
+      actualCheckOut: detailData?.attendance?.checkOutTime ?? undefined,
+    })
+  }, [detailData])
   const onSubmit = async (values: any) => {
     console.log('values', values);
+    const newValues = { ...values, actualCheckIn: dayjs(values.actualCheckIn, "HH:mm").format("HH:mm:ss"), actualCheckOut: dayjs(values.actualCheckOut, "HH:mm").format("HH:mm:ss"), id: detailData?.id ?? null }
+    updateAttendance(newValues, {
+      onSuccess: () => {
+        addToast({
+          description: 'Cập nhật ca thành công.',
+          color: 'success',
+        });
+        closedDrawer()
+      },
+      onError(error, variables, onMutateResult, context) {
+        console.log(error, "err");
+
+        addToast({
+          description: 'Cập nhật ca thất bại.',
+          color: 'danger',
+        });
+      },
+    })
   };
   return (
     <Form
@@ -71,7 +100,7 @@ export const ShiftDetailsDrawer = () => {
       <div className="bg-white w-full p-4 gap-3 flex flex-col">
         <ShiftDetailsCard shift={detailData} control={control} />
 
-        <div className="flex gap-3">
+        {detailData?.attendance.checkInMethod === CheckInMethodEnum.BIOMETRIC && <div className="flex gap-3">
           <div className="flex flex-col gap-3">
             <div className="font-medium">FaceID check in</div>
             {detailData?.attendance.checkInImage ? (
@@ -104,7 +133,7 @@ export const ShiftDetailsDrawer = () => {
               </div>
             )}
           </div>
-        </div>
+        </div>}
       </div>
 
       <div className="p-4 w-full">
@@ -113,7 +142,7 @@ export const ShiftDetailsDrawer = () => {
             control={control}
             name={'reason'}
             label="Lý do điều chỉnh"
-            // isRequired
+            isRequired
             disabled={isSubmitting}
             maxRows={16}
             classNames={{ label: 'text-base font-normal leading-4 text-[#52525B] mb-3' }}

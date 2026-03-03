@@ -20,7 +20,7 @@ import {
 import { useColumns } from './hooks/use-columns';
 import type { AttendanceExplanationFilters } from './types';
 
-const DEFAULT_SUMMARY = {
+export const DEFAULT_SUMMARY = {
   totalRequests: 0,
   pending: 0,
   approved: 0,

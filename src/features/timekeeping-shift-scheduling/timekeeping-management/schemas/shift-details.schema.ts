@@ -4,18 +4,20 @@ export const shiftDetailsSchema = z.object({
   reason: z
     .string()
     .trim()
-    .max(500, "Lý do không quá 500 ký tự")
-    .optional(),
+    .min(1, "Vui lòng nhập lý do")
+    .max(500, "Lý do không quá 500 ký tự"),
+    // .optional()
 
   actualCheckIn: z
     .string()
-    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Không hợp lệ (HH:mm)")
-    .optional(),
+    .regex(/^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/, "Không hợp lệ (HH:mm)"),
+    // .optional()
 
   actualCheckOut: z
     .string()
-    .regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Không hợp lệ (HH:mm)")
-    .optional(),
+    .regex(/^([01]\d|2[0-3]):([0-5]\d)(:([0-5]\d))?$/, "Không hợp lệ (HH:mm)")
+    // .optional()
+    ,
 
   // faceIdCheckIn: z.string().min(1, "Thiếu ảnh FaceID check-in").optional(),
 

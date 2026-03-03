@@ -1,9 +1,11 @@
-import { useState } from 'react';
-import { useStaffDetail, useUpdateStaff } from '@/query-options/staff';
 import { PageContainer } from '@/components/page-container';
-import { StaffDetailHeader, StaffDetailInfo, StaffContractInfo } from './components';
-import { Tabs, Tab, Button } from '@heroui/react';
-import { IconPencil, IconDeviceFloppy, IconX } from '@tabler/icons-react';
+import { useStaffDetail, useUpdateStaff } from '@/query-options/staff';
+import { Button, Tab, Tabs } from '@heroui/react';
+import { IconDeviceFloppy, IconPencil, IconX } from '@tabler/icons-react';
+import { useState } from 'react';
+import { StaffContractInfo, StaffDetailHeader, StaffDetailInfo } from './components';
+import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
+
 
 interface StaffDetailProps {
     id: string;
@@ -141,7 +143,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                         <StaffContractInfo staffId={id} />
                     </Tab>
                     <Tab key="salary" title="Lương và phúc lợi" />
-                    <Tab key="attendance" title="Quản lý chấm công" />
+                    <Tab key="attendance" title="Quản lý chấm công" ><TimeAttendanceManagementTab /></Tab>
                     <Tab key="documents" title="Hồ sơ nhân viên" />
                 </Tabs>
             </div>

@@ -12,6 +12,7 @@ import { ExplanationTypeRow } from './explanation-type-row';
 interface ExplanationSummaryProps {
   summary?: AttendanceExplanationSummary | null;
   explanationTypes?: AttendanceExplanationTypeCount[] | null;
+  showLabel?: boolean
 }
 
 const GRID_COLS = 3;
@@ -62,6 +63,7 @@ const SUMMARY_BADGES: Array<{
 export const ExplanationSummary: FC<Readonly<ExplanationSummaryProps>> = ({
   summary,
   explanationTypes = [],
+  showLabel = true
 }) => {
   const types = explanationTypes ?? [];
   const maxCount = Math.max(...types.map((t) => t.count), 0);
@@ -75,7 +77,7 @@ export const ExplanationSummary: FC<Readonly<ExplanationSummaryProps>> = ({
   return (
     <div className="flex flex-wrap items-stretch gap-6 rounded-xl bg-white p-5">
       <div className="flex flex-wrap items-center gap-4">
-        <span className="text-2xl font-semibold text-[#11181C] whitespace-nowrap">Tổng quát:</span>
+        {showLabel && <span className="text-2xl font-semibold text-[#11181C] whitespace-nowrap">Tổng quát:</span>}
 
         <div className="flex flex-wrap items-center gap-4">
           {SUMMARY_BADGES.map(({ key, icon, label, color, bgColor }, index) => (

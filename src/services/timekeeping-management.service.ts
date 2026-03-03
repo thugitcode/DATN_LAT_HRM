@@ -12,6 +12,7 @@ import type {
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
+import type { shiftDetailsFormValues } from '@/features/timekeeping-shift-scheduling/timekeeping-management/schemas/shift-details.schema';
 
 class TimekeepingManagementService extends BaseApiService<
   WorkSheetByShiftType,
@@ -50,6 +51,14 @@ class TimekeepingManagementService extends BaseApiService<
   async getDetail(id: string): Promise<ApiResponse<ShiftDetails>> {
     return this.request(async () => {
       const res = await this.instance.get(`${this.url()}/work-schedule-detail/${id}`);
+
+      return res.data;
+    });
+  }
+  async updateAttendance(id: string, body: shiftDetailsFormValues & { id: string }): Promise<ApiResponse<ShiftDetails>> {
+    return this.request(async () => {
+      const { id: _, ...newBody } = body;
+      const res = await this.instance.patch(`${this.url()}/detail/${id}/attendance`, newBody);
 
       return res.data;
     });

@@ -1,7 +1,8 @@
-import { queryOptions } from '@tanstack/react-query';
+import { mutationOptions, queryOptions, useMutation } from '@tanstack/react-query';
 import { timekeepingManagementService } from '@/services/timekeeping-management.service';
 
 import type { StaffParams } from '@/types/staff.type';
+import type { shiftDetailsFormValues } from '@/features/timekeeping-shift-scheduling/timekeeping-management/schemas/shift-details.schema';
 
 export const timekeepingManagementKeys = {
   all: ['timekeeping-management'] as const,
@@ -33,5 +34,6 @@ export const timekeepingManagementQueryOptions = {
       queryKey: timekeepingManagementKeys.detail(id),
       queryFn: () => timekeepingManagementService.getDetail(id),
       enabled: !!id,
+      staleTime: 0,
     }),
 } as const;

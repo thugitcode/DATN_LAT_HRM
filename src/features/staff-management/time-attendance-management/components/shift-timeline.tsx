@@ -1,6 +1,7 @@
 'use client';
 
-import { Card, CardBody, Chip } from '@heroui/react';
+import { groupTimeSlots } from "../helpers";
+
 
 interface TimeSlot {
   time: string;
@@ -13,18 +14,51 @@ interface ShiftTimelineProps {
 }
 
 export function ShiftTimeline({ timeSlots }: ShiftTimelineProps) {
+  const grouped = groupTimeSlots(timeSlots)
   return (
-    <div className="flex gap-2 items-end overflow-x-auto px-6">
-      {timeSlots.map((slot, idx) => (
-        <div key={idx} className="flex flex-col items-center gap-2 min-w-fit flex-1">
-          <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">{slot.time}</span>
+    <div className="overflow-x-auto px-6 py-0 h-full">
+      <div
+        className="relative grid gap-0.5"
+        style={{
+          gridTemplateColumns: `repeat(${timeSlots.length}, minmax(80px, 1fr))`,
+        }}
+      >
+        {/* Grid lines background */}
+        {timeSlots.map((slot, i) => (
           <div
-            className={`h-7 w-16 rounded-md ${slot.color} flex items-center w-full justify-center text-white text-center text-xs font-semibold transition-transform hover:scale-105`}
+            key={i}
+            className="text-xs text-center text-gray-500 py-0"
+          >
+            {slot.time}
+          </div>
+        ))}
+
+        {/* Timeline blocks */}
+        {grouped.map((slot, i) => (
+          <div
+            key={i}
+            className={`
+          ${slot.color}
+          absolute
+          h-7
+          flex items-center justify-center
+          text-white text-[14px] py-0.5 leading-5 font-normal
+          rounded-md
+          w-full
+          transition-all
+          hover:scale-101
+          hover:shadow-lg
+          cursor-pointer
+        `}
+            style={{
+              gridColumn: `${slot.startIndex + 1} / span ${slot.count}`,
+              top: "26px",
+            }}
           >
             {slot.label}
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
