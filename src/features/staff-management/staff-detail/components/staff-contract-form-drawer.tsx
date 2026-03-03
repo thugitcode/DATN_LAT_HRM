@@ -28,6 +28,8 @@ import {
     IconTrash,
     IconChevronDown
 } from '@tabler/icons-react';
+import { useStaffList } from '@/query-options/staff';
+import { StaffPositionEnum } from '@/types/staff.type';
 
 interface WorkingAreaRow {
     id: number;
@@ -49,6 +51,19 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
     const [workingAreas, setWorkingAreas] = useState<WorkingAreaRow[]>([
         { id: Date.now(), departmentId: '', roomId: '' },
     ]);
+
+    const { data: managersRes } = useStaffList({
+        getAll: true,
+        positions: [
+            StaffPositionEnum.HEAD_OF_DEPARTMENT,
+            StaffPositionEnum.DEPUTY_HEAD_OF_DEPARTMENT,
+            StaffPositionEnum.CHIEF_NURSE,
+            StaffPositionEnum.MANAGER,
+            StaffPositionEnum.HEAD_OF_UNIT,
+            StaffPositionEnum.DEPUTY_MANAGER,
+        ],
+    });
+    const managers = managersRes?.data || [];
 
     const addWorkingArea = useCallback(() => {
         setWorkingAreas((prev) => [...prev, { id: Date.now(), departmentId: '', roomId: '' }]);
@@ -165,8 +180,19 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             </Button>
 
                                             <div className="grid grid-cols-2 gap-4">
-                                                <Select label="Quản lý trực tiếp" labelPlacement="outside" placeholder="Chọn" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
-                                                    <SelectItem key="MGR">Manager</SelectItem>
+                                                <Select
+                                                    label="Quản lý trực tiếp"
+                                                    labelPlacement="outside"
+                                                    placeholder="Chọn"
+                                                    classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}
+                                                    isRequired
+                                                    selectionMode="multiple"
+                                                >
+                                                    {managers.map((m) => (
+                                                        <SelectItem key={m.id} textValue={`${m.code} - ${m.name}`}>
+                                                            {m.code} - {m.name}
+                                                        </SelectItem>
+                                                    ))}
                                                 </Select>
                                                 <Select label="Loại hình làm việc theo ca" labelPlacement="outside" placeholder="Chọn" classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired>
                                                     <SelectItem key="CA">Theo ca</SelectItem>

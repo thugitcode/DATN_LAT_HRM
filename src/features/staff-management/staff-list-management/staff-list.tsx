@@ -1,5 +1,5 @@
 import { Button, Chip, Input, Select, SelectItem, addToast, Divider } from '@heroui/react';
-import { IconPrinter, IconList, IconGridDots, IconSearch, IconDownload, IconUpload, IconRefresh, IconFileDownload } from '@tabler/icons-react';
+import { IconPrinter, IconList, IconGridDots, IconSearch, IconRefresh, IconFileDownload } from '@tabler/icons-react';
 import * as XLSX from 'xlsx';
 import { useRef, useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
@@ -14,6 +14,16 @@ import { StaffTable } from './components/staff-table';
 import { StaffGrid } from './components/staff-grid';
 import { StaffFormDrawer } from './components/staff-form-drawer';
 import { useDisclosure } from '@heroui/react';
+
+const POSITION_OPTIONS = [
+    { key: 'STAFF', label: 'Nhân viên' },
+    { key: 'HEAD_OF_DEPARTMENT', label: 'Trưởng khoa' },
+    { key: 'DEPUTY_HEAD_OF_DEPARTMENT', label: 'Phó khoa' },
+    { key: 'CHIEF_NURSE', label: 'Điều dưỡng trưởng' },
+    { key: 'MANAGER', label: 'Trưởng phòng' },
+    { key: 'HEAD_OF_UNIT', label: 'Trưởng bộ phận' },
+    { key: 'DEPUTY_MANAGER', label: 'Phó phòng' },
+];
 
 interface StaffListProps {
     title: string;
@@ -32,6 +42,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
         search: searchParams.search,
         status: searchParams.status,
         jobTitle: searchParams.jobTitle,
+        positions: searchParams.positions,
         departmentId: searchParams.departmentId,
         roomId: searchParams.roomId,
     };
@@ -56,6 +67,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
         search: filters.search,
         status: filters.status,
         jobTitle: filters.jobTitle,
+        positions: filters.positions,
         departmentIds: filters.departmentId ? [filters.departmentId] : undefined,
         roomIds: filters.roomId ? [filters.roomId] : undefined,
         contractType: contractType,
@@ -268,7 +280,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                 {/* Main Content Area */}
                 <div className="bg-white rounded-2xl shadow-sm border border-[#F4F4F5] flex-1 flex flex-col overflow-hidden p-4">
                     {/* Filters */}
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-4">
+                    <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-4">
                         <Input
                             placeholder="Tìm kiếm"
                             startContent={<IconSearch size={18} className="text-[#A1A1AA]" />}
@@ -294,6 +306,22 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                             <SelectItem key="PHARMACIST">Dược sĩ</SelectItem>
                             <SelectItem key="RECEPTIONIST">Lễ tân</SelectItem>
                             <SelectItem key="MANAGEMENT">Quản trị</SelectItem>
+                        </Select>
+                        <Select
+                            placeholder="Cấp bậc"
+                            classNames={{ trigger: 'bg-white border-1 border-[#E4E4E7] shadow-sm rounded-xl h-10' }}
+                            selectedKeys={filters.positions ? [filters.positions[0]] : ['ALL']}
+                            onSelectionChange={(keys) => {
+                                const val = Array.from(keys)[0] as string;
+                                setFilters({ positions: val === 'ALL' ? undefined : [val] });
+                            }}
+                        >
+                            {[
+                                <SelectItem key="ALL">Tất cả cấp bậc</SelectItem>,
+                                ...POSITION_OPTIONS.map((o) => (
+                                    <SelectItem key={o.key}>{o.label}</SelectItem>
+                                )),
+                            ]}
                         </Select>
                         <Select
                             placeholder="Trạng thái"

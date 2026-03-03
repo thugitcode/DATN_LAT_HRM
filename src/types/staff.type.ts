@@ -127,6 +127,7 @@ export interface StaffParams {
   search?: string;
   status?: string;
   jobTitle?: string;
+  positions?: StaffPositionEnum[];
   departmentIds?: string[];
   roomIds?: string[];
   contractType?: ContractTypeEnum;
