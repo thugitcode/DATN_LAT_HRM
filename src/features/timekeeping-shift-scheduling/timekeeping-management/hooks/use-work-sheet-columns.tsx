@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 import dayjs from 'dayjs';
 
 import type { StaffPosition } from '@/types/global.type';
@@ -23,6 +24,12 @@ const BASE_CELL_CLS =
 
 // eslint-disable-next-line react-refresh/only-export-components
 const DayCell = ({ dayData }: { dayData?: WorkDay }) => {
+  const open = useDrawer((state) => state.onOpen);
+
+  const onClick = (workScheduleDetailId: string) => {
+    open(DrawerType.TIME_SHEET_DETAIL, workScheduleDetailId);
+  };
+
   if (!dayData) {
     return (
       <div className="flex items-center justify-center">
@@ -42,6 +49,7 @@ const DayCell = ({ dayData }: { dayData?: WorkDay }) => {
           'cursor-default transition-all duration-150 hover:brightness-110',
         )}
         style={{ backgroundColor: color ?? '#94a3b8' }}
+        onClick={() => onClick(dayData.workScheduleDetailId)}
       >
         {dayData.displayCode}
       </div>
@@ -148,6 +156,7 @@ const SUMMERY_COLUMNS: Column<WorkSheetByShiftRow>[] = [
 
 export const useWorkSheetColumns = () => {
   const { month, year } = useYearMonth();
+
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
 
   const weekColumns = useMemo<Column<WorkSheetByShiftRow>[]>(
