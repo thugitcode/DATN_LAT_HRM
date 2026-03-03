@@ -53,7 +53,7 @@ const SUMMARY_BADGES: Array<{
   },
   {
     key: 'pending',
-    icon: icons.refreshCircle,
+    icon: <icons.refreshCircle />,
     label: 'Chờ xác nhận',
     color: '#F5A524',
     bgColor: '#FEF4E6',

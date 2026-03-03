@@ -2,12 +2,12 @@ import type { MenuItem } from '@/types/global.type';
 import { icons } from '@/lib/icons';
 
 export const menuSidebar: MenuItem[] = [
-  {
-    id: '1',
-    path: '/admin/dashboard',
-    label: 'Tổng quan',
-    icon: icons.home,
-  },
+  // {
+  //   id: '1',
+  //   path: '/admin/dashboard',
+  //   label: 'Tổng quan',
+  //   icon: icons.home,
+  // },
   {
     id: '2',
     path: '/admin/timekeeping-shift-scheduling',
@@ -31,12 +31,19 @@ export const menuSidebar: MenuItem[] = [
       },
     ],
   },
-  // {
-  //   id: '3',
-  //   path: '/admin/dashboard',
-  //   label: 'Quản lý nghỉ',
-  //   icon: icons.job,
-  // },
+  {
+    id: '3',
+    path: '/admin/leave-management',
+    label: 'Quản lý nghỉ',
+    icon: icons.clockX,
+    children: [
+      {
+        id: '1',
+        label: 'Quản lý đăng ký nghỉ',
+        path: '/admin/leave-management/leave-request-management',
+      },
+    ],
+  },
   {
     id: '4',
     path: '/admin/staff-management',
@@ -67,25 +74,25 @@ export const menuSidebar: MenuItem[] = [
   },
   // {
   //   id: '5',
-  //   path: '/admin/dashboard',
+  //   path: '/admin/contract-management',
   //   label: 'Quản lý hợp đồng',
-  //   icon: icons.note,
+  //   icon: icons.notePen,
   // },
   // {
   //   id: '6',
-  //   path: '/admin/dashboard',
+  //   path: '/admin/payroll-management',
   //   label: 'Quản lý lương',
-  //   icon: icons.note,
+  //   icon: icons.payroll,
   // },
   // {
   //   id: '7',
-  //   path: '/admin/dashboard',
+  //   path: '/admin/recruitment-management',
   //   label: 'Quản lý tuyển dụng',
-  //   icon: icons.note,
+  //   icon: icons.plusUser,
   // },
   // {
   //   id: '8',
-  //   path: '/admin/dashboard',
+  //   path: '/admin/management-report',
   //   label: 'Báo cáo quản trị',
   //   icon: icons.note,
   // },

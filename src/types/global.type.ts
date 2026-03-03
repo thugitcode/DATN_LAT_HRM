@@ -43,6 +43,9 @@ export enum Status {
   INACTIVE = 'INACTIVE',
   WORKING = 'WORKING',
   RESIGNED = 'RESIGNED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  CANCELLED = 'CANCELLED',
 }
 
 export interface Options {
