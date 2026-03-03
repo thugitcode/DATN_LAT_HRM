@@ -14,6 +14,7 @@ export interface ShiftManagementParams {
   search?: string;
   month?: string;
   status?: string;
+  getAll?: boolean;
 
   [key: string]: unknown;
 }

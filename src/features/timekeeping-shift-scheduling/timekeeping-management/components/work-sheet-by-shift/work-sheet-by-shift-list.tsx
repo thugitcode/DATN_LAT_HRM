@@ -25,10 +25,16 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
   totalPage,
 }) => {
   const { columns } = useWorkSheetColumns();
+  // const dataSource = useMemo(() => {
+  //   const grouped = groupByStaff(data);
+
+  //   console.log('grouped+____________', grouped);
+
+  //   return Array.from(grouped.values()).map(mapToListRow);
+  // }, [data]);
 
   const dataSource = useMemo(() => {
-    const grouped = groupByStaff(data);
-    return Array.from(grouped.values()).map(mapToListRow);
+    return data.map(mapToListRow);
   }, [data]);
 
   return (

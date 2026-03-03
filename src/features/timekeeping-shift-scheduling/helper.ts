@@ -119,47 +119,59 @@ function buildRuns(schedule: DayCell[]): ShiftRun[] {
   return runs;
 }
 
+// export function groupByStaff(data: WorkSheetByShiftType[]): Map<string, WorkSheetByShiftType> {
+//   const map = new Map<string, WorkSheetByShiftType>();
+
+//   for (const item of data) {
+//     const existing = map.get(item.staff.id);
+
+//     if (!existing) {
+//       map.set(item.staff.id, { ...item, days: { ...item.days } });
+//       continue;
+//     }
+
+//     for (const [date, incoming] of Object.entries(item.days)) {
+//       const current = existing.days[date];
+
+//       existing.days[date] = current
+//         ? {
+//             ...current,
+//             displayCode:
+//               current.displayCode === incoming.displayCode
+//                 ? current.displayCode
+//                 : `${current.displayCode}/${incoming.displayCode}`,
+//           }
+//         : incoming;
+//     }
+
+//     const s = existing.summary;
+//     const t = item.summary;
+//     existing.summary = {
+//       totalWork: s.totalWork + t.totalWork,
+//       totalLateMinutes: s.totalLateMinutes + t.totalLateMinutes,
+//       totalEarlyMinutes: s.totalEarlyMinutes + t.totalEarlyMinutes,
+//       absentDays: s.absentDays + t.absentDays,
+//       workDays: s.workDays + t.workDays,
+//       actualWorkDays: s.actualWorkDays + t.actualWorkDays,
+//       paidLeave: s.paidLeave + t.paidLeave,
+//       otherLeave: s.otherLeave + t.otherLeave,
+//       onCall: s.onCall + t.onCall,
+//       holiday: s.holiday + t.holiday,
+//       overtimeHours: s.overtimeHours + t.overtimeHours,
+//       totalAttendance: s.totalAttendance + t.totalAttendance,
+//     };
+//   }
+
+//   return map;
+// }
+
 export function groupByStaff(data: WorkSheetByShiftType[]): Map<string, WorkSheetByShiftType> {
   const map = new Map<string, WorkSheetByShiftType>();
 
   for (const item of data) {
-    const existing = map.get(item.staff.id);
-
-    if (!existing) {
+    if (!map.has(item.staff.id)) {
       map.set(item.staff.id, { ...item, days: { ...item.days } });
-      continue;
     }
-
-    for (const [date, incoming] of Object.entries(item.days)) {
-      const current = existing.days[date];
-
-      existing.days[date] = current
-        ? {
-            ...current,
-            displayCode:
-              current.displayCode === incoming.displayCode
-                ? current.displayCode
-                : `${current.displayCode}/${incoming.displayCode}`,
-          }
-        : incoming;
-    }
-
-    const s = existing.summary;
-    const t = item.summary;
-    existing.summary = {
-      totalWork: s.totalWork + t.totalWork,
-      totalLateMinutes: s.totalLateMinutes + t.totalLateMinutes,
-      totalEarlyMinutes: s.totalEarlyMinutes + t.totalEarlyMinutes,
-      absentDays: s.absentDays + t.absentDays,
-      workDays: s.workDays + t.workDays,
-      actualWorkDays: s.actualWorkDays + t.actualWorkDays,
-      paidLeave: s.paidLeave + t.paidLeave,
-      otherLeave: s.otherLeave + t.otherLeave,
-      onCall: s.onCall + t.onCall,
-      holiday: s.holiday + t.holiday,
-      overtimeHours: s.overtimeHours + t.overtimeHours,
-      totalAttendance: s.totalAttendance + t.totalAttendance,
-    };
   }
 
   return map;

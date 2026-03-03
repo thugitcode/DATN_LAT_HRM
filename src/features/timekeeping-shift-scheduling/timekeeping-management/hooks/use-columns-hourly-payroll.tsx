@@ -67,6 +67,15 @@ const BASE_COLUMNS: Column<AttendanceByHoursResponse>[] = [
   },
 ];
 
+const TOTAL_HOUR_COLUMNS: Column<AttendanceByHoursResponse>[] = [
+  {
+    key: 'totalHours',
+    title: 'TỔNG GỜ LÀM',
+    align: 'center',
+    render: (_, record) => <div className="text-sm text-black">{record.totalHours}</div>,
+  },
+];
+
 export const useColumnsHourlyPayroll = () => {
   const { month, year } = useYearMonth();
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
@@ -112,7 +121,10 @@ export const useColumnsHourlyPayroll = () => {
     [weeks, month],
   );
 
-  const columns = useMemo(() => [...BASE_COLUMNS, ...weekColumns], [weekColumns]);
+  const columns = useMemo(
+    () => [...BASE_COLUMNS, ...weekColumns, ...TOTAL_HOUR_COLUMNS],
+    [weekColumns],
+  );
 
   return { columns };
 };

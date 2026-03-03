@@ -34,16 +34,20 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
 
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
 
+  // const rows = useMemo(() => {
+  //   const grouped = groupByStaff(data);
+  //   return Array.from(grouped.values()).map((item) => mapToRow(item, days));
+  // }, [data, days]);
+
   const rows = useMemo(() => {
-    const grouped = groupByStaff(data);
-    return Array.from(grouped.values()).map((item) => mapToRow(item, days));
+    return data.map((item) => mapToRow(item, days));
   }, [data, days]);
 
   const handleDayLeave = useCallback(() => setHoveredDay(null), []);
   const isEmpty = !isLoading && rows.length === 0;
 
   return (
-    <div className="h-[calc(100vh-290px)] overflow-auto relative">
+    <div className="h-[calc(100vh-300px)] overflow-auto relative">
       <table
         className="border-separate border-spacing-0"
         style={{

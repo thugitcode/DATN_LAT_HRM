@@ -1,5 +1,3 @@
-// services/accountability-management.service.ts
-
 import { DEFAULT_PAGINATION } from '@/query-options/constants';
 
 import type { ApiResponse } from '@/types';
@@ -18,8 +16,8 @@ import { API_ENDPOINTS } from './constants/endpoints';
 
 class AccountabilityManagementService extends BaseApiService<
   AttendanceExplanation,
-  never, // Create — nếu FE không tạo thì để never
-  never, // Update
+  never,
+  never,
   AttendanceExplanationFilters
 > {
   constructor() {

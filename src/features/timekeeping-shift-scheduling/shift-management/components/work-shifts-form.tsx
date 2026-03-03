@@ -407,8 +407,6 @@ const ShiftDetailRow = ({
   const selectedCa = caseCategoryOptions.find((ca) => ca.key === shiftTemplateId);
   const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
 
-  // Nếu là ca dạng ShiftTypeEnum.SPLIT thì không fill ngày tháng
-
   const handleSelectShiftTemplate = (id: string) => {
     const template = caseCategoryOptions.find((e) => e.key === id);
 

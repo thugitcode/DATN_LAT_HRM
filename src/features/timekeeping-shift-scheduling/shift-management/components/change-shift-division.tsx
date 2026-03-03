@@ -20,6 +20,13 @@ export const ChangeShiftDivision = () => {
 
   const dataDetail = data?.data;
 
+  console.log('record_____________________', {
+    record,
+    matchedSchedule,
+    shift,
+    date,
+  });
+
   return (
     <LoadingWrapper isLoading={isLoading} className="flex flex-col justify-between">
       <CardUserShift
