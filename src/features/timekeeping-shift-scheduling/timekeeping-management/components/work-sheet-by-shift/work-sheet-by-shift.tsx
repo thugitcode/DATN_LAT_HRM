@@ -18,8 +18,8 @@ export const WorkSheetByShift = () => {
   const { data, isLoading } = useAttendanceTable({
     page: filters.page ?? 1,
     limit: filters.limit ?? 10,
-    startDate,
-    endDate,
+    fromDate: startDate,
+    toDate: endDate,
     search: filters.search,
     departmentId: filters.departmentId,
     roomId: filters.roomId,

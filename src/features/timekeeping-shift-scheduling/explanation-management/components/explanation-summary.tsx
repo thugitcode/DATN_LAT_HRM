@@ -114,7 +114,7 @@ const ExplanationTypeRow: FC<Readonly<ExplanationTypeRowProps>> = ({ label, coun
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm w-28 whitespace-nowrap">{label}</span>
+      <span className="text-sm w-35 whitespace-nowrap">{label}</span>
       <div className="w-20 h-[8px] bg-[#E4E4E7] rounded-full relative">
         <div
           className="absolute inset-y-0 left-0 rounded-full"
