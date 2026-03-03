@@ -5,6 +5,7 @@ import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
 import { WorkShiftsForm } from '@/features/timekeeping-shift-scheduling/shift-management/components/work-shifts-form';
 import { ShiftDetailsDrawer } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-drawer';
+import { ProfileDetailsDrawer } from '@/features/staff-management/profile-staff/components/profile-details-drawer';
 
 type DrawerConfig = {
   title: string;
@@ -55,6 +56,17 @@ export const DRAWER_CONFIG: Record<DrawerType, DrawerConfig> = {
   [DrawerType.TIME_SHEET_DETAIL]: {
     title: 'Chi tiết ca',
     component: <ShiftDetailsDrawer />,
+    drawerProps: {
+      placement: 'right',
+      size: '2xl',
+      classNames: {
+        body: 'p-0 bg-[#F4F4F5]',
+      },
+    },
+  },
+  [DrawerType.PROFILE_STAFF_DETAIL]: {
+    title: 'Chi tiết hồ sơ nhân viên',
+    component: <ProfileDetailsDrawer />,
     drawerProps: {
       placement: 'right',
       size: '2xl',

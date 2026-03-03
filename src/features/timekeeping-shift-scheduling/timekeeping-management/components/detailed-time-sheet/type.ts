@@ -16,6 +16,8 @@ export interface ShiftDetails {
   noteEndTime: string | null;
   note: string | null;
   histories: History[];
+  rooms?: { id: string, name: string }[];
+  departments?: { id: string, name: string }[];
 }
 
 export interface Staff {

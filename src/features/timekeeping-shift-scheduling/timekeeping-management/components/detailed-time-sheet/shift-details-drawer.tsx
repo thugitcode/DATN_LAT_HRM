@@ -18,21 +18,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { IconCaretRightFilled } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 
-import { AttendanceExplanationType } from '@/types/attendance-explanation.type';
 import { FormArea } from '@/components/form-fields/form-area';
 import { ShiftDetailsCard } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-card';
 
+import dayjs from 'dayjs';
+import { useEffect } from 'react';
 import { useAttendanceDetail, useUpdateAttendanceMutation } from '../../hooks/use-timekeeping-management';
 import {
   shiftDetailsSchema,
   type shiftDetailsFormValues,
 } from '../../schemas/shift-details.schema';
 import { CheckInMethodEnum } from './type';
-import { useEffect } from 'react';
-import dayjs from 'dayjs';
 
 const columns = [
-  { key: 'createdBy', label: 'NGƯỜI ĐIỀU CHỈNH' },
+  { key: 'changedByName', label: 'NGƯỜI ĐIỀU CHỈNH' },
   { key: 'adjustedTime', label: 'GIỜ ĐIỀU CHỈNH' },
   { key: 'reason', label: 'LÝ DO ĐIỀU CHỈNH' },
 ];
@@ -150,7 +149,7 @@ export const ShiftDetailsDrawer = () => {
         </div>
       </div>
 
-      <div className="px-4 py-0 w-full">
+      <div className="px-4 py-0 w-full mb-17.5">
         <Accordion selectionMode="multiple" className="px-0 w-full">
           <AccordionItem
             classNames={{
@@ -158,12 +157,12 @@ export const ShiftDetailsDrawer = () => {
               trigger: 'flex-row-reverse pt-0 gap-3',
               indicator: 'data-[open=true]:!rotate-90 text-black',
             }}
-            key="1"
+            key="LICH_SU_DIEU_CHINH"
             aria-label="Lịch sử điều chỉnh"
             title="Lịch sử điều chỉnh"
             indicator={<IconCaretRightFilled />}
           >
-            <Table aria-label="Lịch sử điều chỉnh">
+            <Table aria-label="Lịch sử điều chỉnh" classNames={{ wrapper: "mb-17.5" }}>
               <TableHeader columns={columns}>
                 {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
               </TableHeader>
@@ -173,9 +172,9 @@ export const ShiftDetailsDrawer = () => {
               >
                 {(item: any) => (
                   <TableRow key={item.id}>
-                    <TableCell>{item.createdBy}</TableCell>
+                    <TableCell>{item.changedByName}</TableCell>
                     <TableCell>
-                      {item.checkInTime} → {item.checkOutTime}
+                      {item.oldTime} → {item.newTime}
                     </TableCell>
                     <TableCell>{item.reason}</TableCell>
                   </TableRow>
@@ -186,7 +185,7 @@ export const ShiftDetailsDrawer = () => {
         </Accordion>
       </div>
 
-      <div className="flex justify-end gap-2 pt-3 pb-6 px-6 bg-white w-full">
+      <div className="flex justify-end gap-2 py-3 px-6 bg-white w-full absolute bottom-0">
         <Button
           variant="light"
           onPress={closedDrawer}

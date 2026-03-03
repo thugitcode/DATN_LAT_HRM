@@ -1,18 +1,17 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DrawerType, useDrawer } from '@/store/useDrawer';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import dayjs from 'dayjs';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { ShiftManagementParams } from '@/types';
-import { STANDARD_HOURS } from '@/lib/constants';
-import { cn } from '@/lib/utils';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
 import {
   fillMissingDaysWithDayjs,
   getTotalDaysInMonth,
 } from '@/features/timekeeping-shift-scheduling/helper';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { STANDARD_HOURS } from '@/lib/constants';
+import { cn } from '@/lib/utils';
+import type { ShiftManagementParams } from '@/types';
 
 import { useDetailsTimeSheetList } from '../../hooks/use-detailed-time-sheet';
 import type { FlatRow } from '../../types/index.type';
@@ -52,7 +51,6 @@ export function GroupedTable() {
 
   const ROW_HEIGHT = 52;
   const TABLE_HEIGHT = 550;
-  const { onOpen } = useDrawer((state) => state);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [stickyGroup, setStickyGroup] = useState<FlatRow | null>(null);
 
@@ -100,7 +98,7 @@ export function GroupedTable() {
     });
 
     return rows;
-  }, [expandedGroups, isLoading]);
+  }, [expandedGroups, isLoading, data?.data]);
 
   // Build an index: for each flat-row index, which group does it belong to?
   const groupIndexMap = useMemo(() => {
@@ -373,7 +371,7 @@ export function GroupedTable() {
               >
                 {(columnKey) => {
                   const col = columns.find((c) => c.key === columnKey);
-                  const alignClass = `text-${col?.textAlign}`;
+                  const alignClass = `text-${col?.className}`;
                   return (
                     <TableCell
                       className={cn(

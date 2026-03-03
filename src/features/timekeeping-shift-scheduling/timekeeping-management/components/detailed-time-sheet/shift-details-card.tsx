@@ -28,6 +28,8 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
     roomName,
     totalWorkHours,
     totalCompHours,
+    departments,
+    rooms,
     status,
     displayCode,
   } = shift;
@@ -68,7 +70,10 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
             </div>
           </div>
         </div>
-        <div className="text-xs text-slate-300">{departmentName || roomName}</div>
+        <div className='text-end'>
+          <div className="text-xs text-white font-medium truncate max-w-75">{departments?.map(it => it?.name)?.filter(Boolean)?.join(", ")}</div>
+          <div className="text-xs text-slate-300 truncate max-w-75">{rooms?.map(it => it?.name)?.filter(Boolean)?.join(", ")}</div>
+        </div>
       </div>
 
       {/* Bottom part: Shift and Times */}

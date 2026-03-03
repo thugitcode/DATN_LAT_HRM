@@ -34,7 +34,9 @@ export interface AttendanceExplanation {
   staffName: string;
   staffAvatar?: string;
   departmentName: string;
+  departments: string[];
   roomName: string;
+  rooms: string[];
   position: string;
 
   // Shift info (snapshot)
