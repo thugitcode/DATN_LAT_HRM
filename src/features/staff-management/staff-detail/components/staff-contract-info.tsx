@@ -46,7 +46,8 @@ import {
     useDeleteContract,
     useUpdateContract,
 } from '@/query-options/staff-contract';
-import { ContractStatusEnum } from '@/types/staff.type';
+import { useStaffList } from '@/query-options/staff';
+import { ContractStatusEnum, StaffPositionEnum } from '@/types/staff.type';
 import type { StaffContract } from '@/types/staff.type';
 import dayjs from 'dayjs';
 import { StaffContractFormDrawer } from './staff-contract-form-drawer';
@@ -224,9 +225,22 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
         enabled: formData.shiftType === 'FIXED',
     });
 
+    const { data: managersRes } = useStaffList({
+        getAll: true,
+        positions: [
+            StaffPositionEnum.HEAD_OF_DEPARTMENT,
+            StaffPositionEnum.DEPUTY_HEAD_OF_DEPARTMENT,
+            StaffPositionEnum.CHIEF_NURSE,
+            StaffPositionEnum.MANAGER,
+            StaffPositionEnum.HEAD_OF_UNIT,
+            StaffPositionEnum.DEPUTY_MANAGER,
+        ],
+    });
+
     const departments = departmentsRes?.data || [];
     const rooms = roomsRes?.data || [];
     const shifts = (shiftsRes?.data || []) as any[];
+    const managers = managersRes?.data || [];
 
     const workHistories = useMemo(() => {
         return contracts
@@ -623,7 +637,11 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                     isInvalid={!!errors.directManagerIds}
                                     errorMessage={errors.directManagerIds}
                                 >
-                                    <SelectItem key="none">—</SelectItem>
+                                    {managers.map((m) => (
+                                        <SelectItem key={m.id} textValue={`${m.code} - ${m.name}`}>
+                                            {m.code} - {m.name}
+                                        </SelectItem>
+                                    ))}
                                 </Select>
                                 <Select
                                     label="Loại hình làm việc theo ca"
@@ -695,7 +713,17 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                             <InfoRow label="Phòng quản lý" value="—" />
                             <InfoRow label="Khoa làm việc" value={currentContract?.department?.name} />
                             <InfoRow label="Phòng làm việc" value="—" />
-                            <InfoRow label="Quản lý trực tiếp" value="—" />
+                            <InfoRow
+                                label="Quản lý trực tiếp"
+                                value={
+                                    currentContract?.directManagerIds?.length
+                                        ? managers
+                                            .filter((m) => currentContract.directManagerIds!.includes(m.id))
+                                            .map((m) => m.name)
+                                            .join(', ')
+                                        : '—'
+                                }
+                            />
                             <InfoRow label="Loại hình làm việc theo ca" value={currentContract?.shiftType ? translateShiftType(currentContract.shiftType) : '—'} />
                             <InfoRow label="Ca làm việc" value={currentContract?.fixedShiftId ? (() => { const found = shifts.find((s) => s.id === currentContract.fixedShiftId); return found ? `${found.code} - ${found.name}` : '—'; })() : '—'} />
                             <div className="col-span-1 md:col-span-2">
