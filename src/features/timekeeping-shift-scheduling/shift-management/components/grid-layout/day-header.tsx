@@ -10,9 +10,10 @@ import { COL_W, STAFF_COL_W } from '../../constants/constants';
 
 interface DayHeaderProps {
   data?: StaffSchedule[];
+  isDetailsEmployee?: boolean
 }
 
-export const DayHeader: FC<DayHeaderProps> = memo(({ data }) => {
+export const DayHeader: FC<DayHeaderProps> = memo(({ data, isDetailsEmployee = false }) => {
   const { month, year } = useYearMonth();
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
 
@@ -32,10 +33,10 @@ export const DayHeader: FC<DayHeaderProps> = memo(({ data }) => {
   return (
     <thead className="sticky top-0 z-30">
       <tr>
-        <th
+        {!isDetailsEmployee && <th
           className="sticky left-0 z-40 bg-[#F4F4F5] shrink-0"
           style={{ width: STAFF_COL_W, minWidth: STAFF_COL_W }}
-        />
+        /> }
 
         {days.map((d, di) => (
           <th

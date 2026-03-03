@@ -14,7 +14,7 @@ import type { ShiftManagementGridProps } from './shift-management-grid';
 const getShiftsForDay = (schedules: StaffSchedule['schedules'], dateStr?: string): Shift[] =>
   schedules.find((s) => s.date === dateStr)?.shifts ?? [];
 
-export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
+export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data, isDetailsEmployee = false }) => {
   const { month, year } = useYearMonth();
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
@@ -53,7 +53,7 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
 
         return (
           <tr key={staff.id} className={cn(isEven && 'bg-[#F4F4F5]')}>
-            <td
+            {!isDetailsEmployee && <td
               className={cn(
                 'sticky left-0 z-20 border-b border-[#F4F4F5] align-top pt-3',
                 isEven ? 'bg-[#F4F4F5]' : 'bg-white',
@@ -87,7 +87,7 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data }) => {
                   />
                 </div>
               </div>
-            </td>
+            </td>}
 
             {days.map((d, dIdx) => {
               const shifts = getShiftsForDay(schedules, dateStrs[dIdx]);

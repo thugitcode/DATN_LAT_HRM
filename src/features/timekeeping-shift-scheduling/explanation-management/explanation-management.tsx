@@ -167,7 +167,7 @@ export const ExplanationManagement = () => {
   const handleRejectSuccess = (id: string) => {
     table.setSelectedRecords((prev) => prev.filter((r) => r.id !== id));
   };
-
+  
   return (
     <PageContainer className="space-y-4">
       {/* Header */}

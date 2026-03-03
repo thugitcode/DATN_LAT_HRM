@@ -43,3 +43,12 @@ export interface Attendance {
   checkInMethod: string;
   checkOutMethod: string;
 }
+
+
+export enum CheckInMethodEnum {
+  BIOMETRIC = 'BIOMETRIC', // Máy chấm công (vân tay/thẻ)
+  GPS = 'GPS', // GPS (Mobile app)
+  WIFI = 'WIFI', // Wifi
+  QR_CODE = 'QR_CODE', // QR Code
+  MANUAL = 'MANUAL', // Nhập tay
+}

@@ -1,11 +1,13 @@
-import type { Control } from 'react-hook-form';
+import { useWatch, type Control, type UseFormGetValues } from 'react-hook-form';
 
-import { calculateCompHours, formatTime } from '@/lib/utils';
 import { FormTimePicker } from '@/components/form-fields/form-time-picker';
+import { calculateWorkingHours, formatDateVN, formatTime } from '@/lib/utils';
 
+import { BREAK_MINUTES } from '@/lib/constants';
 import type { shiftDetailsFormValues } from '../../schemas/shift-details.schema';
+import type { AttendanceStatus } from '../../types/index.type';
 import { AttendanceBadge } from './attendance-badge';
-import type { ShiftDetails } from './type';
+import { CheckInMethodEnum, type ShiftDetails } from './type';
 
 interface ShiftDetailsCardProps {
   shift?: ShiftDetails;
@@ -29,6 +31,15 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
     status,
     displayCode,
   } = shift;
+  const actualCheckIn = useWatch({ control, name: "actualCheckIn" })
+  const actualCheckOut = useWatch({ control, name: "actualCheckOut" })
+  // const actualCheckIn = watch("actualCheckIn")
+  // const actualCheckOut = watch("actualCheckOut")
+
+  const newTotalWorkHours =
+    (actualCheckIn && actualCheckOut
+      ? calculateWorkingHours(actualCheckIn, actualCheckOut, BREAK_MINUTES)
+      : totalWorkHours).toFixed(2)
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -72,15 +83,15 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-gray-800">{workDate}</span>
-            {/* <AttendanceBadge type={displayCode} /> */}
+            <span className="text-sm font-semibold text-gray-800">{formatDateVN(workDate)}</span>
+            <AttendanceBadge type={displayCode as AttendanceStatus} />
           </div>
         </div>
 
         <div className="grid grid-cols-2 divide-x divide-gray-100 text-center border-t border-dashed border-gray-200 p-3">
           <div className="flex items-center gap-1">
             <span className="text-xs text-gray-400 w-26 text-start">Tổng giờ làm</span>
-            <span className="text-[30px] font-medium w-25 leading-9">{totalWorkHours}</span>
+            <span className="text-[30px] font-medium w-25 leading-9">{newTotalWorkHours}</span>
           </div>
           <div className="flex items-center gap-1 ml-12">
             <span className="text-xs text-gray-400 w-26 text-start">Tổng giờ bù</span>
@@ -96,7 +107,7 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
             <FormTimePicker
               control={control}
               name="actualCheckIn"
-              classInput="!text-danger !font-medium text-[16px] w-22 !text-center"
+              classInput="!text-danger !font-inter !font-medium text-[16px] w-22 !text-center"
               isRequired
               showIcon={false}
             />
@@ -106,16 +117,19 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
             <FormTimePicker
               control={control}
               name="actualCheckOut"
-              classInput="!font-medium text-[16px] w-22 !text-center"
+              classInput="!font-medium !font-inter text-[16px] w-22 !text-center"
               isRequired
               showIcon={false}
             />
           </div>
         </div>
-
+        {/* - Nếu chấm bằng GPS: hiển thị địa điểm chấm
+            - Nếu chấm bằng máy: hiển thị tên máy chấm công
+            - Nếu chấm bằng faceId: hiển thị hình ảnh chấm công */}
         <div className="p-3 bg-[#F4F4F5]">
           <span className="text-[16px] text-gray-900 bg-[#F4F4F5] rounded-xl w-29">
-            Địa điểm: {attendance.checkInLocation ?? ''}
+            {attendance.checkInMethod === CheckInMethodEnum.GPS && `Địa điểm: ${attendance.checkOutLocation ?? ''}`}
+            {attendance.checkInMethod === CheckInMethodEnum.MANUAL && `Tên máy: `}
           </span>
         </div>
       </div>

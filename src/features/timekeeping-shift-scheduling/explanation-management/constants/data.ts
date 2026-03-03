@@ -1,6 +1,7 @@
 import { AttendanceExplanationType } from "@/types/attendance-explanation.type";
-import { IconAlertCircle, IconAlertTriangleFilled, IconBriefcase, IconDots, IconLogin, IconLogout, IconStethoscope, IconUserOff, type IconProps } from "@tabler/icons-react";
+import { IconAlertCircle, IconAlertTriangleFilled, IconBriefcase, IconDots, IconHome, IconLogin, IconLogout, IconStethoscope, IconUserOff, type IconProps } from "@tabler/icons-react";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
+import { AttendanceStatus } from "../../timekeeping-management/types/index.type";
 
 export const mockExplanationData: any[] = [
     {
@@ -117,65 +118,70 @@ export const statusOptions = [
 ];
 
 
-export const attendanceExplanationUI: Record<
-  AttendanceExplanationType,
+export const attendanceStatusUI: Record<
+  AttendanceStatus,
   {
     label: string;
-    className: string; // giờ dùng hex + Tailwind opacity nếu cần
+    className: string; // bg-[color]/10 text-[color]
     icon: ForwardRefExoticComponent<IconProps & RefAttributes<SVGSVGElement>>;
-  }
+  } | null // null = không hiển thị badge
 > = {
-  [AttendanceExplanationType.LATE]: {
-    label: "Đi muộn",
-    className: "bg-[#D55829]/10 text-[#D55829]", // nhạt + đậm như legend
-    icon: IconAlertTriangleFilled,
-  },
+  [AttendanceStatus.OnTime]: null, // Đúng giờ → thường không cần badge
 
-  [AttendanceExplanationType.EARLY_LEAVE]: {
-    label: "Về sớm",
-    className: "bg-[#73C9C6]/10 text-[#73C9C6]",
-    icon: IconLogout,
-  },
-
-  [AttendanceExplanationType.MISSING_CHECK_IN]: {
-    label: "Thiếu check-in",
-    className: "bg-[#17C964]/10 text-[#17C964]", // map với MissingPunch (Quên chấm công)
-    icon: IconLogin,
-  },
-
-  [AttendanceExplanationType.MISSING_CHECK_OUT]: {
-    label: "Thiếu check-out",
-    className: "bg-[#17C964]/10 text-[#17C964]",
-    icon: IconLogout,
-  },
-
-  [AttendanceExplanationType.ABSENT]: {
+  [AttendanceStatus.Absent]: {
     label: "Vắng mặt",
     className: "bg-[#9734EE]/10 text-[#9734EE]",
     icon: IconUserOff,
   },
 
-  [AttendanceExplanationType.MISSING_HOURS]: {
-    label: "Thiếu giờ làm",
-    className: "bg-[#FF93B8]/10 text-[#FF93B8]", // khớp ShortHours
-    icon: IconAlertCircle,
+  [AttendanceStatus.Late]: {
+    label: "Đi muộn",
+    className: "bg-[#D55829]/10 text-[#D55829]",
+    icon: IconAlertTriangleFilled,
   },
 
-  [AttendanceExplanationType.BUSINESS_TRIP]: {
+  [AttendanceStatus.EarlyLeave]: {
+    label: "Về sớm",
+    className: "bg-[#73C9C6]/10 text-[#73C9C6]",
+    icon: IconLogout,
+  },
+
+  [AttendanceStatus.LateAndEarly]: {
+    label: "Muộn + Sớm",
+    className: "bg-[#D55829]/10 text-[#D55829]", // ưu tiên màu muộn, hoặc mix nếu muốn
+    icon: IconAlertTriangleFilled, // hoặc tạo icon kết hợp
+    // Nếu UI hỗ trợ hiển thị 2 badge → bạn có thể trả về array thay vì object
+  },
+
+  [AttendanceStatus.Overtime]: {
     label: "Công tác",
-    className: "bg-[#F5AF24]/10 text-[#F5AF24]", // khớp Overtime trong legend
+    className: "bg-[#F5AF24]/10 text-[#F5AF24]",
     icon: IconBriefcase,
   },
 
-  [AttendanceExplanationType.SICK]: {
-    label: "Nghỉ ốm",
-    className: "bg-[#A855F7]/10 text-[#A855F7]", // map gần với PaidLeave (nghỉ phép)
-    icon: IconStethoscope,
+  [AttendanceStatus.WorkFromHome]: {
+    label: "Làm tại nhà",
+    className: "bg-[#60A5FA]/10 text-[#60A5FA]", // xanh dương nhạt → gợi ý WFH
+    icon: IconHome, // nếu có icon Home, hoặc IconDots tạm
   },
 
-  [AttendanceExplanationType.OTHER]: {
-    label: "Khác",
-    className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300", // neutral, không có trong legend
-    icon: IconDots,
+  [AttendanceStatus.ShortHours]: {
+    label: "Thiếu giờ",
+    className: "bg-[#FF93B8]/10 text-[#FF93B8]",
+    icon: IconAlertCircle,
   },
+
+  [AttendanceStatus.MissingPunch]: {
+    label: "Quên chấm công",
+    className: "bg-[#17C964]/10 text-[#17C964]",
+    icon: IconLogin, // hoặc mix Login + Logout nếu muốn
+  },
+
+  [AttendanceStatus.PaidLeave]: {
+    label: "Nghỉ phép",
+    className: "bg-[#A855F7]/10 text-[#A855F7]",
+    icon: IconStethoscope, // hoặc IconCalendarEvent nếu có
+  },
+
+  [AttendanceStatus.DayOff]: null, // Ngày nghỉ → thường không hiển thị badge
 };

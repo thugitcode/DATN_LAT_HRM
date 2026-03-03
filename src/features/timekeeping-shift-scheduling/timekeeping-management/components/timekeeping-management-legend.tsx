@@ -2,7 +2,7 @@ import { memo, type FC } from 'react';
 
 import type { LegendItem } from '../types/index.type';
 
-const LegendDot = memo(({ color, shape = 'circle' }: Pick<LegendItem, 'color' | 'shape'>) => {
+export const LegendDot = memo(({ color, shape = 'circle' }: Pick<LegendItem, 'color' | 'shape'>) => {
   if (shape === 'ring') {
     return (
       <span

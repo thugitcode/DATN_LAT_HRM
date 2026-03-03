@@ -39,7 +39,7 @@ export function ShiftEntry({
   return (
     <Card className={`${STATUS_COLORS[status]} border rounded-[14px]`}>
       <CardBody className="p-4">
-        <div className="flex items-start justify-between mb-4">
+        <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-bold text-gray-900 dark:text-white">{date}</h3>
           </div>
@@ -60,23 +60,24 @@ export function ShiftEntry({
             )}
           </div>
         </div>
-        <div className="flex">
+        <div className="flex items-center">
           <div className='p-3'>
             <p className="text-sm text-gray-600 dark:text-gray-400">Chấm công vào</p>
             <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
               {checkInTime}
             </p>
           </div>
-          <div className="w-px h-8 bg-[#E4E4E7]" />
-          <div className="flex-1">
+          <div className="w-px h-7.5 bg-[#E4E4E7]" />
+          <div className="flex-1 h-14">
             <ShiftTimeline timeSlots={timeSlots} />
           </div>
+          <div className="w-px h-7.5 bg-[#E4E4E7]" />
           <div className="flex items-center justify-between dark:border-slate-700">
             <div className='p-3'>
               <p className="text-xs text-gray-600 dark:text-gray-400">Chấm công về</p>
               <p className="text-sm font-semibold text-gray-900 dark:text-white">--</p>
             </div>
-            <div className="w-px h-8 bg-[#E4E4E7]" />
+            <div className="w-px h-7.5 bg-[#E4E4E7]" />
             <div className="text-right p-3">
               <p className="text-xs text-gray-600 dark:text-gray-400">Tổng giờ</p>
               <p className="text-medium text-start font-semibold text-gray-900 dark:text-white">
