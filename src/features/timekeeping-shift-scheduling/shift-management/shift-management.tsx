@@ -20,61 +20,6 @@ import { SHIFT_CA_LEGEND } from './constants/data';
 import { useShiftExport } from './hooks/use-shift-export';
 import { useShiftManagementList } from './hooks/use-shift-management';
 
-interface ShiftImportRow {
-  employeeCode: string;
-  employeeName: string;
-  shiftDate: string;
-  shiftType: string;
-  departmentName: string;
-  note: string;
-}
-
-// const SHIFT_COLUMNS: ExcelColumnDef<ShiftImportRow>[] = [
-//   {
-//     header: 'Mã nhân viên',
-//     key: 'employeeCode',
-//     width: 16,
-//     required: true,
-//     example: 'NV001',
-//   },
-//   {
-//     header: 'Họ và tên',
-//     key: 'employeeName',
-//     width: 24,
-//     required: true,
-//     example: 'Nguyễn Văn A',
-//   },
-//   {
-//     header: 'Ngày phân ca',
-//     key: 'shiftDate',
-//     width: 16,
-//     required: true,
-//     example: '2025-07-01',
-//     exportFormatter: (v) => (v ? dayjs(String(v)).format('YYYY-MM-DD') : ''),
-//     importParser: (v) =>
-//       v ? dayjs(String(v), ['YYYY-MM-DD', 'DD/MM/YYYY']).format('YYYY-MM-DD') : '',
-//   },
-//   {
-//     header: 'Ca làm việc',
-//     key: 'shiftType',
-//     width: 16,
-//     required: true,
-//     example: 'Ca sáng',
-//   },
-//   {
-//     header: 'Phòng ban',
-//     key: 'departmentName',
-//     width: 20,
-//     example: 'Kế toán',
-//   },
-//   {
-//     header: 'Ghi chú',
-//     key: 'note',
-//     width: 28,
-//     example: '',
-//   },
-// ];
-
 export const ShiftManagement = () => {
   const currentLayout = useCurrentLayout();
 
@@ -92,31 +37,6 @@ export const ShiftManagement = () => {
     roomId: filters.roomId,
     getAll: currentLayout === LayoutSwitcherEnum.GRID,
   });
-
-  // const exportConfig = useMemo(
-  //   () => ({
-  //     fileName: `mau_phan_ca_${dayjs().format('YYYYMMDD')}`,
-  //     sheetName: 'Phân ca',
-  //     columns: SHIFT_COLUMNS,
-  //     includeExampleRow: true,
-  //   }),
-  //   [],
-  // );
-
-  // const importConfig = useMemo(
-  //   () => ({
-  //     columns: SHIFT_COLUMNS,
-  //     onImport: async (rows: ShiftImportRow[]) => {
-  //       // Gọi API import tại đây
-  //       console.log('Rows to import:', rows);
-  //       console.log(`Nhập thành công ${rows.length} bản ghi`);
-  //     },
-  //     onError: (errors: ImportError[]) => {
-  //       errors.forEach((e) => console.log(`Dòng ${e.row} - ${e.column}: ${e.message}`));
-  //     },
-  //   }),
-  //   [],
-  // );
 
   const { exportConfig } = useShiftExport(data?.data);
 
