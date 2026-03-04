@@ -33,6 +33,8 @@ export interface Shift {
   name: string;
   color: string | null;
   type: string;
+  startTime?: string;
+  endTime?: string
 }
 
 export interface Attendance {

@@ -78,6 +78,25 @@ export const useApproveAttendanceExplanation = () => {
   });
 };
 
+export const useUpdateAttendanceExplanation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status?: string }) => {
+      const res = await hrmInstance.post<ApiResponse<boolean>>(
+        `/attendance-explanation/${id}`,
+        { status },
+      );
+      return res.data.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['attendance-explanation'],
+      });
+    },
+  });
+};
+
 // Mutation for manager approving
 export const useManagerApproveAttendanceExplanation = () => {
   const queryClient = useQueryClient();

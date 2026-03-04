@@ -41,7 +41,7 @@ export const ShiftDetailsDrawer = () => {
 
   const workScheduleDetailId = useDrawer((state) => state.data) as string;
 
-  const { data, isLoading } = useAttendanceDetail(workScheduleDetailId);
+  const { data, isLoading, refetch } = useAttendanceDetail(workScheduleDetailId);
   const { mutate: updateAttendance } = useUpdateAttendanceMutation()
 
   const detailData = data?.data;
@@ -49,7 +49,7 @@ export const ShiftDetailsDrawer = () => {
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, dirtyFields },
     reset
   } = useForm<shiftDetailsFormValues>({
     resolver: zodResolver(shiftDetailsSchema),
@@ -64,13 +64,21 @@ export const ShiftDetailsDrawer = () => {
   });
   useEffect(() => {
     reset({
-      reason: detailData?.note ?? undefined,
+      reason: "",
       actualCheckIn: detailData?.attendance?.checkInTime ?? undefined,
       actualCheckOut: detailData?.attendance?.checkOutTime ?? undefined,
     })
   }, [detailData])
+
   const onSubmit = async (values: any) => {
+    if (!dirtyFields.actualCheckIn && !dirtyFields.actualCheckOut) {
+      return addToast({
+        description: 'Giờ chấm công chưa có thay đổi.',
+        color: 'warning',
+      });
+    }
     console.log('values', values);
+
     const newValues = { ...values, actualCheckIn: dayjs(values.actualCheckIn, "HH:mm").format("HH:mm:ss"), actualCheckOut: dayjs(values.actualCheckOut, "HH:mm").format("HH:mm:ss"), id: detailData?.id ?? null }
     updateAttendance(newValues, {
       onSuccess: () => {
@@ -78,7 +86,9 @@ export const ShiftDetailsDrawer = () => {
           description: 'Cập nhật ca thành công.',
           color: 'success',
         });
-        closedDrawer()
+        reset()
+        refetch()
+        // closedDrawer()
       },
       onError(error, variables, onMutateResult, context) {
         console.log(error, "err");
