@@ -26,17 +26,10 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
 }) => {
   const { columns } = useWorkSheetColumns();
 
-  // const dataSource = useMemo(() => {
-  //   const grouped = groupByStaff(data);
-
-  //   console.log('grouped+____________', grouped);
-
-  //   return Array.from(grouped.values()).map(mapToListRow);
-  // }, [data]);
-
   const dataSource = useMemo(() => {
+    if (isLoading) return [];
     return data.map(mapToListRow);
-  }, [data]);
+  }, [data, isLoading]);
 
   return (
     <Table
@@ -45,6 +38,7 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
       size="middle"
       loading={isLoading}
       className="h-[calc(100vh-390px)]"
+      key={`page-${page}-${pageSize}`}
       pagination={{
         current: page,
         pageSize,

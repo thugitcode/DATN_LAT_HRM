@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import type { ShiftManagementParams } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
@@ -15,16 +17,28 @@ export const WorkSheetByShift = () => {
   const { filters } = useQueryFilter<ShiftManagementParams>();
   const { startDate, endDate } = useMonthDateRange(filters.month);
 
-  const { data, isLoading } = useAttendanceTable({
-    page: filters.page ?? 1,
-    limit: filters.limit ?? 10,
-    fromDate: startDate,
-    toDate: endDate,
-    search: filters.search,
-    departmentId: filters.departmentId,
-    roomId: filters.roomId,
-    // getAll: currentLayout === LayoutSwitcherEnum.GRID,
-  });
+  const queryParams = useMemo(
+    () => ({
+      page: filters.page ?? 1,
+      limit: filters.limit ?? 10,
+      fromDate: startDate,
+      toDate: endDate,
+      search: filters.search,
+      departmentId: filters.departmentId,
+      roomId: filters.roomId,
+    }),
+    [
+      filters.page,
+      filters.limit,
+      filters.search,
+      filters.departmentId,
+      filters.roomId,
+      startDate,
+      endDate,
+    ],
+  );
+
+  const { data, isLoading } = useAttendanceTable(queryParams);
 
   return (
     <LayoutRenderer
