@@ -51,7 +51,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
-  const handleKeyDown = (keyCode)=>{
+  const handleKeyDown = (keyCode: number)=>{
     const ENTER_KEYCODE = 13
     if(keyCode === ENTER_KEYCODE) {
       onChangeRef.current(localValue)
