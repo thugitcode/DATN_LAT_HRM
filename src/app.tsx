@@ -1,6 +1,6 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { HeroUIProvider, ToastProvider } from '@heroui/react';
+import { addToast, HeroUIProvider, ToastProvider } from '@heroui/react';
 
 import { MainConfirmModal } from './components/confirm-modal/main-confirm-modal';
 import { MainDrawer } from './components/drawers/main-drawer';
@@ -8,6 +8,16 @@ import { PersistProvider } from './components/providers/persist-provider';
 import { routeTree } from './routeTree.gen';
 
 const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error) => {
+      console.log('error____________', error);
+      addToast({
+        title: 'Có lỗi xảy ra',
+        description: error.message,
+        color: 'danger',
+      });
+    },
+  }),
   defaultOptions: {
     queries: {
       staleTime: 3 * 60 * 1000, // 3 minutes
@@ -85,10 +95,10 @@ declare module '@tanstack/react-router' {
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ToastProvider placement={'top-right'} />
       <PersistProvider>
         {/* <GlobalLoading /> */}
         <HeroUIProvider className="h-full">
-          <ToastProvider placement={'top-right'} />
           <RouterProvider router={router} />
         </HeroUIProvider>
         <MainDrawer />

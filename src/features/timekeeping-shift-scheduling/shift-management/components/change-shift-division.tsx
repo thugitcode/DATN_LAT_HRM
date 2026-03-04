@@ -33,8 +33,8 @@ export const ChangeShiftDivision = () => {
         avatarUrl={dataDetail?.staff?.avatar}
         name={dataDetail?.staff?.name}
         code={dataDetail?.staff?.code}
-        startTime={dataDetail?.shiftTemplate?.startTime}
-        endTime={dataDetail?.shiftTemplate?.endTime}
+        startTime={shift?.startTime}
+        endTime={shift?.endTime}
         shiftTemplateName={dataDetail?.shiftTemplate?.name}
         workDate={date}
         departmentName={dataDetail?.department?.name}
@@ -42,10 +42,13 @@ export const ChangeShiftDivision = () => {
 
       <ChangeShiftDivisionForm
         shift={dataDetail?.shiftTemplate}
-        staff={staff}
+        staffRow={staff}
         matchedSchedule={matchedSchedule}
         workScheduleId={shift?.workScheduleId}
         shiftRow={shift}
+        note={dataDetail?.note}
+        department={dataDetail?.department}
+        room={dataDetail?.room}
       />
     </LoadingWrapper>
   );

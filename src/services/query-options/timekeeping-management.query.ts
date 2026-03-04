@@ -20,6 +20,7 @@ export const timekeepingManagementQueryOptions = {
     queryOptions({
       queryKey: timekeepingManagementKeys.attendanceTable(params),
       queryFn: () => timekeepingManagementService.getAttendanceTable(params),
+      throwOnError: true,
     }),
 
   attendanceByHours: (params?: StaffParams) =>

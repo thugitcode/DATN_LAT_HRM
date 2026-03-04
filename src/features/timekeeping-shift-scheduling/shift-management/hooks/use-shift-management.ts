@@ -27,7 +27,10 @@ export function useCreateShiftManagement() {
   const closedDrawer = useDrawer((state) => state.onClose);
 
   return useMutation({
-    mutationFn: (data: CreateStaffSchedule) => shiftManagementService.create(data),
+    mutationFn: (data: CreateStaffSchedule | CreateStaffSchedule[]) => {
+      const payloads = Array.isArray(data) ? data : [data];
+      return Promise.all(payloads.map((p) => shiftManagementService.create(p)));
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
       addToast({
@@ -52,8 +55,10 @@ export function useUpdateShiftManagement() {
 
   return useMutation({
     mutationFn: ({ id, data }: UpdateShift) => shiftManagementService.update({ id, data }),
-    onSuccess: () => {
+    onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: shiftManagementKeys.detail(id) });
+
       addToast({
         description: 'Thay đổi phân ca thành công.',
         color: 'success',

@@ -123,7 +123,7 @@ export interface DepartmentWorkScheduleDetail extends BaseEntity {
   status: string;
 }
 
-interface Room extends BaseEntity {
+export interface RoomWorkScheduleDetail extends BaseEntity {
   externalId: string;
   hospitalId: string;
   code: string;
@@ -157,5 +157,5 @@ export interface WorkScheduleDetail extends BaseEntity {
   staff: Staff;
   shiftTemplate: ShiftTemplateWorkScheduleDetail;
   department: DepartmentWorkScheduleDetail;
-  room: Room[];
+  room: RoomWorkScheduleDetail;
 }
