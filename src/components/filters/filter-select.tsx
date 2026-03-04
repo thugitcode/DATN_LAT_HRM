@@ -36,7 +36,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
 
   return (
     <Select
-      selectionMode={multiple ? "multiple" : "none"}
+      selectionMode={multiple ? "multiple" : "single"}
       label={label}
       placeholder={placeholder}
       size="sm"

@@ -103,7 +103,7 @@ export const ExplanationFilter = ({
                     handleFilterChange('status', value);
                 }}
                 classNames={{
-                    trigger: 'bg-white border-none shadow-none !rounded-[12px] px-3 h-[46px] min-h-[46px]',
+                    trigger: 'bg-white border-none shadow-none !rounded-[12px] px-3 h-[40px] min-h-[40px]',
                     value: 'text-black',
                     label: 'text-black',
                     popoverContent: 'bg-white rounded-[12px]',
@@ -126,7 +126,7 @@ export const ExplanationFilter = ({
                     handleFilterChange('departmentId', value);
                 }}
                 classNames={{
-                    trigger: 'bg-white border-none shadow-none !rounded-[12px] px-3 h-[46px] min-h-[46px]',
+                    trigger: 'bg-white border-none shadow-none !rounded-[12px] px-3 h-[40px] min-h-[40px]',
                     value: 'text-black',
                     label: 'text-black',
                     popoverContent: 'bg-white rounded-[12px]',
@@ -149,7 +149,7 @@ export const ExplanationFilter = ({
                     handleFilterChange('roomId', value);
                 }}
                 classNames={{
-                    trigger: 'bg-white border-none shadow-none !rounded-[12px] px-3 h-[46px] min-h-[46px]',
+                    trigger: 'bg-white border-none shadow-none !rounded-[12px] px-3 h-[40px] min-h-[40px]',
                     value: 'text-black',
                     label: 'text-black',
                     popoverContent: 'bg-white rounded-[12px]',
