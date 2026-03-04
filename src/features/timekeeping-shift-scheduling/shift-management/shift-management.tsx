@@ -68,6 +68,7 @@ export const ShiftManagement = () => {
                 isLoading,
                 pageSize: filters.limit,
                 totalPage: data?.pagination?.totalPage,
+                search: filters.search,
               },
             },
             [LayoutSwitcherEnum.GRID]: {

@@ -12,14 +12,15 @@ interface ActionsPageProps<T = Record<string, unknown>> {
   actions?: ReactNode;
   hiddenLayoutSwitcher?: boolean;
   exportConfig?: ExcelExportConfig<T>;
+  exportTemplateConfig?: ExcelExportConfig<T>;
   importConfig?: ExcelImportConfig<T>;
-  exportTemplateConfig?: any;
 }
 
 export const ActionsPage = <T = Record<string, unknown>,>({
   actions,
   hiddenLayoutSwitcher = false,
   exportConfig,
+  exportTemplateConfig,
   importConfig,
 }: ActionsPageProps<T>) => {
   const { clearFilters } = useQueryFilter({ replace: true });
@@ -68,7 +69,7 @@ export const ActionsPage = <T = Record<string, unknown>,>({
           </li>
         )}
 
-        <li>
+        {/* <li>
           <Tooltip content="Xuất file excel" showArrow>
             <Button
               isIconOnly
@@ -82,9 +83,9 @@ export const ActionsPage = <T = Record<string, unknown>,>({
               {icons.export}
             </Button>
           </Tooltip>
-        </li>
+        </li> */}
 
-        <li>
+        {/* <li>
           <Tooltip content="Xuất file mẫu" showArrow>
             <Button
               isIconOnly
@@ -92,17 +93,13 @@ export const ActionsPage = <T = Record<string, unknown>,>({
               variant="faded"
               color="default"
               className="border-none bg-[#D4D4D866] rounded-lg"
-              isDisabled={!exportConfig}
-              onPress={
-                exportConfig
-                  ? () => exportTemplate({ ...exportConfig, includeExampleRow: true })
-                  : undefined
-              }
+              isDisabled={!exportTemplateConfig}
+              onPress={exportTemplateConfig ? () => exportToExcel(exportTemplateConfig) : undefined}
             >
               {icons.exportSampleFile}
             </Button>
           </Tooltip>
-        </li>
+        </li> */}
       </ul>
 
       <span className="inline-block w-0.5 bg-[#11111126] flex-1" />

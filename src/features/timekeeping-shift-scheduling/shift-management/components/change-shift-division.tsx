@@ -30,14 +30,16 @@ export const ChangeShiftDivision = () => {
   return (
     <LoadingWrapper isLoading={isLoading} className="flex flex-col justify-between">
       <CardUserShift
+        workDate={date}
         avatarUrl={dataDetail?.staff?.avatar}
         name={dataDetail?.staff?.name}
         code={dataDetail?.staff?.code}
         startTime={dataDetail?.shiftTemplate?.startTime}
         endTime={dataDetail?.shiftTemplate?.endTime}
         shiftTemplateName={dataDetail?.shiftTemplate?.name}
-        workDate={date}
         departmentName={dataDetail?.department?.name}
+        type={dataDetail?.shiftTemplate?.type}
+        standardHours={dataDetail?.shiftTemplate?.standardHours}
       />
 
       <ChangeShiftDivisionForm

@@ -31,7 +31,6 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
       let max = 0;
 
       record?.schedules?.forEach((schedule) => {
-        // Chỉ tính shifts thuộc tháng/năm hiện tại
         const scheduleDate = dayjs(schedule.date);
         if (scheduleDate.month() !== month || scheduleDate.year() !== year) return;
 

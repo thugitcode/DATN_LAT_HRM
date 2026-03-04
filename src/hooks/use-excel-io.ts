@@ -17,6 +17,9 @@ export interface ExcelExportConfig<T = Record<string, unknown>> {
   columns: ExcelColumnDef<T>[];
   data: T[];
   includeExampleRow?: boolean;
+  defaultRowHeight?: number;
+  headerRowHeight?: number;
+  merges?: { s: { r: number; c: number }; e: { r: number; c: number } }[];
 }
 
 export interface ImportError {
@@ -56,7 +59,10 @@ export const useExcelIO = () => {
 
     const ws = XLSX.utils.aoa_to_sheet(sheetData);
 
-    // Set column widths
+    if (config.merges?.length) {
+      ws['!merges'] = config.merges;
+    }
+
     ws['!cols'] = columns.map((col) => ({ wch: col.width ?? 16 }));
 
     const wb = XLSX.utils.book_new();
