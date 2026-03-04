@@ -324,9 +324,15 @@ export function calculateWorkingHours(
   const [outHour, outMin] = checkOut.split(":").map(Number);
 
   const checkInMinutes = (inHour ?? 0) * 60 + (inMin ?? 0);
-  const checkOutMinutes = (outHour ?? 0) * 60 + (outMin ?? 0);
+  let checkOutMinutes = (outHour ?? 0) * 60 + (outMin ?? 0);
 
-  const totalMinutes = checkOutMinutes - checkInMinutes - breakMinutes;
+  // ✅ Nếu ca đêm (qua ngày)
+  if (checkOutMinutes < checkInMinutes) {
+    checkOutMinutes += 24 * 60;
+  }
+
+  const totalMinutes =
+    checkOutMinutes - checkInMinutes - (breakMinutes ?? 0);
 
   return +(totalMinutes / 60).toFixed(2);
 }

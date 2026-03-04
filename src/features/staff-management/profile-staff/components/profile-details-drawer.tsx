@@ -119,7 +119,7 @@ export const ProfileDetailsDrawer = () => {
             <FormArea
               control={control}
               name={`documents.${index}.note`}
-              label="Lý do điều chỉnh"
+              label="Ghi chú"
               isRequired
               maxRows={16}
               classNames={{

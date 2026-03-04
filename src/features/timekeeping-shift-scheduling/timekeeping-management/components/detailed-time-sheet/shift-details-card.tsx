@@ -1,13 +1,14 @@
 import { useWatch, type Control, type UseFormGetValues } from 'react-hook-form';
 
 import { FormTimePicker } from '@/components/form-fields/form-time-picker';
-import { calculateWorkingHours, formatDateVN, formatTime } from '@/lib/utils';
+import { calculateWorkingHours, cn, formatDateVN, formatTime } from '@/lib/utils';
 
 import { BREAK_MINUTES } from '@/lib/constants';
 import type { shiftDetailsFormValues } from '../../schemas/shift-details.schema';
 import type { AttendanceStatus } from '../../types/index.type';
 import { AttendanceBadge } from './attendance-badge';
 import { CheckInMethodEnum, type ShiftDetails } from './type';
+import dayjs from 'dayjs';
 
 interface ShiftDetailsCardProps {
   shift?: ShiftDetails;
@@ -22,21 +23,19 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
     shift: shiftInfo,
     attendance,
     workDate,
-    startTime,
-    endTime,
-    departmentName,
-    roomName,
     totalWorkHours,
     totalCompHours,
     departments,
     rooms,
-    status,
     displayCode,
   } = shift;
   const actualCheckIn = useWatch({ control, name: "actualCheckIn" })
   const actualCheckOut = useWatch({ control, name: "actualCheckOut" })
   // const actualCheckIn = watch("actualCheckIn")
   // const actualCheckOut = watch("actualCheckOut")
+  
+  const isLate = dayjs(actualCheckIn, "HH:mm")
+  .isAfter(dayjs(shiftInfo?.startTime, "HH:mm:ss"))
 
   const newTotalWorkHours =
     (actualCheckIn && actualCheckOut
@@ -84,7 +83,7 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
               {shiftInfo.name || 'Ca làm việc'}
             </h4>
             <div className="text-[13px] text-gray-500 mt-0.5">
-              {formatTime(startTime)} - {formatTime(endTime)}
+              {formatTime(shiftInfo?.startTime)} - {formatTime(shiftInfo?.endTime)}
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -112,7 +111,7 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
             <FormTimePicker
               control={control}
               name="actualCheckIn"
-              classInput="!text-danger !font-inter !font-medium text-[16px] w-22 !text-center"
+              classInput={cn(isLate && "!text-danger","!font-sans !font-medium text-[16px] w-22 !text-center")}
               isRequired
               showIcon={false}
             />
@@ -122,7 +121,7 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
             <FormTimePicker
               control={control}
               name="actualCheckOut"
-              classInput="!font-medium !font-inter text-[16px] w-22 !text-center"
+              classInput="!font-medium !font-sans text-[16px] w-22 !text-center"
               isRequired
               showIcon={false}
             />

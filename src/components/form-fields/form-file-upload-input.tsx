@@ -65,7 +65,7 @@ export function FileUploadInput({
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {    
     if (e.target.files?.[0]) {
       handleFile(e.target.files[0])
     }
@@ -126,6 +126,7 @@ export function FileUploadInput({
           onChange={handleChange}
           disabled={disabled}
           className="hidden"
+          multiple
         />
 
         {selectedFile ? (
