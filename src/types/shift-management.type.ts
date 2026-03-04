@@ -15,6 +15,8 @@ export interface ShiftManagementParams {
   month?: string;
   status?: string;
   getAll?: boolean;
+  fromDate?: string;
+  toDate?: string;
 
   [key: string]: unknown;
 }

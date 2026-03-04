@@ -33,8 +33,8 @@ export const ChangeShiftDivision = () => {
         avatarUrl={dataDetail?.staff?.avatar}
         name={dataDetail?.staff?.name}
         code={dataDetail?.staff?.code}
-        startTime={shift?.startTime}
-        endTime={shift?.endTime}
+        startTime={dataDetail?.shiftTemplate?.startTime}
+        endTime={dataDetail?.shiftTemplate?.endTime}
         shiftTemplateName={dataDetail?.shiftTemplate?.name}
         workDate={date}
         departmentName={dataDetail?.department?.name}

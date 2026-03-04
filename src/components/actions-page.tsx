@@ -13,6 +13,7 @@ interface ActionsPageProps<T = Record<string, unknown>> {
   hiddenLayoutSwitcher?: boolean;
   exportConfig?: ExcelExportConfig<T>;
   importConfig?: ExcelImportConfig<T>;
+  exportTemplateConfig?: any;
 }
 
 export const ActionsPage = <T = Record<string, unknown>,>({
@@ -28,7 +29,6 @@ export const ActionsPage = <T = Record<string, unknown>,>({
   return (
     <div className="flex items-stretch gap-3">
       <ul className="flex items-center gap-2">
-        {/* Reload */}
         <li>
           <Tooltip content="Tải lại" showArrow>
             <Button
@@ -68,7 +68,7 @@ export const ActionsPage = <T = Record<string, unknown>,>({
           </li>
         )}
 
-        {/* <li>
+        <li>
           <Tooltip content="Xuất file excel" showArrow>
             <Button
               isIconOnly
@@ -82,9 +82,9 @@ export const ActionsPage = <T = Record<string, unknown>,>({
               {icons.export}
             </Button>
           </Tooltip>
-        </li> */}
+        </li>
 
-        {/* <li>
+        <li>
           <Tooltip content="Xuất file mẫu" showArrow>
             <Button
               isIconOnly
@@ -102,7 +102,7 @@ export const ActionsPage = <T = Record<string, unknown>,>({
               {icons.exportSampleFile}
             </Button>
           </Tooltip>
-        </li> */}
+        </li>
       </ul>
 
       <span className="inline-block w-0.5 bg-[#11111126] flex-1" />

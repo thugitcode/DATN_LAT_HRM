@@ -1,17 +1,17 @@
 'use client';
 
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import type { ShiftManagementParams } from '@/types';
+import { STANDARD_HOURS } from '@/lib/constants';
+import { cn } from '@/lib/utils';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
 import {
   fillMissingDaysWithDayjs,
   getTotalDaysInMonth,
 } from '@/features/timekeeping-shift-scheduling/helper';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
-import { STANDARD_HOURS } from '@/lib/constants';
-import { cn } from '@/lib/utils';
-import type { ShiftManagementParams } from '@/types';
 
 import { useDetailsTimeSheetList } from '../../hooks/use-detailed-time-sheet';
 import type { FlatRow } from '../../types/index.type';
@@ -56,12 +56,13 @@ export function GroupedTable() {
 
   const { data, isLoading } = useDetailsTimeSheetList({
     page: filters.page ?? 1,
-    limit: filters.limit ?? 10,
+    limit: 100,
     fromDate: startDate,
     toDate: endDate,
     search: filters.search,
     departmentId: filters.departmentId,
     roomId: filters.roomId,
+    getAll: true,
   });
 
   const flatRows = useMemo<FlatRow[]>(() => {
