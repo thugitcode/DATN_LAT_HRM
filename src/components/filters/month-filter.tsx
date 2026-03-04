@@ -5,6 +5,7 @@ import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
 
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
 
 import { MONTH_NAMES } from './constants/data';
 
@@ -31,6 +32,7 @@ const MONTH_ABBR_VI = [
 
 export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, className = '' }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { filters, setFilter, setFilters } = useQueryFilter();
 
   const currentMonth = useMemo<CalendarDate>(() => {
     if (value) {
@@ -54,11 +56,13 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
   const handlePreviousMonth = useCallback(() => {
     const prevMonth = currentMonth.subtract({ months: 1 });
     onChange(`${prevMonth.year}-${String(prevMonth.month).padStart(2, '0')}`);
+    setFilter('page', 1);
   }, [currentMonth, onChange]);
 
   const handleNextMonth = useCallback(() => {
     const nextMonth = currentMonth.add({ months: 1 });
     onChange(`${nextMonth.year}-${String(nextMonth.month).padStart(2, '0')}`);
+    setFilter('page', 1);
   }, [currentMonth, onChange]);
 
   const handleSelectMonth = useCallback(
@@ -66,6 +70,7 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
       const month = String(monthIndex + 1).padStart(2, '0');
       onChange(`${popoverYear}-${month}`);
       setIsOpen(false);
+      setFilter('page', 1);
     },
     [popoverYear, onChange],
   );
@@ -124,7 +129,6 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
               </Button>
             </div>
 
-            {/* Lưới tháng 3x4 */}
             <div className="grid grid-cols-3 gap-y-2 gap-x-1">
               {MONTH_ABBR_VI.map((abbr, idx) => {
                 const isSelected =

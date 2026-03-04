@@ -96,7 +96,7 @@ const BASE_COLUMNS: Column<WorkSheetByShiftRow>[] = [
 const SUMMERY_COLUMNS: Column<WorkSheetByShiftRow>[] = [
   {
     key: 'summary.totalAttendance',
-    title: 'TỔNG CỘNG',
+    title: 'TỔNG CÔNG',
     align: 'center',
     render: (_, record) => (
       <div className="text-sm text-black">{record.summary.totalAttendance}</div>

@@ -132,6 +132,7 @@ export enum StatusUpdateShift {
 export interface UpdateShiftData {
   note?: string;
   roomId: string;
+  departmentId?: string;
   status: StatusUpdateShift | null;
   details: {
     startTime: string;
