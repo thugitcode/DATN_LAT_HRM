@@ -59,7 +59,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
 
       startTime: shiftRow?.startTime?.slice(0, 5),
       endTime: shiftRow?.endTime?.slice(0, 5),
-      note: shift?.note ?? '',
+      note: '',
     },
     mode: 'onChange',
   });

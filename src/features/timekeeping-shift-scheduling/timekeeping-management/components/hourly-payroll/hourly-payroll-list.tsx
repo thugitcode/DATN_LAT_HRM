@@ -33,6 +33,7 @@ export const HourlyPayrollList: FC<HourlyPayrollListProps> = ({
       rowKey="staffId"
       size="middle"
       className="h-[calc(100vh-390px)]"
+      key={`page-${page}-${pageSize}`}
       pagination={{
         current: page,
         pageSize,
