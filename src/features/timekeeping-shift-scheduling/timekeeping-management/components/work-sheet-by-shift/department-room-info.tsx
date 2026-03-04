@@ -1,6 +1,6 @@
 import { Accordion, AccordionItem } from '@heroui/react';
 
-interface Item {
+export interface Item {
   id: string;
   name: string;
 }
