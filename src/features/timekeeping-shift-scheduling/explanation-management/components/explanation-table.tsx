@@ -157,7 +157,7 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
       <Table
         aria-label="Bảng giải trình ca"
         classNames={{
-          wrapper: 'shadow-none p-4',
+          wrapper: 'shadow-none p-4 max-h-[485px]',
           th: 'text-[#71717A] text-xs font-semibold uppercase py-3 first:rounded-l-lg last:rounded-r-lg',
           td: 'py-3 text-sm',
           tr: 'border-b border-[#F4F4F5] last:border-none hover:bg-[#FAFAFA] transition-colors cursor-pointer',

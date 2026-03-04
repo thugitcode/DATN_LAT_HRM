@@ -5,7 +5,7 @@ import {
   Button,
   Form
 } from '@heroui/react';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
 
 import { FormArea } from '@/components/form-fields/form-area';
@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 type FormValues = {
   documents: DocumentFormValues[];
 };
+const TODAY = dayjs().format("YYYY-MM-DD")
 export const ProfileDetailsDrawer = () => {
   const closedDrawer = useDrawer((state) => state.onClose);
 
@@ -31,13 +32,14 @@ export const ProfileDetailsDrawer = () => {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-    reset
+    reset,
+    getValues
   } = useForm<FormValues>({
     defaultValues: {
       documents: [
         {
           documentType: "",
-          updateDate: "",
+          updateDate: TODAY,
           updater: "Admin",
           note: "",
           file: null,
@@ -45,7 +47,7 @@ export const ProfileDetailsDrawer = () => {
       ],
     },
   });
-
+  
   const { fields, append, remove } = useFieldArray({
     control,
     name: "documents",
@@ -103,7 +105,7 @@ export const ProfileDetailsDrawer = () => {
                 control={control}
                 name={`documents.${index}.updateDate`}
                 label="Ngày thêm mới"
-                disabled
+                // disabled
               />
               <FormInput
                 control={control}
@@ -132,17 +134,27 @@ export const ProfileDetailsDrawer = () => {
                 Tệp đính kèm
               </label>
 
-              <FileUploadInput
+              <Controller
                 control={control}
                 name={`documents.${index}.file`}
-                disabled={isSubmitting}
+                rules={{
+                  required: 'Vui lòng chọn file',
+                  validate: (file) => {
+                    if (!file) return 'Vui lòng chọn file'
+                    if (file.size > 5 * 1024 * 1024)
+                      return 'File không được vượt quá 5MB'
+                    return true
+                  },
+                }}
+                render={({ field, fieldState }) => (
+                  <FileUploadInput
+                    selectedFile={field.value}
+                    onFileSelect={field.onChange}
+                    disabled={isSubmitting}
+                    error={fieldState.error?.message}
+                  />
+                )}
               />
-
-              {errors.documents?.[index]?.file && (
-                <p className="text-danger text-sm mt-2">
-                  {errors.documents[index]?.file?.message}
-                </p>
-              )}
             </div>
           </div>
         ))}
@@ -155,7 +167,7 @@ export const ProfileDetailsDrawer = () => {
           onPress={() =>
             append({
               documentType: "",
-              updateDate: dayjs().toISOString(),
+              updateDate: TODAY,
               updater: "Admin",
               note: "",
               file: null,

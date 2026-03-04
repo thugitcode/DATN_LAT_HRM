@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Input, Select, SelectItem, Popover, PopoverTrigger, PopoverContent, Button } from '@heroui/react';
 import { IconCalendar } from '@tabler/icons-react';
 
@@ -8,6 +8,8 @@ import { useDepartmentOptions } from '@/hooks/select-options/use-department-opti
 import { useRoomOptions } from '@/hooks/select-options/use-room-options';
 
 import { statusOptions } from '../constants/data';
+import { MonthFilter } from '@/components/filters/month-filter';
+import { SearchInput } from '@/components/filters/search-input';
 
 interface ExplanationFilterProps {
     filters: AttendanceExplanationFilters;
@@ -32,7 +34,17 @@ export const ExplanationFilter = ({
             setLocalFilters((prev) => ({ ...prev, roomId: undefined }));
         }
     }, [localFilters.departmentId, filters.departmentId]);
-
+    const handleMonthChange = useCallback(
+        (value: string) => {
+            const newFilters = {
+                ...localFilters,
+                month: value
+            };
+            setLocalFilters(pre => { return { ...pre, month: value } });
+            onFiltersChange(newFilters);
+        },
+        [setLocalFilters],
+    );
     const handleFilterChange = (key: keyof AttendanceExplanationFilters, value: any) => {
         let finalValue = value;
         if (key === 'status' && value === 'ALL') {
@@ -75,85 +87,10 @@ export const ExplanationFilter = ({
     return (
         <div className="flex items-center gap-3">
             {/* Date Range Picker - Single Input */}
-            <Popover
-                isOpen={isDateRangeOpen}
-                onOpenChange={setIsDateRangeOpen}
-                placement="bottom-start"
-            >
-                <PopoverTrigger>
-                    <div
-                        className="flex items-center gap-2 h-[46px] min-w-[260px] px-3 bg-white rounded-xl cursor-pointer hover:bg-gray-50 transition-colors"
-                    >
-                        <IconCalendar size={18} className="text-gray-400" />
-                        <span className="text-sm text-gray-600 flex-1">
-                            {getDateRangeText()}
-                        </span>
-                    </div>
-                </PopoverTrigger>
-                <PopoverContent className="p-4">
-                    <div className="flex flex-col gap-3 w-[320px]">
-                        <h4 className="text-sm font-semibold text-gray-700">Chọn khoảng thời gian</h4>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-medium text-gray-600">Từ ngày</label>
-                            <Input
-                                type="date"
-                                variant="bordered"
-                                value={tempFromDate}
-                                onValueChange={setTempFromDate}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-medium text-gray-600">Đến ngày</label>
-                            <Input
-                                type="date"
-                                variant="bordered"
-                                value={tempToDate}
-                                onValueChange={setTempToDate}
-                            />
-                        </div>
-                        <div className="flex gap-2">
-                            <Button
-                                variant="flat"
-                                size="sm"
-                                className="flex-1"
-                                onPress={() => {
-                                    setTempFromDate('');
-                                    setTempToDate('');
-                                }}
-                            >
-                                Xóa
-                            </Button>
-                            <Button
-                                color="primary"
-                                size="sm"
-                                className="flex-1"
-                                onPress={handleApplyDateRange}
-                            >
-                                Áp dụng
-                            </Button>
-                        </div>
-                    </div>
-                </PopoverContent>
-            </Popover>
+            <MonthFilter value={filters.month} onChange={handleMonthChange} />
 
             {/* Search */}
-            <Input
-                placeholder="Tìm kiếm"
-                variant="flat"
-                value={localFilters.search || ''}
-                onValueChange={(value) => handleFilterChange('search', value)}
-                startContent={icons.search}
-                classNames={{
-                    inputWrapper: `
-            h-[46px]
-            min-h-[46px]
-            bg-white
-            border-none
-            shadow-none
-          `,
-                    input: 'text-black',
-                }}
-            />
+            <SearchInput value={filters.search} onChange={(value) => onFiltersChange({ ...localFilters, search: value })} startIcon={icons.search} />
 
             {/* Status Select */}
             <Select
