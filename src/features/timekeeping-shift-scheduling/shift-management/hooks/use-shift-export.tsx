@@ -8,6 +8,7 @@ import type { ExcelColumnDef, ExcelExportConfig } from '@/hooks/use-excel-io';
 import { dayNames, getDaysInMonth, getWeeksInMonth } from '../../helper';
 import { useCurrentLayout } from '../../hooks/use-current-layout';
 import { useYearMonth } from '../../hooks/use-year-month';
+import { STAFF_POSITION } from '../constants/data';
 
 type ShiftExportRow = Record<string, string | number>;
 
@@ -20,17 +21,17 @@ const FIXED_COLUMNS: ExcelColumnDef<ShiftExportRow>[] = [
   { header: 'Chức vụ', key: 'position', width: 16 },
 ];
 
-// ─── Grid layout (BodyV2) ─────────────────────────────────────────────────────
-// maxShiftsPerDay = max shifts trên toàn bộ ngày của NV đó (giống BodyV2)
-// → mỗi NV 1 row, mỗi ngày có N cột slot = globalMaxSlots
 const buildGridExport = (
   data: StaffSchedule[],
   year: number,
   month: number,
-): { columns: ExcelColumnDef<ShiftExportRow>[]; rows: ShiftExportRow[] } => {
+): {
+  columns: ExcelColumnDef<ShiftExportRow>[];
+  rows: ShiftExportRow[];
+  merges: { s: { r: number; c: number }; e: { r: number; c: number } }[];
+} => {
   const days = getDaysInMonth(year, month);
 
-  // maxShiftsPerStaff[staffId]: giống BodyV2's maxShiftsPerDay
   const maxShiftsPerStaff: Record<string, number> = {};
   data.forEach((record) => {
     const max = Math.max(
@@ -40,54 +41,57 @@ const buildGridExport = (
     maxShiftsPerStaff[record.staff.id] = max;
   });
 
-  const globalMaxSlots = Math.max(1, ...Object.values(maxShiftsPerStaff));
+  const dayCols: ExcelColumnDef<ShiftExportRow>[] = days.map((d) => ({
+    header: `${dayNames[d.dayOfWeek]}\n${dayjs(d.date).format('D/M/YY')}`,
+    key: `d_${d.date}`,
+    width: 22,
+  }));
 
-  // Build dynamic day columns
-  const dayCols: ExcelColumnDef<ShiftExportRow>[] = [];
-  days.forEach((d) => {
-    const dayLabel = `${dayNames[d.dayOfWeek]}\n${dayjs(d.date).format('D/M/YY')}`;
-    for (let i = 0; i < globalMaxSlots; i++) {
-      dayCols.push({
-        header: globalMaxSlots === 1 ? dayLabel : `${dayLabel}\n(${i + 1})`,
-        key: `d_${d.date}_${i}`,
-        width: 22,
+  const rows: ShiftExportRow[] = [];
+  const merges: { s: { r: number; c: number }; e: { r: number; c: number } }[] = [];
+
+  let currentRow = 1;
+
+  data.forEach((record, idx) => {
+    const { staff, schedules = [] } = record;
+    const numSlots = maxShiftsPerStaff[staff.id] ?? 1;
+
+    if (numSlots > 1) {
+      FIXED_COLUMNS.forEach((_, colIdx) => {
+        merges.push({
+          s: { r: currentRow, c: colIdx },
+          e: { r: currentRow + numSlots - 1, c: colIdx },
+        });
       });
     }
-  });
 
-  // Build rows
-  const rows = data.map((record, idx) => {
-    const { staff, schedules = [] } = record;
-    const maxSlots = maxShiftsPerStaff[staff.id] ?? 1;
+    for (let i = 0; i < numSlots; i++) {
+      const row: ShiftExportRow = {
+        stt: i === 0 ? idx + 1 : '',
+        employeeCode: i === 0 ? (staff.code ?? '') : '',
+        employeeName: i === 0 ? (staff.name ?? '') : '',
+        department: i === 0 ? (staff.departments?.map((d) => d.name).join(', ') ?? '') : '',
+        room: i === 0 ? (staff.rooms?.map((r) => r.name).join(', ') ?? '') : '',
+        position: i === 0 ? (staff.position ?? '') : '',
+      };
 
-    const row: ShiftExportRow = {
-      stt: idx + 1,
-      employeeCode: staff.code ?? '',
-      employeeName: staff.name ?? '',
-      department: staff.departments?.map((d) => d.name).join(', ') ?? '',
-      room: staff.rooms?.map((r) => r.name).join(', ') ?? '',
-      position: staff.position ?? '',
-    };
-
-    days.forEach((d) => {
-      const shifts = schedules.find((s) => s.date === d.date)?.shifts ?? [];
-      for (let i = 0; i < globalMaxSlots; i++) {
-        const shift = i < maxSlots ? shifts[i] : undefined;
-        row[`d_${d.date}_${i}`] = shift
+      days.forEach((d) => {
+        const shifts = schedules.find((s) => s.date === d.date)?.shifts ?? [];
+        const shift = shifts[i];
+        row[`d_${d.date}`] = shift
           ? `${shift.shiftTemplateName}\n${shift.startTime?.slice(0, 5)} - ${shift.endTime?.slice(0, 5)}`
           : '--';
-      }
-    });
+      });
 
-    return row;
+      rows.push(row);
+    }
+
+    currentRow += numSlots;
   });
 
-  return { columns: [...FIXED_COLUMNS, ...dayCols], rows };
+  return { columns: [...FIXED_COLUMNS, ...dayCols], rows, merges };
 };
 
-// ─── Table layout (useColumns) ────────────────────────────────────────────────
-// maxShiftsPerRow[staffId]: max shifts trong 1 ngày bất kỳ của NV (giống useColumns)
-// → mỗi NV 1 row, cột theo tuần → ngày
 const buildTableExport = (
   data: StaffSchedule[],
   year: number,
@@ -96,36 +100,21 @@ const buildTableExport = (
   const weeks = getWeeksInMonth(year, month);
   const allDays = weeks.flatMap((w) => w.days);
 
-  const maxShiftsPerRow: Record<string, number> = {};
-  data.forEach((record) => {
-    let max = 0;
-    record.schedules?.forEach((schedule) => {
-      const d = dayjs(schedule.date);
-      if (d.month() !== month || d.year() !== year) return;
-      const count = schedule.shifts?.length ?? 0;
-      if (count > max) max = count;
-    });
-    maxShiftsPerRow[record.staff.id] = max;
-  });
-
-  const globalMaxSlots = Math.max(1, ...Object.values(maxShiftsPerRow));
-
   const dayCols: ExcelColumnDef<ShiftExportRow>[] = [];
-  allDays.forEach((day) => {
-    const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
-    const dayLabel = `${dayNames[day.dayOfWeek]}\n${dayjs(dateStr).format('D/M/YY')}`;
-    for (let i = 0; i < globalMaxSlots; i++) {
+
+  weeks.forEach((week) => {
+    week.days.forEach((day) => {
+      const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
       dayCols.push({
-        header: globalMaxSlots === 1 ? dayLabel : `${dayLabel}\n(${i + 1})`,
-        key: `d_${dateStr}_${i}`,
+        header: `${dayNames[day.dayOfWeek]}\n${dayjs(dateStr).format('D/M/YY')}`,
+        key: `d_${dateStr}`,
         width: 22,
       });
-    }
+    });
   });
 
   const rows = data.map((record, idx) => {
     const { staff, schedules = [] } = record;
-    const maxSlots = maxShiftsPerRow[staff.id] ?? 1;
 
     const row: ShiftExportRow = {
       stt: idx + 1,
@@ -133,18 +122,21 @@ const buildTableExport = (
       employeeName: staff.name ?? '',
       department: staff.departments?.map((d) => d.name).join(', ') ?? '',
       room: staff.rooms?.map((r) => r.name).join(', ') ?? '',
-      position: staff.position ?? '',
+      position: STAFF_POSITION?.[staff.position] ?? '',
     };
 
     allDays.forEach((day) => {
       const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
       const shifts = schedules.find((s) => s.date === dateStr)?.shifts ?? [];
-      for (let i = 0; i < globalMaxSlots; i++) {
-        const shift = i < maxSlots ? shifts[i] : undefined;
-        row[`d_${dateStr}_${i}`] = shift
-          ? `${shift.shiftTemplateName}\n${shift.startTime?.slice(0, 5)} - ${shift.endTime?.slice(0, 5)}`
-          : '--';
-      }
+
+      row[`d_${dateStr}`] = shifts.length
+        ? shifts
+            .map(
+              (shift) =>
+                `${shift.shiftTemplateName} ${shift.startTime?.slice(0, 5)}-${shift.endTime?.slice(0, 5)}`,
+            )
+            .join('\n')
+        : '--';
     });
 
     return row;

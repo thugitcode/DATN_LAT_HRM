@@ -14,6 +14,7 @@ interface WorkSheetByShiftListProps {
   pageSize?: number;
   isLoading?: boolean;
   totalPage?: number;
+  search?: string;
 }
 
 export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
@@ -23,6 +24,7 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
   pageSize,
   isLoading,
   totalPage,
+  search,
 }) => {
   const { columns } = useWorkSheetColumns();
 
@@ -33,12 +35,12 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
 
   return (
     <Table
+      key={`page-${page}-${pageSize}-${search}`}
       columns={columns}
       dataSource={dataSource}
       size="middle"
       loading={isLoading}
       className="h-[calc(100vh-390px)]"
-      key={`page-${page}-${pageSize}`}
       pagination={{
         current: page,
         pageSize,

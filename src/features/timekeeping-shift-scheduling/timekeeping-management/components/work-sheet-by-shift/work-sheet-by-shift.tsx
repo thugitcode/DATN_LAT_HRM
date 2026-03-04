@@ -52,6 +52,7 @@ export const WorkSheetByShift = () => {
             isLoading,
             pageSize: filters.limit,
             totalPage: data?.pagination?.totalPage,
+            search: filters.search,
           },
         },
         [LayoutSwitcherEnum.GRID]: {

@@ -67,8 +67,8 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
       caId: shift?.id ?? '',
       roomId: room?.id ?? '',
 
-      startTime: shift?.startTime?.slice(0, 5),
-      endTime: shift?.endTime?.slice(0, 5),
+      startTime: shiftRow?.startTime?.slice(0, 5),
+      endTime: shiftRow?.endTime?.slice(0, 5),
       note: note ?? '',
     },
     mode: 'onChange',
