@@ -32,7 +32,6 @@ export const PageFilter: React.FC = () => {
         { label: "Đã mở gần đây", key: "DA_MO_GAN_DAY" },
         { label: "Thêm mới gần đây", key: "THEM_MOI_GAN_DAY" },
     ]
-    console.log(filters,333222);
     
     return (
         <div className="flex items-center gap-3 justify-between">

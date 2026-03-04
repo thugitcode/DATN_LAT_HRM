@@ -17,7 +17,7 @@ interface PageFiltersProps {
 export const PageFilters: FC<Readonly<PageFiltersProps>> = ({ statusOptions }) => {
   const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
 
-  const { options: roomOptions } = useRoomOptions();
+  const { options: roomOptions } = useRoomOptions(filters?.departmentId);
   const { options: departmentOptions } = useDepartmentOptions();
 
   const handleMonthChange = useCallback(

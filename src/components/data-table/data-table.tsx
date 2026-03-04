@@ -45,6 +45,8 @@ export interface DataTableProps<T extends object> {
 
   visibleColumns?: Set<string>;
   onVisibleColumnsChange?: (visibleKeys: Set<string>) => void;
+  onRowClick?: (record: T) => void
+  isHeaderSticky?: boolean
 }
 
 export function DataTable<T extends object>({
@@ -59,6 +61,8 @@ export function DataTable<T extends object>({
   selectionMode = 'multiple',
   visibleColumns,
   classNames,
+  onRowClick,
+  isHeaderSticky
 }: DataTableProps<T>) {
   const visibleColumnDefs = visibleColumns
     ? columns.filter((col) => visibleColumns.has(col.key))
@@ -90,6 +94,7 @@ export function DataTable<T extends object>({
   return (
     <div className="flex flex-col gap-4">
       <Table
+        isHeaderSticky={isHeaderSticky}
         aria-label="Data table"
         selectionMode={selectionMode}
         selectedKeys={selectedKeys}
@@ -127,7 +132,11 @@ export function DataTable<T extends object>({
           emptyContent={emptyContent}
         >
           {(record) => (
-            <TableRow key={getRowKey(record, items.indexOf(record))}>
+            <TableRow key={getRowKey(record, items.indexOf(record))} onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault()
+              onRowClick?.(record)
+            }}>
               {visibleColumnDefs.map((col) => (
                 <TableCell key={col.key}>{renderCell(record, col.key)}</TableCell>
               ))}

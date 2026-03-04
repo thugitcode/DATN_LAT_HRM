@@ -56,8 +56,7 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
   onReject,
 }) => {
   const totalPages = Math.ceil(total / limit);
-  const { onOpen } = useDrawer((state) => state);
-
+  const { onOpen } = useDrawer((state) => state);  
   const renderStatus = (status: ExplanationRecord['status'], id: string) => {
     const statusUpper = status.toUpperCase();
     if (statusUpper === 'PENDING' || statusUpper === 'PENDING_HR') {

@@ -18,7 +18,8 @@ import {
   useBulkApproveAccountability,
 } from './hooks/use-approve-accountability';
 import { useColumns } from './hooks/use-columns';
-import type { AttendanceExplanationFilters } from './types';
+import { AttendanceExplanationStatus, type AttendanceExplanationFilters } from './types';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 export const DEFAULT_SUMMARY = {
   totalRequests: 0,
@@ -50,6 +51,7 @@ export const AccountabilityManagement = () => {
     page,
     limit,
   });
+  const { onOpen } = useDrawer((state) => state);
 
   const summary = useMemo(() => data?.metadata ?? DEFAULT_SUMMARY, [data]);
 
@@ -61,8 +63,24 @@ export const AccountabilityManagement = () => {
   const hasSelection = selectedIds.length > 0;
 
   const handleSelectionChange = useCallback((keys: Selection) => {
-    setSelectedKeys(keys);
-  }, []);
+    if (keys !== "all") {
+      const intersection = new Set(
+        data?.data.filter(item => keys.has(item.id) && [AttendanceExplanationStatus.APPROVED, AttendanceExplanationStatus.REJECTED].includes(item.status))?.map(ite => ite.id)
+      );
+      setSelectedKeys(intersection);
+    } else {
+      const intersection = new Set(
+        data?.data.filter(item => [AttendanceExplanationStatus.APPROVED, AttendanceExplanationStatus.REJECTED].includes(item.status))?.map(ite => ite.id)
+      );
+      setSelectedKeys(pre => {
+        if (pre instanceof Set && pre.size === intersection.size) {
+          return new Set()
+        } else {
+          return intersection
+        }
+      });
+    }
+  }, [data?.data]);
 
   const handleOpenBulkConfirm = useCallback(() => {
     setIsBulkConfirmOpen(true);
@@ -89,7 +107,7 @@ export const AccountabilityManagement = () => {
   return (
     <PageContainer className="space-y-3.75">
       <div className="flex items-center justify-between">
-        <TitlePage title="Quản lý giải trình ca" />
+        <TitlePage title="Quản lý giải trình ca" className='h-10' />
 
         {hasSelection && (
           <Button color="primary" className="h-10 px-4 font-medium" onPress={handleOpenBulkConfirm}>
@@ -107,6 +125,7 @@ export const AccountabilityManagement = () => {
         loading={isLoading}
         selectedKeys={selectedKeys}
         onSelectionChange={handleSelectionChange}
+        onRowClick={(record) => onOpen(DrawerType.EXPLANATION_DETAIL, { id: record.id })}
         classNames={{ wrapper: 'h-[calc(100vh-424px)]' }}
         pagination={{
           current: Number(filters.page),
