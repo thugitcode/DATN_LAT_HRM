@@ -36,7 +36,7 @@ export const ShiftManagement = () => {
     search: filters.search,
     departmentId: filters.departmentId,
     roomId: filters.roomId,
-    getAll: currentLayout === LayoutSwitcherEnum.GRID,
+    getAll: currentLayout === LayoutSwitcherEnum.GRID ? true : undefined,
   });
 
   const { exportConfig } = useShiftExport(data?.data);
