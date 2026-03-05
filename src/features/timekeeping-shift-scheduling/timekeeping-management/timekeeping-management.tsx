@@ -11,6 +11,7 @@ import {
 } from '@heroui/react';
 import { IconSparkles } from '@tabler/icons-react';
 
+import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionsPage } from '@/components/actions-page';
 import { TitlePage } from '@/components/title-page';
 
@@ -22,7 +23,7 @@ import { useTimekeepingTabs } from './hooks/use-timekeeping-tabs';
 import { TAB_KEYS } from './types/index.type';
 
 export const TimekeepingManagement = () => {
-  const { tabs, activeKey, activeTab, setActiveKey } = useTimekeepingTabs();
+  const { tabs, activeKey, activeTab, onSelectionChange } = useTimekeepingTabs();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
@@ -34,7 +35,7 @@ export const TimekeepingManagement = () => {
             variant="underlined"
             color="primary"
             selectedKey={activeKey}
-            onSelectionChange={(key) => setActiveKey(key as TAB_KEYS)}
+            onSelectionChange={(key) => onSelectionChange(key as TAB_KEYS)}
           >
             {tabs.map((tab) => (
               <Tab key={tab.key} title={tab.label} />
