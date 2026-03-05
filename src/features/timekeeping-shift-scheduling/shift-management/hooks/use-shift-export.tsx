@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx';
 
@@ -310,10 +310,12 @@ export const useShiftExport = (data: StaffSchedule[] = []) => {
   const currentLayout = useCurrentLayout();
   const isGrid = currentLayout === LayoutSwitcherEnum.GRID;
 
+  const handleExportTable = useCallback(() => {
+    exportTableToExcel(data, year, month);
+  }, [data, year, month]);
+
   const exportConfig = useMemo<ExcelExportConfig<ShiftExportRow>>(() => {
-    const { columns, rows } = isGrid
-      ? buildGridExport(data, year, month)
-      : buildTableExport(data, year, month);
+    const { columns, rows } = isGrid ? buildGridExport(data, year, month) : handleExportTable();
 
     return {
       fileName: `phan_ca_thang_${month + 1}_${year}_${dayjs().format('YYYYMMDD')}`,
