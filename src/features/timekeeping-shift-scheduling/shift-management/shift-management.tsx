@@ -17,6 +17,7 @@ import { ShiftManagementGrid } from './components/grid-layout/shift-management-g
 import { ShiftManagementFilter } from './components/shift-management-filter';
 import { ShiftManagementListview } from './components/shift-management-listview';
 import { SHIFT_CA_LEGEND } from './constants/data';
+import { downloadShiftTemplate } from './constants/shift-template';
 import { useShiftExport } from './hooks/use-shift-export';
 import { useShiftManagementList } from './hooks/use-shift-management';
 
@@ -52,6 +53,7 @@ export const ShiftManagement = () => {
               // exportConfig={exportConfig}
               // importConfig={importConfig}
               exportConfig={exportConfig}
+              onExportTemplate={() => downloadShiftTemplate()}
             />
           </div>
           <ShiftManagementFilter />

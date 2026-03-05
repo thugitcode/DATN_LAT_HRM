@@ -55,6 +55,7 @@ export const WorkSheetByShift = () => {
             pageSize: filters.limit,
             totalPage: data?.pagination?.totalPage,
             search: filters.search,
+            month: filters.month,
           },
         },
         [LayoutSwitcherEnum.GRID]: {
