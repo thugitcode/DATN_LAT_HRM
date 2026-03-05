@@ -67,7 +67,7 @@ const BASE_COLUMNS: Column<AttendanceByHoursResponse>[] = [
   },
 ];
 
-const TOTAL_HOUR_COLUMNS: Column<AttendanceByHoursResponse>[] = [
+export const TOTAL_HOUR_COLUMNS: Column<AttendanceByHoursResponse>[] = [
   {
     key: 'totalHours',
     title: 'TỔNG GỜ LÀM',
