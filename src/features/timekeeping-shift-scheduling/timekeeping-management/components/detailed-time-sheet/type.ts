@@ -1,3 +1,5 @@
+import type { IBreakTime } from "../../types/index.type";
+
 export interface ShiftDetails {
   id: string;
   workDate: string;
@@ -18,8 +20,18 @@ export interface ShiftDetails {
   histories: History[];
   rooms?: { id: string, name: string }[];
   departments?: { id: string, name: string }[];
+  breaktime: IBreakTime[]
 }
-
+export interface History {
+  attendance:any[]
+  changeType:string
+  changedAt:string
+  id:string
+  newTime:string
+  oldTime:string
+  reason:string
+  changedByName: string
+}
 export interface Staff {
   id: string;
   code: string;
@@ -35,6 +47,8 @@ export interface Shift {
   type: string;
   startTime?: string;
   endTime?: string
+  allowedEarlyLeaveMinutes?: number
+  allowedLateMinutes?: number
 }
 
 export interface Attendance {

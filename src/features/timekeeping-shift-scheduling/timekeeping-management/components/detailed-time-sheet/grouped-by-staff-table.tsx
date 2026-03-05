@@ -181,7 +181,7 @@ export function GroupedTable() {
   const monthStr = typeof data?.metadata?.month === 'string' ? data?.metadata?.month : '';
   const totalShifts = monthStr
     ? getTotalDaysInMonth(Number(monthStr.split('-')[0]), Number(monthStr.split('-')[1])) *
-      totalStaff
+    totalStaff
     : 0;
 
   const renderShiftCell = useCallback(
@@ -314,8 +314,8 @@ export function GroupedTable() {
         {/* Sticky group header overlay */}
         {stickyGroup && (
           <div
-            className="pointer-events-auto absolute right-0 left-0 z-20 flex items-center gap-1 from-group-header to-group-header/80 ps-4 w-[97.7%] max-md:w-[96.7%]"
-            style={{ top: 64, height: ROW_HEIGHT }}
+            className="pointer-events-auto absolute right-0 left-0 z-20 flex items-center gap-1 from-group-header to-group-header/80 ps-4 w-[calc(100%-31px)] max-xl:w-[calc(100%-15px)]"
+            style={{ top: 59, height: ROW_HEIGHT }}
           >
             <StickyRowGroupStaff
               row={stickyGroup}
@@ -342,7 +342,8 @@ export function GroupedTable() {
               // "last:!rounded-br-0"
             ),
             td: 'p-0',
-            tr: 'rounded-0',
+            tr: 'rounded-none',
+            thead: 'after:content-none'
           }}
         >
           <TableHeader columns={columns}>

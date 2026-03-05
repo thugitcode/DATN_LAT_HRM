@@ -29,6 +29,7 @@ import {
   type shiftDetailsFormValues,
 } from '../../schemas/shift-details.schema';
 import { CheckInMethodEnum } from './type';
+import { displayTime } from '@/features/timekeeping-shift-scheduling/helper';
 
 const columns = [
   { key: 'changedByName', label: 'NGƯỜI ĐIỀU CHỈNH' },
@@ -179,13 +180,13 @@ export const ShiftDetailsDrawer = () => {
                 items={detailData?.histories ?? []}
                 emptyContent="Không có lịch sử điều chỉnh"
               >
-                {(item: any) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.changedByName}</TableCell>
+                {(item) => (
+                  <TableRow key={item?.id}>
+                    <TableCell>{item?.changedByName}</TableCell>
                     <TableCell>
-                      {item.oldTime} → {item.newTime}
+                      {displayTime(item.oldTime)} → {displayTime(item.newTime)}
                     </TableCell>
-                    <TableCell>{item.reason}</TableCell>
+                    <TableCell>{item?.reason}</TableCell>
                   </TableRow>
                 )}
               </TableBody>

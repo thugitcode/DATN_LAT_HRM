@@ -5,13 +5,13 @@ import { SearchInput } from '@/components/filters/search-input';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { icons } from '@/lib/icons';
 import type { ShiftManagementParams } from '@/types';
-import { Select, SelectItem, type SharedSelection } from '@heroui/react';
+import { Chip, Select, SelectItem, type SharedSelection } from '@heroui/react';
 
 export const PageFilter: React.FC = () => {
     const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
-    // useEffect(() => {
-    //     setFilter("filter", "DA_MO_GAN_DAY")
-    // }, [])
+    useEffect(() => {
+        setFilter("filter", "DA_MO_GAN_DAY,THEM_MOI_GAN_DAY")
+    }, [])
     const handleSearchChange = useCallback(
         (value: string | undefined) => {
             setFilter('search', value);
@@ -21,6 +21,7 @@ export const PageFilter: React.FC = () => {
 
     const handleFilter = useCallback(
         (keys: SharedSelection) => {
+            
             const values = Array.from(keys) as string[];
 
             setFilter("filter", values); // truyền nguyên mảng
@@ -39,7 +40,7 @@ export const PageFilter: React.FC = () => {
                 <SearchInput value={filters.search} onChange={handleSearchChange} startIcon={icons.search} />
             </div>
 
-            <div className='w-1/4'>
+            <div className='w-[26.5%] max-w-[320px]'>
                 {/* <FilterSelect
                     multiple={true}
                     options={options}
@@ -48,11 +49,19 @@ export const PageFilter: React.FC = () => {
                 // placeholder="Khoa"
                 /> */}
                 <Select
-                    className="max-w-xs"
                     classNames={{ trigger: "bg-white" }}
                     selectionMode="multiple"
                     onSelectionChange={(values) => handleFilter(values)}
-                    defaultSelectedKeys={"DA_MO_GAN_DAY"}
+                    defaultSelectedKeys={"all"}
+                    renderValue={(items) => {                        
+                        return (
+                            <div className="flex flex-nowrap gap-2">
+                                {items.map((item) => (
+                                    <Chip key={item.key}>{item?.textValue}</Chip>
+                                ))}
+                            </div>
+                        );
+                    }}
                 >
                     {options.map((animal) => (
                         <SelectItem key={animal.key}>{animal.label}</SelectItem>
