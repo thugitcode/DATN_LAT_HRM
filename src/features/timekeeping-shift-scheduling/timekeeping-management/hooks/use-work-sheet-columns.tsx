@@ -93,7 +93,7 @@ const BASE_COLUMNS: Column<WorkSheetByShiftRow>[] = [
   },
 ];
 
-const SUMMERY_COLUMNS: Column<WorkSheetByShiftRow>[] = [
+export const SUMMARY_COLUMNS: Column<WorkSheetByShiftRow>[] = [
   {
     key: 'summary.totalAttendance',
     title: 'TỔNG CÔNG',
@@ -198,7 +198,7 @@ export const useWorkSheetColumns = () => {
   );
 
   const columns = useMemo(
-    () => [...BASE_COLUMNS, ...weekColumns, ...SUMMERY_COLUMNS],
+    () => [...BASE_COLUMNS, ...weekColumns, ...SUMMARY_COLUMNS],
     [weekColumns],
   );
 
