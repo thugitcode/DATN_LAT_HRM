@@ -60,6 +60,14 @@ const MultiShiftDayCell = ({
   dateString: string;
   isCN: boolean;
 }) => {
+  if (!shifts.length) {
+    return (
+      <div className={cn('flex flex-col items-center justify-center gap-1 py-1')}>
+        <DayCell />
+      </div>
+    );
+  }
+
   return (
     <div className={cn('flex flex-col items-center justify-center gap-1 py-1')}>
       {shifts.map((shiftEntry) => (

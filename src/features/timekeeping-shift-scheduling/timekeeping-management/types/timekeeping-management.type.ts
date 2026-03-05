@@ -1,5 +1,8 @@
 import type { StaffPosition } from '@/types/global.type';
 
+import type { HoursStatusEnum } from '../constants/data';
+import type { HourlyPayrollStatus } from './index.type';
+
 export interface WorkSheetByShiftRow {
   id: string;
   code: string;
@@ -106,5 +109,5 @@ export interface DailyHourEntry {
   date: string;
   dayOfWeek: number;
   hours: number;
-  status: 'OFF' | 'FULL' | 'OVERTIME' | 'MISSING';
+  status?: HoursStatusEnum;
 }
