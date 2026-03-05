@@ -9,16 +9,38 @@ import { dayNames, getWeeksInMonth, isWeekend } from '../../helper';
 import { useYearMonth } from '../../hooks/use-year-month';
 import { STAFF_POSITION } from '../../shift-management/constants/data';
 import { DepartmentRoomInfo } from '../components/work-sheet-by-shift/department-room-info';
+import { HOURLY_PAYROLL_LEGEND_ITEMS, HoursStatusEnum } from '../constants/data';
 import type { AttendanceByHoursResponse } from '../types/timekeeping-management.type';
 
 // eslint-disable-next-line react-refresh/only-export-components
-const HoursCell = ({ hours }: { hours: number | null | undefined }) => {
-  if (hours == null) {
-    return <span className="text-gray-400">--</span>;
+const HoursCell = ({
+  hours,
+  status,
+}: {
+  hours: number | null | undefined;
+  status?: HoursStatusEnum;
+}) => {
+  const color = HOURLY_PAYROLL_LEGEND_ITEMS?.find((h) => h.status === status)?.color;
+
+  if (hours == null || status === HoursStatusEnum.OFF) {
+    return (
+      <span
+        style={{
+          color,
+        }}
+      >
+        --
+      </span>
+    );
   }
 
   return (
-    <span className={cn('font-medium', hours < 8 ? 'text-red-500' : 'text-blue-600')}>
+    <span
+      className={cn('font-medium')}
+      style={{
+        color,
+      }}
+    >
       {hours}h
     </span>
   );
@@ -113,7 +135,8 @@ export const useColumnsHourlyPayroll = () => {
             align: 'center' as const,
             render: (_, record) => {
               const dayData = record?.days?.[dateString];
-              return <HoursCell hours={dayData?.hours} />;
+
+              return <HoursCell hours={dayData?.hours} status={dayData?.status} />;
             },
           };
         }),
