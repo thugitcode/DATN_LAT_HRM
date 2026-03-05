@@ -55,3 +55,12 @@ export const updateContract = async (id: string, data: any): Promise<ApiResponse
         throw normalizeAxiosError(err);
     }
 };
+
+export const createContract = async (data: any): Promise<ApiResponse<boolean>> => {
+    try {
+        const response = await hrmInstance.post('/staff-contract', data);
+        return response.data;
+    } catch (err: unknown) {
+        throw normalizeAxiosError(err);
+    }
+};

@@ -97,6 +97,41 @@ export interface StaffWorkHistory {
   updatedAt?: string;
 }
 
+export interface StaffSalary {
+  id: string;
+  basicSalary: number;
+  insuranceSalary?: number;
+  responsibilityAllowance?: number;
+  positionAllowance?: number;
+  hazardAllowance?: number;
+  mealAllowance?: number;
+  mealAllowanceUnit?: string;
+  fuelAllowance?: number;
+  phoneAllowance?: number;
+  businessTripAllowance?: number;
+  otherAllowance?: number;
+  hasHealthInsurance?: boolean;
+  healthInsuranceRate?: number;
+  hasSocialInsurance?: boolean;
+  socialInsuranceRate?: number;
+  hasUnemploymentInsurance?: boolean;
+  unemploymentInsuranceRate?: number;
+  hasUnionFee?: boolean;
+  unionFee?: number;
+  hasHealthCareInsurance?: boolean;
+  healthCareInsuranceCompany?: string;
+  healthCareInsuranceBenefit?: number;
+  healthCareInsuranceRate?: number;
+  leaveQuotaIds?: string[];
+  hasFamilyDeduction?: boolean;
+  dependentsCount?: number;
+  hasPersonalIncomeTax?: boolean;
+  personalIncomeTaxRate?: number;
+  salaryType: string;
+  netSalary?: number;
+  grossSalary?: number;
+}
+
 export interface StaffContract {
   id: string;
   contractType: ContractTypeEnum;
@@ -110,6 +145,7 @@ export interface StaffContract {
   position: StaffPositionEnum;
   staff?: Staff;
   department?: { id: string; name: string };
+  room?: { id: string; name: string; department?: { id: string; name: string } };
   directManagerIds?: string[];
   shiftType?: ShiftTypeEnum;
   fixedShiftId?: string;
@@ -118,7 +154,9 @@ export interface StaffContract {
   approvedAt?: string;
   approvedBy?: string;
   signedAt?: string;
+  signatureUrl?: string;
   staffWorkHistory?: StaffWorkHistory[];
+  salary?: StaffSalary;
 }
 
 export interface StaffParams {

@@ -214,7 +214,13 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     const [formData, setFormData] = useState<EditFormData>(() => initFormFromContract(currentContract));
     const [errors, setErrors] = useState<Record<string, string>>({});
 
+    const [selectedContractId, setSelectedContractId] = useState<string | undefined>(undefined);
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
+    const handleCloseDrawer = useCallback(() => {
+        setSelectedContractId(undefined);
+        onClose();
+    }, [onClose]);
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
     // Data queries for dropdowns
@@ -399,12 +405,12 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                         <p className="text-[15px] text-[#71717A] text-center">
                             Nhân viên chưa có dữ liệu hợp đồng, vui lòng thêm mới hợp đồng.
                         </p>
-                        <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={onOpen}>
+                        <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setSelectedContractId(undefined); onOpen(); }}>
                             Thêm mới hợp đồng
                         </Button>
                     </CardBody>
                 </Card>
-                <StaffContractFormDrawer isOpen={isOpen} onClose={onClose} staffId={staffId} />
+                <StaffContractFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} staffId={staffId} contractId={selectedContractId} />
             </div>
         );
     }
@@ -436,7 +442,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 <Button variant="flat" size="sm" startContent={<IconPencil size={18} />} className="bg-[#F4F4F5] text-[#11181C] font-semibold h-9 rounded-xl px-4" onPress={handleStartEdit}>
                                     Chỉnh sửa
                                 </Button>
-                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={onOpen}>
+                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setSelectedContractId(undefined); onOpen(); }}>
                                     Thêm mới hợp đồng
                                 </Button>
                             </>
@@ -805,7 +811,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                                 </>
                                             )}
                                             {canEdit && (
-                                                <Button isIconOnly size="sm" variant="light" className="min-w-8 w-8 h-8 text-[#71717A]" onPress={onOpen}>
+                                                <Button isIconOnly size="sm" variant="light" className="min-w-8 w-8 h-8 text-[#71717A]" onPress={() => { setSelectedContractId(history._contractId); onOpen(); }}>
                                                     <IconPencil size={18} />
                                                 </Button>
                                             )}
@@ -846,7 +852,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                 </ModalContent>
             </Modal>
 
-            <StaffContractFormDrawer isOpen={isOpen} onClose={onClose} staffId={staffId} />
+            <StaffContractFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} staffId={staffId} contractId={selectedContractId} />
         </div>
     );
 };
