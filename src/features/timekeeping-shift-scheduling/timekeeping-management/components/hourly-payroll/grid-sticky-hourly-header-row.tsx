@@ -6,7 +6,8 @@ import type { DayColumn } from '@/features/timekeeping-shift-scheduling/shift-ma
 
 import { CELL_W, STICKY_COL_W, SUMMARY_COL_W } from '../../constants/data';
 import { TOTAL_HOUR_COLUMNS } from '../../hooks/use-columns-hourly-payroll';
-import { SUMMARY_COLUMNS } from '../../hooks/use-work-sheet-columns';
+
+// import { SUMMARY_COLUMNS } from '../../hooks/use-work-sheet-columns';
 
 interface GridStickyHeaderRowProps {
   hoveredDay: number | null;
@@ -72,7 +73,7 @@ export const GridStickyHourlyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> =
               'h-17.5 text-[11px] font-semibold border-0 p-0 cursor-default bg-white',
               'text-center align-middle text-gray-500 transition-colors duration-100',
               ci === 0 && 'border-l border-gray-200',
-              ci === SUMMARY_COLUMNS.length - 1 && 'rounded-tr-[14px]',
+              // ci === SUMMARY_COLUMNS.length - 1 && 'rounded-tr-[14px]',
             )}
             style={{
               width: SUMMARY_COL_W,
