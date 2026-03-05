@@ -1,4 +1,4 @@
-import { useMemo, type FC } from 'react';
+import { useEffect, useMemo, type FC } from 'react';
 import { Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -20,23 +20,33 @@ import { FormTimePicker } from '@/components/form-fields/form-time-picker';
 
 import { useUpdateShiftManagement } from '../hooks/use-shift-management';
 import { shiftDivisinSchema, type ShiftDivisinFormValues } from '../schemas/shift-division.schema';
-import type { ShiftTemplateWorkScheduleDetail } from '../types/type';
+import type {
+  DepartmentWorkScheduleDetail,
+  RoomWorkScheduleDetail,
+  ShiftTemplateWorkScheduleDetail,
+} from '../types/type';
 import { FooterFrawer } from './footer-drawer';
 
 interface ChangeShiftDivisionFormProps {
   shift?: ShiftTemplateWorkScheduleDetail;
-  staff?: StaffWorkSchedule;
+  staffRow?: StaffWorkSchedule;
   matchedSchedule?: DaySchedule;
   workScheduleId?: string;
   shiftRow?: Shift;
+  note?: string;
+  department?: DepartmentWorkScheduleDetail;
+  room?: RoomWorkScheduleDetail;
 }
 
 export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>> = ({
   shift,
-  staff,
+  staffRow,
   matchedSchedule,
   workScheduleId,
   shiftRow,
+  note,
+  department,
+  room,
 }) => {
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
 
@@ -51,15 +61,15 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
   } = useForm<ShiftDivisinFormValues>({
     resolver: zodResolver(shiftDivisinSchema),
     defaultValues: {
-      name: staff?.name ?? '',
-      staffId: staff?.id ?? '',
-      departmentId: staff?.departments?.length === 1 ? staff?.departments?.[0]?.id : '',
+      name: staffRow?.name ?? '',
+      staffId: staffRow?.id ?? '',
+      departmentId: department?.id ?? '',
       caId: shift?.id ?? '',
-      roomId: staff?.rooms?.length === 1 ? staff?.rooms?.[0]?.id : '',
+      roomId: room?.id ?? '',
 
       startTime: shiftRow?.startTime?.slice(0, 5),
       endTime: shiftRow?.endTime?.slice(0, 5),
-      note: shift?.note ?? '',
+      note: note ?? '',
     },
     mode: 'onChange',
   });
@@ -68,6 +78,13 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
 
   const selectedCa = caseCategoryOptions.find((ca) => ca.key === caId);
   const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
+
+  useEffect(() => {
+    if (selectedCa) {
+      setValue('startTime', selectedCa.startTime?.slice(0, 5) ?? '');
+      setValue('endTime', selectedCa.endTime?.slice(0, 5) ?? '');
+    }
+  }, [caId]);
 
   const onSubmit = async (values: ShiftDivisinFormValues) => {
     if (shift?.id && workScheduleId) {
@@ -93,7 +110,9 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
         data: {
           roomId: values.roomId,
           status: StatusUpdateShift.SCHEDULED,
-          details: [...otherDetails, updatedDetail],
+          departmentId: values.departmentId,
+          // details: [...otherDetails, updatedDetail],
+          details: [updatedDetail],
         },
       };
 
@@ -102,14 +121,14 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
   };
 
   const departmentStaffOptions: Options[] = useMemo(
-    () => staff?.departments?.map((d) => ({ key: d.id, label: d.name })) ?? [],
-    [staff],
+    () => staffRow?.departments?.map((d) => ({ key: d.id, label: d.name })) ?? [],
+    [staffRow],
   );
 
   const roomStaffOptions: Options[] = useMemo(
-    () => staff?.rooms?.map((d) => ({ key: d.id, label: d.name })) ?? [],
+    () => staffRow?.rooms?.map((d) => ({ key: d.id, label: d.name })) ?? [],
 
-    [staff],
+    [staffRow],
   );
   return (
     <Form

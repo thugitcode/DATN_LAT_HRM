@@ -6,5 +6,6 @@ import { ExplanationManagement } from '@/features/timekeeping-shift-scheduling/e
 export const Route = createFileRoute(
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/',
 )({
-  component: ExplanationManagement,
+  // component: ExplanationManagement,
+  component: AccountabilityManagement,
 });

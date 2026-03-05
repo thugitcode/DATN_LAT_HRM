@@ -18,21 +18,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { IconCaretRightFilled } from '@tabler/icons-react';
 import { useForm } from 'react-hook-form';
 
-import { AttendanceExplanationType } from '@/types/attendance-explanation.type';
 import { FormArea } from '@/components/form-fields/form-area';
 import { ShiftDetailsCard } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-card';
 
+import dayjs from 'dayjs';
+import { useEffect } from 'react';
 import { useAttendanceDetail, useUpdateAttendanceMutation } from '../../hooks/use-timekeeping-management';
 import {
   shiftDetailsSchema,
   type shiftDetailsFormValues,
 } from '../../schemas/shift-details.schema';
 import { CheckInMethodEnum } from './type';
-import { useEffect } from 'react';
-import dayjs from 'dayjs';
+import { displayTime } from '@/features/timekeeping-shift-scheduling/helper';
 
 const columns = [
-  { key: 'createdBy', label: 'NGƯỜI ĐIỀU CHỈNH' },
+  { key: 'changedByName', label: 'NGƯỜI ĐIỀU CHỈNH' },
   { key: 'adjustedTime', label: 'GIỜ ĐIỀU CHỈNH' },
   { key: 'reason', label: 'LÝ DO ĐIỀU CHỈNH' },
 ];
@@ -42,7 +42,7 @@ export const ShiftDetailsDrawer = () => {
 
   const workScheduleDetailId = useDrawer((state) => state.data) as string;
 
-  const { data, isLoading } = useAttendanceDetail(workScheduleDetailId);
+  const { data, isLoading, refetch } = useAttendanceDetail(workScheduleDetailId);
   const { mutate: updateAttendance } = useUpdateAttendanceMutation()
 
   const detailData = data?.data;
@@ -50,7 +50,7 @@ export const ShiftDetailsDrawer = () => {
   const {
     control,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, dirtyFields },
     reset
   } = useForm<shiftDetailsFormValues>({
     resolver: zodResolver(shiftDetailsSchema),
@@ -65,13 +65,20 @@ export const ShiftDetailsDrawer = () => {
   });
   useEffect(() => {
     reset({
-      reason: detailData?.note ?? undefined,
-      actualCheckIn: detailData?.attendance?.checkInTime ?? undefined,
-      actualCheckOut: detailData?.attendance?.checkOutTime ?? undefined,
+      reason: "",
+      actualCheckIn: detailData?.attendance?.checkInTime ?? "",
+      actualCheckOut: detailData?.attendance?.checkOutTime ?? "",
     })
   }, [detailData])
+
   const onSubmit = async (values: any) => {
-    console.log('values', values);
+    if (!dirtyFields.actualCheckIn && !dirtyFields.actualCheckOut) {
+      return addToast({
+        description: 'Giờ chấm công chưa có thay đổi.',
+        color: 'warning',
+      });
+    }
+
     const newValues = { ...values, actualCheckIn: dayjs(values.actualCheckIn, "HH:mm").format("HH:mm:ss"), actualCheckOut: dayjs(values.actualCheckOut, "HH:mm").format("HH:mm:ss"), id: detailData?.id ?? null }
     updateAttendance(newValues, {
       onSuccess: () => {
@@ -79,7 +86,9 @@ export const ShiftDetailsDrawer = () => {
           description: 'Cập nhật ca thành công.',
           color: 'success',
         });
-        closedDrawer()
+        reset()
+        refetch()
+        // closedDrawer()
       },
       onError(error, variables, onMutateResult, context) {
         console.log(error, "err");
@@ -150,7 +159,7 @@ export const ShiftDetailsDrawer = () => {
         </div>
       </div>
 
-      <div className="px-4 py-0 w-full">
+      <div className="px-4 py-0 w-full mb-17.5">
         <Accordion selectionMode="multiple" className="px-0 w-full">
           <AccordionItem
             classNames={{
@@ -158,12 +167,12 @@ export const ShiftDetailsDrawer = () => {
               trigger: 'flex-row-reverse pt-0 gap-3',
               indicator: 'data-[open=true]:!rotate-90 text-black',
             }}
-            key="1"
+            key="LICH_SU_DIEU_CHINH"
             aria-label="Lịch sử điều chỉnh"
             title="Lịch sử điều chỉnh"
             indicator={<IconCaretRightFilled />}
           >
-            <Table aria-label="Lịch sử điều chỉnh">
+            <Table aria-label="Lịch sử điều chỉnh" classNames={{ wrapper: "mb-17.5" }}>
               <TableHeader columns={columns}>
                 {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
               </TableHeader>
@@ -171,13 +180,13 @@ export const ShiftDetailsDrawer = () => {
                 items={detailData?.histories ?? []}
                 emptyContent="Không có lịch sử điều chỉnh"
               >
-                {(item: any) => (
-                  <TableRow key={item.id}>
-                    <TableCell>{item.createdBy}</TableCell>
+                {(item) => (
+                  <TableRow key={item?.id}>
+                    <TableCell>{item?.changedByName}</TableCell>
                     <TableCell>
-                      {item.checkInTime} → {item.checkOutTime}
+                      {displayTime(item.oldTime)} → {displayTime(item.newTime)}
                     </TableCell>
-                    <TableCell>{item.reason}</TableCell>
+                    <TableCell>{item?.reason}</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -186,7 +195,7 @@ export const ShiftDetailsDrawer = () => {
         </Accordion>
       </div>
 
-      <div className="flex justify-end gap-2 pt-3 pb-6 px-6 bg-white w-full">
+      <div className="flex justify-end gap-2 py-3 px-6 bg-white w-full absolute bottom-0">
         <Button
           variant="light"
           onPress={closedDrawer}

@@ -23,18 +23,6 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
 
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
 
-  const maxShiftsPerDate = useMemo(() => {
-    const map: Record<string, Record<string, number>> = {};
-    data.forEach((record) => {
-      const staffId = record.staff.id;
-      record?.schedules?.forEach((schedule) => {
-        if (!map[schedule.date]) map[schedule.date] = {};
-        map[schedule.date][staffId] = schedule.shifts?.length ?? 0;
-      });
-    });
-    return map;
-  }, [data]);
-
   const maxShiftsPerRow = useMemo(() => {
     const map: Record<string, number> = {};
 
@@ -43,7 +31,6 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
       let max = 0;
 
       record?.schedules?.forEach((schedule) => {
-        // Chỉ tính shifts thuộc tháng/năm hiện tại
         const scheduleDate = dayjs(schedule.date);
         if (scheduleDate.month() !== month || scheduleDate.year() !== year) return;
 
@@ -175,7 +162,7 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
                             onOpen(DrawerType.CHANGE_SHIFT_DIVISION, {
                               record,
                               shift,
-                              date: day.date,
+                              date: dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD'),
                               day: day.day,
                               month: month + 1,
                               year,

@@ -14,7 +14,10 @@ import type { ShiftManagementGridProps } from './shift-management-grid';
 const getShiftsForDay = (schedules: StaffSchedule['schedules'], dateStr?: string): Shift[] =>
   schedules.find((s) => s.date === dateStr)?.shifts ?? [];
 
-export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data, isDetailsEmployee = false }) => {
+export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({
+  data,
+  isDetailsEmployee = false,
+}) => {
   const { month, year } = useYearMonth();
 
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
@@ -53,41 +56,43 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({ data, isDetails
 
         return (
           <tr key={staff.id} className={cn(isEven && 'bg-[#F4F4F5]')}>
-            {!isDetailsEmployee && <td
-              className={cn(
-                'sticky left-0 z-20 border-b border-[#F4F4F5] align-top pt-3',
-                isEven ? 'bg-[#F4F4F5]' : 'bg-white',
-              )}
-              style={{ width: STAFF_COL_W, minWidth: STAFF_COL_W, height: blockHeight }}
-            >
-              <div
-                className="relative flex h-full items-start"
-                style={{ paddingTop: ROW_PY, paddingBottom: ROW_PY }}
-              >
-                {hasMultipleRows && (
-                  <button
-                    className={cn(
-                      'absolute left-2.5 top-5 z-20 transition-transform duration-200',
-                      isExpanded ? 'rotate-0 text-[#3B82F6]' : '-rotate-90 text-[#A1A1AA]',
-                    )}
-                    onClick={() => toggleExpand(staff.id)}
-                  >
-                    {icons.arrowDownIndicator}
-                  </button>
+            {!isDetailsEmployee && (
+              <td
+                className={cn(
+                  'sticky left-0 z-20 border-b border-[#F4F4F5] align-top pt-3',
+                  isEven ? 'bg-[#F4F4F5]' : 'bg-white',
                 )}
+                style={{ width: STAFF_COL_W, minWidth: STAFF_COL_W, height: blockHeight }}
+              >
+                <div
+                  className="relative flex h-full items-start"
+                  style={{ paddingTop: ROW_PY, paddingBottom: ROW_PY }}
+                >
+                  {hasMultipleRows && (
+                    <button
+                      className={cn(
+                        'absolute left-2.5 top-5 z-20 transition-transform duration-200',
+                        isExpanded ? 'rotate-0 text-[#3B82F6]' : '-rotate-90 text-[#A1A1AA]',
+                      )}
+                      onClick={() => toggleExpand(staff.id)}
+                    >
+                      {icons.arrowDownIndicator}
+                    </button>
+                  )}
 
-                <div className="min-w-0 flex-1 pl-8 pr-2">
-                  <StaffInfo
-                    avatarUrl={staff.avatar}
-                    code={staff.code}
-                    name={staff.name}
-                    role={staff.position}
-                    departments={staff?.departments}
-                    rooms={staff?.rooms}
-                  />
+                  <div className="min-w-0 flex-1 pl-8 pr-2">
+                    <StaffInfo
+                      avatarUrl={staff.avatar}
+                      code={staff.code}
+                      name={staff.name}
+                      role={staff.position}
+                      departments={staff?.departments}
+                      rooms={staff?.rooms}
+                    />
+                  </div>
                 </div>
-              </div>
-            </td>}
+              </td>
+            )}
 
             {days.map((d, dIdx) => {
               const shifts = getShiftsForDay(schedules, dateStrs[dIdx]);

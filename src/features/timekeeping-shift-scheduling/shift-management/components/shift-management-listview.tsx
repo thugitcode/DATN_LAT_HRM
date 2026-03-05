@@ -13,6 +13,7 @@ interface ShiftManagementListviewProps {
   pageSize?: number;
   isLoading?: boolean;
   totalPage?: number;
+  search?: string;
 }
 
 export const ShiftManagementListview: FC<Readonly<ShiftManagementListviewProps>> = ({
@@ -22,11 +23,13 @@ export const ShiftManagementListview: FC<Readonly<ShiftManagementListviewProps>>
   pageSize,
   isLoading,
   totalPage,
+  search,
 }) => {
   const { columns } = useColumns({ data: data });
 
   return (
     <Table
+      key={`page-${page}-${pageSize}-${search}`}
       loading={isLoading}
       columns={columns}
       dataSource={data ?? []}

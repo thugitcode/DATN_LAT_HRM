@@ -1,7 +1,6 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DrawerType, useDrawer } from '@/store/useDrawer';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import dayjs from 'dayjs';
 
@@ -51,19 +50,19 @@ export function GroupedTable() {
   }, [filters.month]);
 
   const ROW_HEIGHT = 52;
-  const TABLE_HEIGHT = 560;
-  const { onOpen } = useDrawer((state) => state);
+  const TABLE_HEIGHT = 550;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [stickyGroup, setStickyGroup] = useState<FlatRow | null>(null);
 
   const { data, isLoading } = useDetailsTimeSheetList({
     page: filters.page ?? 1,
-    limit: filters.limit ?? 10,
+    limit: 100,
     fromDate: startDate,
     toDate: endDate,
     search: filters.search,
     departmentId: filters.departmentId,
     roomId: filters.roomId,
+    getAll: true,
   });
 
   const flatRows = useMemo<FlatRow[]>(() => {
@@ -100,7 +99,7 @@ export function GroupedTable() {
     });
 
     return rows;
-  }, [expandedGroups, isLoading]);
+  }, [expandedGroups, isLoading, data?.data]);
 
   // Build an index: for each flat-row index, which group does it belong to?
   const groupIndexMap = useMemo(() => {
@@ -182,7 +181,7 @@ export function GroupedTable() {
   const monthStr = typeof data?.metadata?.month === 'string' ? data?.metadata?.month : '';
   const totalShifts = monthStr
     ? getTotalDaysInMonth(Number(monthStr.split('-')[0]), Number(monthStr.split('-')[1])) *
-      totalStaff
+    totalStaff
     : 0;
 
   const renderShiftCell = useCallback(
@@ -315,8 +314,8 @@ export function GroupedTable() {
         {/* Sticky group header overlay */}
         {stickyGroup && (
           <div
-            className="pointer-events-auto absolute right-0 left-0 z-20 flex items-center gap-1 from-group-header to-group-header/80 ps-4 w-[97.7%] max-md:w-[96.7%]"
-            style={{ top: 64, height: ROW_HEIGHT }}
+            className="pointer-events-auto absolute right-0 left-0 z-20 flex items-center gap-1 from-group-header to-group-header/80 ps-4 w-[calc(100%-31px)] max-xl:w-[calc(100%-15px)]"
+            style={{ top: 59, height: ROW_HEIGHT }}
           >
             <StickyRowGroupStaff
               row={stickyGroup}
@@ -343,7 +342,8 @@ export function GroupedTable() {
               // "last:!rounded-br-0"
             ),
             td: 'p-0',
-            tr: 'rounded-0',
+            tr: 'rounded-none',
+            thead: 'after:content-none'
           }}
         >
           <TableHeader columns={columns}>
@@ -373,7 +373,7 @@ export function GroupedTable() {
               >
                 {(columnKey) => {
                   const col = columns.find((c) => c.key === columnKey);
-                  const alignClass = `text-${col?.textAlign}`;
+                  const alignClass = `text-${col?.className}`;
                   return (
                     <TableCell
                       className={cn(

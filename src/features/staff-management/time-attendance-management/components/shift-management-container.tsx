@@ -5,9 +5,10 @@ import { useMonthDateRange } from "@/hooks/use-month-date-range";
 import { useQueryFilter } from "@/hooks/useQueryFilter";
 import type { ShiftManagementParams } from "@/types";
 import { ShiftTypeEnum } from "@/types/shift-management.type";
-import { number } from "zod";
+import { useParams } from "@tanstack/react-router";
 
 export const ShiftManagementContainer = () => {
+    const { id } = useParams({ strict: false })
     const { filters } = useQueryFilter<ShiftManagementParams>();
 
     const { startDate, endDate } = useMonthDateRange(filters.month);
@@ -18,7 +19,6 @@ export const ShiftManagementContainer = () => {
             status: ShiftTypeEnum.FIXED,
             number: 4
         },
-
         {
             label: 'Ca gãy',
             color: '#F5A524',
@@ -52,6 +52,7 @@ export const ShiftManagementContainer = () => {
         search: filters.search,
         departmentId: filters.departmentId,
         roomId: filters.roomId,
+        staffId: id
     });
 
     const StatsSection = ({ stats }) => {

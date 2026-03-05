@@ -324,9 +324,15 @@ export function calculateWorkingHours(
   const [outHour, outMin] = checkOut.split(":").map(Number);
 
   const checkInMinutes = (inHour ?? 0) * 60 + (inMin ?? 0);
-  const checkOutMinutes = (outHour ?? 0) * 60 + (outMin ?? 0);
+  let checkOutMinutes = (outHour ?? 0) * 60 + (outMin ?? 0);
 
-  const totalMinutes = checkOutMinutes - checkInMinutes - breakMinutes;
+  // ✅ Nếu ca đêm (qua ngày)
+  if (checkOutMinutes < checkInMinutes) {
+    checkOutMinutes += 24 * 60;
+  }
+
+  const totalMinutes =
+    checkOutMinutes - checkInMinutes - (breakMinutes ?? 0);
 
   return +(totalMinutes / 60).toFixed(2);
 }
@@ -358,3 +364,23 @@ export function formatDateVN(d: string | Date) {
   const weekdays = ["Chủ nhật","Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7"]
   return `${weekdays[date.day()]}, ngày ${date.format("DD/MM/YYYY")}`
 }
+
+export const convertMimeToExtension = (mime: string) => {
+  const map: Record<string, string> = {
+    'application/pdf': 'pdf',
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'image/webp': 'webp',
+    'image/svg+xml': 'svg',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+    'application/vnd.ms-excel': 'xls',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+    'text/csv': 'csv',
+    'text/plain': 'txt',
+    'application/json': 'json',
+  };
+
+  return map[mime.toLowerCase()] ?? null;
+};

@@ -104,3 +104,9 @@ export const STANDARD_HOURS = "07:00 - 17:00"
 export const STANDARD_HOURS_NUMBER = 8
 export const CONVERT_RATE = 1.5 //hệ số OT
 export const BREAK_MINUTES = 60
+
+export enum DocumentType {
+  IMAGE = 'IMAGE',
+  DOCUMENT = 'DOCUMENT',
+  VIDEO = 'VIDEO',
+}

@@ -4,15 +4,18 @@ import type { DailyAttendance } from '@/types/shift-details.type';
 
 import type { DayColumn } from './shift-management/types/type';
 import { PILL_SHIFTS, WORK_SHEET_LEGEND_ITEMS } from './timekeeping-management/constants/data';
-import type { WorkSheetByShiftRow } from './timekeeping-management/hooks/use-work-sheet-columns';
 import {
   AttendanceStatus,
   type DayCell,
   type EmployeeRow,
+  type IBreakTime,
   type ShiftCode,
   type ShiftRun,
 } from './timekeeping-management/types/index.type';
-import type { WorkSheetByShiftType } from './timekeeping-management/types/timekeeping-management.type';
+import type {
+  WorkSheetByShiftRow,
+  WorkSheetByShiftType,
+} from './timekeeping-management/types/timekeeping-management.type';
 
 export const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
@@ -119,63 +122,65 @@ function buildRuns(schedule: DayCell[]): ShiftRun[] {
   return runs;
 }
 
+// export function groupByStaff(data: WorkSheetByShiftType[]): Map<string, WorkSheetByShiftType> {
+//   const map = new Map<string, WorkSheetByShiftType>();
+
+//   for (const item of data) {
+//     const existing = map.get(item.staff.id);
+
+//     if (!existing) {
+//       map.set(item.staff.id, { ...item, days: { ...item.days } });
+//       continue;
+//     }
+
+//     for (const [date, incoming] of Object.entries(item.days)) {
+//       const current = existing.days[date];
+
+//       existing.days[date] = current
+//         ? {
+//             ...current,
+//             displayCode:
+//               current.displayCode === incoming.displayCode
+//                 ? current.displayCode
+//                 : `${current.displayCode}/${incoming.displayCode}`,
+//           }
+//         : incoming;
+//     }
+
+//     const s = existing.summary;
+//     const t = item.summary;
+//     existing.summary = {
+//       totalWork: s.totalWork + t.totalWork,
+//       totalLateMinutes: s.totalLateMinutes + t.totalLateMinutes,
+//       totalEarlyMinutes: s.totalEarlyMinutes + t.totalEarlyMinutes,
+//       absentDays: s.absentDays + t.absentDays,
+//       workDays: s.workDays + t.workDays,
+//       actualWorkDays: s.actualWorkDays + t.actualWorkDays,
+//       paidLeave: s.paidLeave + t.paidLeave,
+//       otherLeave: s.otherLeave + t.otherLeave,
+//       onCall: s.onCall + t.onCall,
+//       holiday: s.holiday + t.holiday,
+//       overtimeHours: s.overtimeHours + t.overtimeHours,
+//       totalAttendance: s.totalAttendance + t.totalAttendance,
+//     };
+//   }
+
+//   return map;
+// }
+
 export function groupByStaff(data: WorkSheetByShiftType[]): Map<string, WorkSheetByShiftType> {
   const map = new Map<string, WorkSheetByShiftType>();
 
   for (const item of data) {
-    const existing = map.get(item.staff.id);
-
-    if (!existing) {
+    if (!map.has(item.staff.id)) {
       map.set(item.staff.id, { ...item, days: { ...item.days } });
-      continue;
     }
-
-    for (const [date, incoming] of Object.entries(item.days)) {
-      const current = existing.days[date];
-
-      existing.days[date] = current
-        ? {
-            ...current,
-            displayCode:
-              current.displayCode === incoming.displayCode
-                ? current.displayCode
-                : `${current.displayCode}/${incoming.displayCode}`,
-          }
-        : incoming;
-    }
-
-    const s = existing.summary;
-    const t = item.summary;
-    existing.summary = {
-      totalWork: s.totalWork + t.totalWork,
-      totalLateMinutes: s.totalLateMinutes + t.totalLateMinutes,
-      totalEarlyMinutes: s.totalEarlyMinutes + t.totalEarlyMinutes,
-      absentDays: s.absentDays + t.absentDays,
-      workDays: s.workDays + t.workDays,
-      actualWorkDays: s.actualWorkDays + t.actualWorkDays,
-      paidLeave: s.paidLeave + t.paidLeave,
-      otherLeave: s.otherLeave + t.otherLeave,
-      onCall: s.onCall + t.onCall,
-      holiday: s.holiday + t.holiday,
-      overtimeHours: s.overtimeHours + t.overtimeHours,
-      totalAttendance: s.totalAttendance + t.totalAttendance,
-    };
   }
 
   return map;
 }
 
-export function mapToRow(
-  item: WorkSheetByShiftType,
-  days: ReturnType<typeof getDaysInMonth>,
-): EmployeeRow & { runs: ShiftRun[] } {
-  const schedule: DayCell[] = days.map((d) => ({
-    day: d.day,
-    dayOfWeek: d.dayOfWeek,
-    shift: (item.days[d.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
-    workScheduleDetailId: item.days[d.date]?.workScheduleDetailId,
-  }));
-
+export function mapToRow(item: WorkSheetByShiftType, days: ReturnType<typeof getDaysInMonth>) {
   return {
     employee: {
       id: item.staff.id,
@@ -188,23 +193,37 @@ export function mapToRow(
       rooms: item.staff.rooms,
       departmentName: '',
     },
-    schedule,
-    runs: buildRuns(schedule),
+    shifts: item.shifts.map((shiftEntry) => {
+      const schedule: DayCell[] = days.map((d) => ({
+        day: d.day,
+        dayOfWeek: d.dayOfWeek,
+        shift: (shiftEntry.days[d.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
+        workScheduleDetailId: shiftEntry.days[d.date]?.workScheduleDetailId ?? '',
+      }));
+
+      return {
+        shift: shiftEntry.shift,
+        schedule,
+        runs: buildRuns(schedule),
+        summary: shiftEntry.summary,
+      };
+    }),
   };
 }
 
-export function mapToListRow(item: WorkSheetByShiftType): WorkSheetByShiftRow {
-  return {
+export function mapToListRow(item: WorkSheetByShiftType): WorkSheetByShiftRow[] {
+  return item.shifts.map((shiftEntry) => ({
     id: item.staff.id,
     code: item.staff.code,
     name: item.staff.name,
     avatar: item.staff.avatar,
     departments: item.staff.departments,
     rooms: item.staff.rooms,
-    days: item.days,
-    summary: item.summary,
     position: item.staff.position,
-  };
+    shift: shiftEntry.shift,
+    days: shiftEntry.days,
+    summary: shiftEntry.summary,
+  }));
 }
 
 export function getInitials(name: string) {
@@ -259,3 +278,19 @@ export function getLabelShift(shift: ShiftCode): string {
 export function getTotalDaysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
 }
+
+export const displayTime = (time: string) => {
+  return time ? dayjs(time, "HH:mm:ss").format("HH:mm") : ""
+}
+
+export const calculateTotalBreakTime = (breakTimes: IBreakTime[]) => {
+  return breakTimes.reduce((total, cur) => {
+    const [inHour, inMin] = cur.breakStartTime.split(":").map(Number);
+    const [outHour, outMin] = cur.breakEndTime.split(":").map(Number);
+
+    const breakStart = (inHour ?? 0) * 60 + (inMin ?? 0);
+    const breakEnd = (outHour ?? 0) * 60 + (outMin ?? 0);
+
+    return total + (breakEnd - breakStart);
+  }, 0);
+};

@@ -16,6 +16,8 @@ export const API_ENDPOINTS = {
     SHIFT_DETAILS: '/work-schedule/detailed-attendance-table',
 
     ATTENDANCE_EXPLANATION: '/attendance-explanation',
+
+    LEAVE_REQUEST: '/leave-request',
   },
 
   OTHER_SERVICE: {

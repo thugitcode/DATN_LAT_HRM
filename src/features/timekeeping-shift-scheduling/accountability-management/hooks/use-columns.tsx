@@ -6,6 +6,7 @@ import type { ColumnDef } from '@/components/data-table/data-table';
 import { STAFF_POSITION } from '../../shift-management/constants/data';
 import { RowActions } from '../components/row-actions';
 import type { AttendanceExplanation } from '../types';
+import { DepartmentRoomInfo } from '../../timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 export const useColumns = () => {
   const columns: ColumnDef<AttendanceExplanation>[] = [
@@ -14,7 +15,7 @@ export const useColumns = () => {
       title: 'KHOA/PHÒNG',
       minWidth: 120,
       render: (_, row) => (
-        <span className="text-sm text-gray-700">{row.roomName || row.departmentName}</span>
+        <DepartmentRoomInfo departments={row.departments} rooms={row.rooms} />
       ),
     },
     {

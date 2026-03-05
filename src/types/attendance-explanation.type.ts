@@ -1,3 +1,5 @@
+import type { Item } from "@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info";
+
 export enum AttendanceExplanationStatus {
   PENDING = 'PENDING',
   PENDING_HR = 'PENDING_HR',
@@ -34,7 +36,9 @@ export interface AttendanceExplanation {
   staffName: string;
   staffAvatar?: string;
   departmentName: string;
+  departments: Item[];
   roomName: string;
+  rooms: Item[];
   position: string;
 
   // Shift info (snapshot)

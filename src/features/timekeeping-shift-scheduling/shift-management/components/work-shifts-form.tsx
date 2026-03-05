@@ -1,12 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDrawer } from '@/store/useDrawer';
 import { Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconTrash } from '@tabler/icons-react';
-import { FormProvider, useFieldArray, useForm, useFormContext } from 'react-hook-form';
+import {
+  FormProvider,
+  useFieldArray,
+  useForm,
+  useFormContext,
+  type FieldErrors,
+} from 'react-hook-form';
 
 import type { Options } from '@/types/global.type';
 import { ShiftTypeEnum, type CreateStaffSchedule } from '@/types/shift-management.type';
@@ -153,7 +159,7 @@ export const WorkShiftsForm = () => {
     setValue,
     trigger,
     watch,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = methods;
 
   const fromDate = watch('fromDate');
@@ -205,6 +211,29 @@ export const WorkShiftsForm = () => {
     });
   };
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToFirstError = () => {
+    console.log('scroll này ');
+    setTimeout(() => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+
+      const firstInvalid = container.querySelector<HTMLElement>('[aria-invalid="true"]');
+
+      console.log('firstInvalid_)_______', firstInvalid);
+
+      if (!firstInvalid) return;
+
+      firstInvalid.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+
+      firstInvalid.focus?.();
+    }, 120);
+  };
+
   const onSubmit = (values: WorkShiftAssignFormValues) => {
     const staffId = staffOptions.find((s) => s.code === values.staffId)?.key ?? '';
 
@@ -223,10 +252,7 @@ export const WorkShiftsForm = () => {
       })),
     }));
 
-    console.log(' payloads:', payloads);
-    // mutate({ ...values, staffId, details } satisfies CreateStaffSchedule);
-
-    payloads.forEach((payload) => mutate(payload));
+    mutate(payloads);
   };
 
   return (
@@ -240,11 +266,12 @@ export const WorkShiftsForm = () => {
             onSubmit(values);
           },
           (errors) => {
-            console.error(' Validation errors:', errors);
+            console.error('Validation errors:', errors);
+            scrollToFirstError();
           },
         )}
       >
-        <div className="w-full space-y-6 overflow-auto px-6">
+        <div ref={scrollContainerRef} className="w-full space-y-6 overflow-auto px-6">
           <WrapperBoxForm title="Thông tin nhân sự">
             <div className="grid grid-cols-2 gap-4">
               <FormAutocomplete
@@ -299,6 +326,7 @@ export const WorkShiftsForm = () => {
                 label="Ngày kết thúc"
                 isRequired
                 disabled={isLoading}
+
                 // onTrigger={() => trigger('fromDate')}
               />
             </div>
@@ -407,8 +435,6 @@ const ShiftDetailRow = ({
   const selectedCa = caseCategoryOptions.find((ca) => ca.key === shiftTemplateId);
   const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
 
-  // Nếu là ca dạng ShiftTypeEnum.SPLIT thì không fill ngày tháng
-
   const handleSelectShiftTemplate = (id: string) => {
     const template = caseCategoryOptions.find((e) => e.key === id);
 
@@ -438,7 +464,10 @@ const ShiftDetailRow = ({
         </button>
       )}
 
-      <div className="grid grid-cols-3 items-start gap-3">
+      <div
+        className="grid grid-cols-3 items-start gap-3"
+        data-field-name={`${baseName}.shiftTemplateId`}
+      >
         <FormSelect
           control={control}
           name={`${baseName}.shiftTemplateId`}

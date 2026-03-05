@@ -19,6 +19,7 @@ import { IconFileText, IconX } from '@tabler/icons-react';
 import { icons } from '@/lib/icons';
 
 import type { ExplanationRecord } from '../types';
+import { DepartmentRoomInfo } from '../../timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 // Helper function to format date from YYYY-MM-DD to DD/MM/YYYY
 const formatDate = (dateString: string): string => {
@@ -55,8 +56,7 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
   onReject,
 }) => {
   const totalPages = Math.ceil(total / limit);
-  const { onOpen } = useDrawer((state) => state);
-
+  const { onOpen } = useDrawer((state) => state);  
   const renderStatus = (status: ExplanationRecord['status'], id: string) => {
     const statusUpper = status.toUpperCase();
     if (statusUpper === 'PENDING' || statusUpper === 'PENDING_HR') {
@@ -156,7 +156,7 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
       <Table
         aria-label="Bảng giải trình ca"
         classNames={{
-          wrapper: 'shadow-none p-4',
+          wrapper: 'shadow-none p-4 max-h-[485px]',
           th: 'text-[#71717A] text-xs font-semibold uppercase py-3 first:rounded-l-lg last:rounded-r-lg',
           td: 'py-3 text-sm',
           tr: 'border-b border-[#F4F4F5] last:border-none hover:bg-[#FAFAFA] transition-colors cursor-pointer',
@@ -205,9 +205,12 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
                 </div>
               </TableCell>
               <TableCell>
-                <span className="text-sm text-[#11181C]">
+                {/* <span className="text-sm text-[#11181C]">
                   {record.departmentName || record.roomName || '-'}
-                </span>
+                </span> */}
+                <div className="w-50">
+                  <DepartmentRoomInfo departments={record.departments} rooms={record.rooms} />
+                </div>
               </TableCell>
               <TableCell>
                 <span className="text-sm text-[#11181C]">{record.staffCode}</span>

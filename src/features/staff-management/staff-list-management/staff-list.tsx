@@ -124,7 +124,6 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                     raw: false,
                     defval: ""
                 });
-                console.log(jsonData, "jsonData")
 
                 if (jsonData.length === 0) {
                     addToast({ title: 'File không có dữ liệu', color: 'warning' });
@@ -174,7 +173,6 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                         note: row['Ghi chú']?.toString().trim(),
                     };
                 }).filter(row => row.code && row.name);
-                console.log(rows, "33333333333333333333333333333333333333333");
                 await importStaff({ rows });
                 if (fileInputRef.current) fileInputRef.current.value = '';
             } catch (error) {

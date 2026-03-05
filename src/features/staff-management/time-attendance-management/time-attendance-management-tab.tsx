@@ -1,13 +1,11 @@
-import { ExplanationManagement } from '@/features/timekeeping-shift-scheduling/explanation-management/explanation-management';
+import { PageFilter } from '@/features/timekeeping-shift-scheduling/components/page-filter';
+import AttendanceSummary from './components/attendance-summary';
+import { Header } from './components/header';
+import { ShiftEntry } from './components/shift-entry';
+import { ShiftExplanation } from './components/shift-explanation';
+import { ShiftManagementContainer } from './components/shift-management-container';
 import { TAB_KEYS } from './contants/data';
 import { useTimeAttendanceTabs } from './hooks/use-time-attendance-tabs';
-import AttendanceSummary from './components/attendance-summary';
-import { ShiftEntry } from './components/shift-entry';
-import { Header } from './components/header';
-import { ShiftExplanation } from './components/shift-explanation';
-import { PageFilter } from '@/features/timekeeping-shift-scheduling/components/page-filter';
-import { ShiftManagementGrid } from '@/features/timekeeping-shift-scheduling/shift-management/components/grid-layout/shift-management-grid';
-import { ShiftManagementContainer } from './components/shift-management-container';
 const mockShifts = [
   {
     date: 'Monday, 26/1/2026',

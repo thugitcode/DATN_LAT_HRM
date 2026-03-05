@@ -14,6 +14,8 @@ interface WorkSheetByShiftListProps {
   pageSize?: number;
   isLoading?: boolean;
   totalPage?: number;
+  search?: string;
+  month?: string;
 }
 
 export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
@@ -23,18 +25,23 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
   pageSize,
   isLoading,
   totalPage,
+  search,
+  month,
 }) => {
   const { columns } = useWorkSheetColumns();
 
   const dataSource = useMemo(() => {
-    const grouped = groupByStaff(data);
-    return Array.from(grouped.values()).map(mapToListRow);
-  }, [data]);
+    if (isLoading) return [];
+    // return data.flatMap(mapToListRow);
+    return data;
+  }, [data, isLoading]);
+  // console.log('dataSource_________', dataSource);
 
   return (
     <Table
+      key={`page-${page}-${pageSize}-${search}-${month}`}
       columns={columns}
-      dataSource={dataSource}
+      dataSource={dataSource ?? []}
       size="middle"
       loading={isLoading}
       className="h-[calc(100vh-390px)]"

@@ -28,33 +28,28 @@ export const WORK_SHEET_LEGEND_ITEMS: LegendItem[] = [
   { status: AttendanceStatus.DayOff, label: 'Ngày nghỉ', color: 'transparent', shape: 'ring' },
 ];
 export enum HoursStatusEnum {
-  ON_TIME = 'ON_TIME',
-  LATE = 'LATE',
-  EARLY = 'EARLY',
-  OVERTIME = 'OVERTIME',
-  ABSENT = 'ABSENT',
-  OFF = 'OFF',
   FULL = 'FULL',
   MISSING = 'MISSING',
-  ERROR = 'ERROR',
+  OVERTIME = 'OVERTIME',
+  OFF = 'OFF',
 }
 
 export const HOURLY_PAYROLL_LEGEND_ITEMS: LegendItem[] = [
   { status: HoursStatusEnum.FULL, label: 'Đủ giờ', color: '#006FEE' },
-  { status: HoursStatusEnum.LATE, label: 'Đi trễ', color: '#F59E0B' },
-  { status: HoursStatusEnum.EARLY, label: 'Về sớm', color: '#F31260' },
+  { status: HoursStatusEnum.MISSING, label: 'Thiếu', color: '#F31260' },
   { status: HoursStatusEnum.OVERTIME, label: 'Thừa', color: '#52525B' },
-  { status: HoursStatusEnum.ABSENT, label: 'Vắng', color: '#DC2626' },
   { status: HoursStatusEnum.OFF, label: 'Nghỉ', color: '#000000', shape: 'line' },
-  { status: HoursStatusEnum.MISSING, label: 'Thiếu chấm công', color: '#A855F7' },
-  { status: HoursStatusEnum.ERROR, label: 'Lỗi dữ liệu', color: '#EF4444' },
 ];
 
 // export const HOURLY_PAYROLL_LEGEND_ITEMS: LegendItem[] = [
-//   { status: HourlyPayrollStatus.FULL_HOURS, label: 'Đủ giờ', color: '#006FEE' },
-//   { status: HourlyPayrollStatus.SHORTAGE, label: 'Thiếu', color: '#F31260' },
-//   { status: HourlyPayrollStatus.OVERTIME, label: 'Thừa', color: '#52525B' },
-//   { status: HourlyPayrollStatus.OFF, label: 'Nghỉ', color: '#000000', shape: 'line' },
+//   { status: HoursStatusEnum.FULL, label: 'Đủ giờ', color: '#006FEE' },
+//   { status: HoursStatusEnum.LATE, label: 'Đi trễ', color: '#F59E0B' },
+//   { status: HoursStatusEnum.EARLY, label: 'Về sớm', color: '#F31260' },
+//   { status: HoursStatusEnum.OVERTIME, label: 'Thừa', color: '#52525B' },
+//   { status: HoursStatusEnum.ABSENT, label: 'Vắng', color: '#DC2626' },
+//   { status: HoursStatusEnum.OFF, label: 'Nghỉ', color: '#000000', shape: 'line' },
+//   { status: HoursStatusEnum.MISSING, label: 'Thiếu chấm công', color: '#A855F7' },
+//   { status: HoursStatusEnum.ERROR, label: 'Lỗi dữ liệu', color: '#EF4444' },
 // ];
 
 export const DETAILED_TIME_SHEET_LEGEND_ITEMS: LegendItem[] = [
@@ -70,6 +65,7 @@ export enum DetailedTimeSheetColor {
 export const CELL_W = 52;
 export const PILL_INSET = 6;
 export const STICKY_COL_W = 400;
+export const SUMMARY_COL_W = 90;
 
 export const STATUS_COLOR_MAP: Partial<Record<ShiftCode, string>> = Object.fromEntries(
   WORK_SHEET_LEGEND_ITEMS.filter((item) => item.color !== 'transparent').map((item) => [

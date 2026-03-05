@@ -35,6 +35,7 @@ interface PaginationParams {
   limit?: number;
   offset?: number;
   getAll?: boolean;
+  departmentId?: string;
 }
 
 export interface QueryOptionsListResponse<T, M = unknown> {

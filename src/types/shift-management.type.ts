@@ -14,6 +14,9 @@ export interface ShiftManagementParams {
   search?: string;
   month?: string;
   status?: string;
+  getAll?: boolean;
+  fromDate?: string;
+  toDate?: string;
 
   [key: string]: unknown;
 }
@@ -131,6 +134,7 @@ export enum StatusUpdateShift {
 export interface UpdateShiftData {
   note?: string;
   roomId: string;
+  departmentId?: string;
   status: StatusUpdateShift | null;
   details: {
     startTime: string;

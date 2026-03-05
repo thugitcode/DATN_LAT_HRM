@@ -151,6 +151,7 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
       isDismissable={!isLoading}
       hideCloseButton={isLoading}
       size="sm"
+      onClick={e => e.stopPropagation()}
     >
       <ModalContent>
         <ModalHeader className="flex items-center gap-2">

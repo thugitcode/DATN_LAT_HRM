@@ -21,6 +21,7 @@ export interface ColumnDef<T extends object> {
   minWidth?: number;
   align?: 'start' | 'center' | 'end';
   className?: string;
+  hideable?: boolean;
   render?: (value: unknown, record: T, index: number) => ReactNode;
 }
 
@@ -41,6 +42,11 @@ export interface DataTableProps<T extends object> {
     td?: string;
     tr?: string;
   };
+
+  visibleColumns?: Set<string>;
+  onVisibleColumnsChange?: (visibleKeys: Set<string>) => void;
+  onRowClick?: (record: T) => void
+  isHeaderSticky?: boolean
 }
 
 export function DataTable<T extends object>({
@@ -53,8 +59,15 @@ export function DataTable<T extends object>({
   selectedKeys,
   onSelectionChange,
   selectionMode = 'multiple',
+  visibleColumns,
   classNames,
+  onRowClick,
+  isHeaderSticky
 }: DataTableProps<T>) {
+  const visibleColumnDefs = visibleColumns
+    ? columns.filter((col) => visibleColumns.has(col.key))
+    : columns;
+
   const getRowKey = (record: T, index: number): string => {
     const val = record[rowKey];
     return val !== undefined && val !== null ? String(val) : String(index);
@@ -81,6 +94,7 @@ export function DataTable<T extends object>({
   return (
     <div className="flex flex-col gap-4">
       <Table
+        isHeaderSticky={isHeaderSticky}
         aria-label="Data table"
         selectionMode={selectionMode}
         selectedKeys={selectedKeys}
@@ -99,7 +113,7 @@ export function DataTable<T extends object>({
         }}
       >
         <TableHeader>
-          {columns.map((col) => (
+          {visibleColumnDefs.map((col) => (
             <TableColumn
               key={col.key}
               align={col.align ?? 'start'}
@@ -118,8 +132,12 @@ export function DataTable<T extends object>({
           emptyContent={emptyContent}
         >
           {(record) => (
-            <TableRow key={getRowKey(record, items.indexOf(record))}>
-              {columns.map((col) => (
+            <TableRow key={getRowKey(record, items.indexOf(record))} onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault()
+              onRowClick?.(record)
+            }}>
+              {visibleColumnDefs.map((col) => (
                 <TableCell key={col.key}>{renderCell(record, col.key)}</TableCell>
               ))}
             </TableRow>
@@ -131,5 +149,4 @@ export function DataTable<T extends object>({
     </div>
   );
 }
-
 export default DataTable;

@@ -45,13 +45,13 @@ export const TimekeepingManagement = () => {
             <TitlePage title={activeTab.label} />
             <ActionsPage
               hiddenLayoutSwitcher={activeKey === TAB_KEYS.DETAILED_TIME_SHEET}
-              actions={
-                <div className="flex gap-3">
-                  <Button color="primary" onPress={onOpen}>
-                    Duyệt bảng công
-                  </Button>
-                </div>
-              }
+              // actions={
+              //   <div className="flex gap-3">
+              //     <Button color="primary" onPress={onOpen}>
+              //       Duyệt bảng công
+              //     </Button>
+              //   </div>
+              // }
             />
           </div>
 

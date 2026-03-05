@@ -29,13 +29,13 @@ export function FormInput<T extends FieldValues>({
           label={label}
           name={name}
           placeholder={placeholder}
-          labelPlacement="outside"
+          labelPlacement="outside-top"
           isRequired={isRequired}
           isDisabled={disabled}
           isInvalid={!!fieldState.error}
           errorMessage={fieldState.error?.message}
           classNames={{
-            label: 'text-xs font-normal leading-4 text-[#52525B]!',
+            label: 'text-base! font-normal leading-4 text-[#52525B]!',
             inputWrapper: `
   data-[invalid=true]:!bg-[#F4F4F5]
   group-data-[invalid=true]:!bg-[#F4F4F5]

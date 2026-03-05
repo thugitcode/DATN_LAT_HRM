@@ -9,12 +9,15 @@ import { StaffInfo } from '@/features/timekeeping-shift-scheduling/components/st
 import { getDaysInMonth } from '@/features/timekeeping-shift-scheduling/helper';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
 
+import { SUMMARY_COL_W } from '../../constants/data';
+import { TOTAL_HOUR_COLUMNS } from '../../hooks/use-columns-hourly-payroll';
 import type {
   AttendanceByHoursResponse,
   DailyHourEntry,
 } from '../../types/timekeeping-management.type';
 import { GridStickyHeaderRow } from '../work-sheet-by-shift/grid-sticky-header-row';
 import { GridHourlyPayrollScheduleRow, type DayRecord } from './grid-hourly-payroll-schedule-row';
+import { GridStickyHourlyHeaderRow } from './grid-sticky-hourly-header-row';
 
 interface HourlyPayrollGridProps {
   data?: AttendanceByHoursResponse[];
@@ -26,13 +29,21 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
 
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
+  const [hoveredSummaryCol, setHoveredSummaryCol] = useState<string | null>(null);
+
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
   const isEmpty = !isLoading && data.length === 0;
 
   return (
     <div className="h-[calc(100vh-300px)] overflow-auto relative">
       <table className="table-fixed w-full border-separate border-spacing-0">
-        <GridStickyHeaderRow days={days} hoveredDay={hoveredDay} setHoveredDay={setHoveredDay} />
+        <GridStickyHourlyHeaderRow
+          days={days}
+          hoveredDay={hoveredDay}
+          setHoveredDay={setHoveredDay}
+          hoveredSummaryCol={hoveredSummaryCol}
+          setHoveredSummaryCol={setHoveredSummaryCol}
+        />
 
         <tbody>
           {isEmpty ? (
@@ -75,6 +86,28 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
                     onDayEnter={setHoveredDay}
                     onDayLeave={() => setHoveredDay(null)}
                   />
+
+                  {TOTAL_HOUR_COLUMNS.map((col) => {
+                    const isColHovered = hoveredSummaryCol === col.key;
+
+                    return (
+                      <td
+                        key={col.key}
+                        className="border-b border-l border-gray-100 p-0 text-center align-middle bg-white transition-colors duration-100"
+                        style={{
+                          width: SUMMARY_COL_W,
+                          minWidth: SUMMARY_COL_W,
+                          backgroundColor: isColHovered
+                            ? '#EFF6FF'
+                            : isColHovered
+                              ? 'rgba(239,246,255,0.4)'
+                              : '#ffffff',
+                        }}
+                      >
+                        {col.render(null, row)}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })

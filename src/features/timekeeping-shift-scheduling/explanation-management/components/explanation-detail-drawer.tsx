@@ -1,15 +1,17 @@
-import { useState, useEffect } from 'react';
-import type { FC } from 'react';
-import { useDrawer } from '@/store/useDrawer';
-import { useQuery } from '@tanstack/react-query';
-import { Button, Spinner, Textarea } from '@heroui/react';
-import { IconFileText, IconX, IconCheck, IconAlertCircle } from '@tabler/icons-react';
 import {
     attendanceExplanationDetailQueryOptions,
     useApproveAttendanceExplanation,
-    useRejectAttendanceExplanation,
     useManagerApproveAttendanceExplanation,
+    useRejectAttendanceExplanation,
+    useUpdateAttendanceExplanation,
 } from '@/hooks/use-attendance-explanation';
+import { useDrawer } from '@/store/useDrawer';
+import { AttendanceExplanationStatus } from '@/types/attendance-explanation.type';
+import { Button, Spinner, Textarea } from '@heroui/react';
+import { IconAlertCircle, IconCheck, IconFileText, IconX } from '@tabler/icons-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 
 export const ExplanationDetailDrawer: FC = () => {
     const { data: drawerData, onClose } = useDrawer((state) => state);
@@ -19,8 +21,8 @@ export const ExplanationDetailDrawer: FC = () => {
         ...attendanceExplanationDetailQueryOptions(explanationId),
         enabled: !!explanationId,
     });
-
     const { mutateAsync: approveMutation, isPending: isApproving } = useApproveAttendanceExplanation();
+    const { mutateAsync: update, isPending: isUpdate } = useUpdateAttendanceExplanation();
     const { mutateAsync: managerApproveMutation, isPending: isManagerApproving } = useManagerApproveAttendanceExplanation();
     const { mutateAsync: rejectMutation, isPending: isRejecting } = useRejectAttendanceExplanation();
 
@@ -79,6 +81,13 @@ export const ExplanationDetailDrawer: FC = () => {
                 await managerApproveMutation({ id: explanationId, managerConfirmation: managerConfirmationInput });
             } else if (status === 'PENDING_HR') {
                 await approveMutation({ id: explanationId, hrComment: hrCommentInput });
+            } else {
+                await update({
+                    id: explanationId,
+                    status: AttendanceExplanationStatus.PENDING,
+                    managerConfirmation: managerConfirmationInput,
+                    hrComment: hrCommentInput
+                });
             }
             onClose();
         } catch (error) {
@@ -204,66 +213,69 @@ export const ExplanationDetailDrawer: FC = () => {
 
                     <div>
                         <label className="text-xs font-medium text-gray-500 mb-2 block">Xác nhận của quản lý trực tiếp</label>
-                        {status === 'PENDING' ? (
-                            <Textarea
-                                minRows={3}
-                                placeholder="Nhập xác nhận của quản lý trực tiếp (nếu có)..."
-                                value={managerConfirmationInput}
-                                onValueChange={setManagerConfirmationInput}
-                                classNames={{ inputWrapper: 'bg-[#F4F4F5] border-none shadow-none', input: 'placeholder:text-gray-400' }}
-                            />
-                        ) : (
+                        {/* {status === 'PENDING' ? ( */}
+                        <Textarea
+                            minRows={3}
+                            placeholder="Nhập xác nhận của quản lý trực tiếp (nếu có)..."
+                            value={managerConfirmationInput}
+                            onValueChange={setManagerConfirmationInput}
+                            classNames={{ inputWrapper: 'bg-[#F4F4F5] border-none shadow-none', input: 'placeholder:text-gray-400' }}
+                        />
+                        {/* ) : (
                             <div className="bg-[#F4F4F5] text-sm text-gray-800 p-3 rounded-lg min-h-[44px]">
                                 {managerConfirmation || '-'}
                             </div>
-                        )}
+                        )} */}
                     </div>
 
                     <div>
                         <label className="text-xs font-medium text-gray-500 mb-2 block">Xác nhận của bộ phận nhân sự</label>
-                        {status === 'PENDING_HR' ? (
-                            <Textarea
-                                minRows={3}
-                                placeholder="Nhập xác nhận của bộ phận nhân sự (nếu có)..."
-                                value={hrCommentInput}
-                                onValueChange={setHrCommentInput}
-                                classNames={{ inputWrapper: 'bg-[#F4F4F5] border-none shadow-none', input: 'placeholder:text-gray-400' }}
-                            />
-                        ) : (
+                        {/* {status === 'PENDING_HR' ? ( */}
+                        <Textarea
+                            minRows={3}
+                            placeholder="Nhập xác nhận của bộ phận nhân sự (nếu có)..."
+                            value={hrCommentInput}
+                            onValueChange={setHrCommentInput}
+                            classNames={{ inputWrapper: 'bg-[#F4F4F5] border-none shadow-none', input: 'placeholder:text-gray-400' }}
+                        />
+                        {/* ) : (
                             <div className="bg-[#F4F4F5] text-sm text-gray-800 p-3 rounded-lg min-h-[80px]">
                                 {hrComment || '-'}
                             </div>
-                        )}
+                        )} */}
                     </div>
                 </div>
             </div>
 
             {/* Actions */}
-            {(status === 'PENDING' || status === 'PENDING_HR') && (
-                <div className="p-4 bg-white border-t border-gray-100 flex items-center justify-end gap-3 mt-auto">
-                    <Button
-                        variant="bordered"
-                        color="danger"
-                        onPress={handleReject}
-                        isLoading={isRejecting}
-                        isDisabled={isApproving || isManagerApproving}
-                        className="font-medium bg-white"
-                        startContent={!isRejecting && <IconX size={16} />}
-                    >
-                        Từ chối
-                    </Button>
-                    <Button
-                        color="primary"
-                        onPress={handleApprove}
-                        isLoading={isApproving || isManagerApproving}
-                        isDisabled={isRejecting}
-                        className="font-medium"
-                        startContent={!isApproving && <IconCheck size={16} />}
-                    >
-                        Xác nhận
-                    </Button>
-                </div>
-            )}
+
+            <div className="p-4 bg-white border-t border-gray-100 flex items-center justify-end gap-3 mt-auto">
+                {(status === 'PENDING' || status === 'PENDING_HR') ? <Button
+                    variant="bordered"
+                    color="danger"
+                    onPress={handleReject}
+                    isLoading={isRejecting}
+                    isDisabled={isApproving || isManagerApproving}
+                    className="font-medium bg-white"
+                    startContent={!isRejecting && <IconX size={16} />}
+                >
+                    Từ chối
+                </Button> :
+                    <Button variant="bordered" color="danger" onClick={onClose}>
+                        Hủy
+                    </Button>}
+                <Button
+                    color="primary"
+                    onPress={handleApprove}
+                    isLoading={isApproving || isManagerApproving}
+                    isDisabled={isRejecting}
+                    className="font-medium"
+                    startContent={!isApproving && <IconCheck size={16} />}
+                >
+                    Xác nhận
+                </Button>
+            </div>
+
         </div>
     );
 };

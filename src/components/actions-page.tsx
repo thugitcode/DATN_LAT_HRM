@@ -2,31 +2,34 @@ import type { FC, ReactNode } from 'react';
 import { Button, Tooltip } from '@heroui/react';
 
 import { icons } from '@/lib/icons';
+import { useExcelIO } from '@/hooks/use-excel-io';
+import type { ExcelExportConfig, ExcelImportConfig } from '@/hooks/use-excel-io';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 
 import { LayoutSwitcher } from './layout-switcher';
 
-interface ActionsPageProps {
+interface ActionsPageProps<T = Record<string, unknown>> {
   actions?: ReactNode;
   hiddenLayoutSwitcher?: boolean;
-  // exportConfig?: ExcelExportConfig;
-  // importConfig?: ExcelImportConfig;
+  exportConfig?: ExcelExportConfig<T>;
+  importConfig?: ExcelImportConfig<T>;
+  onExportTemplate?: () => void;
 }
 
-export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
+export const ActionsPage = <T = Record<string, unknown>,>({
   actions,
   hiddenLayoutSwitcher = false,
-  // exportConfig,
-  // importConfig,
-}) => {
+  exportConfig,
+  importConfig,
+  onExportTemplate,
+}: ActionsPageProps<T>) => {
   const { clearFilters } = useQueryFilter({ replace: true });
-
-  // const { fileInputRef, exportTemplate, triggerImport, handleFileChange } = useExcelIO();
+  const { fileInputRef, exportToExcel, exportTemplate, triggerImport, handleFileChange } =
+    useExcelIO();
 
   return (
     <div className="flex items-stretch gap-3">
       <ul className="flex items-center gap-2">
-        {/* Reload */}
         <li>
           <Tooltip content="Tải lại" showArrow>
             <Button
@@ -42,22 +45,20 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
           </Tooltip>
         </li>
 
-        <li>
-          {/* <Tooltip content="Nhập file excel" showArrow>
-            <Button
-              isIconOnly
-              aria-label="Import excel"
-              variant="faded"
-              color="default"
-              className="border-none bg-[#D4D4D866] rounded-lg"
-              // isDisabled={!importConfig}
-              // onPress={importConfig ? triggerImport : undefined}
-            >
-              I
-            </Button>
-          </Tooltip> */}
-
-          {/* {importConfig && (
+        {importConfig && (
+          <li>
+            <Tooltip content="Nhập file excel" showArrow>
+              <Button
+                isIconOnly
+                aria-label="Import excel"
+                variant="faded"
+                color="default"
+                className="border-none bg-[#D4D4D866] rounded-lg"
+                onPress={triggerImport}
+              >
+                I
+              </Button>
+            </Tooltip>
             <input
               ref={fileInputRef}
               type="file"
@@ -65,35 +66,37 @@ export const ActionsPage: FC<Readonly<ActionsPageProps>> = ({
               className="hidden"
               onChange={(e) => handleFileChange(e, importConfig)}
             />
-          )} */}
-        </li>
+          </li>
+        )}
 
         {/* <li>
-          <Tooltip content="Xuất file mẫu" showArrow>
+          <Tooltip content="Xuất file excel" showArrow>
             <Button
               isIconOnly
-              aria-label="Export template"
+              aria-label="Export excel"
               variant="faded"
               color="default"
               className="border-none bg-[#D4D4D866] rounded-lg"
-              // isDisabled={!exportConfig}
-              // onPress={exportConfig ? () => exportTemplate(exportConfig) : undefined}
+              isDisabled={!exportConfig}
+              onPress={exportConfig ? () => exportToExcel(exportConfig) : undefined}
             >
               {icons.export}
             </Button>
           </Tooltip>
-        </li> */}
+        </li>
 
-        {/* <li>
-          <Tooltip content="In" showArrow>
+        <li>
+          <Tooltip content="Xuất file mẫu" showArrow>
             <Button
               isIconOnly
-              aria-label="Print"
+              aria-label="Export excel template"
               variant="faded"
               color="default"
               className="border-none bg-[#D4D4D866] rounded-lg"
+              isDisabled={!onExportTemplate}
+              onPress={onExportTemplate}
             >
-              {icons.print}
+              {icons.exportSampleFile}
             </Button>
           </Tooltip>
         </li> */}
