@@ -4,7 +4,6 @@ import type { DailyAttendance } from '@/types/shift-details.type';
 
 import type { DayColumn } from './shift-management/types/type';
 import { PILL_SHIFTS, WORK_SHEET_LEGEND_ITEMS } from './timekeeping-management/constants/data';
-import type { WorkSheetByShiftRow } from './timekeeping-management/hooks/use-work-sheet-columns';
 import {
   AttendanceStatus,
   type DayCell,
@@ -12,7 +11,10 @@ import {
   type ShiftCode,
   type ShiftRun,
 } from './timekeeping-management/types/index.type';
-import type { WorkSheetByShiftType } from './timekeeping-management/types/timekeeping-management.type';
+import type {
+  WorkSheetByShiftRow,
+  WorkSheetByShiftType,
+} from './timekeeping-management/types/timekeeping-management.type';
 
 export const dayNames = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 
@@ -177,18 +179,7 @@ export function groupByStaff(data: WorkSheetByShiftType[]): Map<string, WorkShee
   return map;
 }
 
-export function mapToRow(
-  item: WorkSheetByShiftType,
-  days: ReturnType<typeof getDaysInMonth>,
-): EmployeeRow & { runs: ShiftRun[] } {
-  const schedule: DayCell[] = days?.map((d) => ({
-    day: d?.day,
-    dayOfWeek: d?.dayOfWeek,
-    shift: (item?.days?.[d?.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
-    // workScheduleDetailId: item.days[d.date].workScheduleDetailId,
-    workScheduleDetailId: '',
-  }));
-
+export function mapToRow(item: WorkSheetByShiftType, days: ReturnType<typeof getDaysInMonth>) {
   return {
     employee: {
       id: item.staff.id,
@@ -201,24 +192,37 @@ export function mapToRow(
       rooms: item.staff.rooms,
       departmentName: '',
     },
-    schedule,
-    runs: buildRuns(schedule),
-    summary: item.summary,
+    shifts: item.shifts.map((shiftEntry) => {
+      const schedule: DayCell[] = days.map((d) => ({
+        day: d.day,
+        dayOfWeek: d.dayOfWeek,
+        shift: (shiftEntry.days[d.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
+        workScheduleDetailId: shiftEntry.days[d.date]?.workScheduleDetailId ?? '',
+      }));
+
+      return {
+        shift: shiftEntry.shift,
+        schedule,
+        runs: buildRuns(schedule),
+        summary: shiftEntry.summary,
+      };
+    }),
   };
 }
 
-export function mapToListRow(item: WorkSheetByShiftType): WorkSheetByShiftRow {
-  return {
+export function mapToListRow(item: WorkSheetByShiftType): WorkSheetByShiftRow[] {
+  return item.shifts.map((shiftEntry) => ({
     id: item.staff.id,
     code: item.staff.code,
     name: item.staff.name,
     avatar: item.staff.avatar,
     departments: item.staff.departments,
     rooms: item.staff.rooms,
-    days: item.days,
-    summary: item.summary,
     position: item.staff.position,
-  };
+    shift: shiftEntry.shift,
+    days: shiftEntry.days,
+    summary: shiftEntry.summary,
+  }));
 }
 
 export function getInitials(name: string) {

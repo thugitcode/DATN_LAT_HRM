@@ -10,6 +10,7 @@ export interface WorkSheetByShiftRow {
   days: Record<string, WorkDay>;
   summary: Summary;
   position: StaffPosition;
+  shift: ShiftTimeKeeping;
 }
 
 export interface WorkDay {
@@ -24,12 +25,23 @@ export interface WorkDay {
   workWeight: number;
 }
 
+export interface BreakTime {
+  id: string;
+  name: string;
+  breakStartTime: string;
+  breakEndTime: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
 export interface ShiftTimeKeeping {
   id: string;
   code: string;
   name: string;
   startTime: string;
   endTime: string;
+  breakTimes: BreakTime[];
 }
 
 export interface Department {
@@ -51,6 +63,7 @@ export interface StaffTimeKeeping {
   rooms: Room[];
   position: StaffPosition;
 }
+
 export interface Summary {
   totalWork: number;
   totalLateMinutes: number;
@@ -66,11 +79,15 @@ export interface Summary {
   totalAttendance: number;
 }
 
-export interface WorkSheetByShiftType {
-  days: Record<string, WorkDay>;
+export interface ShiftEntry {
   shift: ShiftTimeKeeping;
-  staff: StaffTimeKeeping;
+  days: Record<string, WorkDay>;
   summary: Summary;
+}
+
+export interface WorkSheetByShiftType {
+  staff: StaffTimeKeeping;
+  shifts: ShiftEntry[];
 }
 
 export interface AttendanceByHoursResponse {

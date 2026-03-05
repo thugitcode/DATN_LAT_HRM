@@ -32,14 +32,16 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
 
   const dataSource = useMemo(() => {
     if (isLoading) return [];
-    return data.map(mapToListRow);
+    // return data.flatMap(mapToListRow);
+    return data;
   }, [data, isLoading]);
+  // console.log('dataSource_________', dataSource);
 
   return (
     <Table
       key={`page-${page}-${pageSize}-${search}-${month}`}
       columns={columns}
-      dataSource={dataSource}
+      dataSource={dataSource ?? []}
       size="middle"
       loading={isLoading}
       className="h-[calc(100vh-390px)]"
