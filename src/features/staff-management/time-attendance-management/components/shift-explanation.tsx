@@ -37,7 +37,7 @@ export const ShiftExplanation = () => {
     });
     const summary = useMemo(() => data?.metadata ?? DEFAULT_SUMMARY, [data]);
     return (
-        <div>
+        <div className="flex flex-col gap-5">
             <ExplanationSummary showLabel={false} summary={summary} explanationTypes={summary.byType} />
 
             <DataTable
@@ -46,7 +46,7 @@ export const ShiftExplanation = () => {
                 loading={isLoading}
                 selectedKeys={selectedKeys}
                 onSelectionChange={handleSelectionChange}
-                classNames={{ wrapper: 'h-[calc(100vh-424px)]' }}
+                classNames={{ wrapper: 'h-[calc(100vh-565px)]' }}
                 pagination={{
                     current: Number(filters.page),
                     showSizeChanger: true,
