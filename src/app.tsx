@@ -6,6 +6,7 @@ import { MainConfirmModal } from './components/confirm-modal/main-confirm-modal'
 import { MainDrawer } from './components/drawers/main-drawer';
 import { PersistProvider } from './components/providers/persist-provider';
 import { routeTree } from './routeTree.gen';
+import ModalViewFile from './components/modal-view-file';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
@@ -103,6 +104,7 @@ export function App() {
         </HeroUIProvider>
         <MainDrawer />
         <MainConfirmModal />
+        <ModalViewFile />
       </PersistProvider>
     </QueryClientProvider>
   );

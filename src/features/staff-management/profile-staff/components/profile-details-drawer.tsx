@@ -42,12 +42,12 @@ export const ProfileDetailsDrawer = () => {
           updateDate: TODAY,
           updater: "Admin",
           note: "",
-          file: null,
+          files: null,
         },
       ],
     },
   });
-  
+
   const { fields, append, remove } = useFieldArray({
     control,
     name: "documents",
@@ -72,7 +72,7 @@ export const ProfileDetailsDrawer = () => {
       validationBehavior="aria"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="flex flex-col gap-4 p-6 w-full">
+      <div className="flex flex-col gap-4 w-full pb-21.25">
         {fields.map((field, index) => (
           <div
             key={field.id}
@@ -105,7 +105,7 @@ export const ProfileDetailsDrawer = () => {
                 control={control}
                 name={`documents.${index}.updateDate`}
                 label="Ngày thêm mới"
-                // disabled
+                disabled
               />
               <FormInput
                 control={control}
@@ -136,21 +136,25 @@ export const ProfileDetailsDrawer = () => {
 
               <Controller
                 control={control}
-                name={`documents.${index}.file`}
+                name={`documents.${index}.files`}
                 rules={{
-                  required: 'Vui lòng chọn file',
-                  validate: (file) => {
-                    if (!file) return 'Vui lòng chọn file'
-                    if (file.size > 5 * 1024 * 1024)
-                      return 'File không được vượt quá 5MB'
+                  validate: (files: File[] | null) => {
+                    if (!files || (Array.isArray(files) && files.length === 0))
+                      return 'Vui lòng chọn ít nhất 1 file'
+
+                    const fileArray = Array.isArray(files) ? files : [files];
+                    for (const file of fileArray) {
+                      if (file.size > 5 * 1024 * 1024)
+                        return 'Mỗi file không vượt quá 5MB'
+                    }
+
                     return true
                   },
                 }}
                 render={({ field, fieldState }) => (
                   <FileUploadInput
-                    selectedFile={field.value}
-                    onFileSelect={field.onChange}
-                    disabled={isSubmitting}
+                    selectedFiles={field.value || []}
+                    onFilesSelect={field.onChange}
                     error={fieldState.error?.message}
                   />
                 )}
@@ -170,7 +174,7 @@ export const ProfileDetailsDrawer = () => {
               updateDate: TODAY,
               updater: "Admin",
               note: "",
-              file: null,
+              files: null,
             })
           }
         >
@@ -179,7 +183,7 @@ export const ProfileDetailsDrawer = () => {
       </div>
 
       {/* Footer */}
-      <div className="flex justify-end gap-2 pt-3 pb-6 px-6 bg-white w-full">
+      <div className="flex justify-end gap-2 py-3 px-6 bg-white w-full absolute bottom-0 left-0">
         <Button
           variant="light"
           onPress={closedDrawer}
@@ -187,7 +191,7 @@ export const ProfileDetailsDrawer = () => {
         >
           Hủy
         </Button>
-        <Button type="submit" color="primary">
+        <Button type="submit" color="primary" isLoading={isSubmitting}>
           Cập nhật
         </Button>
       </div>

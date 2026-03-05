@@ -1,14 +1,16 @@
 'use client'
 
 import * as React from 'react'
-import { Card, Button } from '@heroui/react'
+import { Card, Button, CardBody } from '@heroui/react'
 import { IconAlertCircle, IconFile, IconUpload } from '@tabler/icons-react'
+import { useViewFile } from '@/hooks/common/use-view-file'
 
 interface FileUploadInputProps {
   accept?: string
   maxSize?: number
-  onFileSelect: (file: File | null) => void
-  selectedFile?: File | null
+  multiple?: boolean
+  onFilesSelect: (files: File[]) => void
+  selectedFiles?: File[]
   disabled?: boolean
   error?: string
 }
@@ -16,18 +18,17 @@ interface FileUploadInputProps {
 export function FileUploadInput({
   accept = '.docx,.doc,.pdf,.xlsx,.xls,.csv',
   maxSize = 5 * 1024 * 1024,
-  onFileSelect,
-  selectedFile = null,
+  multiple = true,
+  onFilesSelect,
+  selectedFiles = [],
   disabled = false,
   error,
 }: FileUploadInputProps) {
   const [dragActive, setDragActive] = React.useState(false)
   const inputRef = React.useRef<HTMLInputElement>(null)
-
-  const validateFile = (file: File): boolean => {
-    if (file.size > maxSize) {
-      return false
-    }
+  const { onOpen } = useViewFile()
+  const validateFile = (file: File) => {
+    if (file.size > maxSize) return false
 
     const acceptedTypes = accept.split(',').map((t) => t.trim())
     const fileExt = '.' + file.name.split('.').pop()?.toLowerCase()
@@ -35,21 +36,14 @@ export function FileUploadInput({
     return acceptedTypes.includes(fileExt)
   }
 
-  const handleFile = (file: File) => {
-    if (validateFile(file)) {
-      onFileSelect(file)
-    } else {
-      onFileSelect(null)
-    }
-  }
+  const handleFiles = (fileList: FileList) => {
+    const filesArray = Array.from(fileList)
+    const validFiles = filesArray.filter(validateFile)
 
-  const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true)
-    } else if (e.type === 'dragleave') {
-      setDragActive(false)
+    if (multiple) {
+      onFilesSelect([...(selectedFiles || []), ...validFiles])
+    } else {
+      onFilesSelect(validFiles.slice(0, 1))
     }
   }
 
@@ -57,32 +51,27 @@ export function FileUploadInput({
     e.preventDefault()
     e.stopPropagation()
     setDragActive(false)
-
     if (disabled) return
 
-    if (e.dataTransfer.files?.[0]) {
-      handleFile(e.dataTransfer.files[0])
+    if (e.dataTransfer.files) {
+      handleFiles(e.dataTransfer.files)
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {    
-    if (e.target.files?.[0]) {
-      handleFile(e.target.files[0])
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      handleFiles(e.target.files)
     }
   }
 
-  const handleClear = (e?: React.MouseEvent) => {
-    e?.stopPropagation()
-    onFileSelect(null)
-    if (inputRef.current) {
-      inputRef.current.value = ''
-    }
+  const handleRemove = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation()
+    const updated = selectedFiles.filter((_, i) => i !== index)
+    onFilesSelect(updated)
   }
 
   const handleClick = () => {
-    if (!disabled) {
-      inputRef.current?.click()
-    }
+    if (!disabled) inputRef.current?.click()
   }
 
   const getFileIcon = (fileName: string) => {
@@ -98,7 +87,7 @@ export function FileUploadInput({
 
     return (
       <IconFile
-        size={32}
+        size={24}
         className={colorMap[ext || ''] || 'text-default-400'}
       />
     )
@@ -108,70 +97,84 @@ export function FileUploadInput({
     <div className="space-y-3 w-full">
       <Card
         isPressable={!disabled}
-        onDragEnter={handleDrag}
-        onDragLeave={handleDrag}
-        onDragOver={handleDrag}
+        onDragEnter={() => setDragActive(true)}
+        onDragLeave={() => setDragActive(false)}
+        onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
         onClick={handleClick}
-        className={`cursor-pointer transition-all w-full ${
-          dragActive
-            ? 'bg-primary-100 border-2 border-primary'
-            : 'border-2 border-dashed border-default-300'
-        } ${error ? 'border-danger' : ''}`}
+        className={`cursor-pointer transition-all w-full ${dragActive
+          ? 'bg-primary-100 border-2 border-primary'
+          : 'border-2 border-dashed border-default-300'
+          } ${error ? 'border-danger' : ''}`}
       >
         <input
           ref={inputRef}
           type="file"
+          multiple={multiple}
           accept={accept}
           onChange={handleChange}
           disabled={disabled}
           className="hidden"
-          multiple
         />
 
-        {selectedFile ? (
-          <div className="flex items-center justify-between gap-4 p-6">
-            <div className="flex items-center gap-3 flex-1">
-              {getFileIcon(selectedFile.name)}
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">
-                  {selectedFile.name}
-                </p>
-                <p className="text-xs text-default-500">
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                </p>
-              </div>
-            </div>
-
-            <Button
-              isIconOnly
-              variant="light"
-              size="sm"
-              onClick={handleClear}
-              disabled={disabled}
-            >
-              ✕
-            </Button>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center gap-3 p-8 bg-[#f4f4f5]">
-            <IconUpload size={32} className="text-primary" />
-            <div className="text-center">
-              <p className="font-semibold">Kéo và thả file vào đây</p>
-              <p className="text-sm text-default-500">
-                hoặc click để chọn file
-              </p>
-            </div>
-            <p className="text-xs text-default-400">
-              Hỗ trợ: docx, doc, pdf, xlsx, xls, csv (tối đa 5MB)
-            </p>
-          </div>
-        )}
+        <div className="flex flex-col items-center justify-center gap-3 p-6 bg-[#f4f4f5]">
+          <IconUpload size={28} className="text-primary" />
+          <p className="text-sm text-center">
+            Kéo & thả hoặc click để chọn file
+          </p>
+          <p className="text-xs text-default-400">
+            Hỗ trợ: docx, doc, pdf, xlsx, xls, csv (tối đa 5MB/file)
+          </p>
+        </div>
       </Card>
+
+      {selectedFiles.length > 0 && (
+        <div className="grid grid-cols-2 gap-2">
+          {selectedFiles.map((file, index) => (
+            <Card
+              key={index}
+              isBlurred
+              className="border-none bg-background/60 dark:bg-default-100/50"
+              shadow="sm"
+            >
+              <CardBody>
+                <div
+                  className="flex items-center justify-between rounded-lg"
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    {getFileIcon(file.name)}
+                    <div className="min-w-0">
+                      <p className="text-sm truncate hover:text-blue-600 hover:underline hover:cursor-pointer" onClick={() => {
+                        onOpen({
+                          name: file?.name,
+                          url: URL.createObjectURL(file) ?? "",
+                          type: file.type,
+                        })
+                      }}>{file.name}</p>
+                      <p className="text-xs text-default-500">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                  </div>
+
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    onClick={(e) => handleRemove(index, e)}
+                  >
+                    ✕
+                  </Button>
+                </div>
+              </CardBody>
+            </Card>
+          ))}
+        </div>
+      )}
 
       {error && (
         <div className="flex gap-2 rounded-lg bg-danger-50 p-3">
-          <IconAlertCircle size={20} className="text-danger shrink-0 mt-0.5" />
+          <IconAlertCircle size={18} className="text-danger shrink-0" />
           <p className="text-sm text-danger">{error}</p>
         </div>
       )}

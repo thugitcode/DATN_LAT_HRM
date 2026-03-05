@@ -65,8 +65,8 @@ export const ShiftDetailsDrawer = () => {
   useEffect(() => {
     reset({
       reason: "",
-      actualCheckIn: detailData?.attendance?.checkInTime ?? undefined,
-      actualCheckOut: detailData?.attendance?.checkOutTime ?? undefined,
+      actualCheckIn: detailData?.attendance?.checkInTime ?? "",
+      actualCheckOut: detailData?.attendance?.checkOutTime ?? "",
     })
   }, [detailData])
 
@@ -77,7 +77,6 @@ export const ShiftDetailsDrawer = () => {
         color: 'warning',
       });
     }
-    console.log('values', values);
 
     const newValues = { ...values, actualCheckIn: dayjs(values.actualCheckIn, "HH:mm").format("HH:mm:ss"), actualCheckOut: dayjs(values.actualCheckOut, "HH:mm").format("HH:mm:ss"), id: detailData?.id ?? null }
     updateAttendance(newValues, {
