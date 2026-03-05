@@ -190,7 +190,7 @@ export const useWorkSheetColumns = () => {
             ),
             width: 56,
             align: 'center' as const,
-            render: (_, record) => <DayCell dayData={record.days[dateString]} />,
+            render: (_, record) => <DayCell dayData={record?.days?.[dateString]} />,
           };
         }),
       })),

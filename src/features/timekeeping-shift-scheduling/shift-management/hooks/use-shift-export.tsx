@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import dayjs from 'dayjs';
+import * as XLSX from 'xlsx';
 
 import type { StaffSchedule } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
@@ -9,6 +10,164 @@ import { dayNames, getDaysInMonth, getWeeksInMonth } from '../../helper';
 import { useCurrentLayout } from '../../hooks/use-current-layout';
 import { useYearMonth } from '../../hooks/use-year-month';
 import { STAFF_POSITION } from '../constants/data';
+
+// Map dayOfWeek → tên thứ kiểu file mẫu
+const DAY_SHORT: Record<number, string> = {
+  0: 'CN',
+  1: 'T2',
+  2: 'T3',
+  3: 'T4',
+  4: 'T5',
+  5: 'T6',
+  6: 'T7',
+};
+
+export const exportTableToExcel = (
+  data: StaffSchedule[],
+  year: number,
+  month: number, // 0-indexed
+  options?: { companyName?: string; hospitalName?: string; department?: string },
+) => {
+  const weeks = getWeeksInMonth(year, month);
+  const allDays = weeks.flatMap((w) => w.days);
+
+  // Tính maxShiftsPerRow[staffId] = max ca trong 1 ngày của NV
+  const maxShiftsPerRow: Record<string, number> = {};
+  data.forEach((record) => {
+    let max = 1;
+    record.schedules?.forEach((schedule) => {
+      const d = dayjs(schedule.date);
+      if (d.month() !== month || d.year() !== year) return;
+      const count = schedule.shifts?.length ?? 0;
+      if (count > max) max = count;
+    });
+    maxShiftsPerRow[record.staff.id] = max;
+  });
+
+  // Số cột ngày = allDays.length, bắt đầu từ col index 5 (sau A-E)
+  const FIXED_COL_COUNT = 5; // A=STT, B=Khoa, C=Mã NV, D=Tên, E=Chức vụ
+  const totalCols = FIXED_COL_COUNT + allDays.length;
+  const lastColLetter = XLSX.utils.encode_col(totalCols - 1);
+
+  const aoa: unknown[][] = [];
+  const merges: XLSX.Range[] = [];
+
+  // ── Row 0: Công ty ──────────────────────────────────────────────────────────
+  aoa.push([
+    options?.companyName ?? '',
+    '',
+    '',
+    'BẢNG PHÂN CA THÁNG ' + (month + 1) + ' NĂM ' + year,
+  ]);
+
+  // ── Row 1: Bệnh viện + Khoa ─────────────────────────────────────────────────
+  aoa.push([options?.hospitalName ?? '', '', '', 'KHOA: ' + (options?.department ?? '')]);
+
+  // ── Row 2: THÁNG (merge toàn bộ cột ngày) ──────────────────────────────────
+  const row2: unknown[] = ['', '', '', '', '', 'THÁNG ' + (month + 1)];
+  for (let i = 1; i < allDays.length; i++) row2.push('');
+  aoa.push(row2);
+  merges.push({ s: { r: 2, c: 5 }, e: { r: 2, c: totalCols - 1 } });
+
+  // ── Row 3: Số ngày ──────────────────────────────────────────────────────────
+  const row3: unknown[] = ['', '', '', '', ''];
+  allDays.forEach((day) => row3.push(day.day));
+  aoa.push(row3);
+
+  // ── Row 4: Header (STT, Khoa, Mã NV, Tên, Chức vụ, T2, T3...) ─────────────
+  const row4: unknown[] = [
+    'STT',
+    'Khoa/phòng (*)',
+    'Mã nhân viên (*)',
+    'Tên nhân viên (*)',
+    'Chức vụ',
+  ];
+  allDays.forEach((day) => row4.push(DAY_SHORT[day.dayOfWeek]));
+  aoa.push(row4);
+
+  // ── Data rows ────────────────────────────────────────────────────────────────
+  // Header chiếm row 0-4 → data bắt đầu từ row index 5
+  let currentRow = 5;
+
+  data.forEach((record, idx) => {
+    const { staff, schedules = [] } = record;
+    const numSlots = maxShiftsPerRow[staff.id] ?? 1;
+    const numRows = numSlots * 2; // mỗi slot = 2 rows (tên ca + giờ)
+
+    // Merge cột A-E theo numRows
+    for (let c = 0; c < FIXED_COL_COUNT; c++) {
+      if (numRows > 1) {
+        merges.push({
+          s: { r: currentRow, c },
+          e: { r: currentRow + numRows - 1, c },
+        });
+      }
+    }
+
+    // Build 2 rows cho mỗi slot
+    for (let slotIdx = 0; slotIdx < numSlots; slotIdx++) {
+      const nameRow: unknown[] =
+        slotIdx === 0
+          ? [
+              idx + 1,
+              staff.departments?.map((d) => d.name).join(', ') ?? '',
+              staff.code ?? '',
+              staff.name ?? '',
+              staff.position ?? '',
+            ]
+          : ['', '', '', '', ''];
+
+      const timeRow: unknown[] = ['', '', '', '', ''];
+
+      allDays.forEach((day) => {
+        const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
+        const shifts = schedules.find((s) => s.date === dateStr)?.shifts ?? [];
+        const shift = shifts[slotIdx];
+
+        nameRow.push(shift ? shift.shiftTemplateName : '');
+        timeRow.push(
+          shift ? `${shift.startTime?.slice(0, 5)} - ${shift.endTime?.slice(0, 5)}` : '',
+        );
+      });
+
+      aoa.push(nameRow);
+      aoa.push(timeRow);
+    }
+
+    currentRow += numRows;
+  });
+
+  // ── Footer ──────────────────────────────────────────────────────────────────
+  aoa.push([]);
+  aoa.push(['', '', '', '', '', '….............., ngày __ tháng __ năm ' + year]);
+  aoa.push(['Trưởng Đơn Vị', '', 'TL.Hành chánh - Nhân sự', '', '', '', 'Lập Bảng']);
+
+  // ── Build workbook ──────────────────────────────────────────────────────────
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!merges'] = merges;
+
+  // Column widths
+  ws['!cols'] = [
+    { wch: 6 }, // A: STT
+    { wch: 18 }, // B: Khoa
+    { wch: 16 }, // C: Mã NV
+    { wch: 22 }, // D: Tên
+    { wch: 14 }, // E: Chức vụ
+    ...allDays.map(() => ({ wch: 14 })), // Ngày
+  ];
+
+  // Merge header row 0: A1:C1 và D1:lastCol
+  merges.unshift(
+    { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
+    { s: { r: 0, c: 3 }, e: { r: 0, c: totalCols - 1 } },
+    { s: { r: 1, c: 0 }, e: { r: 1, c: 2 } },
+    { s: { r: 1, c: 3 }, e: { r: 1, c: totalCols - 1 } },
+  );
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Phân ca');
+  XLSX.writeFile(wb, `phan_ca_thang_${month + 1}_${year}_${dayjs().format('YYYYMMDD')}.xlsx`);
+};
 
 type ShiftExportRow = Record<string, string | number>;
 

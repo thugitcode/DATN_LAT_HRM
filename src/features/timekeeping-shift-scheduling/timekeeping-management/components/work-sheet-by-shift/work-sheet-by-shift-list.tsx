@@ -15,6 +15,7 @@ interface WorkSheetByShiftListProps {
   isLoading?: boolean;
   totalPage?: number;
   search?: string;
+  month?: string;
 }
 
 export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
@@ -25,6 +26,7 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
   isLoading,
   totalPage,
   search,
+  month,
 }) => {
   const { columns } = useWorkSheetColumns();
 
@@ -35,7 +37,7 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
 
   return (
     <Table
-      key={`page-${page}-${pageSize}-${search}`}
+      key={`page-${page}-${pageSize}-${search}-${month}`}
       columns={columns}
       dataSource={dataSource}
       size="middle"

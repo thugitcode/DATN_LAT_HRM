@@ -12,16 +12,16 @@ interface ActionsPageProps<T = Record<string, unknown>> {
   actions?: ReactNode;
   hiddenLayoutSwitcher?: boolean;
   exportConfig?: ExcelExportConfig<T>;
-  exportTemplateConfig?: ExcelExportConfig<T>;
   importConfig?: ExcelImportConfig<T>;
+  onExportTemplate?: () => void;
 }
 
 export const ActionsPage = <T = Record<string, unknown>,>({
   actions,
   hiddenLayoutSwitcher = false,
   exportConfig,
-  exportTemplateConfig,
   importConfig,
+  onExportTemplate,
 }: ActionsPageProps<T>) => {
   const { clearFilters } = useQueryFilter({ replace: true });
   const { fileInputRef, exportToExcel, exportTemplate, triggerImport, handleFileChange } =
@@ -83,9 +83,9 @@ export const ActionsPage = <T = Record<string, unknown>,>({
               {icons.export}
             </Button>
           </Tooltip>
-        </li> */}
+        </li>
 
-        {/* <li>
+        <li>
           <Tooltip content="Xuất file mẫu" showArrow>
             <Button
               isIconOnly
@@ -93,8 +93,8 @@ export const ActionsPage = <T = Record<string, unknown>,>({
               variant="faded"
               color="default"
               className="border-none bg-[#D4D4D866] rounded-lg"
-              isDisabled={!exportTemplateConfig}
-              onPress={exportTemplateConfig ? () => exportToExcel(exportTemplateConfig) : undefined}
+              isDisabled={!onExportTemplate}
+              onPress={onExportTemplate}
             >
               {icons.exportSampleFile}
             </Button>
