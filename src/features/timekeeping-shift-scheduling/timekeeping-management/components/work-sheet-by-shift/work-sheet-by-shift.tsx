@@ -26,6 +26,7 @@ export const WorkSheetByShift = () => {
       search: filters.search,
       departmentId: filters.departmentId,
       roomId: filters.roomId,
+      getAll: currentLayout === LayoutSwitcherEnum.GRID,
     }),
     [
       filters.page,
@@ -35,6 +36,7 @@ export const WorkSheetByShift = () => {
       filters.roomId,
       startDate,
       endDate,
+      currentLayout,
     ],
   );
 

@@ -70,6 +70,7 @@ export enum DetailedTimeSheetColor {
 export const CELL_W = 52;
 export const PILL_INSET = 6;
 export const STICKY_COL_W = 400;
+export const SUMMARY_COL_W = 90;
 
 export const STATUS_COLOR_MAP: Partial<Record<ShiftCode, string>> = Object.fromEntries(
   WORK_SHEET_LEGEND_ITEMS.filter((item) => item.color !== 'transparent').map((item) => [

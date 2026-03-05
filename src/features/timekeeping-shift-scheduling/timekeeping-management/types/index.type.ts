@@ -1,6 +1,8 @@
 import type { DailyAttendance, IStaff } from '@/types/shift-details.type';
 import type { ShiftTypeEnum, Staff } from '@/types/shift-management.type';
 
+import type { Summary } from './timekeeping-management.type';
+
 export enum TAB_KEYS {
   WORKSHEET_BY_SHIFT = 'WORKSHEET_BY_SHIFT',
   HOURLY_PAYROLL = 'HOURLY_PAYROLL',
@@ -87,6 +89,7 @@ export interface Employee {
 export interface EmployeeRow {
   employee: Employee;
   schedule: DayCell[];
+  summary: Summary;
 }
 
 export interface ShiftRun {

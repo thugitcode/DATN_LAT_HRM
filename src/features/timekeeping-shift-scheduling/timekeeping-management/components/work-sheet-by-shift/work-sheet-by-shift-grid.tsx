@@ -14,9 +14,12 @@ import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-
 import { ROW_H } from '@/features/timekeeping-shift-scheduling/shift-management/constants/constants';
 
 import { CELL_W, STICKY_COL_W } from '../../constants/data';
+import { SUMMARY_COLUMNS } from '../../hooks/use-work-sheet-columns';
 import type { WorkSheetByShiftType } from '../../types/timekeeping-management.type';
 import { GridScheduleRow } from './grid-schedule-row';
 import { GridStickyHeaderRow } from './grid-sticky-header-row';
+
+const SUMMARY_COL_W = 90;
 
 interface WorkSheetByShiftGridProps {
   data?: WorkSheetByShiftType[];
@@ -31,13 +34,9 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
 
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
+  const [hoveredSummaryCol, setHoveredSummaryCol] = useState<string | null>(null);
 
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
-
-  // const rows = useMemo(() => {
-  //   const grouped = groupByStaff(data);
-  //   return Array.from(grouped.values()).map((item) => mapToRow(item, days));
-  // }, [data, days]);
 
   const rows = useMemo(() => {
     return data.map((item) => mapToRow(item, days));
@@ -55,7 +54,13 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
           tableLayout: 'fixed',
         }}
       >
-        <GridStickyHeaderRow days={days} hoveredDay={hoveredDay} setHoveredDay={setHoveredDay} />
+        <GridStickyHeaderRow
+          days={days}
+          hoveredDay={hoveredDay}
+          setHoveredDay={setHoveredDay}
+          hoveredSummaryCol={hoveredSummaryCol}
+          setHoveredSummaryCol={setHoveredSummaryCol}
+        />
 
         <tbody>
           {isEmpty ? (
@@ -80,7 +85,6 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     className={cn(
                       'sticky left-0 z-50 p-0 border-b px-2.5 border-r border-gray-100 bg-white',
                       'transition-colors duration-100',
-                      // isRowHovered ? 'bg-blue-50/60!' : '',
                     )}
                   >
                     <StaffInfo
@@ -102,6 +106,29 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     onDayEnter={setHoveredDay}
                     onDayLeave={handleDayLeave}
                   />
+                  {SUMMARY_COLUMNS.map((col) => {
+                    const isColHovered = hoveredSummaryCol === col.key;
+
+                    return (
+                      <td
+                        key={col.key}
+                        className="border-b border-l border-gray-100 p-0 text-center align-middle bg-white transition-colors duration-100"
+                        // style={{ width: SUMMARY_COL_W, minWidth: SUMMARY_COL_W }}
+
+                        style={{
+                          width: SUMMARY_COL_W,
+                          minWidth: SUMMARY_COL_W,
+                          backgroundColor: isColHovered
+                            ? '#EFF6FF'
+                            : isRowHovered
+                              ? 'rgba(239,246,255,0.4)'
+                              : '#ffffff',
+                        }}
+                      >
+                        {col.render(null, row)}
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })

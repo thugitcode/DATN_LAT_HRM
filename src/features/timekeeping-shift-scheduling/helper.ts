@@ -202,6 +202,7 @@ export function mapToRow(
     },
     schedule,
     runs: buildRuns(schedule),
+    summary: item.summary,
   };
 }
 
