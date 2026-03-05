@@ -77,7 +77,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                   <td
                     style={{ minWidth: 320, width: 320 }}
                     className={cn(
-                      'sticky left-0 z-50 p-0 border-b px-2.5 border-r border-gray-100 bg-white',
+                      'sticky left-0 z-50 p-0 border-b px-2.5 border-r border-gray-100 bg-white py-2',
                       'transition-colors duration-100 align-middle',
                     )}
                   >
