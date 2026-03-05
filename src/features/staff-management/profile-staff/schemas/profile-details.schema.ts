@@ -12,6 +12,18 @@ const ACCEPTED_FILE_TYPES = [
     'text/csv',
 ];
 
+export const fileSchema = z
+    .array(z.instanceof(File))
+    .min(1, { message: "Vui lòng chọn ít nhất 1 file" })
+    .refine(
+        (files) => files.every((file) => file.size <= MAX_FILE_SIZE),
+        { message: "Mỗi file tối đa 5MB" }
+    )
+    .refine(
+        (files) => files.every((file) => ACCEPTED_FILE_TYPES.includes(file.type)),
+        { message: "Có file không đúng định dạng" }
+    );
+
 export const documentSchema = z.object({
     documentType: z
         .string()
@@ -27,14 +39,7 @@ export const documentSchema = z.object({
         .string()
         .optional(),
 
-    file: z
-        .instanceof(File, { message: 'File không được để trống' })
-        .refine((file) => file.size <= MAX_FILE_SIZE, {
-            message: 'Dung lượng file tối đa 5MB',
-        })
-        .refine((file) => ACCEPTED_FILE_TYPES.includes(file.type), {
-            message: 'Định dạng file không hợp lệ',
-        })
+    files: fileSchema
         .nullable(),
 });
 

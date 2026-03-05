@@ -7,6 +7,7 @@ import type {
   AttendanceExplanationSummary,
 } from '@/types/attendance-explanation.type';
 import { hrmInstance } from '@/lib/axios';
+import { accountabilityManagementKeys } from '@/services/query-options/accountability-management.query';
 
 // Query options for list
 export const attendanceExplanationListQueryOptions = (params: {
@@ -55,6 +56,7 @@ export const attendanceExplanationDetailQueryOptions = (id: string) => {
       return res.data.data;
     },
     enabled: !!id,
+    staleTime: 0
   });
 };
 
@@ -72,7 +74,8 @@ export const useApproveAttendanceExplanation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['attendance-explanation'],
+        queryKey: accountabilityManagementKeys.lists(),
+        exact: false,
       });
     },
   });
@@ -82,16 +85,17 @@ export const useUpdateAttendanceExplanation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status?: string }) => {
+    mutationFn: async ({ id, ...body }: Partial<AttendanceExplanation>) => {
       const res = await hrmInstance.post<ApiResponse<boolean>>(
         `/attendance-explanation/${id}`,
-        { status },
+        { ...body },
       );
       return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['attendance-explanation'],
+        queryKey: accountabilityManagementKeys.lists(),
+        exact: false,
       });
     },
   });
@@ -110,14 +114,15 @@ export const useManagerApproveAttendanceExplanation = () => {
       managerConfirmation?: string;
     }) => {
       const res = await hrmInstance.post<ApiResponse<boolean>>(
-        `/attendance-explanation/${id}/manager-approve`,
+        `/attendance-explanation/${id}/approve`,
         { managerConfirmation },
       );
       return res.data.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['attendance-explanation'],
+        queryKey: accountabilityManagementKeys.lists(),
+        exact: false,
       });
     },
   });
@@ -137,7 +142,8 @@ export const useRejectAttendanceExplanation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['attendance-explanation'],
+        queryKey: accountabilityManagementKeys.lists(),
+        exact: false,
       });
     },
   });
@@ -160,7 +166,8 @@ export const useBulkApproveAttendanceExplanation = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ['attendance-explanation'],
+        queryKey: accountabilityManagementKeys.lists(),
+        exact: false,
       });
     },
   });

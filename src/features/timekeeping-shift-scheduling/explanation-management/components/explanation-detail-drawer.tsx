@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
-import type { FC } from 'react';
-import { useDrawer } from '@/store/useDrawer';
-import { useQuery } from '@tanstack/react-query';
-import { Button, Spinner, Textarea } from '@heroui/react';
-import { IconFileText, IconX, IconCheck, IconAlertCircle } from '@tabler/icons-react';
 import {
     attendanceExplanationDetailQueryOptions,
     useApproveAttendanceExplanation,
-    useRejectAttendanceExplanation,
     useManagerApproveAttendanceExplanation,
+    useRejectAttendanceExplanation,
     useUpdateAttendanceExplanation,
 } from '@/hooks/use-attendance-explanation';
+import { useDrawer } from '@/store/useDrawer';
 import { AttendanceExplanationStatus } from '@/types/attendance-explanation.type';
+import { Button, Spinner, Textarea } from '@heroui/react';
+import { IconAlertCircle, IconCheck, IconFileText, IconX } from '@tabler/icons-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import type { FC } from 'react';
+import { useEffect, useState } from 'react';
 
 export const ExplanationDetailDrawer: FC = () => {
     const { data: drawerData, onClose } = useDrawer((state) => state);
@@ -21,7 +21,6 @@ export const ExplanationDetailDrawer: FC = () => {
         ...attendanceExplanationDetailQueryOptions(explanationId),
         enabled: !!explanationId,
     });
-
     const { mutateAsync: approveMutation, isPending: isApproving } = useApproveAttendanceExplanation();
     const { mutateAsync: update, isPending: isUpdate } = useUpdateAttendanceExplanation();
     const { mutateAsync: managerApproveMutation, isPending: isManagerApproving } = useManagerApproveAttendanceExplanation();
@@ -84,8 +83,10 @@ export const ExplanationDetailDrawer: FC = () => {
                 await approveMutation({ id: explanationId, hrComment: hrCommentInput });
             } else {
                 await update({
-                    id: explanationId, status
-                        : AttendanceExplanationStatus.PENDING
+                    id: explanationId,
+                    status: AttendanceExplanationStatus.PENDING,
+                    managerConfirmation: managerConfirmationInput,
+                    hrComment: hrCommentInput
                 });
             }
             onClose();
