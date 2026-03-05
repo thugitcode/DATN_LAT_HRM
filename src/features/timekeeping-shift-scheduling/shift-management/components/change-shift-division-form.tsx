@@ -1,4 +1,4 @@
-import { useMemo, type FC } from 'react';
+import { useEffect, useMemo, type FC } from 'react';
 import { Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -78,6 +78,13 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
 
   const selectedCa = caseCategoryOptions.find((ca) => ca.key === caId);
   const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
+
+  useEffect(() => {
+    if (selectedCa) {
+      setValue('startTime', selectedCa.startTime?.slice(0, 5) ?? '');
+      setValue('endTime', selectedCa.endTime?.slice(0, 5) ?? '');
+    }
+  }, [caId]);
 
   const onSubmit = async (values: ShiftDivisinFormValues) => {
     if (shift?.id && workScheduleId) {
