@@ -364,3 +364,23 @@ export function formatDateVN(d: string | Date) {
   const weekdays = ["Chủ nhật","Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7"]
   return `${weekdays[date.day()]}, ngày ${date.format("DD/MM/YYYY")}`
 }
+
+export const convertMimeToExtension = (mime: string) => {
+  const map: Record<string, string> = {
+    'application/pdf': 'pdf',
+    'image/jpeg': 'jpg',
+    'image/png': 'png',
+    'image/gif': 'gif',
+    'image/webp': 'webp',
+    'image/svg+xml': 'svg',
+    'application/msword': 'doc',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+    'application/vnd.ms-excel': 'xls',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+    'text/csv': 'csv',
+    'text/plain': 'txt',
+    'application/json': 'json',
+  };
+
+  return map[mime.toLowerCase()] ?? null;
+};

@@ -54,12 +54,12 @@ export enum DetailedTimeSheetStatus {
 
 export interface LegendItem {
   status:
-    | AttendanceStatus
-    | HourlyPayrollStatus
-    | DetailedTimeSheetStatus
-    | ShiftTypeEnum
-    | HoursStatusEnum
-    | null;
+  | AttendanceStatus
+  | HourlyPayrollStatus
+  | DetailedTimeSheetStatus
+  | ShiftTypeEnum
+  | HoursStatusEnum
+  | null;
   label: string;
   color: string;
   shape?: 'circle' | 'ring' | 'line';
@@ -132,16 +132,26 @@ export type HourlyPayrollRecord = {
 
 export type FlatRow =
   | {
-      type: 'group';
-      key: string;
-      staff: IStaff;
-      index: number;
-      isExpanded: boolean;
-    }
+    type: 'group';
+    key: string;
+    staff: IStaff;
+    index: number;
+    isExpanded: boolean;
+  }
   | {
-      type: 'shift';
-      key: string;
-      staffId: string;
-      shift: DailyAttendance;
-      isLast: boolean;
-    };
+    type: 'shift';
+    key: string;
+    staffId: string;
+    shift: DailyAttendance;
+    isLast: boolean;
+  };
+
+export interface IBreakTime {
+  breakEndTime: string
+  breakStartTime: string
+  createdAt: string
+  deletedAt: string
+  id: string
+  name: string
+  updatedAt: string
+}

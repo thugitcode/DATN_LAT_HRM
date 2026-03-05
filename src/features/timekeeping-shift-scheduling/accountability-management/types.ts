@@ -1,4 +1,5 @@
 import type { StaffPositionEnum } from '@/types/staff.type';
+import type { Item } from '../timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 export enum AttendanceExplanationStatus {
   PENDING = 'PENDING',
@@ -44,6 +45,8 @@ export interface AttendanceExplanation {
   staffAvatar?: string;
   departmentName: string;
   roomName: string;
+  departments: Item[];
+  rooms: Item[];
   position: StaffPositionEnum;
 
   // Shift info (snapshot)

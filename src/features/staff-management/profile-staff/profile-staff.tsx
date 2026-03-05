@@ -54,7 +54,7 @@ export const ProfileStaff = () => {
         <div className="flex flex-col gap-3.75">
             <Header />
             <PageFilter />
-            <div className="grid grid-cols-5 gap-6">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(246px,1fr))] gap-6">
                 {mockFiles.map((file) => (
                     <FileCard
                         key={file.id}

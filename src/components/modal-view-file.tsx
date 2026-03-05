@@ -15,10 +15,11 @@ import {
 
 import { useViewFile } from '@/hooks/common/use-view-file';
 import { DocumentType } from '@/lib/constants';
+import { convertMimeToExtension } from '@/lib/utils';
 
 export default function ModalViewFile() {
   const { open, file, onClose } = useViewFile((state) => state);
-  
+
   const isImage = file?.type?.startsWith('image/') || file?.type === DocumentType.IMAGE;
   const isPdf = file?.type === 'application/pdf' || file?.type === DocumentType.DOCUMENT;
   const isVideo = file?.type === DocumentType.VIDEO || file?.type === 'video/mp4';
@@ -36,7 +37,7 @@ export default function ModalViewFile() {
       onOpenChange={(isOpen) => {
         if (!isOpen) handleClose();
       }}
-      size={isPdf ? '5xl' : 'md'} // HeroUI size: xs, sm, md, lg, xl, 2xl, 3xl, 4xl, 5xl, full
+      size={isPdf ? '5xl' : 'xl'} // HeroUI size: xs, sm, md, lg, xl, 2xl, 3xl, 4xl, 5xl, full
       placement="center"
       backdrop="blur" // hoặc "opaque", "transparent"
       classNames={{
@@ -52,7 +53,7 @@ export default function ModalViewFile() {
                 {file?.name}
               </p>
               <p className="text-sm text-foreground/60">
-                {file?.type}
+                {convertMimeToExtension(file?.type ?? "")}
               </p>
             </ModalHeader>
 
@@ -68,7 +69,7 @@ export default function ModalViewFile() {
                       alt={file!.name!}
                       radius="md"
                       className="w-full h-full object-contain"
-                      // removeWrapper={true} // nếu muốn bỏ wrapper mặc định
+                    // removeWrapper={true} // nếu muốn bỏ wrapper mặc định
                     />
                   </div>
                 )}
@@ -93,8 +94,7 @@ export default function ModalViewFile() {
 
                 {!isImage && !isPdf && !isVideo && (
                   <p className="text-foreground/70 text-center">
-                    Không hỗ trợ xem loại tệp này, để xem vui lòng{' '}
-                    <span
+                    File không hỗ trợ xem trực tuyến, vui lòng <span
                       className="text-primary cursor-pointer hover:underline"
                       onClick={() => {
                         setLoading(true);
@@ -103,41 +103,40 @@ export default function ModalViewFile() {
                         // );
                       }}
                     >
-                      tải xuống
-                    </span>
-                    {loading && <Spinner size="sm" className="ml-2 inline" />}
+                      tài về máy
+                    </span> để xem
                   </p>
                 )}
               </div>
             </ModalBody>
 
             <ModalFooter className="justify-center px-6 py-4 gap-3">
-                <Button
-                  variant="bordered"
-                  radius="lg"
-                  onPress={() => {
-                    onCloseModal();
-                    handleClose();
-                  }}
-                  className='border-[#006FEE] border bg-white text-[#006FEE]'
-                >
-                  Hủy
-                </Button>
+              <Button
+                variant="bordered"
+                radius="lg"
+                onPress={() => {
+                  onCloseModal();
+                  handleClose();
+                }}
+                className='border-[#006FEE] border bg-white text-[#006FEE]'
+              >
+                Hủy
+              </Button>
 
-                <Button
-                  variant="solid"
-                  color="primary"
-                  radius="lg"
-                  onPress={() => {
-                    setLoading(true);
-                    // downloadFromSignedUrl(file?.url ?? '', file?.name ?? 'tep_dinh_kem').finally(() =>
-                    //   setLoading(false)
-                    // );
-                  }}
-                  isLoading={loading}
-                >
-                  Tải xuống
-                </Button>
+              <Button
+                variant="solid"
+                color="primary"
+                radius="lg"
+                onPress={() => {
+                  setLoading(true);
+                  // downloadFromSignedUrl(file?.url ?? '', file?.name ?? 'tep_dinh_kem').finally(() =>
+                  //   setLoading(false)
+                  // );
+                }}
+                isLoading={loading}
+              >
+                Tải xuống
+              </Button>
             </ModalFooter>
           </>
         )}

@@ -8,6 +8,7 @@ import {
   AttendanceStatus,
   type DayCell,
   type EmployeeRow,
+  type IBreakTime,
   type ShiftCode,
   type ShiftRun,
 } from './timekeeping-management/types/index.type';
@@ -277,3 +278,19 @@ export function getLabelShift(shift: ShiftCode): string {
 export function getTotalDaysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
 }
+
+export const displayTime = (time: string) => {
+  return time ? dayjs(time, "HH:mm:ss").format("HH:mm") : ""
+}
+
+export const calculateTotalBreakTime = (breakTimes: IBreakTime[]) => {
+  return breakTimes.reduce((total, cur) => {
+    const [inHour, inMin] = cur.breakStartTime.split(":").map(Number);
+    const [outHour, outMin] = cur.breakEndTime.split(":").map(Number);
+
+    const breakStart = (inHour ?? 0) * 60 + (inMin ?? 0);
+    const breakEnd = (outHour ?? 0) * 60 + (outMin ?? 0);
+
+    return total + (breakEnd - breakStart);
+  }, 0);
+};
