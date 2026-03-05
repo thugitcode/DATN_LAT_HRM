@@ -14,6 +14,11 @@ import { StaffTable } from './components/staff-table';
 import { StaffGrid } from './components/staff-grid';
 import { StaffFormDrawer } from './components/staff-form-drawer';
 import { useDisclosure } from '@heroui/react';
+import { TitlePage } from '@/components/title-page';
+import { ActionsPage } from '@/components/actions-page';
+import { LayoutRenderer } from '@/features/timekeeping-shift-scheduling/components/layout-renderer';
+import { LayoutSwitcherEnum } from '@/types/global.type';
+import { useStaffExport } from './hooks/use-staff-export';
 
 const POSITION_OPTIONS = [
     { key: 'STAFF', label: 'Nhân viên' },
@@ -33,10 +38,9 @@ interface StaffListProps {
 export const StaffList = ({ title, contractType }: StaffListProps) => {
     const navigate = useNavigate();
     const searchParams: any = useSearch({ from: '/_private/admin/_dashboard/staff-management/$type' });
-
+    
     const page = searchParams.page || 1;
     const limit = searchParams.limit || 10;
-    const viewMode = searchParams.viewMode || 'list';
 
     const filters = {
         search: searchParams.search,
@@ -56,7 +60,6 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
 
     const setPage = (p: number) => setFilters({ page: p });
     const setLimit = (l: number) => setFilters({ limit: l });
-    const setViewMode = (v: 'list' | 'grid') => setFilters({ viewMode: v });
 
     const { options: departmentOptions, isLoading: deptLoading } = useDepartmentOptions();
     const { options: roomOptions, isLoading: roomLoading } = useRoomOptions(filters.departmentId);
@@ -77,7 +80,8 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
     const total = response?.pagination?.total || 0;
     const workingCount = (response?.metadata?.WORKING as number) || 0;
     const resignedCount = (response?.metadata?.RESIGNED as number) || 0;
-
+    const { exportConfig } = useStaffExport(staffData)
+    
     const handleViewDetail = (id: string) => {
         navigate({
             to: '/admin/staff-management/detail/$id',
@@ -189,19 +193,19 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                 {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-2xl font-semibold text-[#11181C]">{title}</h1>
+                        <h1 className="text-3xl font-semibold text-[#11181C]">{title}</h1>
                         <div className="flex items-center gap-2 mt-2">
-                            <Chip size="sm" color="success" variant="flat" classNames={{ content: 'text-[#17C964] font-medium text-xs' }} startContent={<span className="w-1.5 h-1.5 rounded-full bg-[#17C964] mr-1"></span>}>
+                            <Chip size="md" variant="bordered" classNames={{ content: '!leading-5 text-base', base: "py-1 px-2" }} startContent={<span className="w-1.5 h-1.5 rounded-full p-1 bg-[#17C964] mr-1"></span>}>
                                 Đang làm việc: {workingCount}
                             </Chip>
-                            <Chip size="sm" color="default" variant="flat" classNames={{ content: 'text-[#71717A] font-medium text-xs' }} startContent={<span className="w-1.5 h-1.5 rounded-full bg-[#71717A] mr-1"></span>}>
+                            <Chip size="md" variant="bordered" classNames={{ content: '!leading-5 text-base', base: "py-1 px-2" }} startContent={<span className="w-1.5 h-1.5 rounded-full bg-[#71717A] mr-1"></span>}>
                                 Nghỉ: {resignedCount}
                             </Chip>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2">
+                        {/* <div className="flex items-center gap-2">
                             <Button
                                 isIconOnly
                                 variant="flat"
@@ -271,8 +275,19 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                             }}
                         >
                             Thêm mới nhân viên
-                        </Button>
+                        </Button> */}
                     </div>
+                    <ActionsPage
+                        // hiddenLayoutSwitcher={activeKey === TAB_KEYS.DETAILED_TIME_SHEET}
+                        exportConfig={exportConfig}
+                        actions={
+                            <div className="flex gap-3">
+                                <Button color="primary" onPress={onOpen}>
+                                    Thêm mới nhân viên
+                                </Button>
+                            </div>
+                        }
+                    />
                 </div>
 
                 {/* Main Content Area */}
@@ -372,33 +387,38 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                             )}
                         </Select>
                     </div>
-
-                    {/* View Mode Components */}
-                    {viewMode === 'list' ? (
-                        <StaffTable
-                            data={staffData}
-                            loading={isLoading}
-                            page={page}
-                            limit={limit}
-                            total={total}
-                            onPageChange={setPage}
-                            onLimitChange={setLimit}
-                            onViewDetail={handleViewDetail}
-                            onEdit={handleEdit}
-                        />
-                    ) : (
-                        <StaffGrid
-                            data={staffData}
-                            loading={isLoading}
-                            page={page}
-                            limit={limit}
-                            total={total}
-                            onPageChange={setPage}
-                            onLimitChange={setLimit}
-                            onViewDetail={handleViewDetail}
-                            onEdit={handleEdit}
-                        />
-                    )}
+                    <LayoutRenderer
+                        layouts={{
+                            [LayoutSwitcherEnum.LIST]: {
+                                component: StaffTable,
+                                props: {
+                                    data: staffData,
+                                    loading: isLoading,
+                                    page: page,
+                                    limit: limit,
+                                    total: total,
+                                    onPageChange: setPage,
+                                    onLimitChange: setLimit,
+                                    onViewDetail: handleViewDetail,
+                                    onEdit: handleEdit
+                                },
+                            },
+                            [LayoutSwitcherEnum.GRID]: {
+                                component: StaffGrid,
+                                props: {
+                                    data: staffData,
+                                    loading: isLoading,
+                                    page: page,
+                                    limit: limit,
+                                    total: total,
+                                    onPageChange: setPage,
+                                    onLimitChange: setLimit,
+                                    onViewDetail: handleViewDetail,
+                                    onEdit: handleEdit,
+                                },
+                            },
+                        }}
+                    />
                 </div>
             </PageContainer>
             <StaffFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} editData={editingStaff} />

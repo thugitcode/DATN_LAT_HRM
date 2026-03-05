@@ -8,6 +8,7 @@ import { icons } from '@/lib/icons';
 
 import { ExplanationSummaryBox } from './explanation-summary-box';
 import { ExplanationTypeRow } from './explanation-type-row';
+import { cn } from '@/lib/utils';
 
 interface ExplanationSummaryProps {
   summary?: AttendanceExplanationSummary | null;
@@ -75,7 +76,7 @@ export const ExplanationSummary: FC<Readonly<ExplanationSummaryProps>> = ({
   ];
 
   return (
-    <div className="flex flex-wrap items-stretch gap-6 rounded-xl bg-white p-5">
+    <div className={cn(!showLabel ? "rounded-b-xl" :"rounded-xl", "flex flex-wrap items-stretch gap-6 bg-white p-5")}>
       <div className="flex flex-wrap items-center gap-4">
         {showLabel && <span className="text-2xl font-semibold text-[#11181C] whitespace-nowrap">Tổng quát:</span>}
 

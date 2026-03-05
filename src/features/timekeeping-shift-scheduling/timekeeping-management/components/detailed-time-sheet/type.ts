@@ -32,6 +32,16 @@ export interface History {
   reason:string
   changedByName: string
 }
+export interface History {
+  attendance:any[]
+  changeType:string
+  changedAt:string
+  id:string
+  newTime:string
+  oldTime:string
+  reason:string
+  changedByName: string
+}
 export interface Staff {
   id: string;
   code: string;

@@ -74,7 +74,7 @@ export const ShiftManagementContainer = () => {
             <div className="flex bg-white mb-5 rounded-b-xl py-1.5">
                 {SHIFT_CA_LEGEND.map(item => <StatsSection stats={item} />)}
             </div>
-            <ShiftManagementGrid data={data?.data} isLoading={isLoading} />
+            <ShiftManagementGrid data={data?.data} isLoading={isLoading} height="h-[calc(100vh-480px)] bg-white" />
         </>
     )
 }

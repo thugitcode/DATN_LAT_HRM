@@ -1,17 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import dayjs from 'dayjs';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import type { ShiftManagementParams } from '@/types';
-import { STANDARD_HOURS } from '@/lib/constants';
-import { cn } from '@/lib/utils';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
 import {
   fillMissingDaysWithDayjs,
   getTotalDaysInMonth,
 } from '@/features/timekeeping-shift-scheduling/helper';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { cn } from '@/lib/utils';
+import type { ShiftManagementParams } from '@/types';
 
 import { useDetailsTimeSheetList } from '../../hooks/use-detailed-time-sheet';
 import type { FlatRow } from '../../types/index.type';
@@ -19,8 +18,8 @@ import { StickyRowGroupStaff } from './sticky-row-group-staff';
 
 const columns = [
   { className: 'w-[150px] text-left', key: 'date', label: 'NGÀY' },
-  { className: 'w-[125px] text-left', key: 'shiftCode', label: 'MÃ CA' },
-  { className: 'w-[185px] text-left', key: 'standardHours', label: 'GIỜ CÔNG CHUẨN' },
+  { className: 'w-[135px] text-left', key: 'shiftCode', label: 'MÃ CA' },
+  { className: 'w-[195px] text-left', key: 'standardHours', label: 'GIỜ CÔNG CHUẨN' },
   { className: 'text-center', key: 'checkIn', label: 'GIỜ VÀO' },
   { className: 'text-center', key: 'checkOut', label: 'GIỜ RA' },
   { className: 'text-center', key: 'lateMinutes', label: 'ĐI MUỘN' },
@@ -216,7 +215,7 @@ export function GroupedTable() {
         case 'standardHours':
           return (
             <span className={cn('flex text-muted-foreground py-2.5 px-4', 'hidden sm:flex')}>
-              {STANDARD_HOURS}
+              {shift.standardTime || '--'}
             </span>
           );
 
