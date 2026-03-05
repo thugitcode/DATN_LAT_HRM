@@ -181,11 +181,12 @@ export function mapToRow(
   item: WorkSheetByShiftType,
   days: ReturnType<typeof getDaysInMonth>,
 ): EmployeeRow & { runs: ShiftRun[] } {
-  const schedule: DayCell[] = days.map((d) => ({
-    day: d.day,
-    dayOfWeek: d.dayOfWeek,
-    shift: (item.days[d.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
-    workScheduleDetailId: item.days[d.date]?.workScheduleDetailId,
+  const schedule: DayCell[] = days?.map((d) => ({
+    day: d?.day,
+    dayOfWeek: d?.dayOfWeek,
+    shift: (item?.days?.[d?.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
+    // workScheduleDetailId: item.days[d.date].workScheduleDetailId,
+    workScheduleDetailId: '',
   }));
 
   return {
