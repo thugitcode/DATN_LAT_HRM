@@ -52,8 +52,8 @@ export const ShiftManagement = () => {
               actions={<BtnCreateShift />}
               // exportConfig={exportConfig}
               // importConfig={importConfig}
-              exportConfig={exportConfig}
-              onExportTemplate={() => downloadShiftTemplate()}
+              // exportConfig={exportConfig}
+              // onExportTemplate={() => downloadShiftTemplate()}
             />
           </div>
           <ShiftManagementFilter />
