@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import {
   Button,
   Modal,
@@ -10,21 +11,29 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { IconSparkles } from '@tabler/icons-react';
+import { useReactToPrint } from 'react-to-print';
 
-import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionsPage } from '@/components/actions-page';
 import { TitlePage } from '@/components/title-page';
 
 import { PageFilter } from '../components/page-filter';
+import { useCurrentLayout } from '../hooks/use-current-layout';
 import { TAB_CONTENT_MAP } from './components/tab-content-map';
 import { TAB_LEGEND_MAP } from './components/tab-legend-map';
 import { TimekeepingManagementLegend } from './components/timekeeping-management-legend';
+import { TimekeepingManagementPrint } from './components/timekeeping-management-print';
+import { useTimekeepingExport } from './hooks/use-timekeeping-export';
+import { useTimekeepingPrint } from './hooks/use-timekeeping-print';
 import { useTimekeepingTabs } from './hooks/use-timekeeping-tabs';
 import { TAB_KEYS } from './types/index.type';
 
 export const TimekeepingManagement = () => {
   const { tabs, activeKey, activeTab, onSelectionChange } = useTimekeepingTabs();
+  const currentLayout = useCurrentLayout();
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { onExport } = useTimekeepingExport(activeKey);
+  const { onPrint, printState, printRef, year, month } = useTimekeepingPrint(activeKey);
 
   return (
     <div className="flex flex-col justify-between h-full">
@@ -46,13 +55,8 @@ export const TimekeepingManagement = () => {
             <TitlePage title={activeTab.label} />
             <ActionsPage
               hiddenLayoutSwitcher={activeKey === TAB_KEYS.DETAILED_TIME_SHEET}
-              // actions={
-              //   <div className="flex gap-3">
-              //     <Button color="primary" onPress={onOpen}>
-              //       Duyệt bảng công
-              //     </Button>
-              //   </div>
-              // }
+              onExport={onExport}
+              onPrint={onPrint}
             />
           </div>
 
@@ -106,6 +110,17 @@ export const TimekeepingManagement = () => {
           )}
         </ModalContent>
       </Modal>
+
+      <div className="hidden">
+        <TimekeepingManagementPrint
+          ref={printRef}
+          tab={printState?.tab ?? activeKey}
+          data={printState?.data ?? []}
+          year={year}
+          month={month}
+          layout={currentLayout}
+        />
+      </div>
     </div>
   );
 };

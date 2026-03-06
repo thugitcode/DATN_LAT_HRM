@@ -80,6 +80,8 @@ export interface Summary {
   overtimeHours: number;
   paidLeave: number;
   totalAttendance: number;
+  compHours: number;
+  compLeave: number;
 }
 
 export interface ShiftEntry {

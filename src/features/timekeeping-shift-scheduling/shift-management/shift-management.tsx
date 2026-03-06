@@ -1,3 +1,8 @@
+'use client';
+
+import { useRef, useState } from 'react';
+import { useReactToPrint } from 'react-to-print';
+
 import type { ShiftManagementParams } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
@@ -11,17 +16,23 @@ import { useCurrentLayout } from '../hooks/use-current-layout';
 import { TimekeepingManagementLegend } from '../timekeeping-management/components/timekeeping-management-legend';
 import { BtnCreateShift } from './components/btn-create-shift';
 import { ShiftManagementGrid } from './components/grid-layout/shift-management-grid';
+import { ShiftImportReviewModal } from './components/shift-import-review-modal';
 import { ShiftManagementFilter } from './components/shift-management-filter';
 import { ShiftManagementListview } from './components/shift-management-listview';
+import { ShiftManagementPrint } from './components/shift-management-print';
 import { SHIFT_CA_LEGEND } from './constants/data';
 import { useShiftExport } from './hooks/use-shift-export';
+import type { ParseShiftResult } from './hooks/use-shift-import';
+import { useShiftImport } from './hooks/use-shift-import';
 import { useShiftManagementList } from './hooks/use-shift-management';
 
 export const ShiftManagement = () => {
   const currentLayout = useCurrentLayout();
+  const printRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const { onExport, onExportTemplate } = useShiftExport();
   const { filters } = useQueryFilter<ShiftManagementParams>();
-
   const { startDate, endDate } = useMonthDateRange(filters.month);
 
   const { data, isLoading } = useShiftManagementList({
@@ -35,48 +46,86 @@ export const ShiftManagement = () => {
     getAll: currentLayout === LayoutSwitcherEnum.GRID ? true : undefined,
   });
 
-  const { onExport, onExportTemplate } = useShiftExport();
+  const handlePrint = useReactToPrint({ contentRef: printRef });
+
+  const [parsedImport, setParsedImport] = useState<ParseShiftResult | null>(null);
+
+  const { handleFile } = useShiftImport({
+    onParsed: (result) => setParsedImport(result),
+    onError: (err) => {
+      console.error(err);
+      // toast.error('Import thất bại: ' + err.message);
+    },
+  });
 
   return (
-    <div className="flex flex-col justify-between h-full">
-      <div className="space-y-3">
-        <WrapperToolBar className="space-y-4 flex flex-col">
-          <div className="flex items-center justify-between">
-            <TitlePage title="Quản lý phân ca" />
+    <>
+      <div className="flex flex-col justify-between h-full">
+        <div className="space-y-3">
+          <WrapperToolBar className="space-y-4 flex flex-col">
+            <div className="flex items-center justify-between">
+              <TitlePage title="Quản lý phân ca" />
 
-            <ActionsPage
-              actions={<BtnCreateShift />}
-              // importConfig={importConfig}
-              onExport={onExport}
-              onExportTemplate={onExportTemplate}
-            />
-          </div>
-          <ShiftManagementFilter />
-        </WrapperToolBar>
+              <ActionsPage
+                actions={<BtnCreateShift />}
+                onExport={onExport}
+                onExportTemplate={onExportTemplate}
+                onPrint={handlePrint}
+                // Import được xử lý riêng qua fileInputRef bên dưới
+                onImport={() => fileInputRef.current?.click()}
+              />
+            </div>
 
-        <LayoutRenderer
-          layouts={{
-            [LayoutSwitcherEnum.LIST]: {
-              component: ShiftManagementListview,
-              props: {
-                data: data?.data,
-                total: data?.pagination?.total,
-                page: filters.page,
-                isLoading,
-                pageSize: filters.limit,
-                totalPage: data?.pagination?.totalPage,
-                search: filters.search,
+            <ShiftManagementFilter />
+          </WrapperToolBar>
+
+          <LayoutRenderer
+            layouts={{
+              [LayoutSwitcherEnum.LIST]: {
+                component: ShiftManagementListview,
+                props: {
+                  data: data?.data,
+                  total: data?.pagination?.total,
+                  page: filters.page,
+                  isLoading,
+                  pageSize: filters.limit,
+                  totalPage: data?.pagination?.totalPage,
+                  search: filters.search,
+                },
               },
-            },
-            [LayoutSwitcherEnum.GRID]: {
-              component: ShiftManagementGrid,
-              props: { data: data?.data, isLoading },
-            },
-          }}
-        />
+              [LayoutSwitcherEnum.GRID]: {
+                component: ShiftManagementGrid,
+                props: { data: data?.data, isLoading },
+              },
+            }}
+          />
+        </div>
+
+        <TimekeepingManagementLegend legendItems={SHIFT_CA_LEGEND} />
+
+        <div style={{ display: 'none' }}>
+          <ShiftManagementPrint
+            ref={printRef}
+            data={data?.data ?? []}
+            monthQuery={filters.month}
+            layout={currentLayout}
+          />
+        </div>
       </div>
 
-      <TimekeepingManagementLegend legendItems={SHIFT_CA_LEGEND} />
-    </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".xlsx,.xls"
+        className="hidden"
+        onChange={handleFile}
+      />
+
+      <ShiftImportReviewModal
+        isOpen={!!parsedImport}
+        parsed={parsedImport}
+        onClose={() => setParsedImport(null)}
+      />
+    </>
   );
 };
