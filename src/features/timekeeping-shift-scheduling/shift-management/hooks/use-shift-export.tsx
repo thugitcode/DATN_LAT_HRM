@@ -1,17 +1,19 @@
-import { useMemo } from 'react';
+import { useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useStaffList } from '@/query-options/staff';
+import { shiftManagementQueryOptions } from '@/services/query-options/shift-management.query';
 import dayjs from 'dayjs';
-import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 
 import type { StaffSchedule } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
-import type { ExcelColumnDef, ExcelExportConfig } from '@/hooks/use-excel-io';
+import type { Staff } from '@/types/shift-management.type';
 
 import { dayNames, getDaysInMonth, getWeeksInMonth } from '../../helper';
 import { useCurrentLayout } from '../../hooks/use-current-layout';
 import { useYearMonth } from '../../hooks/use-year-month';
 import { STAFF_POSITION } from '../constants/data';
 
-// Map dayOfWeek → tên thứ kiểu file mẫu
 const DAY_SHORT: Record<number, string> = {
   0: 'CN',
   1: 'T2',
@@ -22,16 +24,10 @@ const DAY_SHORT: Record<number, string> = {
   6: 'T7',
 };
 
-export const exportTableToExcel = (
-  data: StaffSchedule[],
-  year: number,
-  month: number, // 0-indexed
-  options?: { companyName?: string; hospitalName?: string; department?: string },
-) => {
+export const exportTableToExcel = (data: StaffSchedule[], year: number, month: number) => {
   const weeks = getWeeksInMonth(year, month);
   const allDays = weeks.flatMap((w) => w.days);
 
-  // Tính maxShiftsPerRow[staffId] = max ca trong 1 ngày của NV
   const maxShiftsPerRow: Record<string, number> = {};
   data.forEach((record) => {
     let max = 1;
@@ -44,57 +40,54 @@ export const exportTableToExcel = (
     maxShiftsPerRow[record.staff.id] = max;
   });
 
-  // Số cột ngày = allDays.length, bắt đầu từ col index 5 (sau A-E)
-  const FIXED_COL_COUNT = 5; // A=STT, B=Khoa, C=Mã NV, D=Tên, E=Chức vụ
+  const FIXED_COL_COUNT = 5;
   const totalCols = FIXED_COL_COUNT + allDays.length;
-  const lastColLetter = XLSX.utils.encode_col(totalCols - 1);
 
   const aoa: unknown[][] = [];
   const merges: XLSX.Range[] = [];
 
-  // ── Row 0: Công ty ──────────────────────────────────────────────────────────
-  aoa.push([
-    options?.companyName ?? '',
-    '',
-    '',
-    'BẢNG PHÂN CA THÁNG ' + (month + 1) + ' NĂM ' + year,
-  ]);
+  const row0: unknown[] = [`BẢNG PHÂN CA THÁNG ${month + 1} NĂM ${year}`];
+  for (let i = 1; i < totalCols; i++) row0.push('');
+  aoa.push(row0);
+  merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: totalCols - 1 } });
 
-  // ── Row 1: Bệnh viện + Khoa ─────────────────────────────────────────────────
-  aoa.push([options?.hospitalName ?? '', '', '', 'KHOA: ' + (options?.department ?? '')]);
+  const row1: unknown[] = ['', '', '', '', ''];
+  weeks.forEach((week) => {
+    row1.push(
+      `TUẦN ${week.weekNumber}: ${week.startDay}/${month + 1} - ${week.endDay}/${month + 1}`,
+    );
+    for (let i = 1; i < week.days.length; i++) row1.push('');
+  });
+  aoa.push(row1);
 
-  // ── Row 2: THÁNG (merge toàn bộ cột ngày) ──────────────────────────────────
-  const row2: unknown[] = ['', '', '', '', '', 'THÁNG ' + (month + 1)];
-  for (let i = 1; i < allDays.length; i++) row2.push('');
+  let weekColStart = FIXED_COL_COUNT;
+  weeks.forEach((week) => {
+    if (week.days.length > 1) {
+      merges.push({
+        s: { r: 1, c: weekColStart },
+        e: { r: 1, c: weekColStart + week.days.length - 1 },
+      });
+    }
+    weekColStart += week.days.length;
+  });
+
+  const row2: unknown[] = ['STT', 'Khoa/phòng', 'Mã nhân viên', 'Tên nhân viên', 'Chức vụ'];
+  allDays.forEach((day) => {
+    const dateStr = dayjs(new Date(year, month, day.day)).format('D/M/YY');
+    row2.push(`${DAY_SHORT[day.dayOfWeek]}\n${dateStr}`);
+  });
   aoa.push(row2);
-  merges.push({ s: { r: 2, c: 5 }, e: { r: 2, c: totalCols - 1 } });
 
-  // ── Row 3: Số ngày ──────────────────────────────────────────────────────────
-  const row3: unknown[] = ['', '', '', '', ''];
-  allDays.forEach((day) => row3.push(day.day));
-  aoa.push(row3);
-
-  // ── Row 4: Header (STT, Khoa, Mã NV, Tên, Chức vụ, T2, T3...) ─────────────
-  const row4: unknown[] = [
-    'STT',
-    'Khoa/phòng (*)',
-    'Mã nhân viên (*)',
-    'Tên nhân viên (*)',
-    'Chức vụ',
-  ];
-  allDays.forEach((day) => row4.push(DAY_SHORT[day.dayOfWeek]));
-  aoa.push(row4);
-
-  // ── Data rows ────────────────────────────────────────────────────────────────
-  // Header chiếm row 0-4 → data bắt đầu từ row index 5
-  let currentRow = 5;
+  let currentRow = 3;
+  const staffRowStart: number[] = [];
 
   data.forEach((record, idx) => {
     const { staff, schedules = [] } = record;
     const numSlots = maxShiftsPerRow[staff.id] ?? 1;
-    const numRows = numSlots * 2; // mỗi slot = 2 rows (tên ca + giờ)
+    const numRows = numSlots * 2;
 
-    // Merge cột A-E theo numRows
+    staffRowStart.push(currentRow);
+
     for (let c = 0; c < FIXED_COL_COUNT; c++) {
       if (numRows > 1) {
         merges.push({
@@ -104,16 +97,15 @@ export const exportTableToExcel = (
       }
     }
 
-    // Build 2 rows cho mỗi slot
     for (let slotIdx = 0; slotIdx < numSlots; slotIdx++) {
       const nameRow: unknown[] =
         slotIdx === 0
           ? [
               idx + 1,
-              staff.departments?.map((d) => d.name).join(', ') ?? '',
+              staff.departments?.map((d) => d.name).join('\n') ?? '',
               staff.code ?? '',
               staff.name ?? '',
-              staff.position ?? '',
+              STAFF_POSITION[staff.position] ?? '',
             ]
           : ['', '', '', '', ''];
 
@@ -123,7 +115,6 @@ export const exportTableToExcel = (
         const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
         const shifts = schedules.find((s) => s.date === dateStr)?.shifts ?? [];
         const shift = shifts[slotIdx];
-
         nameRow.push(shift ? shift.shiftTemplateName : '');
         timeRow.push(
           shift ? `${shift.startTime?.slice(0, 5)} - ${shift.endTime?.slice(0, 5)}` : '',
@@ -137,58 +128,77 @@ export const exportTableToExcel = (
     currentRow += numRows;
   });
 
-  // ── Footer ──────────────────────────────────────────────────────────────────
-  aoa.push([]);
-  aoa.push(['', '', '', '', '', '….............., ngày __ tháng __ năm ' + year]);
-  aoa.push(['Trưởng Đơn Vị', '', 'TL.Hành chánh - Nhân sự', '', '', '', 'Lập Bảng']);
-
-  // ── Build workbook ──────────────────────────────────────────────────────────
   const ws = XLSX.utils.aoa_to_sheet(aoa);
   ws['!merges'] = merges;
-
-  // Column widths
   ws['!cols'] = [
-    { wch: 6 }, // A: STT
-    { wch: 18 }, // B: Khoa
-    { wch: 16 }, // C: Mã NV
-    { wch: 22 }, // D: Tên
-    { wch: 14 }, // E: Chức vụ
-    ...allDays.map(() => ({ wch: 14 })), // Ngày
+    { wch: 6 },
+    { wch: 18 },
+    { wch: 16 },
+    { wch: 22 },
+    { wch: 14 },
+    ...allDays.map(() => ({ wch: 14 })),
   ];
+  ws['!rows'] = [{ hpt: 40 }];
 
-  // Merge header row 0: A1:C1 và D1:lastCol
-  merges.unshift(
-    { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
-    { s: { r: 0, c: 3 }, e: { r: 0, c: totalCols - 1 } },
-    { s: { r: 1, c: 0 }, e: { r: 1, c: 2 } },
-    { s: { r: 1, c: 3 }, e: { r: 1, c: totalCols - 1 } },
-  );
+  const border = {
+    top: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    bottom: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    left: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    right: { style: 'thin', color: { rgb: 'D1D5DB' } },
+  };
+  const centerAlignment = { horizontal: 'center', vertical: 'center', wrapText: true };
+  const leftAlignment = { horizontal: 'left', vertical: 'center', wrapText: true };
+  const leftAlignCols = new Set([1, 2, 3, 4]);
+
+  const range = XLSX.utils.decode_range(ws['!ref'] ?? 'A1');
+  for (let R = range.s.r; R <= range.e.r; R++) {
+    for (let C = range.s.c; C <= range.e.c; C++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+      if (!ws[cellAddress]) ws[cellAddress] = { v: '', t: 's' };
+
+      const isLeftCol = R >= 3 && leftAlignCols.has(C);
+      const alignment = isLeftCol ? leftAlignment : centerAlignment;
+
+      if (R === 0) {
+        ws[cellAddress].s = {
+          alignment: centerAlignment,
+          border,
+          fill: { fgColor: { rgb: '374151' } },
+          font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 14 },
+        };
+      } else if (R === 1) {
+        ws[cellAddress].s = {
+          alignment: centerAlignment,
+          border,
+          fill: { fgColor: { rgb: '6B7280' } },
+          font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
+        };
+      } else if (R === 2) {
+        ws[cellAddress].s = {
+          alignment: centerAlignment,
+          border,
+          fill: { fgColor: { rgb: '9CA3AF' } },
+          font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
+        };
+      } else {
+        const staffIdx = staffRowStart.reduce((acc, start, i) => (R >= start ? i : acc), 0);
+        const isEven = staffIdx % 2 === 0;
+        ws[cellAddress].s = {
+          alignment,
+          border,
+          fill: { fgColor: { rgb: isEven ? 'FFFFFF' : 'F9FAFB' } },
+          font: { sz: 10 },
+        };
+      }
+    }
+  }
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Phân ca');
   XLSX.writeFile(wb, `phan_ca_thang_${month + 1}_${year}_${dayjs().format('YYYYMMDD')}.xlsx`);
 };
 
-type ShiftExportRow = Record<string, string | number>;
-
-const FIXED_COLUMNS: ExcelColumnDef<ShiftExportRow>[] = [
-  { header: 'STT', key: 'stt', width: 6 },
-  { header: 'Mã NV', key: 'employeeCode', width: 14 },
-  { header: 'Họ và tên', key: 'employeeName', width: 24 },
-  { header: 'Khoa/Phòng ban', key: 'department', width: 22 },
-  { header: 'Phòng', key: 'room', width: 20 },
-  { header: 'Chức vụ', key: 'position', width: 16 },
-];
-
-const buildGridExport = (
-  data: StaffSchedule[],
-  year: number,
-  month: number,
-): {
-  columns: ExcelColumnDef<ShiftExportRow>[];
-  rows: ShiftExportRow[];
-  merges: { s: { r: number; c: number }; e: { r: number; c: number } }[];
-} => {
+export const exportGridToExcel = (data: StaffSchedule[], year: number, month: number) => {
   const days = getDaysInMonth(year, month);
 
   const maxShiftsPerStaff: Record<string, number> = {};
@@ -200,130 +210,307 @@ const buildGridExport = (
     maxShiftsPerStaff[record.staff.id] = max;
   });
 
-  const dayCols: ExcelColumnDef<ShiftExportRow>[] = days.map((d) => ({
-    header: `${dayNames[d.dayOfWeek]}\n${dayjs(d.date).format('D/M/YY')}`,
-    key: `d_${d.date}`,
-    width: 22,
-  }));
+  const FIXED_COL_COUNT = 6;
+  const totalCols = FIXED_COL_COUNT + days.length;
 
-  const rows: ShiftExportRow[] = [];
-  const merges: { s: { r: number; c: number }; e: { r: number; c: number } }[] = [];
+  const aoa: unknown[][] = [];
+  const merges: XLSX.Range[] = [];
 
-  let currentRow = 1;
+  const row0: unknown[] = [`BẢNG PHÂN CA THÁNG ${month + 1} NĂM ${year}`];
+  for (let i = 1; i < totalCols; i++) row0.push('');
+  aoa.push(row0);
+  merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: totalCols - 1 } });
+
+  const row1: unknown[] = ['STT', 'Mã NV', 'Họ và tên', 'Khoa/Phòng ban', 'Phòng', 'Chức vụ'];
+  days.forEach((d) => row1.push(`${dayNames[d.dayOfWeek]}\n${dayjs(d.date).format('D/M/YY')}`));
+  aoa.push(row1);
+
+  let currentRow = 2;
+  const staffRowStart: number[] = [];
 
   data.forEach((record, idx) => {
     const { staff, schedules = [] } = record;
     const numSlots = maxShiftsPerStaff[staff.id] ?? 1;
+    const numRows = numSlots * 2;
 
-    if (numSlots > 1) {
-      FIXED_COLUMNS.forEach((_, colIdx) => {
+    staffRowStart.push(currentRow);
+
+    for (let c = 0; c < FIXED_COL_COUNT; c++) {
+      if (numRows > 1) {
         merges.push({
-          s: { r: currentRow, c: colIdx },
-          e: { r: currentRow + numSlots - 1, c: colIdx },
+          s: { r: currentRow, c },
+          e: { r: currentRow + numRows - 1, c },
         });
-      });
+      }
     }
 
-    for (let i = 0; i < numSlots; i++) {
-      const row: ShiftExportRow = {
-        stt: i === 0 ? idx + 1 : '',
-        employeeCode: i === 0 ? (staff.code ?? '') : '',
-        employeeName: i === 0 ? (staff.name ?? '') : '',
-        department: i === 0 ? (staff.departments?.map((d) => d.name).join(', ') ?? '') : '',
-        room: i === 0 ? (staff.rooms?.map((r) => r.name).join(', ') ?? '') : '',
-        position: i === 0 ? (staff.position ?? '') : '',
-      };
+    for (let slotIdx = 0; slotIdx < numSlots; slotIdx++) {
+      const nameRow: unknown[] =
+        slotIdx === 0
+          ? [
+              idx + 1,
+              staff.code ?? '',
+              staff.name ?? '',
+              staff.departments?.map((d) => d.name).join('\n') ?? '',
+              staff.rooms?.map((r) => r.name).join('\n') ?? '',
+              STAFF_POSITION[staff.position] ?? '',
+            ]
+          : ['', '', '', '', '', ''];
+
+      const timeRow: unknown[] = ['', '', '', '', '', ''];
 
       days.forEach((d) => {
         const shifts = schedules.find((s) => s.date === d.date)?.shifts ?? [];
-        const shift = shifts[i];
-        row[`d_${d.date}`] = shift
-          ? `${shift.shiftTemplateName}\n${shift.startTime?.slice(0, 5)} - ${shift.endTime?.slice(0, 5)}`
-          : '--';
+        const shift = shifts[slotIdx];
+        nameRow.push(shift ? shift.shiftTemplateName : '');
+        timeRow.push(
+          shift ? `${shift.startTime?.slice(0, 5)} - ${shift.endTime?.slice(0, 5)}` : '',
+        );
       });
 
-      rows.push(row);
+      aoa.push(nameRow);
+      aoa.push(timeRow);
     }
 
-    currentRow += numSlots;
+    currentRow += numRows;
   });
 
-  return { columns: [...FIXED_COLUMNS, ...dayCols], rows, merges };
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!merges'] = merges;
+  ws['!rows'] = [{ hpt: 40 }];
+  ws['!cols'] = [
+    { wch: 6 },
+    { wch: 14 },
+    { wch: 24 },
+    { wch: 30 },
+    { wch: 20 },
+    { wch: 16 },
+    ...days.map(() => ({ wch: 16 })),
+  ];
+
+  const border = {
+    top: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    bottom: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    left: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    right: { style: 'thin', color: { rgb: 'D1D5DB' } },
+  };
+  const centerAlignment = { horizontal: 'center', vertical: 'center', wrapText: true };
+  const leftAlignment = { horizontal: 'left', vertical: 'center', wrapText: true };
+  const leftAlignCols = new Set([1, 2, 3, 4, 5]);
+
+  const range = XLSX.utils.decode_range(ws['!ref'] ?? 'A1');
+  for (let R = range.s.r; R <= range.e.r; R++) {
+    for (let C = range.s.c; C <= range.e.c; C++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+      if (!ws[cellAddress]) ws[cellAddress] = { v: '', t: 's' };
+
+      const isLeftCol = R >= 2 && leftAlignCols.has(C);
+
+      if (R === 0) {
+        ws[cellAddress].s = {
+          alignment: centerAlignment,
+          border,
+          fill: { fgColor: { rgb: '374151' } },
+          font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 14 },
+        };
+      } else if (R === 1) {
+        ws[cellAddress].s = {
+          alignment: centerAlignment,
+          border,
+          fill: { fgColor: { rgb: '6B7280' } },
+          font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
+        };
+      } else {
+        const staffIdx = staffRowStart.reduce((acc, start, i) => (R >= start ? i : acc), 0);
+        const isEven = staffIdx % 2 === 0;
+        ws[cellAddress].s = {
+          alignment: isLeftCol ? leftAlignment : centerAlignment,
+          border,
+          fill: { fgColor: { rgb: isEven ? 'FFFFFF' : 'F9FAFB' } },
+          font: { sz: 10 },
+        };
+      }
+    }
+  }
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Phân ca');
+  XLSX.writeFile(wb, `phan_ca_thang_${month + 1}_${year}_${dayjs().format('YYYYMMDD')}.xlsx`);
 };
 
-const buildTableExport = (
-  data: StaffSchedule[],
-  year: number,
-  month: number,
-): { columns: ExcelColumnDef<ShiftExportRow>[]; rows: ShiftExportRow[] } => {
-  const weeks = getWeeksInMonth(year, month);
-  const allDays = weeks.flatMap((w) => w.days);
+export const exportTemplateToExcel = (data: Staff[], year: number, month: number) => {
+  const days = getDaysInMonth(year, month);
 
-  const dayCols: ExcelColumnDef<ShiftExportRow>[] = [];
+  const FIXED_COL_COUNT = 5;
+  const totalCols = FIXED_COL_COUNT + days.length;
 
-  weeks.forEach((week) => {
-    week.days.forEach((day) => {
-      const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
-      dayCols.push({
-        header: `${dayNames[day.dayOfWeek]}\n${dayjs(dateStr).format('D/M/YY')}`,
-        key: `d_${dateStr}`,
-        width: 22,
-      });
-    });
+  const aoa: unknown[][] = [];
+  const merges: XLSX.Range[] = [];
+
+  // ── Row 0: Công ty + Tiêu đề ─────────────────────────────────────────────────
+  const row0: unknown[] = ['CÔNG TY TNHH', '', '', `BẢNG PHÂN CA THÁNG ${month + 1} NĂM ${year}`];
+  for (let i = 4; i < totalCols; i++) row0.push('');
+  aoa.push(row0);
+  merges.push({ s: { r: 0, c: 0 }, e: { r: 0, c: 2 } });
+  merges.push({ s: { r: 0, c: 3 }, e: { r: 0, c: totalCols - 1 } });
+
+  // ── Row 1: Bệnh viện + Khoa ──────────────────────────────────────────────────
+  const row1: unknown[] = ['BỆNH VIỆN ĐA KHOA', '', '', 'KHOA'];
+  for (let i = 4; i < totalCols; i++) row1.push('');
+  aoa.push(row1);
+  merges.push({ s: { r: 1, c: 0 }, e: { r: 1, c: 2 } });
+  merges.push({ s: { r: 1, c: 3 }, e: { r: 1, c: totalCols - 1 } });
+
+  // ── Row 2: THÁNG ─────────────────────────────────────────────────────────────
+  const row2: unknown[] = ['', '', '', '', '', 'THÁNG'];
+  for (let i = 1; i < days.length; i++) row2.push('');
+  aoa.push(row2);
+  merges.push({ s: { r: 2, c: 5 }, e: { r: 2, c: totalCols - 1 } });
+
+  // ── Row 3: Số ngày ───────────────────────────────────────────────────────────
+  const row3: unknown[] = ['', '', '', '', ''];
+  days.forEach((d) => row3.push(dayjs(d.date).date()));
+  aoa.push(row3);
+
+  // Merge cột cố định rows 2-3
+  for (let c = 0; c < FIXED_COL_COUNT; c++) {
+    merges.push({ s: { r: 2, c }, e: { r: 3, c } });
+  }
+
+  // ── Row 4: Header cột ────────────────────────────────────────────────────────
+  const row4: unknown[] = [
+    'STT',
+    'Khoa/phòng (*)',
+    'Mã nhân viên (*)',
+    'Tên nhân viên (*)',
+    'Chức vụ',
+  ];
+  days.forEach((d) => row4.push(DAY_SHORT[d.dayOfWeek]));
+  aoa.push(row4);
+
+  // ── Data rows — điền sẵn danh sách NV ───────────────────────────────────────
+  let currentRow = 5;
+  const staffRowStart: number[] = [];
+
+  data.forEach((staff, idx) => {
+    staffRowStart.push(currentRow);
+    const dataRow: unknown[] = [
+      idx + 1,
+      staff.departments?.map((d) => d.name).join('\n') ?? '',
+      staff.code ?? '',
+      staff.name ?? '',
+      STAFF_POSITION[staff.position ?? ''] ?? '',
+    ];
+    for (let d = 0; d < days.length; d++) dataRow.push('');
+    aoa.push(dataRow);
+    currentRow += 1;
   });
 
-  const rows = data.map((record, idx) => {
-    const { staff, schedules = [] } = record;
+  // ── Footer ───────────────────────────────────────────────────────────────────
+  aoa.push([]);
+  aoa.push(['', '', '', '', '', `….............., ngày __ tháng __ năm ${year}`]);
+  aoa.push(['Trưởng Đơn Vị', '', '', 'TL.Hành chánh - Nhân sự', '', '', '', 'Lập Bảng']);
 
-    const row: ShiftExportRow = {
-      stt: idx + 1,
-      employeeCode: staff.code ?? '',
-      employeeName: staff.name ?? '',
-      department: staff.departments?.map((d) => d.name).join(', ') ?? '',
-      room: staff.rooms?.map((r) => r.name).join(', ') ?? '',
-      position: STAFF_POSITION?.[staff.position] ?? '',
-    };
+  // ── Build workbook ───────────────────────────────────────────────────────────
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
+  ws['!merges'] = merges;
+  ws['!cols'] = [
+    { wch: 6 },
+    { wch: 18 },
+    { wch: 16 },
+    { wch: 22 },
+    { wch: 14 },
+    ...days.map(() => ({ wch: 10 })),
+  ];
+  ws['!rows'] = [{ hpt: 20 }, { hpt: 20 }];
 
-    allDays.forEach((day) => {
-      const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
-      const shifts = schedules.find((s) => s.date === dateStr)?.shifts ?? [];
+  const border = {
+    top: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    bottom: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    left: { style: 'thin', color: { rgb: 'D1D5DB' } },
+    right: { style: 'thin', color: { rgb: 'D1D5DB' } },
+  };
+  const centerAlignment = { horizontal: 'center', vertical: 'center', wrapText: true };
+  const leftAlignment = { horizontal: 'left', vertical: 'center', wrapText: true };
 
-      row[`d_${dateStr}`] = shifts.length
-        ? shifts
-            .map(
-              (shift) =>
-                `${shift.shiftTemplateName} ${shift.startTime?.slice(0, 5)}-${shift.endTime?.slice(0, 5)}`,
-            )
-            .join('\n')
-        : '--';
-    });
+  const range = XLSX.utils.decode_range(ws['!ref'] ?? 'A1');
+  for (let R = range.s.r; R <= range.e.r; R++) {
+    for (let C = range.s.c; C <= range.e.c; C++) {
+      const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+      if (!ws[cellAddress]) ws[cellAddress] = { v: '', t: 's' };
 
-    return row;
-  });
+      if (R <= 1) {
+        ws[cellAddress].s = {
+          alignment: C < 3 ? leftAlignment : centerAlignment,
+          font: { bold: true, sz: 11 },
+        };
+      } else if (R === 2) {
+        ws[cellAddress].s = {
+          alignment: centerAlignment,
+          border,
+          fill: { fgColor: { rgb: 'BFDBFE' } },
+          font: { bold: true, color: { rgb: '1E3A5F' }, sz: 11 },
+        };
+      } else if (R === 3) {
+        ws[cellAddress].s = {
+          alignment: centerAlignment,
+          border,
+          fill: { fgColor: { rgb: '93C5FD' } },
+          font: { bold: true, color: { rgb: '1E3A5F' }, sz: 11 },
+        };
+      } else if (R === 4) {
+        ws[cellAddress].s = {
+          alignment: centerAlignment,
+          border,
+          fill: { fgColor: { rgb: 'DBEAFE' } },
+          font: { bold: true, color: { rgb: '1E3A5F' }, sz: 11 },
+        };
+      } else {
+        const staffIdx = staffRowStart.reduce((acc, start, i) => (R >= start ? i : acc), 0);
+        const isEven = staffIdx % 2 === 0;
+        const isDateCol = C >= FIXED_COL_COUNT;
+        ws[cellAddress].s = {
+          alignment: C < FIXED_COL_COUNT && C > 0 ? leftAlignment : centerAlignment,
+          border,
+          fill: { fgColor: { rgb: isDateCol ? 'FFFFFF' : isEven ? 'FFFFFF' : 'EFF6FF' } },
+          font: { sz: 10 },
+        };
+      }
+    }
+  }
 
-  return { columns: [...FIXED_COLUMNS, ...dayCols], rows };
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Phân ca');
+  XLSX.writeFile(wb, `mau_phan_ca_thang_${month + 1}_${year}.xlsx`);
 };
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-export const useShiftExport = (data: StaffSchedule[] = []) => {
+export const useShiftExport = () => {
   const { month, year } = useYearMonth();
   const currentLayout = useCurrentLayout();
   const isGrid = currentLayout === LayoutSwitcherEnum.GRID;
+  const queryClient = useQueryClient();
+  const { data: staffList } = useStaffList({
+    page: 1,
+    limit: 100,
+  });
+  const onExport = useCallback(async () => {
+    const result = await queryClient.fetchQuery(
+      shiftManagementQueryOptions.list({
+        getAll: true,
+      }),
+    );
+    const data = result?.data ?? [];
 
-  const exportConfig = useMemo<ExcelExportConfig<ShiftExportRow>>(() => {
-    const { columns, rows } = isGrid
-      ? buildGridExport(data, year, month)
-      : buildTableExport(data, year, month);
+    if (isGrid) {
+      exportGridToExcel(data, year, month);
+    } else {
+      exportTableToExcel(data, year, month);
+    }
+  }, [isGrid, year, month, queryClient]);
 
-    return {
-      fileName: `phan_ca_thang_${month + 1}_${year}_${dayjs().format('YYYYMMDD')}`,
-      sheetName: 'Phân ca',
-      columns,
-      data: rows,
-      defaultRowHeight: 55,
-      headerRowHeight: 42,
-    };
-  }, [data, year, month, isGrid]);
+  const onExportTemplate = useCallback(async () => {
+    exportTemplateToExcel(staffList?.data, year, month);
+  }, [staffList?.data, year, month]);
 
-  return { exportConfig };
+  return { onExport, onExportTemplate };
 };

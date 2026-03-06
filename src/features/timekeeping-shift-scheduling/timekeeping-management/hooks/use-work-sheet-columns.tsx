@@ -119,58 +119,60 @@ export const SUMMARY_COLUMNS: Column<WorkSheetByShiftRow>[] = [
     title: 'TỔNG CÔNG',
     align: 'center',
     render: (_, record) => (
-      <div className="text-sm text-black">{record.summary.totalAttendance}</div>
+      <div className="text-sm text-black text-center">{record?.summary?.totalAttendance}</div>
     ),
   },
   {
     key: 'summary.workDays',
     title: 'NGÀY LÀM',
     align: 'center',
-    render: (_, record) => <div className="text-sm text-black">{record.summary.workDays}</div>,
+    render: (_, record) => <div className="text-sm text-black">{record.summary?.workDays}</div>,
   },
   {
     key: 'summary.paidLeave',
     title: 'NGHỈ PHÉP',
     align: 'center',
-    render: (_, record) => <div className="text-sm text-black">{record.summary.paidLeave}</div>,
+    render: (_, record) => <div className="text-sm text-black">{record.summary?.paidLeave}</div>,
   },
   {
     key: 'summary.onCall',
     title: 'CÔNG TRỰC',
     align: 'center',
-    render: (_, record) => <div className="text-sm text-black">{record.summary.onCall}</div>,
+    render: (_, record) => <div className="text-sm text-black">{record.summary?.onCall}</div>,
   },
   {
     key: 'summary.actualWorkDays',
     title: 'NGHỈ BÙ TRỰC',
     align: 'center',
     render: (_, record) => (
-      <div className="text-sm text-black">{record.summary.actualWorkDays}</div>
+      <div className="text-sm text-black">{record.summary?.actualWorkDays}</div>
     ),
   },
   {
     key: 'summary.holiday',
     title: 'NGHỈ LỄ',
     align: 'center',
-    render: (_, record) => <div className="text-sm text-black">{record.summary.holiday}</div>,
+    render: (_, record) => <div className="text-sm text-black">{record.summary?.holiday}</div>,
   },
   {
     key: 'summary.otherLeave',
     title: 'NGHỈ KHÁC',
     align: 'center',
-    render: (_, record) => <div className="text-sm text-black">{record.summary.otherLeave}</div>,
+    render: (_, record) => <div className="text-sm text-black">{record.summary?.otherLeave}</div>,
   },
   {
     key: 'summary.overtimeHours',
     title: 'TĂNG CA',
     align: 'center',
-    render: (_, record) => <div className="text-sm text-black">{record.summary.overtimeHours}</div>,
+    render: (_, record) => (
+      <div className="text-sm text-black">{record.summary?.overtimeHours}</div>
+    ),
   },
   {
     key: 'summary.absentDays',
     title: 'GIỜ BÙ',
     align: 'center',
-    render: (_, record) => <div className="text-sm text-black">{record.summary.absentDays}</div>,
+    render: (_, record) => <div className="text-sm text-black">{record.summary?.absentDays}</div>,
   },
 ];
 

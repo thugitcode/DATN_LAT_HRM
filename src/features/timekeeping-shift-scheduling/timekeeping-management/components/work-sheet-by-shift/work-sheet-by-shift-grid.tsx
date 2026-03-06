@@ -62,6 +62,8 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
               const isRowHovered = hoveredRow === ri;
               const shiftCount = row.shifts.length;
 
+              console.log('row___________________________________________', row);
+
               return (
                 <tr
                   key={row.employee.id}
@@ -92,7 +94,6 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     />
                   </td>
 
-                  {/* Mỗi shift = 1 dòng schedule xếp dọc trong cùng td */}
                   <td colSpan={days.length} className="p-0 border-b border-gray-100">
                     <table
                       className="w-full border-separate border-spacing-0"
@@ -115,14 +116,14 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     </table>
                   </td>
 
-                  {/* Summary — mỗi shift 1 dòng xếp dọc */}
                   {SUMMARY_COLUMNS.map((col) => {
                     const isColHovered = hoveredSummaryCol === col.key;
 
                     return (
                       <td
                         key={col.key}
-                        className="border-b border-l border-gray-100 p-0 align-top bg-white transition-colors duration-100"
+                        className=" bg-white align-top border-b border-gray-50"
+                        // // colSpan={1}
                         style={{
                           width: SUMMARY_COL_W,
                           minWidth: SUMMARY_COL_W,
@@ -133,26 +134,17 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                               : '#ffffff',
                         }}
                       >
-                        <div className="flex flex-col">
-                          {row.shifts.map((shiftEntry) => (
-                            <div
-                              key={shiftEntry.shift.id}
-                              className="flex items-center justify-center text-sm text-black"
-                              style={{ height: ROW_H }}
-                            >
-                              {col.render(null, {
-                                ...shiftEntry,
-                                id: row.employee.id,
-                                code: row.employee.code,
-                                name: row.employee.name,
-                                avatar: row.employee.avatar,
-                                departments: row.employee.departments,
-                                rooms: row.employee.rooms,
-                                position: row.employee.role as StaffPosition,
-                              })}
-                            </div>
-                          ))}
-                        </div>
+                        {col.render(null, {
+                          id: row.employee.id,
+                          code: row.employee.code,
+                          name: row.employee.name,
+                          avatar: row.employee.avatar,
+                          departments: row.employee.departments,
+                          rooms: row.employee.rooms,
+                          position: row.employee.role as StaffPosition,
+                          summary: row.summary,
+                          shifts: row.shifts,
+                        })}
                       </td>
                     );
                   })}

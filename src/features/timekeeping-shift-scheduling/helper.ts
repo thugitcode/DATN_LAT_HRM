@@ -208,6 +208,8 @@ export function mapToRow(item: WorkSheetByShiftType, days: ReturnType<typeof get
         summary: shiftEntry.summary,
       };
     }),
+
+    summary: item.summary,
   };
 }
 
@@ -280,13 +282,13 @@ export function getTotalDaysInMonth(year: number, month: number) {
 }
 
 export const displayTime = (time: string) => {
-  return time ? dayjs(time, "HH:mm:ss").format("HH:mm") : ""
-}
+  return time ? dayjs(time, 'HH:mm:ss').format('HH:mm') : '';
+};
 
 export const calculateTotalBreakTime = (breakTimes: IBreakTime[]) => {
   return breakTimes.reduce((total, cur) => {
-    const [inHour, inMin] = cur.breakStartTime.split(":").map(Number);
-    const [outHour, outMin] = cur.breakEndTime.split(":").map(Number);
+    const [inHour, inMin] = cur.breakStartTime.split(':').map(Number);
+    const [outHour, outMin] = cur.breakEndTime.split(':').map(Number);
 
     const breakStart = (inHour ?? 0) * 60 + (inMin ?? 0);
     const breakEnd = (outHour ?? 0) * 60 + (outMin ?? 0);

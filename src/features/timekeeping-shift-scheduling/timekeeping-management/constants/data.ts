@@ -24,7 +24,7 @@ export const WORK_SHEET_LEGEND_ITEMS: LegendItem[] = [
   { status: AttendanceStatus.WorkFromHome, label: 'Làm tại nhà', color: '#9DCAFF' },
   { status: AttendanceStatus.ShortHours, label: 'Thiếu giờ', color: '#FF93B8' },
   { status: AttendanceStatus.MissingPunch, label: 'Quên chấm công', color: '#17C964' },
-  { status: AttendanceStatus.PaidLeave, label: 'Nghỉ phép', color: '#A855F7' },
+  // { status: AttendanceStatus.PaidLeave, label: 'Nghỉ phép', color: '#A855F7' },
   { status: AttendanceStatus.DayOff, label: 'Ngày nghỉ', color: 'transparent', shape: 'ring' },
 ];
 export enum HoursStatusEnum {

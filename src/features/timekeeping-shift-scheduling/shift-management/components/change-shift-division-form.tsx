@@ -1,4 +1,4 @@
-import { useEffect, useMemo, type FC } from 'react';
+import { useEffect, useMemo, useRef, type FC } from 'react';
 import { Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -51,12 +51,14 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
 
   const { mutate } = useUpdateShiftManagement();
+  const isMounted = useRef(false);
 
   const {
     control,
     handleSubmit,
     setValue,
     watch,
+    reset,
     formState: { isSubmitting },
   } = useForm<ShiftDivisinFormValues>({
     resolver: zodResolver(shiftDivisinSchema),
@@ -74,12 +76,28 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
     mode: 'onChange',
   });
 
-  const caId = watch('caId');
+  useEffect(() => {
+    reset({
+      name: staffRow?.name ?? '',
+      staffId: staffRow?.id ?? '',
+      departmentId: department?.id ?? '',
+      caId: shift?.id ?? '',
+      roomId: room?.id ?? '',
+      startTime: shiftRow?.startTime?.slice(0, 5),
+      endTime: shiftRow?.endTime?.slice(0, 5),
+      note: note ?? '',
+    });
+    initialCaId.current = shift?.id ?? '';
+  }, [shift?.id]);
 
+  const caId = watch('caId');
+  const initialCaId = useRef(shift?.id ?? '');
   const selectedCa = caseCategoryOptions.find((ca) => ca.key === caId);
   const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
 
   useEffect(() => {
+    if (caId === initialCaId.current) return;
+
     if (selectedCa) {
       setValue('startTime', selectedCa.startTime?.slice(0, 5) ?? '');
       setValue('endTime', selectedCa.endTime?.slice(0, 5) ?? '');
