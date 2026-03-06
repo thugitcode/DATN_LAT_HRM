@@ -85,3 +85,28 @@ export function useDeleteShiftManagement() {
     },
   });
 }
+
+export function useImportShiftManagement() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateStaffSchedule | CreateStaffSchedule[]) => {
+      const payloads = Array.isArray(data) ? data : [data];
+      return Promise.all(payloads.map((p) => shiftManagementService.create(p)));
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
+      addToast({
+        description: 'Import phân ca thành công.',
+        color: 'success',
+      });
+    },
+    onError: (error: unknown) => {
+      const { message } = normalizeAxiosError(error);
+      addToast({
+        description: message,
+        color: 'danger',
+      });
+    },
+  });
+}

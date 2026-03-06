@@ -62,8 +62,6 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
               const isRowHovered = hoveredRow === ri;
               const shiftCount = row.shifts.length;
 
-              console.log('row___________________________________________', row);
-
               return (
                 <tr
                   key={row.employee.id}
@@ -122,7 +120,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     return (
                       <td
                         key={col.key}
-                        className=" bg-white align-top border-b border-gray-50"
+                        className=" bg-white align-middle border-b border-gray-50 p-2"
                         // // colSpan={1}
                         style={{
                           width: SUMMARY_COL_W,

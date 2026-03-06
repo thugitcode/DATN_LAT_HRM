@@ -19,10 +19,19 @@ interface ActionButtonProps {
   tooltip: string;
   ariaLabel: string;
   onPress: () => void;
+  isLoading?: boolean;
+  isDisabled?: boolean;
   children: ReactNode;
 }
 
-const ActionButton: FC<ActionButtonProps> = ({ tooltip, ariaLabel, onPress, children }) => (
+const ActionButton: FC<ActionButtonProps> = ({
+  tooltip,
+  ariaLabel,
+  onPress,
+  isLoading,
+  isDisabled,
+  children,
+}) => (
   <Tooltip content={tooltip} showArrow>
     <Button
       isIconOnly
@@ -31,6 +40,8 @@ const ActionButton: FC<ActionButtonProps> = ({ tooltip, ariaLabel, onPress, chil
       color="default"
       className={ACTION_BTN_CLASS}
       onPress={onPress}
+      isLoading={isLoading}
+      isDisabled={isDisabled}
     >
       {children}
     </Button>
@@ -48,6 +59,8 @@ interface ActionsPageProps<T extends Record<string, unknown> = Record<string, un
   importConfig?: ExcelImportConfig<T>;
   onExportTemplate?: () => void;
   onExport?: () => void;
+  onPrint?: () => void;
+  onImport?: () => void;
 }
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -58,9 +71,10 @@ export const ActionsPage = <T extends Record<string, unknown> = Record<string, u
   importConfig,
   onExportTemplate,
   onExport,
+  onPrint,
+  onImport,
 }: ActionsPageProps<T>) => {
   const { clearFilters } = useQueryFilter({ replace: true });
-  const { fileInputRef, triggerImport, handleFileChange } = useExcelIO();
 
   return (
     <div className="flex items-stretch gap-3">
@@ -71,22 +85,40 @@ export const ActionsPage = <T extends Record<string, unknown> = Record<string, u
           </ActionButton>
         </li>
 
-        {importConfig && (
+        {/* Chỉ render khi có importConfig */}
+        {onImport && (
+          <li>
+            <ActionButton tooltip="Nhập file excel" ariaLabel="Import excel" onPress={onImport}>
+              {icons.import}
+            </ActionButton>
+          </li>
+        )}
+
+        {onExport && (
+          <li>
+            <ActionButton tooltip="Xuất excel" ariaLabel="export excel" onPress={onExport}>
+              {icons.export}
+            </ActionButton>
+          </li>
+        )}
+
+        {onExportTemplate && (
           <li>
             <ActionButton
-              tooltip="Nhập file excel"
-              ariaLabel="Import excel"
-              onPress={triggerImport}
+              tooltip="Xuất file mẫu"
+              ariaLabel="Export excel template"
+              onPress={onExportTemplate}
             >
-              I
+              {icons.exportSampleFile}
             </ActionButton>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".xlsx,.xls"
-              className="hidden"
-              onChange={(e) => handleFileChange(e, importConfig)}
-            />
+          </li>
+        )}
+
+        {onPrint && (
+          <li>
+            <ActionButton tooltip="In" ariaLabel="In" onPress={onPrint}>
+              {icons.print}
+            </ActionButton>
           </li>
         )}
       </ul>

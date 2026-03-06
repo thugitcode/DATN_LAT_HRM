@@ -1,4 +1,3 @@
-import type { HourlyPayrollDay } from "@/features/timekeeping-shift-scheduling/timekeeping-management/types/index.type";
 export interface IStaff {
   name: string;
   code: string;
@@ -20,7 +19,6 @@ export interface DailyAttendance {
   overtimeHours: number;
   compHours: number;
 }
-
 
 export interface DetailsTimeSheetRecord {
   staff: IStaff;

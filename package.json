@@ -64,6 +64,7 @@
     "react-dom": "^19.2.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.71.1",
+    "react-to-print": "^3.3.0",
     "recharts": "^3.5.1",
     "tailwindcss": "^4.1.18",
     "tippy.js": "^6.3.7",
