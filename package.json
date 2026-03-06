@@ -68,6 +68,7 @@
     "tailwindcss": "^4.1.18",
     "tippy.js": "^6.3.7",
     "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0",
     "xstate": "^5.23.0",
     "zod": "^4.1.12",
     "zustand": "^5.0.8"

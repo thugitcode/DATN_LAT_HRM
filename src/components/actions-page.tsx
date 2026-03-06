@@ -8,57 +8,78 @@ import { useQueryFilter } from '@/hooks/useQueryFilter';
 
 import { LayoutSwitcher } from './layout-switcher';
 
-interface ActionsPageProps<T = Record<string, unknown>> {
+// ─── Constants ───────────────────────────────────────────────────────────────
+
+const DIVIDER_CLASS = 'inline-block w-0.5 bg-[#11111126] self-stretch';
+const ACTION_BTN_CLASS = 'border-none bg-[#D4D4D866] rounded-lg';
+
+// ─── Sub-components ──────────────────────────────────────────────────────────
+
+interface ActionButtonProps {
+  tooltip: string;
+  ariaLabel: string;
+  onPress: () => void;
+  children: ReactNode;
+}
+
+const ActionButton: FC<ActionButtonProps> = ({ tooltip, ariaLabel, onPress, children }) => (
+  <Tooltip content={tooltip} showArrow>
+    <Button
+      isIconOnly
+      aria-label={ariaLabel}
+      variant="faded"
+      color="default"
+      className={ACTION_BTN_CLASS}
+      onPress={onPress}
+    >
+      {children}
+    </Button>
+  </Tooltip>
+);
+
+const Divider: FC = () => <span className={DIVIDER_CLASS} />;
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+interface ActionsPageProps<T extends Record<string, unknown> = Record<string, unknown>> {
   actions?: ReactNode;
   hiddenLayoutSwitcher?: boolean;
   exportConfig?: ExcelExportConfig<T>;
   importConfig?: ExcelImportConfig<T>;
   onExportTemplate?: () => void;
+  onExport?: () => void;
 }
 
-export const ActionsPage = <T = Record<string, unknown>,>({
+// ─── Component ───────────────────────────────────────────────────────────────
+
+export const ActionsPage = <T extends Record<string, unknown> = Record<string, unknown>>({
   actions,
   hiddenLayoutSwitcher = false,
-  exportConfig,
   importConfig,
   onExportTemplate,
+  onExport,
 }: ActionsPageProps<T>) => {
   const { clearFilters } = useQueryFilter({ replace: true });
-  const { fileInputRef, exportToExcel, exportTemplate, triggerImport, handleFileChange } =
-    useExcelIO();
+  const { fileInputRef, triggerImport, handleFileChange } = useExcelIO();
 
   return (
     <div className="flex items-stretch gap-3">
       <ul className="flex items-center gap-2">
         <li>
-          <Tooltip content="Tải lại" showArrow>
-            <Button
-              isIconOnly
-              aria-label="Reload"
-              variant="faded"
-              color="default"
-              className="border-none bg-[#D4D4D866] rounded-lg"
-              onPress={clearFilters}
-            >
-              {icons.reload}
-            </Button>
-          </Tooltip>
+          <ActionButton tooltip="Tải lại" ariaLabel="Reload" onPress={clearFilters}>
+            {icons.reload}
+          </ActionButton>
         </li>
 
         {importConfig && (
           <li>
-            <Tooltip content="Nhập file excel" showArrow>
-              <Button
-                isIconOnly
-                aria-label="Import excel"
-                variant="faded"
-                color="default"
-                className="border-none bg-[#D4D4D866] rounded-lg"
-                onPress={triggerImport}
-              >
-                I
-              </Button>
-            </Tooltip>
+            <ActionButton
+              tooltip="Nhập file excel"
+              ariaLabel="Import excel"
+              onPress={triggerImport}
+            >
+              I
+            </ActionButton>
             <input
               ref={fileInputRef}
               type="file"
@@ -68,47 +89,14 @@ export const ActionsPage = <T = Record<string, unknown>,>({
             />
           </li>
         )}
-
-         
-        <li>
-          <Tooltip content="Xuất file excel" showArrow>
-            <Button
-              isIconOnly
-              aria-label="Export excel"
-              variant="faded"
-              color="default"
-              className="border-none bg-[#D4D4D866] rounded-lg"
-              isDisabled={!exportConfig}
-              onPress={exportConfig ? () => exportToExcel(exportConfig) : undefined}
-            >
-              {icons.export}
-            </Button>
-          </Tooltip>
-        </li>
-{/*
-        <li>
-          <Tooltip content="Xuất file mẫu" showArrow>
-            <Button
-              isIconOnly
-              aria-label="Export excel template"
-              variant="faded"
-              color="default"
-              className="border-none bg-[#D4D4D866] rounded-lg"
-              isDisabled={!onExportTemplate}
-              onPress={onExportTemplate}
-            >
-              {icons.exportSampleFile}
-            </Button>
-          </Tooltip>
-        </li> */}
       </ul>
 
-      <span className="inline-block w-0.5 bg-[#11111126] flex-1" />
+      <Divider />
 
       {!hiddenLayoutSwitcher && (
         <>
           <LayoutSwitcher />
-          <span className="inline-block w-0.5 bg-[#11111126] flex-1" />
+          <Divider />
         </>
       )}
 

@@ -221,8 +221,6 @@ export const WorkShiftsForm = () => {
 
       const firstInvalid = container.querySelector<HTMLElement>('[aria-invalid="true"]');
 
-      console.log('firstInvalid_)_______', firstInvalid);
-
       if (!firstInvalid) return;
 
       firstInvalid.scrollIntoView({

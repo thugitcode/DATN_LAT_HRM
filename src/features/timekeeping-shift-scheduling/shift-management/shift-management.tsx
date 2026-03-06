@@ -1,6 +1,3 @@
-import { useMemo } from 'react';
-import dayjs from 'dayjs';
-
 import type { ShiftManagementParams } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
@@ -17,7 +14,6 @@ import { ShiftManagementGrid } from './components/grid-layout/shift-management-g
 import { ShiftManagementFilter } from './components/shift-management-filter';
 import { ShiftManagementListview } from './components/shift-management-listview';
 import { SHIFT_CA_LEGEND } from './constants/data';
-import { downloadShiftTemplate } from './constants/shift-template';
 import { useShiftExport } from './hooks/use-shift-export';
 import { useShiftManagementList } from './hooks/use-shift-management';
 
@@ -39,7 +35,7 @@ export const ShiftManagement = () => {
     getAll: currentLayout === LayoutSwitcherEnum.GRID ? true : undefined,
   });
 
-  const { exportConfig } = useShiftExport(data?.data);
+  const { onExport, onExportTemplate } = useShiftExport();
 
   return (
     <div className="flex flex-col justify-between h-full">
@@ -50,10 +46,9 @@ export const ShiftManagement = () => {
 
             <ActionsPage
               actions={<BtnCreateShift />}
-              // exportConfig={exportConfig}
               // importConfig={importConfig}
-              // exportConfig={exportConfig}
-              // onExportTemplate={() => downloadShiftTemplate()}
+              onExport={onExport}
+              onExportTemplate={onExportTemplate}
             />
           </div>
           <ShiftManagementFilter />
