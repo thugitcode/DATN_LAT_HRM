@@ -16,44 +16,7 @@ import {
 import { IconPencil } from '@tabler/icons-react';
 
 import type { Staff } from '@/types/staff.type';
-
-const translateJobTitle = (title: string) => {
-    const titles: Record<string, string> = {
-        'DOCTOR': 'Bác sĩ',
-        'NURSE': 'Điều dưỡng',
-        'TECHNICIAN': 'Kỹ thuật viên',
-        'MIDWIFE': 'Hộ sinh',
-        'PHYSICIAN_ASSISTANT': 'Y sĩ',
-        'OFFICE_STAFF': 'Nhân viên văn phòng',
-        'MANAGEMENT': 'Quản lý',
-        'LAB_TECHNICIAN': 'Kỹ thuật viên xét nghiệm',
-        'IMAGING_TECHNICIAN': 'Kỹ thuật viên chẩn đoán hình ảnh',
-        'CASHIER': 'Thu ngân',
-        'RECEPTIONIST': 'Lễ tân',
-        'WAREHOUSE_KEEPER': 'Thủ kho',
-        'PHARMACIST': 'Dược sĩ',
-        'SALES': 'Sale',
-        'TELESALES': 'Telesale',
-        'MARKETING': 'Marketing',
-        'CUSTOMER_SUPPORT': 'Chăm sóc khách hàng',
-        'MARKETING_LEAD': 'Trưởng nhóm marketing',
-        'CUSTOMER_SUPPORT_LEAD': 'Trưởng nhóm CSKH',
-    };
-    return titles[title] || title || '—';
-};
-
-const translatePosition = (position: string) => {
-    const positions: Record<string, string> = {
-        'STAFF': 'Nhân viên',
-        'HEAD_OF_DEPARTMENT': 'Trưởng khoa',
-        'DEPUTY_HEAD_OF_DEPARTMENT': 'Phó khoa',
-        'CHIEF_NURSE': 'Điều dưỡng trưởng',
-        'MANAGER': 'Trưởng phòng',
-        'HEAD_OF_UNIT': 'Trưởng bộ phận',
-        'DEPUTY_MANAGER': 'Phó phòng',
-    };
-    return positions[position] || position || '—';
-};
+import { translateJobTitle, translatePosition } from '../../time-attendance-management/helpers';
 
 const renderStatusChip = (status?: string) => {
     switch (status) {

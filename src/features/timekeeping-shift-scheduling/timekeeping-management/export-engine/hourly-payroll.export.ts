@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { getDaysInMonth, getWeeksInMonth } from '../../helper';
 import type { AttendanceByHoursResponse } from '../types/timekeeping-management.type';
 import { buildSheet, DAY_SHORT, writeWorkbook, type SheetData } from './export.engine';
+import { translatePosition } from '@/features/staff-management/time-attendance-management/helpers';
 
 // ─── LIST layout ──────────────────────────────────────────────────────────────
 
@@ -77,7 +78,7 @@ export function exportHourlyPayrollTable(
       record.departments?.map((d) => d.name).join('\n') ?? '',
       record.staffCode ?? '',
       record.staffName ?? '',
-      record.position ?? '',
+      translatePosition(record.position ?? ''),
     ];
 
     allDays.forEach((day) => {
@@ -160,7 +161,7 @@ export function exportHourlyPayrollGrid(
       record.staffName ?? '',
       record.departments?.map((d) => d.name).join('\n') ?? '',
       record.rooms?.map((r) => r.name).join('\n') ?? '',
-      record.position ?? '',
+      translatePosition(record.position ?? ''),
     ];
 
     days.forEach((d) => {

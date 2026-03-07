@@ -280,6 +280,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                     <ActionsPage
                         // hiddenLayoutSwitcher={activeKey === TAB_KEYS.DETAILED_TIME_SHEET}
                         exportConfig={exportConfig}
+                        // onExport={exportConfig}
                         actions={
                             <div className="flex gap-3">
                                 <Button color="primary" onPress={onOpen}>

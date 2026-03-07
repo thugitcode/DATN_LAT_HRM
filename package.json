@@ -65,6 +65,7 @@
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.71.1",
     "react-to-print": "^3.3.0",
+    "react-number-format": "^5.4.4",
     "recharts": "^3.5.1",
     "tailwindcss": "^4.1.18",
     "tippy.js": "^6.3.7",

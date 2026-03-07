@@ -50,7 +50,7 @@ import { useStaffList } from '@/query-options/staff';
 import { ContractStatusEnum, StaffPositionEnum } from '@/types/staff.type';
 import type { StaffContract } from '@/types/staff.type';
 import dayjs from 'dayjs';
-import { StaffContractFormDrawer } from './staff-contract-form-drawer';
+import { StaffContractFormDrawer } from './staff-contract-form-drawer copy';
 import { useQuery } from '@tanstack/react-query';
 import { departmentQueryOptions } from '@/services/query-options/department.query';
 import { roomQueryOptions } from '@/services/query-options/room.query';
@@ -792,9 +792,9 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                         <div className="flex items-center justify-end gap-2">
                                             {contractStatus === 'PENDING_APPROVAL' && (
                                                 <>
-                                                    <Button isIconOnly size="sm" variant="flat" className="bg-[#FEE2E2] text-[#EF4444] min-w-8 w-8 h-8 rounded-lg" onPress={() => openDeleteModal(history._contractId)}>
+                                                    {/* <Button isIconOnly size="sm" variant="flat" className="bg-[#FEE2E2] text-[#EF4444] min-w-8 w-8 h-8 rounded-lg" onPress={() => openDeleteModal(history._contractId)}>
                                                         <IconX size={16} />
-                                                    </Button>
+                                                    </Button> */}
                                                     <Button size="sm" color="primary" className="bg-[#006FEE] text-white font-semibold h-8 rounded-lg px-4" isLoading={approveMutation.isPending} onPress={() => handleApprove(history._contractId)}>
                                                         Duyệt
                                                     </Button>
@@ -802,9 +802,9 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                             )}
                                             {contractStatus === 'PENDING_SIGNATURE' && (
                                                 <>
-                                                    <Button isIconOnly size="sm" variant="flat" className="bg-[#FEE2E2] text-[#EF4444] min-w-8 w-8 h-8 rounded-lg" onPress={() => openDeleteModal(history._contractId)}>
+                                                    {/* <Button isIconOnly size="sm" variant="flat" className="bg-[#FEE2E2] text-[#EF4444] min-w-8 w-8 h-8 rounded-lg" onPress={() => openDeleteModal(history._contractId)}>
                                                         <IconX size={16} />
-                                                    </Button>
+                                                    </Button> */}
                                                     <Button size="sm" className="bg-[#020617] text-white font-semibold h-8 rounded-lg px-4" isLoading={signMutation.isPending} onPress={() => handleSign(history._contractId)}>
                                                         Ký hợp đồng
                                                     </Button>

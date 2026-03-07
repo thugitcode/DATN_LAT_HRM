@@ -412,7 +412,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                 <h3 className="text-[15px] font-bold text-[#11181C]">Thông tin hợp đồng</h3>
                                             </div>
 
-                                            <div className="pr-12 flex flex-col gap-4">
+                                            <div className="flex flex-col gap-4">
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <Select
                                                         label="Loại hợp đồng"
