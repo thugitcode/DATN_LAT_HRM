@@ -249,7 +249,7 @@ export const staffContractSchema = z.object({
     contractNumber: z.string().optional(),
     startDate: z.string().min(1, 'Vui lòng chọn ngày bắt đầu'),
     endDate: z.string().min(1, 'Vui lòng chọn ngày kết thúc'),
-    departmentId: z.string().min(1, 'Vui lòng chọn khoa quản lý'),
+    // departmentId: z.string().min(1, 'Vui lòng chọn khoa quản lý'),
     roomId: z.string().optional(),
     directManagerIds: z.array(z.string()).min(1, 'Vui lòng chọn ít nhất một quản lý trực tiếp'),
     shiftType: z.string().min(1, 'Vui lòng chọn loại hình làm việc theo ca'),

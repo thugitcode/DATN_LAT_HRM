@@ -1,27 +1,34 @@
 ﻿// staff-contract-form-drawer.tsx
 import type { FC } from 'react';
 import { useEffect } from 'react';
-import { useForm, FormProvider, Form } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  DrawerFooter,
-  Button,
-} from '@heroui/react';
 // import các section component sẽ tạo sau
-import { useContractDetail } from '@/query-options/staff-contract';
+import {
+  useContractDetail,
+  useCreateContract,
+  useUpdateContract,
+} from '@/query-options/staff-contract';
+import {
+  Button,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+} from '@heroui/react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormProvider, useForm } from 'react-hook-form';
+
+import { BtnCancel } from '@/components/btn-cancel';
+
 import { staffContractSchema, type StaffContractFormValues } from '../schemas';
 import { ContractInfoSection } from './sections/contract-info-section';
-import { InsuranceAndUnionSection } from './sections/insurance-and-union-section';
 import { HealthCareInsuranceSection } from './sections/health-care-insurance-section';
-import { SalaryStructureSection } from './sections/salary-structure-section';
-import { SalaryInfoSection } from './sections/salary-info-section';
+import { InsuranceAndUnionSection } from './sections/insurance-and-union-section';
 import { LeaveBenefitsSection } from './sections/leave-benefits-section';
 import { PersonalIncomeTaxSection } from './sections/personal-income-tax-section';
-import { BtnCancel } from '@/components/btn-cancel';
+import { SalaryInfoSection } from './sections/salary-info-section';
+import { SalaryStructureSection } from './sections/salary-structure-section';
+
 // import các query hooks khác giữ nguyên...
 
 interface StaffContractFormDrawerProps {
@@ -41,6 +48,9 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
   const { data: contractRes, isLoading: isDetailLoading } = useContractDetail(contractId || '');
   const contract = contractRes?.data;
 
+  const createMutation = useCreateContract(staffId);
+  const updateMutation = useUpdateContract(staffId);
+
   const methods = useForm<StaffContractFormValues>({
     resolver: zodResolver(staffContractSchema),
     defaultValues: {
@@ -53,7 +63,6 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       contractNumber: '',
       startDate: '',
       endDate: '',
-      departmentId: '',
       roomId: '',
       directManagerIds: [],
       shiftType: '',
@@ -84,20 +93,23 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
         businessTripAllowance: '',
         otherAllowance: '',
 
-
         leaveQuotaIds: [],
 
         hasFamilyDeduction: false,
         dependentsCount: '',
         hasPersonalIncomeTax: true,
-        personalIncomeTaxRate: ''
+        personalIncomeTaxRate: '',
       },
       // thêm default cho các field khác sau
     },
     mode: 'onChange',
   });
 
-  const { handleSubmit, reset, formState: { isSubmitting, errors } } = methods;
+  const {
+    handleSubmit,
+    reset,
+    formState: { isSubmitting, errors },
+  } = methods;
 
   // Reset form khi mở drawer (create mode)
   useEffect(() => {
@@ -114,13 +126,12 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
         contractNumber: '',
         startDate: '',
         endDate: '',
-        departmentId: '',
         roomId: '',
         directManagerIds: [],
         shiftType: '',
         fixedShiftId: '',
         workingDays: [1, 2, 3, 4, 5],
-        workingAreas: [{ departmentId: "", roomId: "" }],
+        workingAreas: [{ departmentId: '', roomId: '' }],
         salary: {
           hasHealthInsurance: false,
           healthInsuranceRate: '',
@@ -156,7 +167,10 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
   useEffect(() => {
     if (!contract) return;
 
+    const salaryData = contract.salary;
+
     reset({
+      // ── Thông tin hợp đồng ───────────────────────────────────────
       contractType: contract.contractType || '',
       workType: contract.workType || '',
       jobTitle: contract.jobTitle || '',
@@ -166,14 +180,73 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       contractNumber: contract.contractNumber || '',
       startDate: contract.startDate || '',
       endDate: contract.endDate || '',
-      departmentId: contract.department?.id || '',
       roomId: contract.room?.id || '',
       directManagerIds: contract.directManagerIds || [],
       shiftType: contract.shiftType || '',
       fixedShiftId: contract.fixedShiftId || '',
       workingDays: contract.workingDays || [1, 2, 3, 4, 5],
 
-      // bổ sung salary, workingAreas,... sau
+      // ── Khu vực làm việc (workingAreas) ───────────────────────────
+      workingAreas:
+        contract?.staff?.rlsStaffDepartments?.length > 0
+          ? contract.staff.rlsStaffDepartments.map((rsd: any, idx: number) => {
+              const deptId = rsd.department?.id || '';
+              // Tìm phòng khớp với khoa (lấy phòng đầu tiên nếu có nhiều)
+              const matchingRoom = contract.staff?.rlsStaffRooms?.find(
+                (rsr: any) => rsr.room?.department?.id === deptId,
+              );
+              return {
+                departmentId: deptId,
+                roomId: matchingRoom?.room?.id || '',
+              };
+            })
+          : [{ departmentId: '', roomId: '' }], // fallback nếu không có data
+
+      // ── Salary object ─────────────────────────────────────────────
+      salary: {
+        // Bảo hiểm & công đoàn
+        hasHealthInsurance: salaryData.hasHealthInsurance || false,
+        healthInsuranceRate: salaryData.healthInsuranceRate?.toString() || '',
+        hasSocialInsurance: salaryData.hasSocialInsurance || false,
+        socialInsuranceRate: salaryData.socialInsuranceRate?.toString() || '',
+        hasUnemploymentInsurance: salaryData.hasUnemploymentInsurance || false,
+        unemploymentInsuranceRate: salaryData.unemploymentInsuranceRate?.toString() || '',
+        hasUnionFee: salaryData.hasUnionFee || false,
+        unionFee: salaryData.unionFee?.toString() || '',
+
+        // Bảo hiểm sức khỏe
+        hasHealthCareInsurance: salaryData.hasHealthCareInsurance || false,
+        healthCareInsuranceCompany: salaryData.healthCareInsuranceCompany || '',
+        healthCareInsuranceBenefit: salaryData.healthCareInsuranceBenefit?.toString() || '',
+        healthCareInsuranceRate: salaryData.healthCareInsuranceRate?.toString() || '',
+
+        // Nghỉ phép & phúc lợi
+        leaveQuotaIds: salaryData.leaveQuotaIds || [],
+
+        // Thuế TNCN
+        hasFamilyDeduction: salaryData.hasFamilyDeduction || false,
+        dependentsCount: salaryData.dependentsCount?.toString() || '',
+        hasPersonalIncomeTax: salaryData.hasPersonalIncomeTax ?? true,
+        personalIncomeTaxRate: salaryData.personalIncomeTaxRate?.toString() || '',
+
+        // Cấu trúc lương
+        basicSalary: salaryData.basicSalary?.toString() || '',
+        insuranceSalary: salaryData.insuranceSalary?.toString() || '',
+        responsibilityAllowance: salaryData.responsibilityAllowance?.toString() || '',
+        positionAllowance: salaryData.positionAllowance?.toString() || '',
+        hazardAllowance: salaryData.hazardAllowance?.toString() || '',
+        mealAllowance: salaryData.mealAllowance?.toString() || '',
+        mealAllowanceUnit: salaryData.mealAllowanceUnit || 'DAY',
+        fuelAllowance: salaryData.fuelAllowance?.toString() || '',
+        phoneAllowance: salaryData.phoneAllowance?.toString() || '',
+        businessTripAllowance: salaryData.businessTripAllowance?.toString() || '',
+        otherAllowance: salaryData.otherAllowance?.toString() || '',
+
+        // Thông tin lương
+        salaryType: salaryData.salaryType || 'NET',
+        netSalary: salaryData.netSalary?.toString() || '',
+        grossSalary: salaryData.grossSalary?.toString() || '',
+      },
     });
   }, [contract, reset]);
 
@@ -183,17 +256,15 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       staffId,
       ...data,
       duration: Number(data.duration),
-      workingAreas: [], // sẽ xử lý ở section sau
-      salary: {}, // sẽ xử lý sau
       // ... map các field khác
     };
-    console.log(payload,7777);
-    
-    // if (isEditMode && contractId) {
-    //   await updateMutation.mutateAsync({ id: contractId, data: payload });
-    // } else {
-    //   await createMutation.mutateAsync(payload);
-    // }
+    console.log(payload, 7777, data);
+
+    if (isEditMode && contractId) {
+      await updateMutation.mutateAsync({ id: contractId, data: payload });
+    } else {
+      await createMutation.mutateAsync(payload);
+    }
     onClose();
   });
   console.log(errors, 333, errors);
@@ -220,7 +291,10 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
             </div>
           ) : (
             <FormProvider {...methods}>
-              <Form onSubmit={() => onSubmit()} className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
+              <Form
+                onSubmit={() => onSubmit()}
+                className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full"
+              >
                 {/* Bắt đầu với phần Thông tin hợp đồng */}
                 <div className="flex flex-col gap-6 pb-18">
                   <ContractInfoSection />
@@ -236,10 +310,10 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                   <LeaveBenefitsSection />
                   <PersonalIncomeTaxSection />
                 </div>
-                <div className='absolute bottom-0 bg-white p-4 w-full left-0 flex justify-end gap-2 z-10'>
+                <div className="absolute bottom-0 bg-white p-4 w-full left-0 flex justify-end gap-2 z-10">
                   <BtnCancel isDisabled={isSubmitting} onPress={onClose} />
                   <Button
-                    type='submit'
+                    type="submit"
                     color="primary"
                     // onClick={onSubmit}
                     isLoading={isSubmitting}

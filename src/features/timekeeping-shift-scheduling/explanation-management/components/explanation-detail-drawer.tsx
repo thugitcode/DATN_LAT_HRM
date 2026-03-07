@@ -96,7 +96,6 @@ export const ExplanationDetailDrawer: FC = () => {
             console.error('Lỗi khi phê duyệt:', error);
         }
     };
-    console.log(status, 21231);
 
     const handleReject = async () => {
         try {
