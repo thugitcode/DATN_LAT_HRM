@@ -34,7 +34,7 @@ interface RowActionsProps {
   dataRow?: AttendanceExplanation;
 }
 
-const CONFIRM_CONFIG: Record<ConfirmAction, ConfirmConfig> = {
+export const CONFIRM_CONFIG: Record<ConfirmAction, ConfirmConfig> = {
   approve: {
     action: 'approve',
     title: 'Xác nhận phê duyệt',

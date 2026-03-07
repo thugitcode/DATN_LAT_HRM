@@ -1,12 +1,15 @@
-import { Input } from '@heroui/react';
+import { Input, type InputProps, type InternalForwardRefRenderFunction } from '@heroui/react';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
 
 import type { BaseFieldProps } from './types';
+import type { ReactNode } from 'react';
+import { cn } from '@/lib/utils';
 
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   type?: 'text' | 'time' | 'date';
   placeholder?: string;
+  endContent?: ReactNode
 };
 
 export function FormInput<T extends FieldValues>({
@@ -17,6 +20,7 @@ export function FormInput<T extends FieldValues>({
   placeholder,
   isRequired,
   disabled,
+  endContent
 }: Props<T>) {
   return (
     <Controller
@@ -35,7 +39,8 @@ export function FormInput<T extends FieldValues>({
           isInvalid={!!fieldState.error}
           errorMessage={fieldState.error?.message}
           classNames={{
-            label: 'text-base! font-normal leading-4 text-[#52525B]!',
+            label: cn('text-base font-normal leading-4 text-[#52525B]',
+              !!fieldState.error ? 'text-[#F31260]' : 'text-[#52525B]'),
             inputWrapper: `
   data-[invalid=true]:!bg-[#F4F4F5]
   group-data-[invalid=true]:!bg-[#F4F4F5]
@@ -44,6 +49,7 @@ export function FormInput<T extends FieldValues>({
           }}
           lang="en-GB"
           step={60}
+          endContent={endContent}
         />
       )}
     />

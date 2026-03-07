@@ -1,4 +1,4 @@
-import { Select, SelectItem, type SharedSelection } from '@heroui/react';
+import { Chip, Select, SelectItem, type SelectionMode, type SelectProps, type SharedSelection } from '@heroui/react';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
 
@@ -11,9 +11,10 @@ type Option = { key: string; label: string };
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   options: Option[];
   placeholder?: string;
+  onSelect?: (key: string | string[]) => void;
+  selectionMode?: SelectionMode;
+} & Partial<SelectProps<T>>;
 
-  onSelect?: (key: string) => void;
-};
 export function FormSelect<T extends FieldValues>({
   control,
   name,
@@ -23,6 +24,8 @@ export function FormSelect<T extends FieldValues>({
   disabled,
   placeholder,
   onSelect,
+  selectionMode = 'single',
+  ...props
 }: Props<T>) {
   return (
     <Controller
@@ -33,18 +36,40 @@ export function FormSelect<T extends FieldValues>({
           <FormLabel label={label} isRequired={isRequired} isError={!!fieldState.error} />
 
           <Select
+            selectionMode={selectionMode}
             isDisabled={disabled}
-            selectedKeys={field.value ? [field.value] : []}
-            onSelectionChange={(keys) => {
-              const selectedKey = [...keys][0] as string;
-              field.onChange(selectedKey);
+            selectedKeys={
+              selectionMode === 'multiple'
+                ? new Set(field.value ?? [])
+                : field.value
+                  ? new Set([field.value])
+                  : new Set()
+            }
+            onSelectionChange={(keys: SharedSelection) => {
+              if (keys === 'all') return;
 
-              field.onChange([...keys][0]);
-              if (selectedKey !== undefined) {
-                onSelect?.(selectedKey);
+              const values = Array.from(keys) as string[];
+
+              if (selectionMode === 'multiple') {
+                field.onChange(values);
+                onSelect?.(values);
+              } else {
+                const value = values[0];
+                field.onChange(value);
+                onSelect?.(value);
               }
             }}
             placeholder={placeholder ?? 'Chọn'}
+            {...(selectionMode === "multiple" && {
+              renderValue: (items) => (
+                <div className="flex flex-nowrap gap-2">
+                  {items.map((item) => (
+                    <Chip key={item.key}>{item.textValue}</Chip>
+                  ))}
+                </div>
+              ),
+            })}
+            {...props}
           >
             {options.map((opt) => (
               <SelectItem key={opt.key}>{opt.label}</SelectItem>
@@ -52,7 +77,7 @@ export function FormSelect<T extends FieldValues>({
           </Select>
 
           {fieldState.error && <FormErrorText errorMessage={fieldState.error.message} />}
-        </div>
+        </ div>
       )}
     />
   );

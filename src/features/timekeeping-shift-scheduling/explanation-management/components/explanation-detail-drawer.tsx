@@ -1,3 +1,5 @@
+import { ConfirmModal } from '@/components/confirm-modal/confirm-modal';
+import { CONFIRM_CONFIG } from '@/components/confirm-modal/confirm.config';
 import {
     attendanceExplanationDetailQueryOptions,
     useApproveAttendanceExplanation,
@@ -16,7 +18,7 @@ import { useEffect, useState } from 'react';
 export const ExplanationDetailDrawer: FC = () => {
     const { data: drawerData, onClose } = useDrawer((state) => state);
     const explanationId = (drawerData as { id: string })?.id;
-
+    const [openRejectModal, setOpenRejectModal] = useState<boolean>(true)
     const { data, isLoading } = useQuery({
         ...attendanceExplanationDetailQueryOptions(explanationId),
         enabled: !!explanationId,
@@ -84,7 +86,7 @@ export const ExplanationDetailDrawer: FC = () => {
             } else {
                 await update({
                     id: explanationId,
-                    status: AttendanceExplanationStatus.PENDING,
+                    status: AttendanceExplanationStatus.APPROVED,
                     managerConfirmation: managerConfirmationInput,
                     hrComment: hrCommentInput
                 });
@@ -94,10 +96,20 @@ export const ExplanationDetailDrawer: FC = () => {
             console.error('Lỗi khi phê duyệt:', error);
         }
     };
+    console.log(status, 21231);
 
     const handleReject = async () => {
         try {
-            await rejectMutation({ id: explanationId, reason: 'Từ chối giải trình' });
+            if (status === 'PENDING') {
+                await rejectMutation({ id: explanationId, reason: 'Từ chối giải trình' });
+            } else {
+                await update({
+                    id: explanationId,
+                    status: AttendanceExplanationStatus.REJECTED,
+                    managerConfirmation: managerConfirmationInput,
+                    hrComment: hrCommentInput
+                });
+            }
             onClose();
         } catch (error) {
             console.error('Lỗi khi từ chối:', error);
@@ -250,20 +262,22 @@ export const ExplanationDetailDrawer: FC = () => {
             {/* Actions */}
 
             <div className="p-4 bg-white border-t border-gray-100 flex items-center justify-end gap-3 mt-auto">
-                {(status === 'PENDING' || status === 'PENDING_HR') ? <Button
+                {/* {(status === 'PENDING' || status === 'PENDING_HR') ?  */}
+                <Button
                     variant="bordered"
                     color="danger"
-                    onPress={handleReject}
+                    onPress={() => (status === 'PENDING' || status === 'PENDING_HR') ? handleReject() : setOpenRejectModal(true)}
                     isLoading={isRejecting}
                     isDisabled={isApproving || isManagerApproving}
                     className="font-medium bg-white"
                     startContent={!isRejecting && <IconX size={16} />}
                 >
                     Từ chối
-                </Button> :
+                </Button>
+                {/* :
                     <Button variant="bordered" color="danger" onClick={onClose}>
                         Hủy
-                    </Button>}
+                    </Button>} */}
                 <Button
                     color="primary"
                     onPress={handleApprove}
@@ -275,7 +289,15 @@ export const ExplanationDetailDrawer: FC = () => {
                     Xác nhận
                 </Button>
             </div>
-
+            {/* <ConfirmModal
+                isOpen={openRejectModal}
+                config={ CONFIRM_CONFIG["reject"]}
+                isLoading={isApproving || isRejecting}
+                reason={reason}
+                onReasonChange={setReason}
+                onConfirm={handleConfirm}
+                onClose={handleClose}
+            /> */}
         </div>
     );
 };

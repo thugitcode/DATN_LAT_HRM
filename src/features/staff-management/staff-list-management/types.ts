@@ -10,5 +10,7 @@ export type StaffExportRow = {
   position: string;
   departments: string;
   rooms: string;
-  status: string;
+  status?: string;
+  workType: string;
+  endDate: string;
 };
