@@ -31,7 +31,6 @@ export const ShiftManagement = () => {
   const printRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { onExport, onExportTemplate } = useShiftExport();
   const { filters } = useQueryFilter<ShiftManagementParams>();
   const { startDate, endDate } = useMonthDateRange(filters.month);
 
@@ -45,6 +44,8 @@ export const ShiftManagement = () => {
     roomId: filters.roomId,
     getAll: currentLayout === LayoutSwitcherEnum.GRID ? true : undefined,
   });
+
+  const { onExport, onExportTemplate } = useShiftExport(data?.data ?? []);
 
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
@@ -71,7 +72,6 @@ export const ShiftManagement = () => {
                 onExport={onExport}
                 onExportTemplate={onExportTemplate}
                 onPrint={handlePrint}
-                // Import được xử lý riêng qua fileInputRef bên dưới
                 onImport={() => fileInputRef.current?.click()}
               />
             </div>

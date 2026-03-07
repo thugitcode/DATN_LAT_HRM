@@ -484,32 +484,22 @@ export const exportTemplateToExcel = (data: Staff[], year: number, month: number
   XLSX.writeFile(wb, `mau_phan_ca_thang_${month + 1}_${year}.xlsx`);
 };
 
-export const useShiftExport = () => {
+export const useShiftExport = (data: StaffSchedule[] = []) => {
   const { month, year } = useYearMonth();
   const currentLayout = useCurrentLayout();
   const isGrid = currentLayout === LayoutSwitcherEnum.GRID;
-  const queryClient = useQueryClient();
-  const { data: staffList } = useStaffList({
-    page: 1,
-    limit: 100,
-  });
-  const onExport = useCallback(async () => {
-    const result = await queryClient.fetchQuery(
-      shiftManagementQueryOptions.list({
-        getAll: true,
-      }),
-    );
-    const data = result?.data ?? [];
+  const { data: staffList } = useStaffList({ page: 1, limit: 100 });
 
+  const onExport = useCallback(() => {
     if (isGrid) {
       exportGridToExcel(data, year, month);
     } else {
       exportTableToExcel(data, year, month);
     }
-  }, [isGrid, year, month, queryClient]);
+  }, [isGrid, data, year, month]);
 
-  const onExportTemplate = useCallback(async () => {
-    exportTemplateToExcel(staffList?.data, year, month);
+  const onExportTemplate = useCallback(() => {
+    exportTemplateToExcel(staffList?.data ?? [], year, month);
   }, [staffList?.data, year, month]);
 
   return { onExport, onExportTemplate };

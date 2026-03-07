@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect } from 'react';
 import { useDrawer } from '@/store/useDrawer';
 import {
   Accordion,
@@ -16,20 +17,22 @@ import {
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconCaretRightFilled } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
 
 import { FormArea } from '@/components/form-fields/form-area';
+import { displayTime } from '@/features/timekeeping-shift-scheduling/helper';
 import { ShiftDetailsCard } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-card';
 
-import dayjs from 'dayjs';
-import { useEffect } from 'react';
-import { useAttendanceDetail, useUpdateAttendanceMutation } from '../../hooks/use-timekeeping-management';
+import {
+  useAttendanceDetail,
+  useUpdateAttendanceMutation,
+} from '../../hooks/use-timekeeping-management';
 import {
   shiftDetailsSchema,
   type shiftDetailsFormValues,
 } from '../../schemas/shift-details.schema';
 import { CheckInMethodEnum } from './type';
-import { displayTime } from '@/features/timekeeping-shift-scheduling/helper';
 
 const columns = [
   { key: 'changedByName', label: 'NGƯỜI ĐIỀU CHỈNH' },
@@ -43,7 +46,7 @@ export const ShiftDetailsDrawer = () => {
   const workScheduleDetailId = useDrawer((state) => state.data) as string;
 
   const { data, isLoading, refetch } = useAttendanceDetail(workScheduleDetailId);
-  const { mutate: updateAttendance } = useUpdateAttendanceMutation()
+  const { mutate: updateAttendance } = useUpdateAttendanceMutation();
 
   const detailData = data?.data;
 
@@ -51,13 +54,13 @@ export const ShiftDetailsDrawer = () => {
     control,
     handleSubmit,
     formState: { isSubmitting, dirtyFields },
-    reset
+    reset,
   } = useForm<shiftDetailsFormValues>({
     resolver: zodResolver(shiftDetailsSchema),
     defaultValues: {
-      reason: "",
-      actualCheckIn: "",
-      actualCheckOut: "",
+      reason: '',
+      actualCheckIn: '',
+      actualCheckOut: '',
       // faceIdCheckIn: undefined,
       // faceIdCheckOut: undefined,
     },
@@ -65,11 +68,11 @@ export const ShiftDetailsDrawer = () => {
   });
   useEffect(() => {
     reset({
-      reason: "",
-      actualCheckIn: detailData?.attendance?.checkInTime ?? "",
-      actualCheckOut: detailData?.attendance?.checkOutTime ?? "",
-    })
-  }, [detailData])
+      reason: '',
+      actualCheckIn: detailData?.attendance?.checkInTime ?? '',
+      actualCheckOut: detailData?.attendance?.checkOutTime ?? '',
+    });
+  }, [detailData]);
 
   const onSubmit = async (values: any) => {
     if (!dirtyFields.actualCheckIn && !dirtyFields.actualCheckOut) {
@@ -79,26 +82,31 @@ export const ShiftDetailsDrawer = () => {
       });
     }
 
-    const newValues = { ...values, actualCheckIn: dayjs(values.actualCheckIn, "HH:mm").format("HH:mm:ss"), actualCheckOut: dayjs(values.actualCheckOut, "HH:mm").format("HH:mm:ss"), id: detailData?.id ?? null }
+    const newValues = {
+      ...values,
+      actualCheckIn: dayjs(values.actualCheckIn, 'HH:mm').format('HH:mm:ss'),
+      actualCheckOut: dayjs(values.actualCheckOut, 'HH:mm').format('HH:mm:ss'),
+      id: detailData?.id ?? null,
+    };
     updateAttendance(newValues, {
       onSuccess: () => {
         addToast({
           description: 'Cập nhật ca thành công.',
           color: 'success',
         });
-        reset()
-        refetch()
+        reset();
+        refetch();
         // closedDrawer()
       },
       onError(error, variables, onMutateResult, context) {
-        console.log(error, "err");
+        console.log(error, 'err');
 
         addToast({
           description: 'Cập nhật ca thất bại.',
           color: 'danger',
         });
       },
-    })
+    });
   };
   return (
     <Form
@@ -109,40 +117,42 @@ export const ShiftDetailsDrawer = () => {
       <div className="bg-white w-full p-4 gap-3 flex flex-col">
         <ShiftDetailsCard shift={detailData} control={control} />
 
-        {detailData?.attendance.checkInMethod === CheckInMethodEnum.BIOMETRIC && <div className="flex gap-3">
-          <div className="flex flex-col gap-3">
-            <div className="font-medium">FaceID check in</div>
-            {detailData?.attendance.checkInImage ? (
-              <Image
-                alt="FaceID check in"
-                src={detailData.attendance.checkInImage}
-                width={183}
-                height={183}
-                isZoomed
-              />
-            ) : (
-              <div className="w-45.75 h-45.75 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-400">
-                Không có ảnh
-              </div>
-            )}
+        {detailData?.attendance.checkInMethod === CheckInMethodEnum.BIOMETRIC && (
+          <div className="flex gap-3">
+            <div className="flex flex-col gap-3">
+              <div className="font-medium">FaceID check in</div>
+              {detailData?.attendance.checkInImage ? (
+                <Image
+                  alt="FaceID check in"
+                  src={detailData.attendance.checkInImage}
+                  width={183}
+                  height={183}
+                  isZoomed
+                />
+              ) : (
+                <div className="w-45.75 h-45.75 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-400">
+                  Không có ảnh
+                </div>
+              )}
+            </div>
+            <div className="flex flex-col gap-3">
+              <div className="font-medium">FaceID check out</div>
+              {detailData?.attendance.checkOutImage ? (
+                <Image
+                  alt="FaceID check out"
+                  src={detailData.attendance.checkOutImage}
+                  width={183}
+                  height={183}
+                  isZoomed
+                />
+              ) : (
+                <div className="w-45.75 h-45.75 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-400">
+                  Không có ảnh
+                </div>
+              )}
+            </div>
           </div>
-          <div className="flex flex-col gap-3">
-            <div className="font-medium">FaceID check out</div>
-            {detailData?.attendance.checkOutImage ? (
-              <Image
-                alt="FaceID check out"
-                src={detailData.attendance.checkOutImage}
-                width={183}
-                height={183}
-                isZoomed
-              />
-            ) : (
-              <div className="w-45.75 h-45.75 rounded-xl bg-gray-100 flex items-center justify-center text-xs text-gray-400">
-                Không có ảnh
-              </div>
-            )}
-          </div>
-        </div>}
+        )}
       </div>
 
       <div className="p-4 w-full">
@@ -172,7 +182,7 @@ export const ShiftDetailsDrawer = () => {
             title="Lịch sử điều chỉnh"
             indicator={<IconCaretRightFilled />}
           >
-            <Table aria-label="Lịch sử điều chỉnh" classNames={{ wrapper: "mb-17.5" }}>
+            <Table aria-label="Lịch sử điều chỉnh" classNames={{ wrapper: 'mb-17.5' }}>
               <TableHeader columns={columns}>
                 {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
               </TableHeader>
