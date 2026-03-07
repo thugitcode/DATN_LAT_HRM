@@ -14,7 +14,6 @@ export const SalaryInfoSection: FC = () => {
     { key: 'NET', label: 'Lương Net' },
   ];
 const salaryType = watch("salary.salaryType")
-console.log(salaryType);
 
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">

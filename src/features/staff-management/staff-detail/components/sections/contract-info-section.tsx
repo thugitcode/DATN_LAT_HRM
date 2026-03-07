@@ -31,7 +31,6 @@ export const ContractInfoSection: FC = () => {
 
   const { data: roomsRes } = useQuery(roomQueryOptions.list({ getAll: true }));
   const rooms = roomsRes?.data || [];
-  console.log(errors, 7777, errors.duration);
 
   const { data: managersRes } = useStaffList({
     getAll: true,

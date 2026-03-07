@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
 
 import type { DetailsTimeSheetRecord } from '@/types/shift-details.type';
+import { translatePosition } from '@/features/staff-management/time-attendance-management/helpers';
 
+import { fillMissingDaysWithDayjs, getMonthRange } from '../../helper';
 import { buildSheet, writeWorkbook, type SheetData } from './export.engine';
 
 // DetailedTimeSheet is always a flat list (no grid layout variant)
@@ -51,17 +53,23 @@ export function exportDetailedTimeSheet(
         merges.push({ s: { r: currentRow, c }, e: { r: currentRow + numDays - 1, c } });
       }
     }
-
-    days.forEach((day, dayIdx) => {
+    const { start, end } = getMonthRange(month + 1, year);
+    const allDaysOfMonth = fillMissingDaysWithDayjs(
+      days,
+      dayjs(start).format('YYYY-MM-DD'),
+      dayjs(end).format('YYYY-MM-DD'),
+    );
+    
+    allDaysOfMonth?.forEach((day, dayIdx) => {
       const isFirst = dayIdx === 0;
       const cells: unknown[] = isFirst
         ? [
             globalIdx++,
             staff.code ?? '',
             staff.name ?? '',
-            staff.department ?? '',
-            staff.room ?? '',
-            staff.position ?? '',
+            staff.departments?.map(it=>it.name)?.join(", ") ?? '',
+            staff.rooms?.map(it=>it.name)?.join(", ") ?? '',
+            translatePosition(staff.position ?? ''),
           ]
         : ['', '', '', '', '', ''];
 
@@ -74,8 +82,8 @@ export function exportDetailedTimeSheet(
         day.lateMinutes ?? '',
         day.earlyMinutes ?? '',
         day.workCount ?? '',
-        day.totalWorkHours ?? '',
-        day.overtimeHours ?? '',
+        day.totalWorkHours?.toFixed(2) ?? '',
+        day.overtimeHours?.toFixed(2) ?? '',
         day.compHours ?? '',
       );
 

@@ -1,9 +1,13 @@
+import type { Item } from "@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info";
+
 export interface IStaff {
   name: string;
   code: string;
   position: string;
   department: string;
   room: string;
+  departments: Item[];
+  rooms: Item[];
 }
 
 export interface DailyAttendance {

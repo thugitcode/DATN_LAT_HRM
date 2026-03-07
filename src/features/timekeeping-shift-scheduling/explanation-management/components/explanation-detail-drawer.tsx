@@ -206,7 +206,7 @@ export const ExplanationDetailDrawer: FC = () => {
                                         </a>
                                         {file.fileSize > 0 && (
                                             <span className="text-xs text-gray-400 ml-5">
-                                                {(file.fileSize / 1024).toFixed(1)}KB
+                                                {(file.fileSize / 1024).toFixed(2)}KB
                                             </span>
                                         )}
                                     </div>
@@ -265,7 +265,8 @@ export const ExplanationDetailDrawer: FC = () => {
                 <Button
                     variant="bordered"
                     color="danger"
-                    onPress={() => (status === 'PENDING' || status === 'PENDING_HR') ? handleReject() : setOpenRejectModal(true)}
+                    // onPress={() => (status === 'PENDING' || status === 'PENDING_HR') ? handleReject() : setOpenRejectModal(true)}
+                    onPress={() => handleReject()}
                     isLoading={isRejecting}
                     isDisabled={isApproving || isManagerApproving}
                     className="font-medium bg-white"
