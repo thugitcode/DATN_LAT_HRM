@@ -49,25 +49,18 @@ const TAB_EXPORT_CONFIG: Record<TAB_KEYS, TabExportConfig> = {
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useTimekeepingExport(activeKey: TAB_KEYS) {
+export function useTimekeepingExport(activeKey: TAB_KEYS, data: unknown[] = []) {
   const { month, year } = useYearMonth();
   const currentLayout = useCurrentLayout();
   const isGrid = currentLayout === LayoutSwitcherEnum.GRID;
-  const queryClient = useQueryClient();
 
-  const onExport = useCallback(async () => {
+  const onExport = useCallback(() => {
     const tabConfig = TAB_EXPORT_CONFIG[activeKey];
     if (!tabConfig) return;
 
-    const result = await queryClient.fetchQuery(
-      tabConfig.queryOption({ getAll: true }) as Parameters<typeof queryClient.fetchQuery>[0],
-    );
-
-    const data = (result as { data?: unknown[] })?.data ?? [];
     const exportFn = isGrid && tabConfig.gridExport ? tabConfig.gridExport : tabConfig.listExport;
-
     exportFn(data, year, month);
-  }, [activeKey, isGrid, year, month, queryClient]);
+  }, [activeKey, isGrid, data, year, month]);
 
   return { onExport };
 }

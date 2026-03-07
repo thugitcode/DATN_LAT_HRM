@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import {
   Button,
   Modal,
@@ -11,7 +10,6 @@ import {
   useDisclosure,
 } from '@heroui/react';
 import { IconSparkles } from '@tabler/icons-react';
-import { useReactToPrint } from 'react-to-print';
 
 import { ActionsPage } from '@/components/actions-page';
 import { TitlePage } from '@/components/title-page';
@@ -24,16 +22,18 @@ import { TimekeepingManagementLegend } from './components/timekeeping-management
 import { TimekeepingManagementPrint } from './components/timekeeping-management-print';
 import { useTimekeepingExport } from './hooks/use-timekeeping-export';
 import { useTimekeepingPrint } from './hooks/use-timekeeping-print';
+import { useTimekeepingTabData } from './hooks/use-timekeeping-tab-data';
 import { useTimekeepingTabs } from './hooks/use-timekeeping-tabs';
 import { TAB_KEYS } from './types/index.type';
 
 export const TimekeepingManagement = () => {
-  const { tabs, activeKey, activeTab, onSelectionChange } = useTimekeepingTabs();
   const currentLayout = useCurrentLayout();
+  const { tabs, activeKey, activeTab, onSelectionChange } = useTimekeepingTabs();
+  const tabData = useTimekeepingTabData(activeKey);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const { onExport } = useTimekeepingExport(activeKey);
-  const { onPrint, printState, printRef, year, month } = useTimekeepingPrint(activeKey);
+  const { onExport } = useTimekeepingExport(activeKey, tabData);
+  const { onPrint, printState, printRef, year, month } = useTimekeepingPrint(activeKey, tabData);
 
   return (
     <div className="flex flex-col justify-between h-full">
