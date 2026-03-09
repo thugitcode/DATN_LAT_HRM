@@ -47,33 +47,30 @@ export function exportDetailedTimeSheet(
 
     staffGroups.push({ startRow: currentRow, rowCount: numDays });
 
-    // Merge fixed info cols across all day rows for this staff
-    if (numDays > 1) {
-      for (let c = 0; c < 6; c++) {
-        merges.push({ s: { r: currentRow, c }, e: { r: currentRow + numDays - 1, c } });
-      }
-    }
+    // // Merge fixed info cols across all day rows for this staff
+    // if (numDays > 1) {
+    //   for (let c = 0; c < 6; c++) {
+    //     merges.push({ s: { r: currentRow, c }, e: { r: currentRow + numDays - 1, c } });
+    //   }
+    // }
     const { start, end } = getMonthRange(month + 1, year);
     const allDaysOfMonth = fillMissingDaysWithDayjs(
       days,
       dayjs(start).format('YYYY-MM-DD'),
       dayjs(end).format('YYYY-MM-DD'),
     );
-    
+
     allDaysOfMonth?.forEach((day, dayIdx) => {
       const isFirst = dayIdx === 0;
-      const cells: unknown[] = isFirst
-        ? [
-            globalIdx++,
-            staff.code ?? '',
-            staff.name ?? '',
-            staff.departments?.map(it=>it.name)?.join(", ") ?? '',
-            staff.rooms?.map(it=>it.name)?.join(", ") ?? '',
-            translatePosition(staff.position ?? ''),
-          ]
-        : ['', '', '', '', '', ''];
+      const cells: unknown[] = []
 
       cells.push(
+        globalIdx++,
+        staff.code ?? '',
+        staff.name ?? '',
+        staff.departments?.map(it => it.name)?.join(", ") ?? '',
+        staff.rooms?.map(it => it.name)?.join(", ") ?? '',
+        translatePosition(staff.position ?? ''),
         dayjs(day.date).format('DD/MM/YYYY'),
         day.shiftCode ?? '',
         day.standardTime ?? '',

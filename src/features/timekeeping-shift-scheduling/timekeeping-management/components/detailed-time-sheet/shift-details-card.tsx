@@ -1,7 +1,7 @@
 import { useWatch, type Control } from 'react-hook-form';
 
 import { FormTimePicker } from '@/components/form-fields/form-time-picker';
-import { calculateWorkingHours, cn, formatDateVN, formatTime } from '@/lib/utils';
+import { calculateWorkingHours, calculateWorkingHoursOvernight, cn, formatDateVN, formatTime } from '@/lib/utils';
 
 import { calculateTotalBreakTime } from '@/features/timekeeping-shift-scheduling/helper';
 import dayjs from 'dayjs';
@@ -42,7 +42,7 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
 
   const newTotalWorkHours =
     (actualCheckIn && actualCheckOut
-      ? calculateWorkingHours(actualCheckIn, actualCheckOut, calculateTotalBreakTime(breaktime))
+      ? calculateWorkingHoursOvernight(actualCheckIn, actualCheckOut, breaktime)
       : totalWorkHours).toFixed(2)
 
   return (

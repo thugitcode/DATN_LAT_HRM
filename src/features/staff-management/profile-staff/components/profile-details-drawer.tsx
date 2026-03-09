@@ -56,8 +56,6 @@ export const ProfileDetailsDrawer = () => {
   const onSubmit = async (data: FormValues) => {
     try {
       // TODO: call API upload
-      console.log(data);
-
       addToast({ title: 'Thêm mới tài liệu thành công.', color: 'success' });
 
       reset();

@@ -23,7 +23,7 @@ export function useTimekeepingTabData(activeKey: TAB_KEYS) {
     search: filters.search,
     departmentId: filters.departmentId,
     roomId: filters.roomId,
-    getAll: currentLayout === LayoutSwitcherEnum.GRID ? true : undefined,
+    getAll: currentLayout === LayoutSwitcherEnum.GRID || activeKey === TAB_KEYS.DETAILED_TIME_SHEET ? true : undefined,
   };
 
   const worksheetQuery = useAttendanceTable(

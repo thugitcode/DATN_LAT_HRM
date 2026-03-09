@@ -6,6 +6,8 @@ import { hrmInstance } from '@/lib/axios';
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
+import type { SalaryFormValues } from '@/features/staff-management/salary-and-benefits/schemas';
+import type { ApiResponse } from '@/types';
 
 class StaffService extends BaseApiService<Staff, StaffParams> {
   constructor() {
@@ -16,6 +18,20 @@ class StaffService extends BaseApiService<Staff, StaffParams> {
     return super.getAll({
       ...DEFAULT_PAGINATION,
       ...params,
+    });
+  }
+
+  async getDetailsStaffSalary(id: string): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.get(`/staff-salary/staff/${id}`);
+      return res.data;
+    });
+  }
+
+  async patchDetailsStaffSalary(id: string, payload: SalaryFormValues): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.patch(`/staff-salary/staff/${id}`, payload.salary);
+      return res.data;
     });
   }
 }

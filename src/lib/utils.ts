@@ -337,6 +337,68 @@ export function calculateWorkingHours(
   return +(totalMinutes / 60).toFixed(2);
 }
 
+type BreakTime = {
+  breakStartTime: string; // "HH:mm:ss"
+  breakEndTime: string;   // "HH:mm:ss"
+};
+
+const toMinutes = (time: string) => {
+  const [h = 0, m = 0] = time.split(":").map(Number);
+  return h * 60 + m;
+};
+
+/**
+ * Tính giờ làm việc chính xác cho mọi ca overnight và break qua ngày
+ * @param checkIn giờ vào ca (HH:mm:ss)
+ * @param checkOut giờ ra ca (HH:mm:ss)
+ * @param breaks mảng break
+ * @returns số giờ làm việc, 2 chữ số thập phân
+ */
+export function calculateWorkingHoursOvernight(
+  checkIn: string,
+  checkOut: string,
+  breaks: BreakTime[] = []
+) {
+  let start = toMinutes(checkIn);
+  let end = toMinutes(checkOut);
+
+  // Nếu ca qua ngày
+  if (end <= start) {
+    end += 24 * 60;
+  }
+
+  const totalWorkMinutes = end - start;
+
+  const totalBreakMinutes = breaks.reduce((total, br) => {
+    let brStart = toMinutes(br.breakStartTime);
+    let brEnd = toMinutes(br.breakEndTime);
+
+    // Nếu break qua ngày
+    if (brEnd <= brStart) {
+      brEnd += 24 * 60;
+    }
+
+    // Break có thể lặp lại nhiều lần nếu nằm ngoài 0-24h, kiểm tra overlap
+    // Cách đơn giản: shift break lên từng ngày để overlap với ca
+    let overlap = 0;
+    for (let dayOffset = -1; dayOffset <= 1; dayOffset++) {
+      const s = brStart + dayOffset * 24 * 60;
+      const e = brEnd + dayOffset * 24 * 60;
+
+      const overlapStart = Math.max(start, s);
+      const overlapEnd = Math.min(end, e);
+
+      overlap += Math.max(0, overlapEnd - overlapStart);
+    }
+
+    return total + overlap;
+  }, 0);
+
+  const workingMinutes = totalWorkMinutes - totalBreakMinutes;
+
+  return +(workingMinutes / 60).toFixed(2);
+}
+
 interface Shift {
   id: string;
   name: string;

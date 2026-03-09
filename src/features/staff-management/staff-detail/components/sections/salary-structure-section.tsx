@@ -12,13 +12,15 @@ import {
 import { IconChevronDown } from '@tabler/icons-react';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { FormLabel } from '@/components/form-fields/form-label';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 
 
 export const SalaryStructureSection: FC = () => {
-    const { control, setValue, formState: { isSubmitting , errors} } = useFormContext();
-
+    const { control, setValue, formState: { isSubmitting, errors } } = useFormContext();
+    const { isView } = useControlMode()
+    const variant = isView ? "underlined" : "flat"
     const mealAllowanceUnit = useWatch({ control, name: 'salary.mealAllowanceUnit' });
-    
+
     return (
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-2">
@@ -35,7 +37,8 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập lương cơ bản"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     isRequired
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
 
                 {/* Lương đóng BHXH - optional */}
@@ -45,7 +48,8 @@ export const SalaryStructureSection: FC = () => {
                     label="Lương đóng BHXH"
                     placeholder="Nhập lương đóng BHXH"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
 
                 {/* Phụ cấp trách nhiệm */}
@@ -55,7 +59,8 @@ export const SalaryStructureSection: FC = () => {
                     label="Phụ cấp trách nhiệm"
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
 
                 {/* Phụ cấp chức vụ */}
@@ -65,7 +70,8 @@ export const SalaryStructureSection: FC = () => {
                     label="Phụ cấp chức vụ"
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
 
                 {/* Phụ cấp độc hại, nguy hiểm */}
@@ -75,7 +81,8 @@ export const SalaryStructureSection: FC = () => {
                     label="Phụ cấp độc hại, nguy hiểm"
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
 
                 {/* Phụ cấp ăn ca - có dropdown đơn vị */}
@@ -88,8 +95,9 @@ export const SalaryStructureSection: FC = () => {
                             name="salary.mealAllowance"
                             placeholder="Nhập"
                             isRequired
+                            variant={variant}
                             endContent={
-                                <div className="flex items-center gap-2">
+                                isView ? <span className='text-[#a1a1aa] text-sm'>{mealAllowanceUnit === 'DAY' ? 'Ngày' : 'Tháng'}</span> : <div className="flex items-center gap-2">
                                     <span className="text-[#a1a1aa] text-sm">VNĐ</span>
                                     <Dropdown>
                                         <DropdownTrigger>
@@ -118,7 +126,7 @@ export const SalaryStructureSection: FC = () => {
                                     </Dropdown>
                                 </div>
                             }
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || isView}
                         />
                     </div>
                 </div>
@@ -130,7 +138,8 @@ export const SalaryStructureSection: FC = () => {
                     label="Phụ cấp xăng xe"
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
 
                 {/* Phụ cấp điện thoại */}
@@ -140,7 +149,8 @@ export const SalaryStructureSection: FC = () => {
                     label="Phụ cấp điện thoại"
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
 
                 {/* Phụ cấp công tác */}
@@ -150,7 +160,8 @@ export const SalaryStructureSection: FC = () => {
                     label="Phụ cấp công tác"
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
 
                 {/* Phụ cấp khác */}
@@ -160,7 +171,8 @@ export const SalaryStructureSection: FC = () => {
                     label="Phụ cấp khác"
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
+                    variant={variant}
                 />
             </div>
         </div>

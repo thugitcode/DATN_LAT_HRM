@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const salarySchema = z
+export const salaryInnerSchema = z
     .object({
         hasHealthInsurance: z.boolean().default(false).optional(),
         healthInsuranceRate: z.string().optional(),
@@ -235,7 +235,14 @@ export const salarySchema = z
         }
         // Làm tương tự cho các field % khác nếu cần
     })
-    .optional(); // vẫn giữ .optional() cho toàn bộ salary nếu phù hợp
+    // .optional(); // vẫn giữ .optional() cho toàn bộ salary nếu phù hợp
 
 
-export type SalaryFormValues = z.infer<typeof salarySchema>;
+// Schema chính cho form (có key salary)
+export const salaryFormSchema = z.object({
+  salary: salaryInnerSchema,
+});
+
+export type SalaryFormValues = z.infer<typeof salaryFormSchema>;
+
+export type SalaryInnerValues = z.infer<typeof salaryInnerSchema>;

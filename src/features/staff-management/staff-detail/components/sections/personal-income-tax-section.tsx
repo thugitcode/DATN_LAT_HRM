@@ -4,10 +4,12 @@ import { useFormContext } from 'react-hook-form';
 import { IconReceiptTax } from '@tabler/icons-react';
 import { FormCheckbox } from '@/components/form-fields/form-checkbox';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 
 export const PersonalIncomeTaxSection: FC = () => {
     const { control, watch, formState: { isSubmitting } } = useFormContext();
-
+    const { isView } = useControlMode()
+    const variant = isView ? "underlined" : "flat"
     const hasFamilyDeduction = watch('salary.hasFamilyDeduction');
     const hasPersonalIncomeTax = watch('salary.hasPersonalIncomeTax');
 
@@ -25,7 +27,7 @@ export const PersonalIncomeTaxSection: FC = () => {
                         control={control}
                         name="salary.hasFamilyDeduction"
                         label="Giảm trừ gia cảnh"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isView}
                     />
 
                     <FormNumberInput
@@ -33,8 +35,9 @@ export const PersonalIncomeTaxSection: FC = () => {
                         name="salary.dependentsCount"
                         label="Số người phụ thuộc"
                         placeholder="Nhập số người"
-                        disabled={isSubmitting || !hasFamilyDeduction}
+                        disabled={isSubmitting || isView || !hasFamilyDeduction}
                         isRequired={hasFamilyDeduction}
+                        variant={variant}
                     />
                 </div>
 
@@ -45,7 +48,7 @@ export const PersonalIncomeTaxSection: FC = () => {
                         control={control}
                         name="salary.hasPersonalIncomeTax"
                         label="Thuế TNCN"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isView}
                     />
 
                     <FormNumberInput
@@ -54,7 +57,8 @@ export const PersonalIncomeTaxSection: FC = () => {
                         label="Tỷ lệ (%)"
                         placeholder="Nhập tỷ lệ"
                         endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
-                        disabled={isSubmitting || !hasPersonalIncomeTax}
+                        disabled={isSubmitting || isView || !hasPersonalIncomeTax}
+                        variant={variant}
                         isRequired={hasPersonalIncomeTax}
                     // Validate %: decimalScale={2}, min={0}, max={100}
                     // fixedDecimalScale
