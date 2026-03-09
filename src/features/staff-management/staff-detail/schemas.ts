@@ -1,6 +1,6 @@
 // src/schemas/staffContractSchema.ts
 import { z } from 'zod';
-import { salarySchema } from '../salary-and-benefits/schemas';
+import { salaryInnerSchema } from '../salary-and-benefits/schemas';
 
 export const staffContractSchema = z.object({
     contractType: z.string().min(1, 'Vui lòng chọn loại hợp đồng'),
@@ -33,7 +33,7 @@ export const staffContractSchema = z.object({
             (areas) => areas.every((area) => area.departmentId), // đảm bảo departmentId không rỗng
             { message: 'Khoa làm việc không được để trống' }
         ),
-    salary: salarySchema,
+    salary: salaryInnerSchema,
     // ... các field khác sẽ bổ sung sau
 });
 

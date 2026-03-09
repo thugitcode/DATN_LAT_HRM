@@ -3,11 +3,12 @@ import type { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { IconBeach } from '@tabler/icons-react';
 import { FormCheckboxGroup } from '@/components/form-fields/form-checkbox-group';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 
 
 export const LeaveBenefitsSection: FC = () => {
     const { control, formState: { isSubmitting } } = useFormContext();
-
+    const { isView } = useControlMode()
     return (
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-1">
@@ -19,7 +20,7 @@ export const LeaveBenefitsSection: FC = () => {
                 <FormCheckboxGroup
                     control={control}
                     name="salary.leaveQuotaIds"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isView}
                     options={[
                         { value: 'P1', label: 'Nghỉ phép năm' },
                         { value: 'P2', label: 'Nghỉ ngày đặc biệt' },

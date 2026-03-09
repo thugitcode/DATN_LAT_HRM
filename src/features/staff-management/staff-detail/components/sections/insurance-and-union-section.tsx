@@ -4,9 +4,13 @@ import { useFormContext } from 'react-hook-form';
 import { IconShieldCheck } from '@tabler/icons-react';
 import { FormCheckbox } from '@/components/form-fields/form-checkbox';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 
 export const InsuranceAndUnionSection: FC = () => {
   const { control, watch, formState: { isSubmitting } } = useFormContext();
+
+  const { isView } = useControlMode()
+  const variant = isView ? "underlined" : "flat"
 
   // Watch để disable/enable input tương ứng
   const hasHealthInsurance = watch('salary.hasHealthInsurance');
@@ -28,7 +32,7 @@ export const InsuranceAndUnionSection: FC = () => {
             control={control}
             name="salary.hasHealthInsurance"
             label="Bảo hiểm y tế"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isView}
           />
 
           <FormNumberInput
@@ -38,7 +42,8 @@ export const InsuranceAndUnionSection: FC = () => {
             placeholder="Nhập tỷ lệ"
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasHealthInsurance}
-            disabled={isSubmitting || !hasHealthInsurance}
+            disabled={isSubmitting || isView || !hasHealthInsurance}
+            variant={variant}
           />
         </div>
 
@@ -48,7 +53,7 @@ export const InsuranceAndUnionSection: FC = () => {
             control={control}
             name="salary.hasSocialInsurance"
             label="Bảo hiểm xã hội"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isView}
           />
 
           <FormNumberInput
@@ -58,7 +63,8 @@ export const InsuranceAndUnionSection: FC = () => {
             placeholder="Nhập tỷ lệ"
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasSocialInsurance}
-            disabled={isSubmitting || !hasSocialInsurance}
+            disabled={isSubmitting || isView || !hasSocialInsurance}
+            variant={variant}
           />
         </div>
 
@@ -68,7 +74,7 @@ export const InsuranceAndUnionSection: FC = () => {
             control={control}
             name="salary.hasUnemploymentInsurance"
             label="Bảo hiểm thất nghiệp"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isView}
           />
 
           <FormNumberInput
@@ -78,7 +84,8 @@ export const InsuranceAndUnionSection: FC = () => {
             placeholder="Nhập tỷ lệ"
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasUnemploymentInsurance}
-            disabled={isSubmitting || !hasUnemploymentInsurance}
+            disabled={isSubmitting || isView || !hasUnemploymentInsurance}
+            variant={variant}
           />
         </div>
 
@@ -88,7 +95,7 @@ export const InsuranceAndUnionSection: FC = () => {
             control={control}
             name="salary.hasUnionFee"
             label="Công đoàn"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isView}
           />
 
           <FormNumberInput
@@ -96,10 +103,13 @@ export const InsuranceAndUnionSection: FC = () => {
             name="salary.unionFee"
             label="Mức đóng"
             placeholder="Nhập mức đóng"
-            endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
+            endContent={<span className="text-[#a1a1aa] text-sm min-w-12.5 text-right">
+              {Number(watch("salary.unionFee") || 0) < 100 ? "%" : "VNĐ"}
+            </span>}
             isRequired={hasUnionFee}
-            disabled={isSubmitting || !hasUnionFee}
-            // Nếu muốn format tiền Việt Nam: thousandSeparator=".", decimalScale={0}
+            disabled={isSubmitting || isView || !hasUnionFee}
+            variant={variant}
+          // Nếu muốn format tiền Việt Nam: thousandSeparator=".", decimalScale={0}
           />
         </div>
       </div>

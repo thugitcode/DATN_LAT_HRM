@@ -1,57 +1,126 @@
 import { BtnCancel } from "@/components/btn-cancel"
 import { TitlePage } from "@/components/title-page"
-import { Button } from "@heroui/react"
+import { icons } from "@/lib/icons"
+import { addToast, Button } from "@heroui/react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
+import { Form, FormProvider, useForm, useWatch } from "react-hook-form"
 import { InsuranceAndUnionSection } from "../staff-detail/components/sections/insurance-and-union-section"
 import { LeaveBenefitsSection } from "../staff-detail/components/sections/leave-benefits-section"
 import { PersonalIncomeTaxSection } from "../staff-detail/components/sections/personal-income-tax-section"
 import { SalaryInfoSection } from "../staff-detail/components/sections/salary-info-section"
 import { SalaryStructureSection } from "../staff-detail/components/sections/salary-structure-section"
-import { Form, FormProvider, useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { salarySchema, type SalaryFormValues } from "./schemas"
+import { ControlMode, useControlMode } from "./hooks/use-control-mode-handle"
+import { salaryFormSchema, type SalaryFormValues } from "./schemas"
+import { usePatchDetailsStaffSalary, useSalaryDetailsQuery } from "@/services/query-options/staff-management.query"
+import { useParams } from "@tanstack/react-router"
+import { calculateSalary, mapApiToFormValues } from "./helpers"
 
 export const SalaryAndBenefits = () => {
+    const { id } = useParams({ strict: false })
+    const { mode, setMode } = useControlMode()
+
+    const { mutate, isPending, isError } = usePatchDetailsStaffSalary();
+    const { data, isLoading, refetch } = useSalaryDetailsQuery(id)
 
     const methods = useForm<SalaryFormValues>({
-        resolver: zodResolver(salarySchema),
-        defaultValues: {
-            hasHealthInsurance: false,
-            healthInsuranceRate: '',
-            hasSocialInsurance: false,
-            socialInsuranceRate: '',
-            hasUnemploymentInsurance: false,
-            unemploymentInsuranceRate: '',
-            hasUnionFee: false,
-            unionFee: '',
-            hasHealthCareInsurance: false,
-            healthCareInsuranceCompany: '',
-            healthCareInsuranceBenefit: '',
-            healthCareInsuranceRate: '',
-            basicSalary: '',
-            insuranceSalary: '',
-            responsibilityAllowance: '',
-            positionAllowance: '',
-            hazardAllowance: '',
-            mealAllowance: '',
-            mealAllowanceUnit: 'DAY' as const,
-            fuelAllowance: '',
-            phoneAllowance: '',
-            businessTripAllowance: '',
-            otherAllowance: '',
-
-            leaveQuotaIds: [],
-
-            hasFamilyDeduction: false,
-            dependentsCount: '',
-            hasPersonalIncomeTax: true,
-            personalIncomeTaxRate: '',
-        },
+        resolver: zodResolver(salaryFormSchema),
+        defaultValues: mapApiToFormValues({}), // khởi tạo rỗng ban đầu
         mode: 'onChange',
-    });
-    const onSubmit = (values: SalaryFormValues) => {
-        console.log(values);
+    })
 
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { isSubmitting, errors },
+        getValues,
+        setValue,
+        watch
+    } = methods
+
+    // Reset form khi data từ API thay đổi (view hoặc edit)
+    useEffect(() => {
+        if (!isLoading && data) {
+            const formValues = mapApiToFormValues(data)
+            reset(formValues)
+        }
+    }, [data, isLoading, reset])
+
+    // Set mode mặc định là view khi mount
+    useEffect(() => {
+        setMode(ControlMode.view)
+    }, [setMode])
+
+    const salaryInputs = useWatch({
+        control,
+        name: [
+            "salary.basicSalary",
+            "salary.insuranceSalary",
+            "salary.responsibilityAllowance",
+            "salary.positionAllowance",
+            "salary.hazardAllowance",
+            "salary.mealAllowance",
+            "salary.mealAllowanceUnit",
+            "salary.fuelAllowance",
+            "salary.phoneAllowance",
+            "salary.businessTripAllowance",
+            "salary.otherAllowance",
+            "salary.hasHealthInsurance",
+            "salary.healthInsuranceRate",
+            "salary.hasSocialInsurance",
+            "salary.socialInsuranceRate",
+            "salary.hasUnemploymentInsurance",
+            "salary.unemploymentInsuranceRate",
+            "salary.hasUnionFee",
+            "salary.unionFee",
+            "salary.hasFamilyDeduction",
+            "salary.dependentsCount",
+            "salary.hasPersonalIncomeTax",
+            "salary.personalIncomeTaxRate",
+        ],
+    });
+
+    useEffect(() => {
+        const result = calculateSalary({ salary: watch("salary") });
+
+        setValue("salary.grossSalary", result?.grossSalary?.toString());
+        setValue("salary.netSalary", result?.netSalary?.toString());
+    }, [salaryInputs]);
+
+    const onSubmit = handleSubmit(async (data) => {
+        // Gọi API update ở đây
+        if (!id) return addToast({
+            description: 'Không tìm thấy id nhân viên',
+            color: 'warning',
+        });
+        mutate(
+            { id: id, payload: data },
+            {
+                onSuccess: () => {
+                    addToast({
+                        description: 'Cập nhật thông tin lương và phúc lợi thành công!',
+                        color: 'success',
+                    });
+                    refetch()
+
+                },
+                onError: (error) => {
+                    console.error('Có lỗi xảy ra:', error);
+                    addToast({
+                        description: 'Có lỗi xảy ra, vui lòng thử lại!',
+                        color: 'danger',
+                    });
+                },
+            }
+        );
+
+    })
+
+    if (isLoading) {
+        return <div>Đang tải dữ liệu lương...</div>
     }
+
     return (
         <FormProvider {...methods}>
             <Form
@@ -60,9 +129,8 @@ export const SalaryAndBenefits = () => {
             >
                 <div className="flex justify-between">
                     <TitlePage title="Lương và phúc lợi" />
-                    <div className="flex gap-2">
-                        <BtnCancel />
-                        {/* <BtnCancel isDisabled={isSubmitting} onPress={onClose} /> */}
+                    {mode === ControlMode.view ? <Button variant="bordered" color="primary" startContent={<icons.edit stroke="#006FEE" width="20px" height={"20px"} color="primary" />} onPress={() => setMode(ControlMode.edit)}>Chỉnh sửa</Button> : <div className="flex gap-2">
+                        <BtnCancel isDisabled={isSubmitting} onPress={() => setMode(ControlMode.view)} />
                         <Button
                             type="submit"
                             color="primary"
@@ -71,7 +139,7 @@ export const SalaryAndBenefits = () => {
                         >
                             Lưu lại
                         </Button>
-                    </div>
+                    </div>}
                 </div>
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full"
                 >

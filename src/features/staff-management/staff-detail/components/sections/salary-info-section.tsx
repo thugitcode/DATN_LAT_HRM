@@ -1,20 +1,21 @@
 // sections/SalaryInfoSection.tsx
+import { FormNumberInput } from '@/components/form-fields/form-number-input';
+import { FormSelect } from '@/components/form-fields/form-select';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { IconCurrencyDollar } from '@tabler/icons-react';
 import type { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { IconCurrencyDollar } from '@tabler/icons-react';
-import { FormSelect } from '@/components/form-fields/form-select';
-import { FormNumberInput } from '@/components/form-fields/form-number-input';
 
 
 export const SalaryInfoSection: FC = () => {
   const { control, formState: { isSubmitting }, watch } = useFormContext();
-
+  const { isView } = useControlMode()
+  const variant = isView ? "underlined" : "flat"
   const salaryTypeOptions = [
     { key: 'GROSS', label: 'Lương Gross' },
     { key: 'NET', label: 'Lương Net' },
   ];
-const salaryType = watch("salary.salaryType")
-
+  const salaryType = watch("salary.salaryType")
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
       <div className="flex items-center gap-2 mb-1">
@@ -30,7 +31,8 @@ const salaryType = watch("salary.salaryType")
           placeholder="Chọn"
           isRequired
           options={salaryTypeOptions}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isView}
+          variant={variant}
         />
 
         <div className="grid grid-cols-2 gap-x-4">
@@ -41,6 +43,7 @@ const salaryType = watch("salary.salaryType")
             placeholder="Nhập"
             endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
             disabled={true}
+            variant={variant}
           />
 
           <FormNumberInput
@@ -50,6 +53,7 @@ const salaryType = watch("salary.salaryType")
             placeholder="Nhập"
             endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
             disabled={true}
+            variant={variant}
           />
         </div>
       </div>
