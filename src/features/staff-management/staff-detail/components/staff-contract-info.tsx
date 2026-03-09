@@ -50,7 +50,7 @@ import { useStaffList } from '@/query-options/staff';
 import { ContractStatusEnum, StaffPositionEnum } from '@/types/staff.type';
 import type { StaffContract } from '@/types/staff.type';
 import dayjs from 'dayjs';
-import { StaffContractFormDrawer } from './staff-contract-form-drawer copy';
+import { StaffContractFormDrawer } from './staff-contract-form-drawer';
 import { useQuery } from '@tanstack/react-query';
 import { departmentQueryOptions } from '@/services/query-options/department.query';
 import { roomQueryOptions } from '@/services/query-options/room.query';

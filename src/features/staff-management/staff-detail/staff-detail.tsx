@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { StaffContractInfo, StaffDetailHeader, StaffDetailInfo } from './components';
 import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
 import { ProfileStaff } from '../profile-staff/profile-staff';
+import { SalaryAndBenefits } from '../salary-and-benefits/salary-and-benefits';
 
 
 interface StaffDetailProps {
@@ -143,7 +144,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                     <Tab key="contract" title="Thông tin hợp đồng">
                         <StaffContractInfo staffId={id} />
                     </Tab>
-                    <Tab key="salary" title="Lương và phúc lợi" />
+                    <Tab key="salary" title="Lương và phúc lợi" ><SalaryAndBenefits /></Tab>
                     <Tab key="attendance" title="Quản lý chấm công" ><TimeAttendanceManagementTab /></Tab>
                     <Tab key="documents" title="Hồ sơ nhân viên" ><ProfileStaff /></Tab>
                 </Tabs>
