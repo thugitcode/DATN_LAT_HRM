@@ -18,7 +18,6 @@ export const SalaryStructureSection: FC = () => {
     const { control, setValue, formState: { isSubmitting , errors} } = useFormContext();
 
     const mealAllowanceUnit = useWatch({ control, name: 'salary.mealAllowanceUnit' });
-    console.log(errors,222);
     
     return (
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">

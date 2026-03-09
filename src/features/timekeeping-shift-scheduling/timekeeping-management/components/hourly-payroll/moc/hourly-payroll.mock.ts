@@ -29,8 +29,8 @@ export const hourlyPayrollMock: HourlyPayrollRecord[] = Array.from({ length: 20 
         };
       }
 
-      const totalHours = parseFloat((7 + Math.random() * 3).toFixed(1)); // 7-10h
-      const overtimeHours = totalHours > 8 ? parseFloat((totalHours - 8).toFixed(1)) : 0;
+      const totalHours = parseFloat((7 + Math.random() * 3).toFixed(2)); // 7-10h
+      const overtimeHours = totalHours > 8 ? parseFloat((totalHours - 8).toFixed(2)) : 0;
 
       return {
         date: `${1 + weekIndex * 7 + dayIndex}/2/26`,

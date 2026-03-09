@@ -258,7 +258,6 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       duration: Number(data.duration),
       // ... map các field khác
     };
-    console.log(payload, 7777, data);
 
     if (isEditMode && contractId) {
       await updateMutation.mutateAsync({ id: contractId, data: payload });
@@ -267,7 +266,6 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
     }
     onClose();
   });
-  console.log(errors, 333, errors);
 
   return (
     <Drawer

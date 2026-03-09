@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import type { DailyAttendance } from '@/types/shift-details.type';
+import type { DailyAttendance, DetailsTimeSheetRecord } from '@/types/shift-details.type';
 
 import type { DayColumn } from './shift-management/types/type';
 import { PILL_SHIFTS, WORK_SHEET_LEGEND_ITEMS } from './timekeeping-management/constants/data';
@@ -8,6 +8,7 @@ import {
   AttendanceStatus,
   type DayCell,
   type EmployeeRow,
+  type FlatRow,
   type IBreakTime,
   type ShiftCode,
   type ShiftRun,
@@ -241,10 +242,10 @@ export function fillMissingDaysWithDayjs(
   days: DailyAttendance[],
   startDate: string,
   endDate: string,
-): DailyAttendance[] {
+): DailyAttendance[] {  
   const existingMap = new Map(days.map((d) => [d.date, d]));
   const result: DailyAttendance[] = [];
-
+  
   let current = dayjs(startDate);
   const end = dayjs(endDate);
 
@@ -295,4 +296,61 @@ export const calculateTotalBreakTime = (breakTimes: IBreakTime[]) => {
 
     return total + (breakEnd - breakStart);
   }, 0);
+};
+
+
+export const buildFlatRows = ({
+  data,
+  expandedGroups,
+  fromDate,
+  toDate,
+}: {
+  data?: DetailsTimeSheetRecord[];
+  expandedGroups: Set<string>;
+  fromDate: string;
+  toDate: string;
+}): FlatRow[] => {
+  const rows: FlatRow[] = [];
+
+  data?.forEach((shift, idx) => {
+    const staffIndex = idx + 1;
+    const staffCode = shift.staff?.code;
+    const isExpanded = expandedGroups.has(staffCode);
+
+    const allDays = fillMissingDaysWithDayjs(
+      shift.days,
+      fromDate,
+      toDate,
+    );
+    
+    rows.push({
+      type: 'group',
+      key: `group-${staffCode}`,
+      staff: shift.staff,
+      index: staffIndex,
+      isExpanded,
+    });
+
+    if (isExpanded) {
+      allDays.forEach((day, dayIdx) => {
+        rows.push({
+          type: 'shift',
+          key: `shift-${staffCode}-${dayIdx}`,
+          staffId: staffCode,
+          shift: day,
+          isLast: dayIdx === allDays.length - 1,
+        });
+      });
+    }
+  });
+
+  return rows;
+};
+
+
+export const getMonthRange = (month: number, year: number) => {
+  const start = dayjs().year(year).month(month - 1).startOf("month");
+  const end = dayjs().year(year).month(month - 1).endOf("month");
+
+  return { start, end };
 };

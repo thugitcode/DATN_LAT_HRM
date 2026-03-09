@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
+  buildFlatRows,
   fillMissingDaysWithDayjs,
   getTotalDaysInMonth,
 } from '@/features/timekeeping-shift-scheduling/helper';
@@ -64,42 +65,15 @@ export function GroupedTable() {
     getAll: true,
   });
 
-  const flatRows = useMemo<FlatRow[]>(() => {
-    const rows: FlatRow[] = [];
-
-    data?.data.forEach((shift, idx) => {
-      const staffIndex = idx + 1;
-      const isExpanded = expandedGroups.has(shift.staff?.code);
-      const allDays = fillMissingDaysWithDayjs(
-        shift.days,
-        data?.metadata?.fromDate as string,
-        data?.metadata?.toDate as string,
-      );
-
-      rows.push({
-        type: 'group',
-        key: `group-${shift.staff?.code}`,
-        staff: shift.staff,
-        index: staffIndex,
-        isExpanded,
-      });
-
-      if (isExpanded) {
-        allDays.forEach((day, dayIdx) => {
-          rows.push({
-            type: 'shift',
-            key: `shift-${shift.staff?.code}-${dayIdx}`,
-            staffId: shift.staff?.code,
-            shift: day,
-            isLast: dayIdx === allDays.length - 1,
-          });
-        });
-      }
-    });
-
-    return rows;
-  }, [expandedGroups, isLoading, data?.data]);
-
+  const flatRows = useMemo(() => {
+  return buildFlatRows({
+    data: data?.data,
+    expandedGroups,
+    fromDate: data?.metadata?.fromDate as string,
+    toDate: data?.metadata?.toDate as string,
+  });
+}, [expandedGroups, data?.data, data?.metadata?.fromDate, data?.metadata?.toDate]);
+  
   // Build an index: for each flat-row index, which group does it belong to?
   const groupIndexMap = useMemo(() => {
     const map: FlatRow[] = [];
@@ -270,7 +244,7 @@ export function GroupedTable() {
         case 'workCount':
           return (
             <span className={cn('flex text-foreground py-2.5 px-4', 'justify-center')}>
-              {shift.workCount ? shift.workCount.toFixed(1) : '0'}
+              {shift.workCount ? shift.workCount.toFixed(2) : '0'}
             </span>
           );
 
@@ -282,21 +256,21 @@ export function GroupedTable() {
                 'hidden lg:flex justify-center',
               )}
             >
-              {shift.totalWorkHours !== null ? `${shift?.totalWorkHours.toFixed(1)}` : '--'}
+              {shift.totalWorkHours !== null ? `${shift?.totalWorkHours.toFixed(2)}` : '--'}
             </span>
           );
 
         case 'overtimeHours':
           return (
             <span className={cn('flex py-2.5 px-4', 'hidden lg:flex justify-center')}>
-              {shift.overtimeHours > 0 ? `${shift.overtimeHours.toFixed(1)}` : '--'}
+              {shift.overtimeHours > 0 ? `${shift.overtimeHours.toFixed(2)}` : '--'}
             </span>
           );
 
         case 'compHours':
           return (
             <span className={cn('flex py-2.5 px-4', 'hidden xl:flex justify-center')}>
-              {shift.compHours > 0 ? `${shift.compHours.toFixed(1)}` : '--'}
+              {shift.compHours > 0 ? `${shift.compHours.toFixed(2)}` : '--'}
             </span>
           );
 

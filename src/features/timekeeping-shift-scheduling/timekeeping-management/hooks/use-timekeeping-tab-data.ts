@@ -8,6 +8,7 @@ import { useCurrentLayout } from '@/features/timekeeping-shift-scheduling/hooks/
 
 import { useAttendanceByHours, useAttendanceTable } from '../hooks/use-timekeeping-management';
 import { TAB_KEYS } from '../types/index.type';
+import { useDetailsTimeSheetList } from './use-detailed-time-sheet';
 
 export function useTimekeepingTabData(activeKey: TAB_KEYS) {
   const currentLayout = useCurrentLayout();
@@ -33,9 +34,9 @@ export function useTimekeepingTabData(activeKey: TAB_KEYS) {
     activeKey === TAB_KEYS.HOURLY_PAYROLL ? commonParams : undefined,
   );
 
-  //   const detailedQuery = useShiftDetailsList(
-  //     activeKey === TAB_KEYS.DETAILED_TIME_SHEET ? commonParams : undefined,
-  //   );
+    const detailedQuery = useDetailsTimeSheetList(
+      activeKey === TAB_KEYS.DETAILED_TIME_SHEET ? commonParams : undefined,
+    );
 
   return useMemo(() => {
     switch (activeKey) {
@@ -44,7 +45,7 @@ export function useTimekeepingTabData(activeKey: TAB_KEYS) {
       case TAB_KEYS.HOURLY_PAYROLL:
         return hourlyQuery.data?.data ?? [];
       case TAB_KEYS.DETAILED_TIME_SHEET:
-        return [];
+        return detailedQuery?.data?.data;
       default:
         return [];
     }
