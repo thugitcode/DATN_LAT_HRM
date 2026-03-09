@@ -34,9 +34,9 @@ export function useTimekeepingTabData(activeKey: TAB_KEYS) {
     activeKey === TAB_KEYS.HOURLY_PAYROLL ? commonParams : undefined,
   );
 
-    const detailedQuery = useDetailsTimeSheetList(
-      activeKey === TAB_KEYS.DETAILED_TIME_SHEET ? commonParams : undefined,
-    );
+  const detailedQuery = useDetailsTimeSheetList(
+    activeKey === TAB_KEYS.DETAILED_TIME_SHEET ? commonParams : undefined,
+  );
 
   return useMemo(() => {
     switch (activeKey) {
@@ -49,5 +49,5 @@ export function useTimekeepingTabData(activeKey: TAB_KEYS) {
       default:
         return [];
     }
-  }, [activeKey, worksheetQuery.data, hourlyQuery.data]);
+  }, [activeKey, worksheetQuery.data, hourlyQuery.data, detailedQuery?.data]);
 }

@@ -56,6 +56,7 @@ import { departmentQueryOptions } from '@/services/query-options/department.quer
 import { roomQueryOptions } from '@/services/query-options/room.query';
 import { shiftTemplateQueryOptions } from '@/services/query-options/shift-template.query';
 import { normalizeAxiosError } from '@/lib/axios';
+import StaffContractEmptyState from './staff-contract-empty-state';
 
 interface StaffContractInfoProps {
     staffId: string;
@@ -398,20 +399,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
 
     if (contracts.length === 0) {
         return (
-            <div className="space-y-6 mt-4">
-                <Card className="shadow-none border border-[#F4F4F5] rounded-2xl overflow-hidden bg-white">
-                    <CardBody className="flex flex-col items-center justify-center py-16 gap-4">
-                        <IconAlertCircle size={48} className="text-[#A1A1AA]" />
-                        <p className="text-[15px] text-[#71717A] text-center">
-                            Nhân viên chưa có dữ liệu hợp đồng, vui lòng thêm mới hợp đồng.
-                        </p>
-                        <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setSelectedContractId(undefined); onOpen(); }}>
-                            Thêm mới hợp đồng
-                        </Button>
-                    </CardBody>
-                </Card>
-                <StaffContractFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} staffId={staffId} contractId={selectedContractId} />
-            </div>
+            <StaffContractEmptyState staffId={staffId} />
         );
     }
 
