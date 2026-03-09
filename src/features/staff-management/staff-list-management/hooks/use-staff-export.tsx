@@ -1,72 +1,97 @@
 import { useMemo } from 'react';
-
-import type { ExcelColumnDef, ExcelExportConfig } from '@/hooks/use-excel-io';
-import type { Staff } from '@/types/staff.type';
-import type { StaffExportRow } from '../types';
-import { translateJobTitle, translatePosition } from '../../time-attendance-management/helpers';
 import dayjs from 'dayjs';
 
-const STAFF_COLUMNS: ExcelColumnDef<StaffExportRow>[] = [
-  { header: 'STT', key: 'stt', width: 8 },
-  { header: 'Mã nhân viên', key: 'employeeCode', width: 20 },
-  { header: 'Tên nhân viên', key: 'employeeName', width: 30 },
-  { header: 'Ngày sinh', key: 'birthday', width: 15 },
-  { header: 'Giới tính', key: 'gender', width: 12 },
-  { header: 'Số điện thoại', key: 'phone', width: 18 },
-  { header: 'Email', key: 'email', width: 30 },
-  { header: 'Chức danh', key: 'jobTitle', width: 18 },
-  { header: 'Cấp bậc', key: 'position', width: 18 },
-  { header: 'Khoa', key: 'departments', width: 35 },
-  { header: 'Phòng', key: 'rooms', width: 35 },
-  { header: 'Loại hình', key: 'workType', width: 15 },
-  { header: 'Ngày hết hạn HĐ', key: 'endDate', width: 15 },
+import type { Staff } from '@/types/staff.type';
+import { translateJobTitle, translatePosition } from '../../time-attendance-management/helpers';
+import { buildSheet, writeWorkbook, type SheetData } from '@/features/timekeeping-shift-scheduling/timekeeping-management/export-engine/export.engine';
+
+// ─── Column Definitions ───────────────────────────────────────────────────────
+
+const FIXED_COLS = [
+  { label: 'STT',          wch: 8,   align: 'center' as const },
+  { label: 'Mã nhân viên',  wch: 18,  align: 'left'   as const },
+  { label: 'Tên nhân viên', wch: 28,  align: 'left'   as const },
+  { label: 'Ngày sinh',     wch: 14,  align: 'center' as const },
+  { label: 'Giới tính',     wch: 10,  align: 'center' as const },
+  { label: 'Số điện thoại', wch: 16,  align: 'left'   as const },
+  { label: 'Email',         wch: 28,  align: 'left'   as const },
+  { label: 'Chức danh',     wch: 18,  align: 'left'   as const },
+  { label: 'Cấp bậc',       wch: 18,  align: 'left'   as const },
+  { label: 'Khoa',          wch: 30,  align: 'left'   as const },
+  { label: 'Phòng',         wch: 30,  align: 'left'   as const },
+  { label: 'Loại hình',     wch: 14,  align: 'center' as const },
+  { label: 'Ngày hết hạn HĐ', wch: 16, align: 'center' as const },
 ];
 
-export const buildStaffTableExport = (
-  data: Staff[],
-): { columns: ExcelColumnDef<StaffExportRow>[]; rows: StaffExportRow[] } => {
-  const rows = data.map((staff, index) => {
-    const row: StaffExportRow = {
-      stt: index + 1,
-      employeeCode: staff.code ?? '',
-      employeeName: staff.name ?? '',
-      birthday: staff.birthday ? dayjs(staff.birthday).format("DD/MM/YYYY") : '',
-      gender: staff.gender === 'MALE' ? 'Nam' : 'Nữ',
-      phone: staff.phone ?? '',
-      email: staff.email ?? '',
-      jobTitle: translateJobTitle(staff.jobTitle ?? ''),
-      position: translatePosition(staff.position ?? ''),
-      departments:
-        staff.departments?.map((d) => d.name).filter(Boolean).join(', ') ?? '',
-      rooms: staff.rooms?.map((r) => r.name).filter(Boolean).join(', ') ?? '',
-      workType: staff.workType === 'FULL_TIME' ? 'Toàn thời gian' : staff.workType === 'PART_TIME' ? 'Bán thời gian' : (staff.workType || '—'),
-      endDate: staff.endDate ? new Date(staff.endDate).toLocaleDateString('vi-VN') : '—'
-    };
+// ─── Build Data Rows ─────────────────────────────────────────────────────────
 
-    return row;
+function buildStaffRows(data: Staff[]): SheetData['rows'] {
+  return data.map((staff, index) => {
+    const rowCells = [
+      index + 1,
+      staff.code ?? '',
+      staff.name ?? '',
+      staff.birthday ? dayjs(staff.birthday).format('DD/MM/YYYY') : '',
+      staff.gender === 'MALE' ? 'Nam' : staff.gender === 'FEMALE' ? 'Nữ' : '',
+      staff.phone ?? '',
+      staff.email ?? '',
+      translateJobTitle(staff.jobTitle ?? ''),
+      translatePosition(staff.position ?? ''),
+      staff.departments?.map(d => d.name).filter(Boolean).join(', ') ?? '',
+      staff.rooms?.map(r => r.name).filter(Boolean).join(', ') ?? '',
+      staff.workType === 'FULL_TIME' ? 'Toàn thời gian'
+        : staff.workType === 'PART_TIME' ? 'Bán thời gian'
+        : (staff.workType || '—'),
+      staff.endDate ? new Date(staff.endDate).toLocaleDateString('vi-VN') : '—',
+    ];
+
+    return { cells: rowCells };
   });
-  return {
-    columns: STAFF_COLUMNS,
+}
+
+// ─── Main Export Function ────────────────────────────────────────────────────
+
+export function exportStaffList(data: Staff[]) {
+  if (!data || data.length === 0) {
+    console.warn('No staff data to export');
+    return;
+  }
+
+  const rows = buildStaffRows(data);
+
+  const colHeaderRow = FIXED_COLS.map(c => c.label);
+
+  const sheetData: SheetData = {
+    config: {
+      title: 'DANH SÁCH NHÂN VIÊN',
+      fixedCols: FIXED_COLS,
+      dayCols: [],           // không dùng trong danh sách nhân viên
+      summaryCols: [],
+      headerRowCount: 2,
+      leftAlignDataCols: new Set([1, 2, 6, 7, 8, 9, 10]), // cột 1-based: mã, tên, sđt, email, chức danh, cấp bậc, khoa, phòng
+    },
+    extraHeaderRows: [colHeaderRow],
+    extraHeaderMerges: [],   // nếu sau này muốn merge tiêu đề thì thêm vào đây
     rows,
+    staffGroups: [],         // không cần group vì mỗi nhân viên chỉ 1 dòng
   };
-};
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
-export const useStaffExport = (
-  data: Staff[] = [],
-) => {
-  const exportConfig = useMemo<ExcelExportConfig<StaffExportRow>>(() => {
-    const { columns, rows } = buildStaffTableExport(data);
+  const ws = buildSheet(sheetData);
 
-    return {
-      fileName: `danh_sach_nhan_vien`,
-      sheetName: 'Danh sách nhân viên',
-      columns,
-      data: rows,
-      defaultRowHeight: 40,
-      headerRowHeight: 42,
-    };
+  const today = dayjs().format('YYYYMMDD');
+  writeWorkbook(
+    ws,
+    'Danh sách nhân viên',
+    `danh_sach_nhan_vien_${today}.xlsx`,
+  );
+}
+
+// ─── Hook (nếu vẫn muốn giữ dạng hook) ───────────────────────────────────────
+
+export const useStaffExport = (data: Staff[] = []) => {
+  const exportStaff = useMemo(() => {
+    return () => exportStaffList(data);
   }, [data]);
 
-  return { exportConfig };
+  return { exportStaff };
 };
