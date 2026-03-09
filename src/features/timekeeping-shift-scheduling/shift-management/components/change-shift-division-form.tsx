@@ -183,7 +183,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
           <FormTimePicker
             control={control}
             name={`startTime`}
-            label="Ghi chú giờ vào"
+            label={isFixed ? "Giờ vào" : "Ghi chú giờ vào"}
             isRequired
             // disabled={caId === ShiftTypeEnum.FIXED}
             disabled={isFixed}
@@ -192,7 +192,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
           <FormTimePicker
             control={control}
             name={`endTime`}
-            label="Ghi chú giờ ra"
+            label={isFixed ? "Giờ ra" : "Ghi chú giờ ra"}
             isRequired
             // disabled={caId === ShiftTypeEnum.FIXED}
             disabled={isFixed}

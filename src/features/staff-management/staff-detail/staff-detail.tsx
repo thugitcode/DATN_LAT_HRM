@@ -3,10 +3,12 @@ import { useStaffDetail, useUpdateStaff } from '@/query-options/staff';
 import { Button, Tab, Tabs } from '@heroui/react';
 import { IconDeviceFloppy, IconPencil, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
-import { StaffContractInfo, StaffDetailHeader, StaffDetailInfo } from './components';
-import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
 import { ProfileStaff } from '../profile-staff/profile-staff';
 import { SalaryAndBenefits } from '../salary-and-benefits/salary-and-benefits';
+import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
+import { StaffContractInfo, StaffDetailHeader, StaffDetailInfo } from './components';
+import { useStaffDetailTabs } from './hooks/use-staff-detail-tabs';
+import { TAB_KEYS } from './types';
 
 
 interface StaffDetailProps {
@@ -18,7 +20,8 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
     const updateStaffMutation = useUpdateStaff();
     const staff = response?.data;
     const [isEditingAll, setIsEditingAll] = useState(false);
-
+    const { staffTabs, activeKey, onSelectionChange, activeTab } = useStaffDetailTabs();
+    
     if (isLoading) {
         return (
             <div className="flex h-full items-center justify-center bg-[#F8F9FA]">
@@ -85,15 +88,10 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                 <Tabs
                     variant="underlined"
                     aria-label="Staff detail tabs"
-                    classNames={{
-                        base: "border-b border-divider w-full",
-                        tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
-                        cursor: "w-full bg-[#006FEE]",
-                        tab: "max-w-fit px-0 h-12",
-                        tabContent: "group-data-[selected=true]:text-[#006FEE] group-data-[selected=true]:font-semibold text-[#71717A]"
-                    }}
+                    selectedKey={activeKey}
+                    onSelectionChange={(key) => onSelectionChange(key as TAB_KEYS)}
                 >
-                    <Tab key="info" title="Thông tin nhân viên">
+                    <Tab key={TAB_KEYS.INFO} title="Thông tin nhân viên">
                         {/* Title + Global Edit/Save/Cancel */}
                         <div className="flex items-center justify-between mt-4 mb-4">
                             <h2 className="text-lg font-bold text-[#11181C]">Thông tin nhân viên</h2>
@@ -141,12 +139,12 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                             isUpdating={updateStaffMutation.isPending}
                         />
                     </Tab>
-                    <Tab key="contract" title="Thông tin hợp đồng">
+                    <Tab key={TAB_KEYS.CONTRACT} title="Thông tin hợp đồng">
                         <StaffContractInfo staffId={id} />
                     </Tab>
-                    <Tab key="salary" title="Lương và phúc lợi" ><SalaryAndBenefits /></Tab>
-                    <Tab key="attendance" title="Quản lý chấm công" ><TimeAttendanceManagementTab /></Tab>
-                    <Tab key="documents" title="Hồ sơ nhân viên" ><ProfileStaff /></Tab>
+                    <Tab key={TAB_KEYS.SALARY} title="Lương và phúc lợi" ><SalaryAndBenefits /></Tab>
+                    <Tab key={TAB_KEYS.ATTENDANCE} title="Quản lý chấm công" ><TimeAttendanceManagementTab /></Tab>
+                    <Tab key={TAB_KEYS.DOCUMENTS} title="Hồ sơ nhân viên" ><ProfileStaff /></Tab>
                 </Tabs>
             </div>
         </PageContainer>

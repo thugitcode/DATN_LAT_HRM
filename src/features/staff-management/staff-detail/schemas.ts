@@ -35,6 +35,17 @@ export const staffContractSchema = z.object({
         ),
     salary: salaryInnerSchema,
     // ... các field khác sẽ bổ sung sau
-});
+}).refine(
+    (data) => {
+        const start = new Date(data.startDate);
+        const end = new Date(data.endDate);
+        return start < end;
+    },
+    {
+        message: "Ngày kết thúc phải lớn hơn ngày bắt đầu",
+        path: ["endDate"], // chỉ định lỗi hiển thị ở field endDate
+    }
+);
+;
 
 export type StaffContractFormValues = z.infer<typeof staffContractSchema>;

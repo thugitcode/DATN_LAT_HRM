@@ -28,6 +28,9 @@ import { LeaveBenefitsSection } from './sections/leave-benefits-section';
 import { PersonalIncomeTaxSection } from './sections/personal-income-tax-section';
 import { SalaryInfoSection } from './sections/salary-info-section';
 import { SalaryStructureSection } from './sections/salary-structure-section';
+import { useStaffDetailTabs } from '../hooks/use-staff-detail-tabs';
+import { useQueryClient } from '@tanstack/react-query';
+import { TAB_KEYS } from '../types';
 
 // import các query hooks khác giữ nguyên...
 
@@ -47,9 +50,11 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
   const isEditMode = !!contractId;
   const { data: contractRes, isLoading: isDetailLoading } = useContractDetail(contractId || '');
   const contract = contractRes?.data;
-
+  const { activeKey } = useStaffDetailTabs()
+  
   const createMutation = useCreateContract(staffId);
   const updateMutation = useUpdateContract(staffId);
+  const queryClient = useQueryClient();
 
   const methods = useForm<StaffContractFormValues>({
     resolver: zodResolver(staffContractSchema),
@@ -262,7 +267,12 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
     if (isEditMode && contractId) {
       await updateMutation.mutateAsync({ id: contractId, data: payload });
     } else {
-      await createMutation.mutateAsync(payload);
+      await createMutation.mutateAsync(payload, {
+        onSuccess() {
+        //  activeKey === TAB_KEYS.SALARY && 
+         queryClient.invalidateQueries({ queryKey: ["salary-details", staffId] })
+        },
+      });
     }
     onClose();
   });

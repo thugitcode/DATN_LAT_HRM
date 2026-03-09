@@ -15,6 +15,8 @@ import { salaryFormSchema, type SalaryFormValues } from "./schemas"
 import { usePatchDetailsStaffSalary, useSalaryDetailsQuery } from "@/services/query-options/staff-management.query"
 import { useParams } from "@tanstack/react-router"
 import { calculateSalary, mapApiToFormValues } from "./helpers"
+import StaffContractEmptyState from "../staff-detail/components/staff-contract-empty-state"
+import { LoadingWrapper } from "@/components/loading-wrapper"
 
 export const SalaryAndBenefits = () => {
     const { id } = useParams({ strict: false })
@@ -118,9 +120,13 @@ export const SalaryAndBenefits = () => {
     })
 
     if (isLoading) {
-        return <div>Đang tải dữ liệu lương...</div>
+        return <div className="h-[50vh] flex items-center justify-center">
+            <LoadingWrapper isLoading={isLoading} ><div></div></LoadingWrapper>
+        </div>
     }
-
+    if (!data?.data && id) {
+        return (<StaffContractEmptyState staffId={id} />)
+    }
     return (
         <FormProvider {...methods}>
             <Form

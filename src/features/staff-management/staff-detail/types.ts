@@ -150,3 +150,25 @@ export interface ContractFormValues {
     grossSalary: string;
   };
 }
+
+
+export enum TAB_KEYS {
+  INFO = "info",
+  CONTRACT = "contract",
+  SALARY = "salary",
+  ATTENDANCE = "attendance",
+  DOCUMENTS = "documents",
+
+  // Timekeeping tabs
+  WORKSHEET_BY_SHIFT = "worksheet_by_shift",
+  WORKSHEET_BY_DAY = "worksheet_by_day",
+  DETAILED_TIME_SHEET = "detailed_time_sheet",
+}
+
+export const staffTabs = [
+  { key: TAB_KEYS.INFO, label: "Thông tin nhân viên" },
+  { key: TAB_KEYS.CONTRACT, label: "Thông tin hợp đồng" },
+  { key: TAB_KEYS.SALARY, label: "Lương và phúc lợi" },
+  { key: TAB_KEYS.ATTENDANCE, label: "Quản lý chấm công" },
+  { key: TAB_KEYS.DOCUMENTS, label: "Hồ sơ nhân viên" },
+];
