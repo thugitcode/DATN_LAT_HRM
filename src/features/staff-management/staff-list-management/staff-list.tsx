@@ -80,7 +80,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
     const total = response?.pagination?.total || 0;
     const workingCount = (response?.metadata?.WORKING as number) || 0;
     const resignedCount = (response?.metadata?.RESIGNED as number) || 0;
-    const { exportConfig } = useStaffExport(staffData)
+    const { exportStaff } = useStaffExport(staffData)
     
     const handleViewDetail = (id: string) => {
         navigate({
@@ -279,8 +279,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                     </div>
                     <ActionsPage
                         // hiddenLayoutSwitcher={activeKey === TAB_KEYS.DETAILED_TIME_SHEET}
-                        exportConfig={exportConfig}
-                        // onExport={exportConfig}
+                        onExport={exportStaff}
                         actions={
                             <div className="flex gap-3">
                                 <Button color="primary" onPress={onOpen}>
