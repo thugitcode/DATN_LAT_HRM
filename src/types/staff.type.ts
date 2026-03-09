@@ -105,7 +105,7 @@ export interface StaffSalary {
   positionAllowance?: number;
   hazardAllowance?: number;
   mealAllowance?: number;
-  mealAllowanceUnit?: string;
+  mealAllowanceUnit?: "DAY" | "MONTH";
   fuelAllowance?: number;
   phoneAllowance?: number;
   businessTripAllowance?: number;
@@ -127,7 +127,7 @@ export interface StaffSalary {
   dependentsCount?: number;
   hasPersonalIncomeTax?: boolean;
   personalIncomeTaxRate?: number;
-  salaryType: string;
+  salaryType: "GROSS" | "NET";
   netSalary?: number;
   grossSalary?: number;
 }
