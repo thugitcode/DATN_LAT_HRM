@@ -78,7 +78,7 @@ export function exportDetailedTimeSheet(
         day.checkOutTime ?? '',
         day.lateMinutes ?? '',
         day.earlyMinutes ?? '',
-        day.workCount ?? '',
+        day.workCount?.toFixed(2) ?? '',
         day.totalWorkHours?.toFixed(2) ?? '',
         day.overtimeHours?.toFixed(2) ?? '',
         day.compHours ?? '',

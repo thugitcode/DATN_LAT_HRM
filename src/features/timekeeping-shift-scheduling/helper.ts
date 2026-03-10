@@ -242,18 +242,31 @@ export function fillMissingDaysWithDayjs(
   days: DailyAttendance[],
   startDate: string,
   endDate: string,
-): DailyAttendance[] {  
-  const existingMap = new Map(days.map((d) => [d.date, d]));
+): DailyAttendance[] {
+  // group records theo date
+  const existingMap = new Map<string, DailyAttendance[]>();
+
+  days.forEach((d) => {
+    if (!existingMap.has(d.date)) {
+      existingMap.set(d.date, []);
+    }
+    existingMap.get(d.date)!.push(d);
+  });
+
   const result: DailyAttendance[] = [];
-  
+
   let current = dayjs(startDate);
   const end = dayjs(endDate);
 
   while (current.isSame(end) || current.isBefore(end)) {
     const dateStr = current.format('YYYY-MM-DD');
 
-    result.push(
-      existingMap.get(dateStr) ?? {
+    const records = existingMap.get(dateStr);
+
+    if (records && records.length) {
+      result.push(...records); // push tất cả record của ngày đó
+    } else {
+      result.push({
         date: dateStr,
         shiftCode: '',
         standardTime: '',
@@ -265,8 +278,8 @@ export function fillMissingDaysWithDayjs(
         totalWorkHours: 0,
         overtimeHours: 0,
         compHours: 0,
-      },
-    );
+      });
+    }
 
     current = current.add(1, 'day');
   }

@@ -10,7 +10,7 @@ import {
   Textarea,
 } from '@heroui/react';
 
-import type { AttendanceExplanationFilters } from '@/types/attendance-explanation.type';
+import { AttendanceExplanationStatus, type AttendanceExplanationFilters } from '@/types/attendance-explanation.type';
 import { normalizeAxiosError } from '@/lib/axios';
 import { useCommonTable } from '@/hooks/common/use-common-table';
 import {
@@ -18,6 +18,7 @@ import {
   useApproveAttendanceExplanation,
   useBulkApproveAttendanceExplanation,
   useRejectAttendanceExplanation,
+  useUpdateAttendanceExplanation,
 } from '@/hooks/use-attendance-explanation';
 import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
@@ -37,6 +38,7 @@ const RejectModal = ({
 }) => {
   const [rejectReason, setRejectReason] = useState('');
   const { mutateAsync: rejectMutate, isPending: isRejecting } = useRejectAttendanceExplanation();
+  const { mutateAsync: update, isPending: isUpdate } = useUpdateAttendanceExplanation();
 
   useEffect(() => {
     if (rejectId) {
@@ -47,8 +49,16 @@ const RejectModal = ({
   const confirmReject = async () => {
     if (!rejectId || !rejectReason.trim()) return;
     try {
-      await rejectMutate({ id: rejectId, reason: rejectReason.trim() });
-      addToast({ title: 'Từ chối giải trình thành công', color: 'success' });
+      // await rejectMutate({ id: rejectId, reason: rejectReason.trim() });
+      await update({
+        id: rejectId,
+        status: AttendanceExplanationStatus.REJECTED,
+        reason: rejectReason.trim()
+      }, {
+        onSuccess() {
+          addToast({ title: 'Từ chối giải trình thành công', color: 'success' });
+        },
+      });
       onSuccess(rejectId);
       onClose();
     } catch (error) {
@@ -119,7 +129,7 @@ export const ExplanationManagement = () => {
   const { mutateAsync: approveMutate } = useApproveAttendanceExplanation();
   const { mutateAsync: bulkApproveMutate, isPending: isBulkApproving } =
     useBulkApproveAttendanceExplanation();
-
+  const { mutateAsync: update, isPending: isUpdate } = useUpdateAttendanceExplanation();
   const summary = useMemo(() => {
     return (
       table.meta || {
@@ -152,8 +162,15 @@ export const ExplanationManagement = () => {
 
   const handleApprove = async (id: string) => {
     try {
-      await approveMutate({ id });
-      addToast({ title: 'Xác nhận giải trình thành công', color: 'success' });
+      // await approveMutate({ id });
+      await update({
+        id: id,
+        status: AttendanceExplanationStatus.APPROVED,
+      }, {
+        onSuccess() {
+          addToast({ description: "Duyệt giải trình thành công", color: "success" })
+        },
+      });
       table.setSelectedRecords((prev) => prev.filter((r) => r.id !== id));
     } catch (error) {
       addToast({ title: normalizeAxiosError(error).message, color: 'danger' });
@@ -167,7 +184,7 @@ export const ExplanationManagement = () => {
   const handleRejectSuccess = (id: string) => {
     table.setSelectedRecords((prev) => prev.filter((r) => r.id !== id));
   };
-  
+
   return (
     <PageContainer className="space-y-4">
       {/* Header */}
