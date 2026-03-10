@@ -9,7 +9,7 @@ import {
 } from '@/hooks/use-attendance-explanation';
 import { useDrawer } from '@/store/useDrawer';
 import { AttendanceExplanationStatus } from '@/types/attendance-explanation.type';
-import { Button, Spinner, Textarea } from '@heroui/react';
+import { addToast, Button, Spinner, Textarea } from '@heroui/react';
 import { IconAlertCircle, IconCheck, IconFileText, IconX } from '@tabler/icons-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import type { FC } from 'react';
@@ -79,18 +79,24 @@ export const ExplanationDetailDrawer: FC = () => {
 
     const handleApprove = async () => {
         try {
-            if (status === 'PENDING') {
-                await managerApproveMutation({ id: explanationId, managerConfirmation: managerConfirmationInput });
-            } else if (status === 'PENDING_HR') {
-                await approveMutation({ id: explanationId, hrComment: hrCommentInput });
-            } else {
-                await update({
-                    id: explanationId,
-                    status: AttendanceExplanationStatus.APPROVED,
-                    managerConfirmation: managerConfirmationInput,
-                    hrComment: hrCommentInput
-                });
-            }
+            //thay đổi theo BE ngày 3/10
+
+            // if (status === 'PENDING') {
+            //     await managerApproveMutation({ id: explanationId, managerConfirmation: managerConfirmationInput });
+            // } else if (status === 'PENDING_HR') {
+            //     await approveMutation({ id: explanationId, hrComment: hrCommentInput });
+            // } else {
+            await update({
+                id: explanationId,
+                status: AttendanceExplanationStatus.APPROVED,
+                managerConfirmation: managerConfirmationInput,
+                hrComment: hrCommentInput
+            }, {
+                onSuccess() {
+                    addToast({ description: "Duyệt giải trình thành công", color: "success" })
+                },
+            });
+            // }
             onClose();
         } catch (error) {
             console.error('Lỗi khi phê duyệt:', error);
@@ -99,16 +105,20 @@ export const ExplanationDetailDrawer: FC = () => {
 
     const handleReject = async () => {
         try {
-            if (status === 'PENDING') {
-                await rejectMutation({ id: explanationId, reason: 'Từ chối giải trình' });
-            } else {
-                await update({
-                    id: explanationId,
-                    status: AttendanceExplanationStatus.REJECTED,
-                    managerConfirmation: managerConfirmationInput,
-                    hrComment: hrCommentInput
-                });
-            }
+            // if (status === 'PENDING') {
+            //     await rejectMutation({ id: explanationId, reason: 'Từ chối giải trình' });
+            // } else {
+            await update({
+                id: explanationId,
+                status: AttendanceExplanationStatus.REJECTED,
+                managerConfirmation: managerConfirmationInput,
+                hrComment: hrCommentInput
+            }, {
+                onSuccess() {
+                    addToast({ description: "Từ chối giải trình thành công", color: "success" })
+                },
+            });
+            // }
             onClose();
         } catch (error) {
             console.error('Lỗi khi từ chối:', error);

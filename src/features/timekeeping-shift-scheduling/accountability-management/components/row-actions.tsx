@@ -1,5 +1,6 @@
 import { useCallback, useState, type FC } from 'react';
 import {
+  addToast,
   Button,
   Chip,
   Modal,
@@ -17,7 +18,8 @@ import {
   useApproveAccountability,
   useRejectAccountability,
 } from '../hooks/use-approve-accountability';
-import type { AttendanceExplanation } from '../types';
+import { AttendanceExplanationStatus, type AttendanceExplanation } from '../types';
+import { useUpdateAttendanceExplanation } from '@/hooks/use-attendance-explanation';
 
 type ConfirmAction = 'approve' | 'reject';
 
@@ -211,6 +213,7 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
 
   const { mutate: approve, isPending: isApproving } = useApproveAccountability();
   const { mutate: reject, isPending: isRejecting } = useRejectAccountability();
+  const { mutateAsync: update, isPending: isUpdate } = useUpdateAttendanceExplanation();
 
   const handleOpenConfirm = useCallback((action: ConfirmAction) => {
     setReason('');
@@ -230,20 +233,40 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
       setPendingAction(null);
       setReason('');
     };
-
     if (pendingAction === 'approve') {
-      approve({ id: dataRow.id }, { onSuccess: onSettled, onError: onSettled });
+      update({
+        id: dataRow?.id,
+        status: AttendanceExplanationStatus.APPROVED,
+      }, {
+        onSuccess() {
+          addToast({ description: "Duyệt giải trình thành công", color: "success" })
+        }, onSettled: onSettled,
+      });
+      // approve({ id: dataRow.id }, { onSuccess: onSettled, onError: onSettled });
     } else {
-      reject(
-        {
-          id: dataRow.id,
-          payload: {
-            reason,
-          },
-        },
-        { onSuccess: onSettled, onError: onSettled },
-      );
+      update({
+        id: dataRow?.id,
+        status: AttendanceExplanationStatus.REJECTED,
+        reason: reason
+      }, {
+        onSuccess() {
+          addToast({ description: "Từ chối giải trình thành công", color: "success" })
+        }, onSettled: onSettled,
+      });
     }
+    // if (pendingAction === 'approve') {
+    //   approve({ id: dataRow.id }, { onSuccess: onSettled, onError: onSettled });
+    // } else {
+    //   reject(
+    //     {
+    //       id: dataRow.id,
+    //       payload: {
+    //         reason,
+    //       },
+    //     },
+    //     { onSuccess: onSettled, onError: onSettled },
+    //   );
+    // }
   }, [dataRow, pendingAction, reason, approve, reject]);
 
   const renderContent = () => {
