@@ -18,6 +18,14 @@ export function useShiftManagementList(params?: ShiftManagementParams) {
   return useQuery(shiftManagementQueryOptions.list(params));
 }
 
+export function useShiftManagementGrid(params?: ShiftManagementParams) {
+  return useQuery(shiftManagementQueryOptions.grid(params));
+}
+
+export function useStaffDailyAttendance(params?: ShiftManagementParams) {
+  return useQuery(shiftManagementQueryOptions.staffDailyAttendance(params));
+}
+
 export function useShiftManagementDetail(id: string | number) {
   return useQuery(shiftManagementQueryOptions.detail(id));
 }

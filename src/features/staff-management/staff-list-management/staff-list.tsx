@@ -62,7 +62,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
     const setLimit = (l: number) => setFilters({ limit: l });
 
     const { options: departmentOptions, isLoading: deptLoading } = useDepartmentOptions();
-    const { options: roomOptions, isLoading: roomLoading } = useRoomOptions(filters.departmentId);
+    const { options: roomOptions, isLoading: roomLoading } = useRoomOptions(filters?.departmentId);
 
     const { data: response, isLoading } = useStaffList({
         page,
@@ -189,9 +189,9 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
 
     return (
         <>
-            <PageContainer className="p-6 space-y-5 flex flex-col h-full bg-[#FAFAFA]">
+            <div className="space-y-4 flex flex-col h-full bg-[#FAFAFA]">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="px-6 pt-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-semibold text-[#11181C]">{title}</h1>
                         <div className="flex items-center gap-2 mt-2">
@@ -291,9 +291,9 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                 </div>
 
                 {/* Main Content Area */}
-                <div className="bg-white rounded-2xl shadow-sm border border-[#F4F4F5] flex-1 flex flex-col overflow-hidden p-4">
+                <div className="flex-1 flex flex-col">
                     {/* Filters */}
-                    <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-4">
+                    <div className="px-6 grid grid-cols-1 md:grid-cols-6 gap-3 mb-4">
                         <Input
                             placeholder="Tìm kiếm"
                             startContent={<IconSearch size={18} className="text-[#A1A1AA]" />}
@@ -420,7 +420,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                         }}
                     />
                 </div>
-            </PageContainer>
+            </div>
             <StaffFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} editData={editingStaff} />
         </>
     );

@@ -1,3 +1,5 @@
+import type { TimelineType } from "./types"
+
 type TimeSlot = {
     time: string
     label: string
@@ -62,4 +64,13 @@ export const translatePosition = (position: string) => {
         'DEPUTY_MANAGER': 'Phó phòng',
     };
     return positions[position] || position || '—';
+};
+
+
+export const TIMELINE_COLOR_MAP: Record<TimelineType, string> = {
+  WORK: "#3874B8",   // Màu xanh dương nhạt (Làm việc)
+  BREAK: "#ECECEC",  // Màu xám nhạt (Nghỉ trưa)
+  OT: "#006FEE",     // Màu xanh dương đậm (OT)
+  LEAVE: "#F5A524",  // Màu cam (Nghỉ phép)
+  OTHER: "#F31260",  // Màu hồng/đỏ (Muộn/Khác)
 };

@@ -12,7 +12,7 @@ import { SearchInput } from '@/components/filters/search-input';
 export const PageFilter: React.FC = () => {
   const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
 
-  const { options: roomOptions } = useRoomOptions();
+  const { options: roomOptions } = useRoomOptions(filters?.departmentId);
   const { options: departmentOptions } = useDepartmentOptions();
 
   const handleMonthChange = useCallback(

@@ -3,48 +3,29 @@ import { Card, CardBody, Chip } from '@heroui/react';
 import { icons } from '@/lib/icons';
 
 import { ShiftTimeline } from './shift-timeline';
-
-interface TimeSlot {
-  time: string;
-  label: string;
-  color: string;
-}
-
-interface ShiftEntryProps {
-  date: string;
-  dayOfWeek: string;
-  checkInTime: string;
-  timeSlots: TimeSlot[];
-  checkInLabel?: string;
-  totalHours?: string;
-  status?: 'approved' | 'pending' | 'warning' | 'none';
-}
-
-const STATUS_COLORS = {
-  approved: 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800',
-  pending: 'bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800',
-  warning: 'bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800',
-  none: 'bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800',
-};
+import type { AttendanceDay, TimelineSegment } from '../types';
+import { AttendanceExplanationStatus } from '@/types/attendance-explanation.type';
+import { formatDate } from '@/lib/utils';
+import dayjs from 'dayjs';
 
 export function ShiftEntry({
   date,
   dayOfWeek,
   checkInTime,
-  timeSlots,
-  checkInLabel,
+  checkOutTime,
+  timeline,
   totalHours,
-  status = 'none',
-}: ShiftEntryProps) {
+  explanationStatus,
+}: AttendanceDay) {
   return (
-    <Card className={`${STATUS_COLORS[status]} border rounded-[14px]`}>
+    <Card className={`rounded-[14px]`}>
       <CardBody className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">
-            <h3 className="font-bold text-gray-900 dark:text-white">{date}</h3>
+            <h3 className="font-bold text-gray-900 dark:text-white">{dayjs(date).isSame(new Date()) ? "Hôm nay" : dayOfWeek + ", " + formatDate(date)}</h3>
           </div>
           <div className="text-right">
-            {status === 'approved' && (
+            {explanationStatus === AttendanceExplanationStatus.APPROVED && (
               <Chip
                 size="md"
                 variant="flat"
@@ -62,26 +43,26 @@ export function ShiftEntry({
         </div>
         <div className="flex items-center">
           <div className='p-3'>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Chấm công vào</p>
-            <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">
-              {checkInTime}
+            <p className="text-sm text-[#A1A1AA] dark:text-gray-400">Chấm công vào</p>
+            <p className="text-base font-medium text-gray-900 dark:text-white mt-1">
+              {checkInTime ?? "--"}
             </p>
           </div>
           <div className="w-px h-7.5 bg-[#E4E4E7]" />
           <div className="flex-1 h-14">
-            <ShiftTimeline timeSlots={timeSlots} />
+            <ShiftTimeline timeline={timeline} />
           </div>
           <div className="w-px h-7.5 bg-[#E4E4E7]" />
           <div className="flex items-center justify-between dark:border-slate-700">
             <div className='p-3'>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Chấm công về</p>
-              <p className="text-sm font-semibold text-gray-900 dark:text-white">--</p>
+              <p className="text-xs text-[#A1A1AA] dark:text-gray-400">Chấm công về</p>
+              <p className="text-base font-medium text-gray-900 dark:text-white">{checkOutTime ?? "--"}</p>
             </div>
             <div className="w-px h-7.5 bg-[#E4E4E7]" />
             <div className="text-right p-3">
-              <p className="text-xs text-gray-600 dark:text-gray-400">Tổng giờ</p>
-              <p className="text-medium text-start font-semibold text-gray-900 dark:text-white">
-                {totalHours || '--'}
+              <p className="text-xs text-[#A1A1AA] dark:text-gray-400">Tổng giờ</p>
+              <p className="text-base font-medium text-start  text-gray-900 dark:text-white">
+                {totalHours?.toFixed(2) || '--'}
               </p>
             </div>
           </div>

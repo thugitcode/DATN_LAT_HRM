@@ -1,49 +1,48 @@
-'use client';
-
-import { groupTimeSlots } from "../helpers";
-
-
-interface TimeSlot {
-  time: string;
-  label: string;
-  color: string;
-}
+import { formatTime } from "@/lib/utils";
+import { TIMELINE_COLOR_MAP } from "../helpers";
+import type { TimelineSegment } from "../types";
 
 interface ShiftTimelineProps {
-  timeSlots: TimeSlot[];
+  timeline: TimelineSegment[];
 }
 
-export function ShiftTimeline({ timeSlots }: ShiftTimelineProps) {
-  const grouped = groupTimeSlots(timeSlots)
+export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
   return (
     <div className="overflow-x-auto px-6 py-0 h-full">
       <div
         className="relative grid gap-0.5"
         style={{
-          gridTemplateColumns: `repeat(${timeSlots.length}, minmax(80px, 1fr))`,
+          gridTemplateColumns: `repeat(${timeline.length}, minmax(80px, 1fr))`,
         }}
       >
         {/* Grid lines background */}
-        {timeSlots.map((slot, i) => (
-          <div
-            key={i}
-            className="text-xs text-center text-gray-500 py-0"
-          >
-            {slot.time}
+        {timeline.map((slot, i) => (
+          <div className="flex justify-between h-2.5 px-2" key={i}>
+            <div
+
+              className="text-xs text-center text-gray-500 py-0"
+            >
+              {formatTime(slot.startTime)}
+            </div>
+            <div
+              // key={i}
+              className="text-xs text-center text-gray-500 py-0"
+            >
+              {formatTime(slot.endTime)}
+            </div>
           </div>
         ))}
 
         {/* Timeline blocks */}
-        {grouped.map((slot, i) => (
+        {timeline.map((slot, i) => (
           <div
             key={i}
             className={`
-          ${slot.color}
           absolute
           h-7
           flex items-center justify-center
           text-white text-[14px] py-0.5 leading-5 font-normal
-          rounded-md
+          rounded-lg
           w-full
           transition-all
           hover:scale-101
@@ -51,8 +50,10 @@ export function ShiftTimeline({ timeSlots }: ShiftTimelineProps) {
           cursor-pointer
         `}
             style={{
-              gridColumn: `${slot.startIndex + 1} / span ${slot.count}`,
+              gridColumn: `${i + 1} / span ${1}`,
               top: "26px",
+              background: TIMELINE_COLOR_MAP?.[slot.type],
+              color: slot.type === "BREAK" ? "black" : "white"
             }}
           >
             {slot.label}
