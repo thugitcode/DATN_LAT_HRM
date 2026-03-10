@@ -1,5 +1,6 @@
 // components/AttendanceSummary.tsx
 import React from 'react';
+import type { IAttendanceSummary } from '../types';
 
 interface StatItemProps {
   label: string;
@@ -19,61 +20,67 @@ const StatItem: React.FC<StatItemProps> = ({ label, value, change, changeColor =
     <div className="flex flex-col items-start justify-center p-3 bg-white rounded-lg min-w-[140px]">
       <div className="text-sm font-medium text-gray-500 tracking-wide mb-1">{label}</div>
       <div className="text-2xl font-medium text-[#11181C] mb-1">{value}</div>
-      <div className={`text-xs ${colorClass} font-medium`}>
+      {/* <div className={`text-xs ${colorClass} font-medium`}>
         {change}&nbsp;
         <span className="text-[#A1A1AA]">vs last month</span>
-      </div>
+      </div> */}
     </div>
   );
 };
+interface AttendanceSummaryProps {
+  data?: IAttendanceSummary;
+}
 
-const AttendanceSummary: React.FC = () => {
+const AttendanceSummary: React.FC<AttendanceSummaryProps> = ({ data }) => {
+  // Fallback nếu data chưa kịp load
+  if (!data) return <div className="p-6 text-gray-400 text-center">Không có dữ liệu</div>;
+
   const stats = [
     {
       label: 'Ngày nghỉ',
-      value: 4,
-      change: '+12',
-      changeColor: 'green',
+      value: data.dayOff,
+      change: '0', // Tạm thời để 0 vì API chưa có field so sánh
+      changeColor: 'neutral',
     },
     {
       label: 'Chấm công muộn',
-      value: 4,
-      change: '+12',
-      changeColor: 'green',
+      value: data.lateCount,
+      change: '0',
+      changeColor: 'neutral',
     },
     {
       label: 'Về sớm',
-      value: 4,
-      change: '-2',
-      changeColor: 'red',
+      value: data.earlyLeaveCount,
+      change: '0',
+      changeColor: 'neutral',
     },
     {
       label: 'Quên chấm công',
-      value: '4', // giữ nguyên định dạng trong ảnh
-      change: '-2',
-      changeColor: 'red',
+      value: data.missedCheckIn,
+      change: '0',
+      changeColor: 'neutral',
     },
     {
       label: 'Số phép còn lại',
-      value: 1,
+      value: data.remainingLeave,
       change: '0',
       changeColor: 'neutral',
     },
     {
       label: 'Nghỉ không phép',
-      value: 4,
-      change: '-2',
-      changeColor: 'red',
+      value: data.unauthorizedLeave,
+      change: '0',
+      changeColor: 'neutral',
     },
   ];
 
   return (
     <div className="w-full">
-      {/* Grid các chỉ số */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 rounded-b-[14px] gap-4 px-6 py-1.5 bg-white border border-t-0 border-gray-200">
         {stats.map((stat, index) => (
           <div className="flex items-center" key={index}>
-            {index !== 0 && <div className="w-px h-full bg-[#E4E4E7]" />}
+            {/* Divider chỉ hiện từ item thứ 2 trở đi trên màn hình lớn */}
+            {index !== 0 && <div className="hidden lg:block w-px h-10 bg-[#E4E4E7]" />}
             <StatItem
               label={stat.label}
               value={stat.value}
@@ -86,5 +93,4 @@ const AttendanceSummary: React.FC = () => {
     </div>
   );
 };
-
 export default AttendanceSummary;

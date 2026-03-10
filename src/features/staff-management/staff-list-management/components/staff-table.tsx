@@ -1,20 +1,8 @@
 import type { FC } from 'react';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableColumn,
-    TableHeader,
-    TableRow,
-    Chip,
-    Switch,
-    Button,
-    Pagination,
-    Select,
-    SelectItem,
-} from '@heroui/react';
-import { IconPencil } from '@tabler/icons-react';
+import { Chip, Switch, Button } from '@heroui/react';
+import { IconMail, IconPencil, IconPhone } from '@tabler/icons-react';
 
+import { DataTable, type ColumnDef } from '@/components/data-table/data-table';
 import type { Staff } from '@/types/staff.type';
 import { translateJobTitle, translatePosition } from '../../time-attendance-management/helpers';
 
@@ -30,6 +18,110 @@ const renderStatusChip = (status?: string) => {
             return <Chip size="sm" classNames={{ content: 'text-[#71717A] font-medium text-[10px] px-1', base: 'h-5 bg-[#F4F4F5]' }}>Không rõ</Chip>;
     }
 };
+
+const columns: ColumnDef<Staff>[] = [
+    {
+        key: 'name',
+        title: 'NHÂN VIÊN',
+        render: (_, record) => (
+            <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0">
+                    <img src={record.avatar || `https://ui-avatars.com/api/?name=${record.name}&background=random`} alt="Avatar" className="w-full h-full object-cover" />
+                </div>
+                <div>
+                    <div className="font-semibold text-sm text-[#11181C] flex items-center gap-2">
+                        {record.name}
+                        {renderStatusChip(record.status as unknown as string)}
+                    </div>
+                    <div className="text-xs text-[#71717A] mt-0.5">
+                        {translateJobTitle(record.jobTitle as any)} - {record.code}
+                    </div>
+                </div>
+            </div>
+        ),
+    },
+    {
+        key: 'birthday',
+        title: 'NGÀY SINH',
+        render: (_, record) => (
+            <span className="text-sm text-[#11181C]">{record?.birthday ? new Date(record?.birthday as string).toLocaleDateString('vi-VN') : ''}</span>
+        ),
+    },
+    {
+        key: 'gender',
+        title: 'GIỚI TÍNH',
+        render: (_, record) => (
+            <span className="text-sm text-[#11181C]">{record?.gender === 'MALE' ? 'Nam' : record?.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</span>
+        ),
+    },
+    {
+        key: 'contact',
+        title: 'LIÊN HỆ',
+        render: (_, record) => (
+            <div className="flex flex-col gap-0.5 text-sm text-[#006FEE]">
+                <span className='flex gap-1.5'><IconMail size={20} color='#000000' stroke={"1px"} /> {record.email}</span>
+                <span className='flex gap-1.5'><IconPhone size={20} color='#000000' stroke={"1px"} /> {record.phone}</span>
+            </div>
+        ),
+    },
+    {
+        key: 'jobTitle',
+        title: 'CHỨC DANH',
+        render: (_, record) => (
+            <span className="text-sm text-[#11181C]">{translateJobTitle(record?.jobTitle as any)}</span>
+        ),
+    },
+    {
+        key: 'position',
+        title: 'CẤP BẬC',
+        render: (_, record) => (
+            <span className="text-sm text-[#11181C]">{translatePosition(record?.position as string)}</span>
+        ),
+    },
+    {
+        key: 'departments',
+        title: 'KHOA/PHÒNG',
+        render: (_, record) => (
+            <span className="text-sm text-[#11181C]">
+                {Array.isArray(record?.departments) ? (record?.departments as { id: string; name: string }[]).map((d) => d.name).join(', ') : '—'}
+            </span>
+        ),
+    },
+    {
+        key: 'workType',
+        title: 'LOẠI HÌNH',
+        render: (_, record) => (
+            <span className="text-sm text-[#11181C]">
+                {record?.workType === 'FULL_TIME' ? 'Toàn thời gian' : record?.workType === 'PART_TIME' ? 'Bán thời gian' : (record?.workType as string) || '—'}
+            </span>
+        ),
+    },
+    {
+        key: 'endDate',
+        title: 'NGÀY HẾT HẠN HĐ',
+        render: (_, record) => (
+            <span className="text-sm text-[#11181C]">{record?.endDate ? new Date(record?.endDate as string).toLocaleDateString('vi-VN') : '—'}</span>
+        ),
+    },
+    {
+        key: 'actions',
+        title: 'HÀNH ĐỘNG',
+        render: (_, record) => (
+            <div className="flex items-center gap-3">
+                <Switch size="sm" isSelected={record.activeStatus === 'ACTIVE'} />
+                <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    className="text-[#71717A]"
+                    onClick={() => record.id}
+                >
+                    <IconPencil size={18} stroke={1.5} />
+                </Button>
+            </div>
+        ),
+    },
+];
 
 interface StaffTableProps {
     data: Staff[];
@@ -56,6 +148,33 @@ export const StaffTable: FC<StaffTableProps> = ({
 }) => {
     const totalPages = Math.ceil((total || 1) / limit);
 
+    // Update the actions column to include the edit handler
+    const columnsWithHandlers: ColumnDef<Staff>[] = columns.map((col) => {
+        if (col.key === 'actions') {
+            return {
+                ...col,
+                render: (_: unknown, record: Staff) => (
+                    <div className="flex items-center gap-3">
+                        <Switch size="sm" isSelected={record.activeStatus === 'ACTIVE'} />
+                        <Button
+                            isIconOnly
+                            size="sm"
+                            variant="light"
+                            className="text-[#71717A]"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit?.(record);
+                            }}
+                        >
+                            <IconPencil size={18} stroke={1.5} />
+                        </Button>
+                    </div>
+                ),
+            };
+        }
+        return col;
+    });
+
     if (loading) {
         return (
             <div className="flex-1 flex flex-col min-h-0 bg-white shadow-sm border border-[#E4E4E7] rounded-xl overflow-hidden mt-4 items-center justify-center">
@@ -65,141 +184,27 @@ export const StaffTable: FC<StaffTableProps> = ({
     }
 
     return (
-        <div className="flex-1 flex flex-col min-h-0 bg-white shadow-sm border border-[#E4E4E7] rounded-xl overflow-hidden mt-4">
-            <div className="flex-1 overflow-auto">
-                <Table
-                    aria-label="Staff list block"
-                    classNames={{
-                        wrapper: 'shadow-none p-0',
-                        th: 'bg-[#F4F4F5] text-[#71717A] text-xs font-semibold uppercase py-3 px-4 first:rounded-tl-lg last:rounded-tr-lg border-b border-[#E4E4E7]',
-                        td: 'py-3 px-4',
-                        tr: 'border-b border-[#F4F4F5] last:border-none hover:bg-[#FAFAFA] transition-colors cursor-pointer',
-                    }}
-                    onRowAction={(key) => onViewDetail?.(key as string)}
-                    removeWrapper
-                >
-                    <TableHeader>
-                        {/* previous columns */}
-                        <TableColumn>NHÂN VIÊN</TableColumn>
-                        <TableColumn>NGÀY SINH</TableColumn>
-                        <TableColumn>GIỚI TÍNH</TableColumn>
-                        <TableColumn>LIÊN HỆ</TableColumn>
-                        <TableColumn>CHỨC DANH</TableColumn>
-                        <TableColumn>CẤP BẬC</TableColumn>
-                        <TableColumn>KHOA/PHÒNG</TableColumn>
-                        <TableColumn>LOẠI HÌNH</TableColumn>
-                        <TableColumn>NGÀY HẾT HẠN HĐ</TableColumn>
-                        <TableColumn>HÀNH ĐỘNG</TableColumn>
-                    </TableHeader>
-                    <TableBody emptyContent={"Không có dữ liệu"}>
-                        {data.map((staff) => (
-                            <TableRow
-                                key={staff.id}
-                            >
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0">
-                                            <img src={staff.avatar || `https://ui-avatars.com/api/?name=${staff.name}&background=random`} alt="Avatar" className="w-full h-full object-cover" />
-                                        </div>
-                                        <div>
-                                            <div className="font-semibold text-sm text-[#11181C] flex items-center gap-2">
-                                                {staff.name}
-                                                {renderStatusChip(staff.status as unknown as string)}
-                                            </div>
-                                            <div className="text-xs text-[#71717A] mt-0.5">
-                                                {translateJobTitle(staff.jobTitle as any)} - {staff.code}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm text-[#11181C]">{staff.birthday ? new Date(staff.birthday).toLocaleDateString('vi-VN') : ''}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm text-[#11181C]">{staff.gender === 'MALE' ? 'Nam' : staff.gender === 'FEMALE' ? 'Nữ' : 'Khác'}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex flex-col gap-0.5 text-sm text-[#006FEE]">
-                                        <span>📧 {staff.email}</span>
-                                        <span>📞 {staff.phone}</span>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm text-[#11181C]">{translateJobTitle(staff.jobTitle as any)}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm text-[#11181C]">{translatePosition(staff.position as string)}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm text-[#11181C]">{staff.departments?.map((d: { id: string; name: string }) => d.name).join(', ') || '—'}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm text-[#11181C]">{staff.workType === 'FULL_TIME' ? 'Toàn thời gian' : staff.workType === 'PART_TIME' ? 'Bán thời gian' : (staff.workType || '—')}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <span className="text-sm text-[#11181C]">{staff.endDate ? new Date(staff.endDate).toLocaleDateString('vi-VN') : '—'}</span>
-                                </TableCell>
-                                <TableCell>
-                                    <div className="flex items-center gap-3">
-                                        <Switch size="sm" isSelected={staff.activeStatus === 'ACTIVE'} />
-                                        <Button
-                                            isIconOnly
-                                            size="sm"
-                                            variant="light"
-                                            className="text-[#71717A]"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onEdit?.(staff);
-                                            }}
-                                        >
-                                            <IconPencil size={18} stroke={1.5} />
-                                        </Button>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
-
-            {/* Pagination block */}
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[#F4F4F5] bg-white mt-auto">
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-[#71717A]">Page</span>
-                    <Select
-                        size="sm"
-                        variant="bordered"
-                        selectedKeys={[limit.toString()]}
-                        onSelectionChange={(keys) => {
-                            const value = Array.from(keys)[0] as string;
-                            onLimitChange(Number(value));
-                        }}
-                        className="w-[70px]"
-                        classNames={{
-                            trigger: 'h-8 min-h-8 rounded-lg',
-                        }}
-                    >
-                        <SelectItem key="10">10</SelectItem>
-                        <SelectItem key="25">25</SelectItem>
-                        <SelectItem key="50">50</SelectItem>
-                        <SelectItem key="100">100</SelectItem>
-                    </Select>
-                    <span className="text-sm text-[#71717A]">
-                        of {totalPages}
-                    </span>
-                </div>
-
-                <Pagination
-                    total={totalPages || 1}
-                    page={page}
-                    onChange={onPageChange}
-                    showControls
-                    size="sm"
-                    classNames={{
-                        cursor: 'bg-[#006FEE] text-white',
-                    }}
-                />
-            </div>
-        </div>
+        // <div className="p-4 bg-white flex-1 overflow-auto">
+            <DataTable
+                columns={columnsWithHandlers}
+                dataSource={data}
+                loading={loading}
+                emptyContent="Không có dữ liệu"
+                pagination={{
+                    current: page,
+                    pageSize: limit,
+                    total: total,
+                    totalPage: totalPages,
+                    showSizeChanger: true,
+                    pageSizeOptions: [10, 25, 50, 100],
+                    onChange: (page, pageSize) => {
+                        onPageChange(page);
+                        onLimitChange(pageSize);
+                    },
+                }}
+                classNames={{ wrapper: 'h-[calc(100vh-315px)]' }}
+                onRowClick={(record) => onViewDetail?.(record.id)}
+            />
+        // </div>
     );
 };

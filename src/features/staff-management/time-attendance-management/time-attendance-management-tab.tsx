@@ -1,83 +1,34 @@
 import { PageFilter } from '@/features/timekeeping-shift-scheduling/components/page-filter';
-import AttendanceSummary from './components/attendance-summary';
+import { useStaffDailyAttendance } from '@/features/timekeeping-shift-scheduling/shift-management/hooks/use-shift-management';
+import { useMonthDateRange } from '@/hooks/use-month-date-range';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import type { ShiftManagementParams } from '@/types';
+import { useParams } from '@tanstack/react-router';
 import { Header } from './components/header';
 import { ShiftEntry } from './components/shift-entry';
 import { ShiftExplanation } from './components/shift-explanation';
 import { ShiftManagementContainer } from './components/shift-management-container';
 import { TAB_KEYS } from './contants/data';
 import { useTimeAttendanceTabs } from './hooks/use-time-attendance-tabs';
-const mockShifts = [
-  {
-    date: 'Monday, 26/1/2026',
-    dayOfWeek: 'Monday',
-    checkInTime: '08:30 AM',
-    checkInLabel: 'Check In',
-    timeSlots: [
-      { time: '08:30', label: 'Work', color: 'bg-blue-500' },
-      { time: '11:30', label: 'Work', color: 'bg-blue-500' },
-      { time: '13:30', label: 'Business Trip', color: 'bg-blue-500' },
-      { time: '15:30', label: 'Work', color: 'bg-blue-500' },
-      { time: '17:30', label: 'Work', color: 'bg-blue-500' },
-      { time: '19:00', label: 'OT', color: 'bg-blue-600' },
-      { time: '21:00', label: 'OT', color: 'bg-blue-600' },
-    ],
-    totalHours: '10h30',
-    status: 'none' as const,
-  },
-  {
-    date: 'Monday, 26/1/2026',
-    dayOfWeek: 'Monday',
-    checkInTime: '08:30 AM',
-    checkInLabel: 'Check In',
-    timeSlots: [
-      { time: '08:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '11:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '13:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '15:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '17:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '19:00', label: 'Leave', color: 'bg-amber-500' },
-      { time: '21:00', label: 'Leave', color: 'bg-amber-500' },
-    ],
-    totalHours: '--',
-    status: 'approved' as const,
-  },
-  {
-    date: 'Saturday, 26/1/2026',
-    dayOfWeek: 'Saturday',
-    checkInTime: '09:30 AM',
-    checkInLabel: 'Check In',
-    timeSlots: [
-      { time: '08:30', label: 'Late', color: 'bg-red-500' },
-      { time: '11:30', label: 'Work', color: 'bg-blue-500' },
-      { time: '13:30', label: 'Business Trip', color: 'bg-blue-500' },
-      { time: '15:30', label: 'Work', color: 'bg-blue-500' },
-      { time: '17:30', label: 'Work', color: 'bg-blue-500' },
-      { time: '19:00', label: 'Work', color: 'bg-blue-500' },
-    ],
-    totalHours: '--',
-    status: 'none' as const,
-  },
-  {
-    date: 'Monday, 26/1/2026',
-    dayOfWeek: 'Monday',
-    checkInTime: '08:30 AM',
-    checkInLabel: 'Check In',
-    timeSlots: [
-      { time: '08:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '11:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '13:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '15:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '17:30', label: 'Leave', color: 'bg-amber-500' },
-      { time: '19:00', label: 'Leave', color: 'bg-amber-500' },
-      { time: '21:00', label: 'Leave', color: 'bg-amber-500' },
-    ],
-    totalHours: '--',
-    status: 'warning' as const,
-  },
-]
-export const TimeAttendanceManagementTab = () => {
-  const { activeKey } = useTimeAttendanceTabs()
+import AttendanceSummary from './components/attendance-summary';
 
+export const TimeAttendanceManagementTab = () => {
+  const { id } = useParams({ strict: false })
+  const { filters } = useQueryFilter<ShiftManagementParams>();
+  const { activeKey } = useTimeAttendanceTabs()
+  const { startDate, endDate } = useMonthDateRange(filters.month);
+
+  const { data, isLoading } = useStaffDailyAttendance({
+    page: filters.page ?? 1,
+    limit: filters.limit ?? 10,
+    fromDate: startDate,
+    toDate: endDate,
+    search: filters.search,
+    departmentId: filters.departmentId,
+    roomId: filters.roomId,
+    staffId: id
+  });
+  
   return (
     <div className='flex flex-col'>
       <div className='mb-5'>
@@ -86,9 +37,9 @@ export const TimeAttendanceManagementTab = () => {
       <Header />
       {
         TAB_KEYS.WORKSHEET_BY_SHIFT === activeKey && <div className="space-y-4">
-          <AttendanceSummary />
+          <AttendanceSummary data={data?.data?.[0]?.summary}/>
 
-          {mockShifts.map((shift, idx) => (
+          {data?.data?.[0]?.days?.map((shift, idx) => (
             <ShiftEntry key={idx} {...shift} />
           ))}
         </div>

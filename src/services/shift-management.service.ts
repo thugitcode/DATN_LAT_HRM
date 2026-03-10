@@ -13,6 +13,7 @@ import type { WorkScheduleDetail } from '@/features/timekeeping-shift-scheduling
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
+import type { AttendanceDay, StaffAttendanceRecord } from '@/features/staff-management/time-attendance-management/types';
 
 class ShiftManagementService extends BaseApiService<
   StaffSchedule,
@@ -43,6 +44,21 @@ class ShiftManagementService extends BaseApiService<
     return this.request(async () => {
       const res = await this.instance.get(`${this.url(id)}`);
 
+      return res.data;
+    });
+  }
+  async getAllGrid(params?: StaffParams): Promise<ApiResponse<StaffSchedule[]>> {
+
+    return this.request(async () => {
+      const res = await this.instance.get(`${this.url()}/calendar`, { params });
+      return res.data;
+    });
+  }
+
+  async getStaffDailyAttendance(params?: StaffParams): Promise<ApiResponse<StaffAttendanceRecord[]>> {
+
+    return this.request(async () => {
+      const res = await this.instance.get(`${this.url()}/staff-daily-attendance`, { params });
       return res.data;
     });
   }
