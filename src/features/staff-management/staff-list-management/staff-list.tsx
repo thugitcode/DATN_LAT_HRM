@@ -1,24 +1,25 @@
-import { Button, Chip, Input, Select, SelectItem, addToast, Divider } from '@heroui/react';
-import { IconPrinter, IconList, IconGridDots, IconSearch, IconRefresh, IconFileDownload } from '@tabler/icons-react';
-import * as XLSX from 'xlsx';
-import { useRef, useState } from 'react';
+import { addToast, Button, Chip, Input, Select, SelectItem } from '@heroui/react';
+import { IconSearch } from '@tabler/icons-react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import dayjs from 'dayjs';
+import { useRef, useState } from 'react';
+import * as XLSX from 'xlsx';
 
-import { PageContainer } from '@/components/page-container';
-import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
-import { useRoomOptions } from '@/hooks/select-options/use-room-options';
-import { useStaffList, useImportStaff } from '@/query-options/staff';
-import type { Staff, ContractTypeEnum } from '@/types/staff.type';
-import { StaffTable } from './components/staff-table';
-import { StaffGrid } from './components/staff-grid';
-import { StaffFormDrawer } from './components/staff-form-drawer';
-import { useDisclosure } from '@heroui/react';
-import { TitlePage } from '@/components/title-page';
 import { ActionsPage } from '@/components/actions-page';
 import { LayoutRenderer } from '@/features/timekeeping-shift-scheduling/components/layout-renderer';
+import { ShiftManagementPrint } from '@/features/timekeeping-shift-scheduling/shift-management/components/shift-management-print';
+import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
+import { useRoomOptions } from '@/hooks/select-options/use-room-options';
+import { useImportStaff, useStaffList } from '@/query-options/staff';
 import { LayoutSwitcherEnum } from '@/types/global.type';
-import { useStaffExport } from './hooks/use-staff-export';
+import type { ContractTypeEnum, Staff } from '@/types/staff.type';
+import { useDisclosure } from '@heroui/react';
+import { useReactToPrint } from 'react-to-print';
+import { StaffFormDrawer } from './components/staff-form-drawer';
+import { StaffGrid } from './components/staff-grid';
+import { StaffTable } from './components/staff-table';
+import { exportStaffTemplate, useStaffExport } from './hooks/use-staff-export';
+import { StaffListPrint } from './components/staff-list-print';
 
 const POSITION_OPTIONS = [
     { key: 'STAFF', label: 'Nhân viên' },
@@ -38,7 +39,7 @@ interface StaffListProps {
 export const StaffList = ({ title, contractType }: StaffListProps) => {
     const navigate = useNavigate();
     const searchParams: any = useSearch({ from: '/_private/admin/_dashboard/staff-management/$type' });
-    
+    const printRef = useRef<HTMLDivElement>(null);
     const page = searchParams.page || 1;
     const limit = searchParams.limit || 10;
 
@@ -80,8 +81,8 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
     const total = response?.pagination?.total || 0;
     const workingCount = (response?.metadata?.WORKING as number) || 0;
     const resignedCount = (response?.metadata?.RESIGNED as number) || 0;
-    const { exportStaff } = useStaffExport(staffData)
-    
+    const { exportStaff, onExportStaffTemplate } = useStaffExport(staffData)
+
     const handleViewDetail = (id: string) => {
         navigate({
             to: '/admin/staff-management/detail/$id',
@@ -93,6 +94,8 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [editingStaff, setEditingStaff] = useState<Staff | undefined>();
     const { mutateAsync: importStaff, isPending: isImporting } = useImportStaff();
+
+    const handlePrint = useReactToPrint({ contentRef: printRef });
 
     const handleEdit = (staff: Staff) => {
         setEditingStaff(staff);
@@ -167,7 +170,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                         major: row['Chuyên ngành']?.toString().trim(),
                         academicDegree: row['Học hàm học vị']?.toString().trim(),
                         practicingCertificateCode: row['Số CCHN']?.toString().trim(),
-                        practicingCertificatePlace: row['Nơi cấp_1']?.toString().trim(),
+                        practicingCertificatePlace: row['Nơi cấp']?.toString().trim(),
                         practicingCertificateExpiryDate: formatExcelDate(row['Ngày hết hạn']),
                         taxCode: row['Mã số thuế']?.toString().trim(),
                         insuranceCode: row['Số BHYT']?.toString().trim(),
@@ -278,8 +281,10 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                         </Button> */}
                     </div>
                     <ActionsPage
-                        // hiddenLayoutSwitcher={activeKey === TAB_KEYS.DETAILED_TIME_SHEET}
+                        onExportTemplate={onExportStaffTemplate}
+                        onPrint={handlePrint}
                         onExport={exportStaff}
+                        onImport={() => fileInputRef.current?.click()}
                         actions={
                             <div className="flex gap-3">
                                 <Button color="primary" onPress={onOpen}>
@@ -422,6 +427,19 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                 </div>
             </div>
             <StaffFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} editData={editingStaff} />
+            <div style={{ display: 'none' }}>
+                <StaffListPrint
+                    ref={printRef}
+                    data={response?.data ?? []}
+                />
+            </div>
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept=".xlsx, .xls"
+                onChange={handleImportExcel}
+            />
         </>
     );
 };

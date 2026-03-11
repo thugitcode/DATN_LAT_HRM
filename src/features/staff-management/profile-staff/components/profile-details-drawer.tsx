@@ -1,67 +1,131 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useDrawer } from '@/store/useDrawer';
-import {
-  addToast,
-  Button,
-  Form
-} from '@heroui/react';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
-
-
 import { FormArea } from '@/components/form-fields/form-area';
-import { FormDatePicker } from '@/components/form-fields/form-date-picker';
 import { FileUploadInput } from '@/components/form-fields/form-file-upload-input';
 import { FormInput } from '@/components/form-fields/form-input';
 import { icons } from '@/lib/icons';
-import React, { useRef } from 'react';
-import { type DocumentFormValues } from '../schemas/profile-details.schema';
+import { useDrawer } from '@/store/useDrawer';
+import { addToast, Button, Form } from '@heroui/react';
 import dayjs from 'dayjs';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useCreateStaffProfile, useStaffProfileDetail } from '../../salary-and-benefits/hooks/use-staff-profile';
+import { documentSchema, type DocumentFormValues } from '../schemas/profile-details.schema';
+import { uploadService } from '@/services/upload.service';
+import { FormDatePicker } from '@/components/form-fields/form-date-picker';
+import z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
+import { staffProfileKeys } from '@/services/query-options/staff-profile.query';
+import { useEffect } from 'react';
+import { formatDate } from '@/lib/utils';
+
 type FormValues = {
   documents: DocumentFormValues[];
 };
-const TODAY = dayjs().format("YYYY-MM-DD")
+
+const TODAY = dayjs().format("YYYY-MM-DD");
+
 export const ProfileDetailsDrawer = () => {
   const closedDrawer = useDrawer((state) => state.onClose);
+  const queryClient = useQueryClient();
 
-  const workScheduleDetailId = useDrawer((state) => state.data) as string;
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(null)
+  const { mutateAsync: createProfile } = useCreateStaffProfile(); // Sử dụng mutateAsync để dễ handle try/catch
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const staffId = useDrawer((state) => (state?.data as { staffId: string })?.staffId);
+  const id = useDrawer((state) => (state?.data as { id: string })?.id);
+  const { data: details } = useStaffProfileDetail(id)
+  
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting, errors },
     reset,
-    getValues
+    setValue
   } = useForm<FormValues>({
+    resolver: zodResolver(z.object({ documents: z.array(documentSchema) })),
     defaultValues: {
       documents: [
         {
-          documentType: "",
-          updateDate: TODAY,
-          updater: "Admin",
+          name: "",
           note: "",
+          staffId: staffId,
+          createdByName: "Admin",
           files: null,
+          createdAt: TODAY
         },
       ],
     },
   });
+  // Set details into form when viewing details
+  useEffect(() => {
+    if (details?.data && id) {
+      const profile = details.data;
+      reset({
+        documents: [
+          {
+            name: profile.name || "",
+            note: profile.note || "",
+            staffId: profile.staffId || staffId,
+            createdByName: profile.createdByName || "Admin",
+            files: null,
+            createdAt: dayjs(profile.createdAt).format("YYYY-MM-DD") || TODAY
+          },
+        ],
+      });
+    }
+  }, [details, id, staffId, reset]);
 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "documents",
   });
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (values: FormValues) => {
     try {
-      // TODO: call API upload
-      addToast({ title: 'Thêm mới tài liệu thành công.', color: 'success' });
+      // Duyệt qua từng bộ tài liệu trong form (fields của useFieldArray)
+      const requests = values.documents.map(async (doc) => {
+        // 1. Kiểm tra và Upload file trước
+        if (!doc.files || doc.files.length === 0) return;
 
+        const fileToUpload = doc.files;
+        const uploadRes = await uploadService.uploadMultiple(fileToUpload);
+
+        if (uploadRes.statusCode === 200) {
+          const fileData = uploadRes.data;
+          const payload = {
+            name: doc.name || fileData?.[0]?.fileName,
+            note: doc.note || "",
+            thumbnail: fileData?.[0]?.url,
+            createdByName: doc.createdByName || "Admin",
+            staffId: staffId,
+            documentIds: fileData?.map(it => it.filePath)
+          };
+
+          return createProfile(payload);
+        }
+      });
+
+      // Đợi tất cả các request hoàn thành
+      await Promise.all(requests);
+      queryClient.invalidateQueries({ queryKey: staffProfileKeys.lists() });
+      addToast({
+        title: 'Thêm mới tài liệu thành công',
+        description: 'Thông tin hồ sơ nhân viên đã được cập nhật',
+        color: 'success',
+      });
+      // addToast({ title: 'Cập nhật tất cả tài liệu thành công', color: 'success' });
       reset();
-      // onSuccess?.();
+      closedDrawer();
     } catch (error) {
-      addToast({ title: 'Có lỗi xảy ra.', color: 'danger' });
+      console.error("Submit error:", error);
+      addToast({ title: 'Có lỗi xảy ra trong quá trình cập nhật', color: 'danger' });
+    }
+  };
+  const handleFilesSelect = (index: number, files: File[]) => {
+    if (files.length > 0) {
+      setValue(`documents.${index}.files`, files, {
+        shouldValidate: true,
+        shouldDirty: true
+      });
     }
   };
   return (
@@ -70,44 +134,44 @@ export const ProfileDetailsDrawer = () => {
       validationBehavior="aria"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="flex flex-col gap-4 w-full pb-21.25">
+      <div className="flex flex-col gap-4 w-full pb-24 overflow-y-auto">
         {fields.map((field, index) => (
           <div
             key={field.id}
-            className="p-4 bg-white shadow-sm group rounded-xl w-full flex flex-col gap-3 relative"
+            className="p-4 bg-white border border-gray-100 shadow-sm group rounded-xl w-full flex flex-col gap-3 relative"
           >
             {/* Delete Button */}
-            <Button
-              variant="flat"
-              isIconOnly
-              onPress={() => remove(index)}
-              className="absolute z-20 border-none
-            size-8 min-w-8 top-1.5 right-2.5
-            opacity-0 group-hover:opacity-100
-            transition-opacity duration-200 bg-transparent"
-            >
-              <icons.trash color="red" />
-            </Button>
+            {fields.length > 1 && (
+              <Button
+                variant="flat"
+                isIconOnly
+                onPress={() => remove(index)}
+                className="absolute z-20 border-none size-8 min-w-8 top-1.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-transparent"
+              >
+                <icons.trash color="red" />
+              </Button>
+            )}
 
-            {/* Document Type */}
+            {/* Document Name */}
             <FormInput
               control={control}
-              name={`documents.${index}.documentType`}
+              name={`documents.${index}.name`} // Đổi key thành name
               label="Tên giấy tờ"
+              placeholder="Nhập tên loại giấy tờ..."
               isRequired
             />
 
-            {/* Date + Updater */}
+            {/* Thông tin ẩn/disabled khớp với BE */}
             <div className="flex gap-3">
               <FormDatePicker
                 control={control}
-                name={`documents.${index}.updateDate`}
+                name={`documents.${index}.createdAt`}
                 label="Ngày thêm mới"
                 disabled
               />
               <FormInput
                 control={control}
-                name={`documents.${index}.updater`}
+                name={`documents.${index}.createdByName`}
                 label="Người thêm mới"
                 disabled
               />
@@ -118,41 +182,23 @@ export const ProfileDetailsDrawer = () => {
               control={control}
               name={`documents.${index}.note`}
               label="Ghi chú"
-              isRequired
-              maxRows={16}
-              classNames={{
-                label:
-                  "text-base font-normal leading-4 text-[#52525B] pb-2",
-              }}
+              placeholder="Nhập ghi chú thêm..."
+              maxRows={4}
             />
 
-            {/* File Upload */}
-            <div className="w-full flex flex-col gap-3">
-              <label className="text-base font-normal leading-4 text-[#52525B]">
-                Tệp đính kèm
+            {/* File Upload Section */}
+            <div className="w-full flex flex-col gap-2">
+              <label className="text-sm font-medium text-[#52525B]">
+                Tệp đính kèm <span className="text-danger">*</span>
               </label>
 
               <Controller
                 control={control}
                 name={`documents.${index}.files`}
-                rules={{
-                  validate: (files: File[] | null) => {
-                    if (!files || (Array.isArray(files) && files.length === 0))
-                      return 'Vui lòng chọn ít nhất 1 file'
-
-                    const fileArray = Array.isArray(files) ? files : [files];
-                    for (const file of fileArray) {
-                      if (file.size > 5 * 1024 * 1024)
-                        return 'Mỗi file không vượt quá 5MB'
-                    }
-
-                    return true
-                  },
-                }}
-                render={({ field, fieldState }) => (
+                render={({ field: fileField, fieldState }) => (
                   <FileUploadInput
-                    selectedFiles={field.value || []}
-                    onFilesSelect={field.onChange}
+                    selectedFiles={fileField.value || []}
+                    onFilesSelect={(files) => handleFilesSelect(index, files)}
                     error={fieldState.error?.message}
                   />
                 )}
@@ -161,36 +207,41 @@ export const ProfileDetailsDrawer = () => {
           </div>
         ))}
 
-        {/* Add Button */}
         <Button
           type="button"
-          className="w-full"
-          color="primary"
+          variant="bordered"
+          className="w-full border-2 border-primary-200 text-primary min-h-10"
           onPress={() =>
             append({
-              documentType: "",
-              updateDate: TODAY,
-              updater: "Admin",
+              name: "",
               note: "",
+              staffId: staffId,
+              createdByName: "Admin",
               files: null,
+              createdAt: TODAY
             })
           }
         >
-          + Thêm giấy tờ
+          + Thêm giấy tờ khác
         </Button>
       </div>
 
-      {/* Footer */}
-      <div className="flex justify-end gap-2 py-3 px-6 bg-white w-full absolute bottom-0 left-0">
+      {/* Footer cố định */}
+      <div className="flex justify-end gap-2 py-4 px-6 bg-white w-full absolute bottom-0 left-0 z-50">
         <Button
           variant="light"
           onPress={closedDrawer}
-          className="border-[#006FEE] border bg-white text-[#006FEE] text-[14px] font-normal"
+          className="border-[#006FEE] border bg-white text-[#006FEE]"
         >
           Hủy
         </Button>
-        <Button type="submit" color="primary" isLoading={isSubmitting}>
-          Cập nhật
+        <Button
+          type="submit"
+          color="primary"
+          isLoading={isSubmitting}
+          className="px-8"
+        >
+          Lưu hồ sơ
         </Button>
       </div>
     </Form>

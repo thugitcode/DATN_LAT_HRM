@@ -1,4 +1,4 @@
-export type ConfirmAction = 'approve' | 'reject';
+export type ConfirmAction = 'approve' | 'reject' | 'delete';
 
 export interface ConfirmConfig {
   title: string;
@@ -22,5 +22,11 @@ export const CONFIRM_CONFIG: Record<ConfirmAction, ConfirmConfig> = {
     confirmLabel: 'Từ chối',
     confirmColor: 'danger',
     requireReason: true,
+  },
+  delete: {
+    title: 'Xác nhận xóa',
+    description: 'Bạn có chắc chắn muốn xóa tài liệu này không? Hành động này không thể hoàn tác.',
+    confirmLabel: 'Xóa',
+    confirmColor: 'danger',
   },
 };

@@ -2,8 +2,11 @@ import { icons } from "@/lib/icons"
 import { Button } from "@heroui/react"
 import { HR } from "./hr"
 import { DrawerType, useDrawer } from "@/store/useDrawer"
+import { useParams } from "@tanstack/react-router"
 
 export const Header = () => {
+    const { id } = useParams({ strict: false })
+
     const { onOpen } = useDrawer()
     return (
         <div className="flex items-center justify-between">
@@ -16,7 +19,7 @@ export const Header = () => {
                     <icons.documentUpload />
                 </Button>
                 <HR />
-                <Button color="primary" onClick={() => onOpen(DrawerType.PROFILE_STAFF_DETAIL)}>
+                <Button color="primary" onPress={() => onOpen(DrawerType.PROFILE_STAFF_DETAIL, { staffId: id })}>
                     Thêm mới tài liệu
                 </Button>
             </div>
