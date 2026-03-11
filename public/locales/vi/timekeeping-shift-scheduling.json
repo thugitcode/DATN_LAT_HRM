@@ -67,5 +67,85 @@
       "comp_hours": "GIỜ BÙ"
     },
     "summary": "Hiển thị {{staff}} nhân viên • {{shifts}} bản ghi ca làm việc"
+  },
+
+  "shift_details": {
+    "columns": {
+      "adjusted_by": "NGƯỜI ĐIỀU CHỈNH",
+      "adjusted_time": "GIỜ ĐIỀU CHỈNH",
+      "reason": "LÝ DO ĐIỀU CHỈNH"
+    },
+    "toast": {
+      "no_changes": "Giờ chấm công chưa có thay đổi.",
+      "update_success": "Cập nhật ca thành công.",
+      "update_error": "Cập nhật ca thất bại."
+    },
+    "face_id": {
+      "check_in": "FaceID check in",
+      "check_out": "FaceID check out",
+      "no_image": "Không có ảnh"
+    },
+    "reason_label": "Lý do điều chỉnh",
+    "history": {
+      "title": "Lịch sử điều chỉnh",
+      "empty": "Không có lịch sử điều chỉnh"
+    },
+
+    "card": {
+      "employee_code": "Mã nhân viên",
+      "default_shift_name": "Ca làm việc",
+      "total_work_hours": "Tổng giờ làm",
+      "total_comp_hours": "Tổng giờ bù",
+      "check_in": "Giờ vào",
+      "check_out": "Giờ ra",
+      "location": "Địa điểm",
+      "machine_name": "Tên máy"
+    }
+  },
+
+  "shift_management": {
+    "title": "Quản lý phân ca",
+
+    "legend": {
+      "fixed": "Ca cố định",
+      "split": "Ca gãy",
+      "on_duty": "Ca trực",
+      "flexible": "Ca linh hoạt",
+      "day_off": "Nghỉ"
+    }
+  },
+
+  "staff_position": {
+    "staff": "Nhân viên",
+    "head_of_department": "Trưởng khoa",
+    "deputy_head_of_department": "Phó khoa",
+    "chief_nurse": "Điều dưỡng trưởng",
+    "manager": "Trưởng phòng",
+    "head_of_unit": "Trưởng bộ phận",
+    "deputy_manager": "Phó phòng"
+  },
+
+  "card_user_shift": {
+    "standard_hours": "{{hours}} giờ"
+  },
+
+  "change_shift_division": {
+    "department": "Khoa làm việc",
+    "room": "Phòng làm việc",
+    "select_shift": "Chọn ca",
+    "check_in_note": "Ghi chú giờ vào",
+    "check_out_note": "Ghi chú giờ ra",
+    "reason": "Lý do"
+  },
+
+  "work_shifts_form": {
+    "staff_info": "Thông tin nhân sự",
+    "shift_info": "Thông tin ca làm việc",
+    "from_date": "Ngày bắt đầu",
+    "to_date": "Ngày kết thúc",
+    "add_shift": "Thêm ca",
+    "remove_shift": "Xóa ca",
+    "start_time": "Giờ bắt đầu",
+    "end_time": "Giờ kết thúc"
   }
 }

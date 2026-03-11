@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import dayjs from 'dayjs';
 
 import type { DailyAttendance, DetailsTimeSheetRecord } from '@/types/shift-details.type';
@@ -61,9 +62,8 @@ export const getWeeksInMonth = (year: number, month: number) => {
 export const formatWorkDate = (dateStr?: string): string => {
   if (!dateStr) return '';
   const date = dayjs.utc(dateStr);
-  return `${dayNames[date.day()]}, ngày ${date.format('DD/MM/YYYY')}`;
+  return `${i18n.t(`common:weekdays.${date.day()}`)}, ${i18n.t('common:date_format', { date: date.format('DD/MM/YYYY') })}`;
 };
-
 const formatDate = (date: Date) => {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -311,7 +311,6 @@ export const calculateTotalBreakTime = (breakTimes: IBreakTime[]) => {
   }, 0);
 };
 
-
 export const buildFlatRows = ({
   data,
   expandedGroups,
@@ -330,12 +329,8 @@ export const buildFlatRows = ({
     const staffCode = shift.staff?.code;
     const isExpanded = expandedGroups.has(staffCode);
 
-    const allDays = fillMissingDaysWithDayjs(
-      shift.days,
-      fromDate,
-      toDate,
-    );
-    
+    const allDays = fillMissingDaysWithDayjs(shift.days, fromDate, toDate);
+
     rows.push({
       type: 'group',
       key: `group-${staffCode}`,
@@ -360,10 +355,15 @@ export const buildFlatRows = ({
   return rows;
 };
 
-
 export const getMonthRange = (month: number, year: number) => {
-  const start = dayjs().year(year).month(month - 1).startOf("month");
-  const end = dayjs().year(year).month(month - 1).endOf("month");
+  const start = dayjs()
+    .year(year)
+    .month(month - 1)
+    .startOf('month');
+  const end = dayjs()
+    .year(year)
+    .month(month - 1)
+    .endOf('month');
 
   return { start, end };
 };

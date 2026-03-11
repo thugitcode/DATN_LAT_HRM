@@ -1,6 +1,8 @@
 import type { FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { Button } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 interface FooterFrawerProps {
   isLoading?: boolean;
@@ -8,6 +10,7 @@ interface FooterFrawerProps {
 }
 
 export const FooterFrawer: FC<FooterFrawerProps> = ({ isLoading, submitLabel = 'Lưu' }) => {
+  const { t } = useTranslation(NAMESPACES.COMMON);
   const closedDrawer = useDrawer((state) => state.onClose);
 
   return (
@@ -17,7 +20,7 @@ export const FooterFrawer: FC<FooterFrawerProps> = ({ isLoading, submitLabel = '
         onPress={closedDrawer}
         className="border-[#006FEE] border bg-white text-[#006FEE] text-[14px] font-normal"
       >
-        Hủy
+        {t('button.cancel')}
       </Button>
       <Button type="submit" color="primary" isLoading={isLoading}>
         {submitLabel}

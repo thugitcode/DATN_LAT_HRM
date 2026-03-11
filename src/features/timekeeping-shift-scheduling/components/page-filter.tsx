@@ -11,7 +11,7 @@ import { FilterSelect } from '@/components/filters/filter-select';
 import { MonthFilter } from '@/components/filters/month-filter';
 import { SearchInput } from '@/components/filters/search-input';
 
-export const PageFilter: React.FC = () => {
+export const PageFilter = () => {
   const { t } = useTranslation(NAMESPACES.COMMON);
 
   const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();

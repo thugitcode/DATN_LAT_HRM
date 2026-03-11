@@ -2,6 +2,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +14,7 @@ import {
   useFormContext,
   type FieldErrors,
 } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import type { Options } from '@/types/global.type';
 import { ShiftTypeEnum, type CreateStaffSchedule } from '@/types/shift-management.type';
@@ -97,6 +99,9 @@ const DEFAULT_SHIFT: ShiftDetailItem = {
 type UserOptions = { departments: Options[]; rooms: Options[] };
 
 export const WorkShiftsForm = () => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
+
   const onClose = useDrawer((state) => state.onClose);
   const data = useDrawer((state) => state.data) as CellDataShift | undefined;
 
@@ -147,7 +152,6 @@ export const WorkShiftsForm = () => {
       fromDate: date ?? '',
       toDate: date ?? '',
       note: '',
-      // details: [{ ...DEFAULT_SHIFT }],
       days: initialDays,
     },
     mode: 'onSubmit',
@@ -275,7 +279,7 @@ export const WorkShiftsForm = () => {
               <FormAutocomplete
                 control={control}
                 name="staffId"
-                label="Mã nhân viên"
+                label={t('columns.employee_code')}
                 isRequired
                 options={staffByCodeOptions}
                 onSelect={handleSelectByCode}
@@ -284,7 +288,7 @@ export const WorkShiftsForm = () => {
               <FormAutocomplete
                 control={control}
                 name="name"
-                label="Tên nhân viên"
+                label={t('columns.employee_name')}
                 isRequired
                 options={staffOptions}
                 onSelect={handleSelectByName}
@@ -293,7 +297,7 @@ export const WorkShiftsForm = () => {
               <FormAutocomplete
                 control={control}
                 name="departmentId"
-                label="Khoa làm việc"
+                label={t('change_shift_division.department')}
                 isRequired
                 options={userOptions.departments}
                 disabled={isLoading}
@@ -301,7 +305,7 @@ export const WorkShiftsForm = () => {
               <FormAutocomplete
                 control={control}
                 name="roomId"
-                label="Phòng làm việc"
+                label={t('change_shift_division.room')}
                 options={userOptions.rooms}
                 disabled={isLoading}
               />
@@ -313,19 +317,16 @@ export const WorkShiftsForm = () => {
               <FormDatePicker
                 control={control}
                 name="fromDate"
-                label="Ngày bắt đầu"
+                label={t('work_shifts_form.from_date')}
                 isRequired
                 disabled={isLoading}
-                // onTrigger={() => trigger('toDate')}
               />
               <FormDatePicker
                 control={control}
                 name="toDate"
-                label="Ngày kết thúc"
+                label={t('work_shifts_form.to_date')}
                 isRequired
                 disabled={isLoading}
-
-                // onTrigger={() => trigger('fromDate')}
               />
             </div>
 
@@ -349,10 +350,10 @@ export const WorkShiftsForm = () => {
             onPress={onClose}
             className="border border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
           >
-            Hủy
+            {tc('button.cancel')}
           </Button>
           <Button type="submit" color="primary" isLoading={isLoading}>
-            Lưu
+            {tc('button.save')}
           </Button>
         </div>
       </Form>
@@ -368,6 +369,8 @@ type DayBlockProps = {
 };
 
 const DayBlock = ({ dayIndex, date, isLoading, caseCategoryOptions }: DayBlockProps) => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+
   const { control } = useFormContext<ExtendedFormValues>();
 
   const { fields, append, remove } = useFieldArray({
@@ -401,7 +404,7 @@ const DayBlock = ({ dayIndex, date, isLoading, caseCategoryOptions }: DayBlockPr
           disabled={isLoading}
         >
           {icons.plusBlue}
-          Thêm ca
+          {t('work_shifts_form.add_shift')}
         </Button>
       </div>
     </div>
@@ -425,6 +428,8 @@ const ShiftDetailRow = ({
   caseCategoryOptions,
   onRemove,
 }: ShiftDetailRowProps) => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+
   const { control, setValue, watch } = useFormContext<ExtendedFormValues>();
 
   const baseName = `days.${dayIndex}.shifts.${shiftIndex}` as const;
@@ -469,7 +474,7 @@ const ShiftDetailRow = ({
         <FormSelect
           control={control}
           name={`${baseName}.shiftTemplateId`}
-          label="Chọn ca"
+          label={t('change_shift_division.select_shift')}
           isRequired
           disabled={isLoading}
           options={caseCategoryOptions}
@@ -478,14 +483,14 @@ const ShiftDetailRow = ({
         <FormTimePicker
           control={control}
           name={`${baseName}.startTime`}
-          label="Giờ bắt đầu"
+          label={t('work_shifts_form.start_time')}
           isRequired
           disabled={isLoading || isFixed}
         />
         <FormTimePicker
           control={control}
           name={`${baseName}.endTime`}
-          label="Giờ kết thúc"
+          label={t('work_shifts_form.end_time')}
           isRequired
           disabled={isLoading || isFixed}
         />
@@ -493,6 +498,3 @@ const ShiftDetailRow = ({
     </div>
   );
 };
-
-const FieldError = ({ message }: { message?: string }) =>
-  message ? <p className="mt-1 text-xs text-red-500">{message}</p> : null;

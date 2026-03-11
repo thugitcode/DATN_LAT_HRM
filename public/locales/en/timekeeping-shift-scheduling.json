@@ -66,5 +66,84 @@
       "comp_hours": "COMP HOURS"
     },
     "summary": "Showing {{staff}} employees • {{shifts}} shift records"
+  },
+
+  "shift_details": {
+    "columns": {
+      "adjusted_by": "ADJUSTED BY",
+      "adjusted_time": "ADJUSTED TIME",
+      "reason": "REASON"
+    },
+    "toast": {
+      "no_changes": "No changes made to attendance time.",
+      "update_success": "Shift updated successfully.",
+      "update_error": "Failed to update shift."
+    },
+    "face_id": {
+      "check_in": "FaceID check in",
+      "check_out": "FaceID check out",
+      "no_image": "No image available"
+    },
+    "reason_label": "Adjustment reason",
+    "history": {
+      "title": "Adjustment History",
+      "empty": "No adjustment history"
+    },
+    "card": {
+      "employee_code": "Employee code",
+      "default_shift_name": "Work Shift",
+      "total_work_hours": "Total work hours",
+      "total_comp_hours": "Total comp hours",
+      "check_in": "Check in",
+      "check_out": "Check out",
+      "location": "Location",
+      "machine_name": "Machine name"
+    }
+  },
+
+  "shift_management": {
+    "title": "Shift Management",
+
+    "legend": {
+      "fixed": "Fixed Shift",
+      "split": "Split Shift",
+      "on_duty": "On Duty",
+      "flexible": "Flexible Shift",
+      "day_off": "Day Off"
+    }
+  },
+
+  "staff_position": {
+    "staff": "Staff",
+    "head_of_department": "Head of Department",
+    "deputy_head_of_department": "Deputy Head of Department",
+    "chief_nurse": "Chief Nurse",
+    "manager": "Manager",
+    "head_of_unit": "Head of Unit",
+    "deputy_manager": "Deputy Manager"
+  },
+
+  "card_user_shift": {
+    "standard_hours": "{{hours}} hours"
+  },
+
+  "change_shift_division": {
+    "department": "Department",
+    "room": "Room",
+    "select_shift": "Select shift",
+    "check_in_note": "Check-in note",
+    "check_out_note": "Check-out note",
+    "reason": "Reason"
+  },
+
+  "work_shifts_form": {
+    "staff_info": "Staff Information",
+    "shift_info": "Shift Information",
+    "from_date": "Start Date",
+    "to_date": "End Date",
+    "add_shift": "Add Shift",
+    "remove_shift": "Remove Shift",
+    "start_time": "Start Time",
+    "end_time": "End Time"
   }
 }

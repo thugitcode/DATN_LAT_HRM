@@ -1,4 +1,5 @@
 // import { notifications, type NotificationData } from '@mantine/notifications';
+import i18n from '@/i18n';
 import clsx, { type ClassValue } from 'clsx';
 
 import type { FormFieldProps } from '@/types';
@@ -315,13 +316,9 @@ export const formatTime = (time: string | undefined) => {
   return time.substring(0, 5);
 };
 
-export function calculateWorkingHours(
-  checkIn: string,
-  checkOut: string,
-  breakMinutes: number
-) {
-  const [inHour, inMin] = checkIn.split(":").map(Number);
-  const [outHour, outMin] = checkOut.split(":").map(Number);
+export function calculateWorkingHours(checkIn: string, checkOut: string, breakMinutes: number) {
+  const [inHour, inMin] = checkIn.split(':').map(Number);
+  const [outHour, outMin] = checkOut.split(':').map(Number);
 
   const checkInMinutes = (inHour ?? 0) * 60 + (inMin ?? 0);
   let checkOutMinutes = (outHour ?? 0) * 60 + (outMin ?? 0);
@@ -331,19 +328,18 @@ export function calculateWorkingHours(
     checkOutMinutes += 24 * 60;
   }
 
-  const totalMinutes =
-    checkOutMinutes - checkInMinutes - (breakMinutes ?? 0);
+  const totalMinutes = checkOutMinutes - checkInMinutes - (breakMinutes ?? 0);
 
   return +(totalMinutes / 60).toFixed(2);
 }
 
 type BreakTime = {
   breakStartTime: string; // "HH:mm:ss"
-  breakEndTime: string;   // "HH:mm:ss"
+  breakEndTime: string; // "HH:mm:ss"
 };
 
 const toMinutes = (time: string) => {
-  const [h = 0, m = 0] = time.split(":").map(Number);
+  const [h = 0, m = 0] = time.split(':').map(Number);
   return h * 60 + m;
 };
 
@@ -357,25 +353,25 @@ const toMinutes = (time: string) => {
 export function calculateWorkingHoursOvernight(
   checkIn: string,
   checkOut: string,
-  breaks: BreakTime[] = []
+  breaks: BreakTime[] = [],
 ) {
-  let start = toMinutes(checkIn);
-  let end = toMinutes(checkOut);
+  const start = toMinutes(checkIn);
+  const end = toMinutes(checkOut);
 
   // Nếu ca qua ngày
   if (end <= start) {
-    end += 24 * 60;
+    consend += 24 * 60;
   }
 
   const totalWorkMinutes = end - start;
 
   const totalBreakMinutes = breaks.reduce((total, br) => {
-    let brStart = toMinutes(br.breakStartTime);
-    let brEnd = toMinutes(br.breakEndTime);
+    const brStart = toMinutes(br.breakStartTime);
+    const brEnd = toMinutes(br.breakEndTime);
 
     // Nếu break qua ngày
     if (brEnd <= brStart) {
-      brEnd += 24 * 60;
+      consbrEnd += 24 * 60;
     }
 
     // Break có thể lặp lại nhiều lần nếu nằm ngoài 0-24h, kiểm tra overlap
@@ -412,19 +408,25 @@ interface Shift {
 export function calculateCompHours(
   totalWorkHours: number,
   standardHours: number,
-  convertRate: number
+  convertRate: number,
 ) {
-  if (totalWorkHours <= standardHours) return 0
+  if (totalWorkHours <= standardHours) return 0;
 
-  const overtime = totalWorkHours - standardHours
+  const overtime = totalWorkHours - standardHours;
 
-  return overtime * convertRate
+  return overtime * convertRate;
 }
 
+// export function formatDateVN(d: string | Date) {
+//   const date = dayjs(d)
+//   const weekdays = ["Chủ nhật","Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7"]
+//   return `${weekdays[date.day()]}, ngày ${date.format("DD/MM/YYYY")}`
+// }
+
 export function formatDateVN(d: string | Date) {
-  const date = dayjs(d)
-  const weekdays = ["Chủ nhật","Thứ 2","Thứ 3","Thứ 4","Thứ 5","Thứ 6","Thứ 7"]
-  return `${weekdays[date.day()]}, ngày ${date.format("DD/MM/YYYY")}`
+  const date = dayjs(d);
+  const t = i18n.t.bind(i18n);
+  return `${t(`common:weekdays.${date.day()}`)}, ${t('common:date_format', { date: date.format('DD/MM/YYYY') })}`;
 }
 
 export const convertMimeToExtension = (mime: string) => {
