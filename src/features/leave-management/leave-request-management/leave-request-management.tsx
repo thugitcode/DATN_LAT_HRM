@@ -9,6 +9,7 @@ import { PageContainer } from '@/components/page-container';
 import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 
+import { LeaveRequestFitlers } from './components/leave-request-fitlers';
 import { SummaryBadges } from './components/summary-badges';
 import { useColumns } from './hooks/use-columns';
 import { useLeaveRequestManagementList } from './hooks/use-leave-request';
@@ -74,7 +75,7 @@ export const LeaveRequestManagement = () => {
         />
       </div>
 
-      <PageFilter />
+      <LeaveRequestFitlers />
 
       <SummaryBadges summary={data?.metadata} />
 
