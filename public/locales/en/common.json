@@ -32,5 +32,13 @@
     "payroll_management": "Payroll Management",
     "recruitment_management": "Recruitment Management",
     "management_report": "Management Report"
+  },
+
+  "drawer": {
+    "work_shifts": "Work Shift Assignment",
+    "change_shift_division": "Change Shift Division",
+    "explanation_detail": "Shift Explanation",
+    "time_sheet_detail": "Shift Details",
+    "profile_staff_detail": "Employee Profile Details"
   }
 }

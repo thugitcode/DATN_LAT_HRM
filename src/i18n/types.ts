@@ -12,8 +12,6 @@ import type timekeepingShiftScheduling from '@public/locales/vi/timekeeping-shif
 
 import type { NAMESPACES } from './constants';
 
-// Map từng namespace key → JSON type
-// Key phải khớp với giá trị trong NAMESPACES
 type I18nResources = {
   [NAMESPACES.COMMON]: typeof common;
   [NAMESPACES.DASHBOARD]: typeof dashboard;

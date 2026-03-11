@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/utils';
 import type { Column } from '@/components/table/types';
@@ -77,121 +79,127 @@ const MultiShiftDayCell = ({
   );
 };
 
-const BASE_COLUMNS: Column<WorkSheetByShiftType>[] = [
-  {
-    key: 'stt',
-    title: 'STT',
-    align: 'center',
-    render: (_, __, index) => (index ?? 0) + 1,
-  },
-  {
-    key: 'departmentName',
-    title: 'KHOA/PHÒNG',
-    render: (_, record) => (
-      <div className="w-50">
-        <DepartmentRoomInfo departments={record.staff.departments} rooms={record.staff.rooms} />
-      </div>
-    ),
-  },
-  {
-    key: 'code',
-    title: 'MÃ NHÂN VIÊN',
-    render: (_, record) => (
-      <div className="text-sm w-32.5 font-mono text-[#11181C]">{record.staff.code}</div>
-    ),
-  },
-  {
-    key: 'name',
-    title: 'TÊN NHÂN VIÊN',
-    fixed: 'left',
-    render: (_, record) => (
-      <div>
-        <p className="text-sm font-medium text-gray-800 w-50">{record.staff.name}</p>
-        <p className="text-xs text-[#A1A1AA]">{STAFF_POSITION?.[record.staff.position]}</p>
-      </div>
-    ),
-  },
-];
-
-export const SUMMARY_COLUMNS: Column<WorkSheetByShiftRow>[] = [
-  {
-    key: 'summary.totalAttendance',
-    title: 'TỔNG CÔNG',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center">{record?.summary?.totalAttendance}</div>
-    ),
-  },
-  {
-    key: 'summary.workDays',
-    title: 'NGÀY LÀM',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center">{record.summary?.actualWorkDays}</div>
-    ),
-  },
-  {
-    key: 'summary.paidLeave',
-    title: 'NGHỈ PHÉP',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center ">{record.summary?.paidLeave}</div>
-    ),
-  },
-  {
-    key: 'summary.onCall',
-    title: 'CÔNG TRỰC',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center">{record.summary?.onCall}</div>
-    ),
-  },
-  {
-    key: 'summary.actualWorkDays',
-    title: 'NGHỈ BÙ TRỰC',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center">{record.summary?.compLeave}</div>
-    ),
-  },
-  {
-    key: 'summary.holiday',
-    title: 'NGHỈ LỄ',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center">{record.summary?.holiday}</div>
-    ),
-  },
-  {
-    key: 'summary.otherLeave',
-    title: 'NGHỈ KHÁC',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center">{record.summary?.otherLeave}</div>
-    ),
-  },
-  {
-    key: 'summary.overtimeHours',
-    title: 'TĂNG CA',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center">{record.summary?.overtimeHours}</div>
-    ),
-  },
-  {
-    key: 'summary.absentDays',
-    title: 'GIỜ BÙ',
-    align: 'center',
-    render: (_, record) => (
-      <div className="text-sm text-black text-center">{record.summary?.compHours}</div>
-    ),
-  },
-];
-
 export const useWorkSheetColumns = () => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
   const { month, year } = useYearMonth();
-
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
+
+  const baseColumns = useMemo<Column<WorkSheetByShiftType>[]>(
+    () => [
+      {
+        key: 'stt',
+        title: t('columns.stt'),
+        align: 'center',
+        render: (_, __, index) => (index ?? 0) + 1,
+      },
+      {
+        key: 'departmentName',
+        title: t('columns.department'),
+        render: (_, record) => (
+          <div className="w-50">
+            <DepartmentRoomInfo departments={record.staff.departments} rooms={record.staff.rooms} />
+          </div>
+        ),
+      },
+      {
+        key: 'code',
+        title: t('columns.employee_code'),
+        render: (_, record) => (
+          <div className="text-sm w-32.5 font-mono text-[#11181C]">{record.staff.code}</div>
+        ),
+      },
+      {
+        key: 'name',
+        title: t('columns.employee_name'),
+        fixed: 'left',
+        render: (_, record) => (
+          <div>
+            <p className="text-sm font-medium text-gray-800 w-50">{record.staff.name}</p>
+            <p className="text-xs text-[#A1A1AA]">{STAFF_POSITION?.[record.staff.position]}</p>
+          </div>
+        ),
+      },
+    ],
+    [t],
+  );
+
+  const summaryColumns = useMemo<Column<WorkSheetByShiftRow>[]>(
+    () => [
+      {
+        key: 'summary.totalAttendance',
+        title: t('columns.summary.total_attendance'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record?.summary?.totalAttendance}</div>
+        ),
+      },
+      {
+        key: 'summary.workDays',
+        title: t('columns.summary.work_days'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record.summary?.actualWorkDays}</div>
+        ),
+      },
+      {
+        key: 'summary.paidLeave',
+        title: t('columns.summary.paid_leave'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record.summary?.paidLeave}</div>
+        ),
+      },
+      {
+        key: 'summary.onCall',
+        title: t('columns.summary.on_call'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record.summary?.onCall}</div>
+        ),
+      },
+      {
+        key: 'summary.actualWorkDays',
+        title: t('columns.summary.comp_leave'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record.summary?.compLeave}</div>
+        ),
+      },
+      {
+        key: 'summary.holiday',
+        title: t('columns.summary.holiday'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record.summary?.holiday}</div>
+        ),
+      },
+      {
+        key: 'summary.otherLeave',
+        title: t('columns.summary.other_leave'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record.summary?.otherLeave}</div>
+        ),
+      },
+      {
+        key: 'summary.overtimeHours',
+        title: t('columns.summary.overtime'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record.summary?.overtimeHours}</div>
+        ),
+      },
+      {
+        key: 'summary.absentDays',
+        title: t('columns.summary.comp_hours'),
+        align: 'center',
+        render: (_, record) => (
+          <div className="text-sm text-black text-center">{record.summary?.compHours}</div>
+        ),
+      },
+    ],
+    [t],
+  );
 
   const weekColumns = useMemo<Column<WorkSheetByShiftType>[]>(
     () =>
@@ -199,7 +207,7 @@ export const useWorkSheetColumns = () => {
         key: `week-${week.weekNumber}`,
         title: (
           <div className="flex items-center justify-center gap-1 text-xs font-semibold uppercase text-nowrap">
-            <span>TUẦN {week.weekNumber}:</span>
+            <span>{t('columns.week', { week: week.weekNumber })}:</span>
             <span>
               ({week.startDay}/{month + 1} – {week.endDay}/{month + 1})
             </span>
@@ -230,13 +238,13 @@ export const useWorkSheetColumns = () => {
           };
         }),
       })),
-    [weeks, month],
+    [weeks, month, t],
   );
 
   const columns = useMemo(
-    () => [...BASE_COLUMNS, ...weekColumns, ...SUMMARY_COLUMNS],
-    [weekColumns],
+    () => [...baseColumns, ...weekColumns, ...summaryColumns],
+    [baseColumns, weekColumns, summaryColumns],
   );
 
-  return { columns };
+  return { columns, summaryColumns };
 };

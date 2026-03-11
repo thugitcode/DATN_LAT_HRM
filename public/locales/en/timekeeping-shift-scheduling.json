@@ -28,5 +28,43 @@
     "missing": "Missing",
     "exceed": "Exceed",
     "off": "Off"
+  },
+
+  "columns": {
+    "stt": "No.",
+    "department": "DEPARTMENT",
+    "employee_code": "EMPLOYEE CODE",
+    "employee_name": "EMPLOYEE NAME",
+    "week": "WEEK {{week}}",
+    "position": "POSITION",
+    "summary": {
+      "total_attendance": "TOTAL",
+      "work_days": "WORK DAYS",
+      "paid_leave": "PAID LEAVE",
+      "on_call": "ON CALL",
+      "comp_leave": "COMP LEAVE",
+      "holiday": "HOLIDAY",
+      "other_leave": "OTHER LEAVE",
+      "overtime": "OVERTIME",
+      "comp_hours": "COMP HOURS",
+      "total_hours": "TOTAL HOURS"
+    }
+  },
+
+  "detailed_time_sheet": {
+    "columns": {
+      "date": "DATE",
+      "shift_code": "SHIFT CODE",
+      "standard_hours": "STANDARD HOURS",
+      "check_in": "CHECK IN",
+      "check_out": "CHECK OUT",
+      "late_minutes": "LATE",
+      "early_minutes": "EARLY LEAVE",
+      "work_count": "WORK COUNT",
+      "total_work_hours": "TOTAL HOURS",
+      "overtime_hours": "OVERTIME",
+      "comp_hours": "COMP HOURS"
+    },
+    "summary": "Showing {{staff}} employees • {{shifts}} shift records"
   }
 }

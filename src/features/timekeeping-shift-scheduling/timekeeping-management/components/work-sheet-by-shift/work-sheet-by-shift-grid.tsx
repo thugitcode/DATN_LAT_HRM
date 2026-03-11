@@ -10,7 +10,7 @@ import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-
 import { ROW_H } from '@/features/timekeeping-shift-scheduling/shift-management/constants/constants';
 
 import { CELL_W, STICKY_COL_W, SUMMARY_COL_W } from '../../constants/data';
-import { SUMMARY_COLUMNS } from '../../hooks/use-work-sheet-columns';
+import { useWorkSheetColumns } from '../../hooks/use-work-sheet-columns'; // ✅ dùng hook thay vì import static
 import type { WorkSheetByShiftType } from '../../types/timekeeping-management.type';
 import { GridScheduleRow } from './grid-schedule-row';
 import { GridStickyHeaderRow } from './grid-sticky-header-row';
@@ -25,13 +25,13 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
   isLoading,
 }) => {
   const { month, year } = useYearMonth();
+  const { summaryColumns } = useWorkSheetColumns();
 
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
   const [hoveredSummaryCol, setHoveredSummaryCol] = useState<string | null>(null);
 
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
-
   const rows = useMemo(() => data.map((item) => mapToRow(item, days)), [data, days]);
 
   const handleDayLeave = useCallback(() => setHoveredDay(null), []);
@@ -42,7 +42,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
       <table
         className="border-separate border-spacing-0"
         style={{
-          width: STICKY_COL_W + days.length * CELL_W + SUMMARY_COL_W * SUMMARY_COLUMNS.length,
+          width: STICKY_COL_W + days.length * CELL_W + SUMMARY_COL_W * summaryColumns.length,
           tableLayout: 'fixed',
         }}
       >
@@ -52,6 +52,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
           setHoveredDay={setHoveredDay}
           hoveredSummaryCol={hoveredSummaryCol}
           setHoveredSummaryCol={setHoveredSummaryCol}
+          summaryColumns={summaryColumns}
         />
 
         <tbody>
@@ -73,7 +74,6 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                   onMouseEnter={() => setHoveredRow(ri)}
                   onMouseLeave={() => setHoveredRow(null)}
                 >
-                  {/* Sticky staff info — rowspan toàn bộ shifts */}
                   <td
                     style={{ minWidth: 320, width: 320 }}
                     className={cn(
@@ -114,14 +114,13 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     </table>
                   </td>
 
-                  {SUMMARY_COLUMNS.map((col) => {
+                  {summaryColumns.map((col) => {
                     const isColHovered = hoveredSummaryCol === col.key;
 
                     return (
                       <td
                         key={col.key}
-                        className=" bg-white align-middle border-b border-gray-50 p-2"
-                        // // colSpan={1}
+                        className="bg-white align-middle border-b border-gray-50 p-2"
                         style={{
                           width: SUMMARY_COL_W,
                           minWidth: SUMMARY_COL_W,
@@ -132,7 +131,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                               : '#ffffff',
                         }}
                       >
-                        {col.render(null, {
+                        {col?.render(null, {
                           id: row.employee.id,
                           code: row.employee.code,
                           name: row.employee.name,

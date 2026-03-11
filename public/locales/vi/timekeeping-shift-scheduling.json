@@ -28,5 +28,44 @@
     "missing": "Thiếu",
     "exceed": "Thừa",
     "off": "Nghỉ"
+  },
+
+  "columns": {
+    "stt": "STT",
+    "department": "KHOA/PHÒNG",
+    "employee_code": "MÃ NHÂN VIÊN",
+    "employee_name": "TÊN NHÂN VIÊN",
+    "week": "TUẦN {{week}}",
+    "position": "CHỨC VỤ",
+
+    "summary": {
+      "total_attendance": "TỔNG CÔNG",
+      "work_days": "NGÀY LÀM",
+      "paid_leave": "NGHỈ PHÉP",
+      "on_call": "CÔNG TRỰC",
+      "comp_leave": "NGHỈ BÙ TRỰC",
+      "holiday": "NGHỈ LỄ",
+      "other_leave": "NGHỈ KHÁC",
+      "overtime": "TĂNG CA",
+      "comp_hours": "GIỜ BÙ",
+      "total_hours": "TỔNG GIỜ LÀM"
+    }
+  },
+
+  "detailed_time_sheet": {
+    "columns": {
+      "date": "NGÀY",
+      "shift_code": "MÃ CA",
+      "standard_hours": "GIỜ CÔNG CHUẨN",
+      "check_in": "GIỜ VÀO",
+      "check_out": "GIỜ RA",
+      "late_minutes": "ĐI MUỘN",
+      "early_minutes": "VỀ SỚM",
+      "work_count": "CÔNG",
+      "total_work_hours": "TỔNG GIỜ",
+      "overtime_hours": "TĂNG CA",
+      "comp_hours": "GIỜ BÙ"
+    },
+    "summary": "Hiển thị {{staff}} nhân viên • {{shifts}} bản ghi ca làm việc"
   }
 }

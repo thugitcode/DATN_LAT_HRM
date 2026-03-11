@@ -1,41 +1,30 @@
 'use client';
 
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import dayjs from 'dayjs';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import {
-  buildFlatRows,
-  fillMissingDaysWithDayjs,
-  getTotalDaysInMonth,
-} from '@/features/timekeeping-shift-scheduling/helper';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
-import { cn } from '@/lib/utils';
 import type { ShiftManagementParams } from '@/types';
+import { cn } from '@/lib/utils';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { buildFlatRows, getTotalDaysInMonth } from '@/features/timekeeping-shift-scheduling/helper';
 
+import { useColumnsDetailTimeSheet } from '../../hooks/use-columns-detail-time-sheet';
 import { useDetailsTimeSheetList } from '../../hooks/use-detailed-time-sheet';
 import type { FlatRow } from '../../types/index.type';
 import { StickyRowGroupStaff } from './sticky-row-group-staff';
 
-const columns = [
-  { className: 'w-[150px] text-left', key: 'date', label: 'NGÀY' },
-  { className: 'w-[135px] text-left', key: 'shiftCode', label: 'MÃ CA' },
-  { className: 'w-[195px] text-left', key: 'standardHours', label: 'GIỜ CÔNG CHUẨN' },
-  { className: 'text-center', key: 'checkIn', label: 'GIỜ VÀO' },
-  { className: 'text-center', key: 'checkOut', label: 'GIỜ RA' },
-  { className: 'text-center', key: 'lateMinutes', label: 'ĐI MUỘN' },
-  { className: 'text-center', key: 'earlyMinutes', label: 'VỀ SỚM' },
-  { className: 'text-center', key: 'workCount', label: 'CÔNG' },
-  { className: 'text-center', key: 'totalWorkHours', label: 'TỔNG GIỜ' },
-  { className: 'text-center', key: 'overtimeHours', label: 'TĂNG CA' },
-  { className: 'text-center', key: 'compHours', label: 'GIỜ BÙ' },
-];
-
 export function GroupedTable() {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
     // () => new Set(hourlyPayrollMock.map((staff) => staff.id))
     () => new Set(),
   );
+
+  const { columns } = useColumnsDetailTimeSheet();
 
   const { filters } = useQueryFilter<ShiftManagementParams>();
 
@@ -66,14 +55,14 @@ export function GroupedTable() {
   });
 
   const flatRows = useMemo(() => {
-  return buildFlatRows({
-    data: data?.data,
-    expandedGroups,
-    fromDate: data?.metadata?.fromDate as string,
-    toDate: data?.metadata?.toDate as string,
-  });
-}, [expandedGroups, data?.data, data?.metadata?.fromDate, data?.metadata?.toDate]);
-  
+    return buildFlatRows({
+      data: data?.data,
+      expandedGroups,
+      fromDate: data?.metadata?.fromDate as string,
+      toDate: data?.metadata?.toDate as string,
+    });
+  }, [expandedGroups, data?.data, data?.metadata?.fromDate, data?.metadata?.toDate]);
+
   // Build an index: for each flat-row index, which group does it belong to?
   const groupIndexMap = useMemo(() => {
     const map: FlatRow[] = [];
@@ -154,7 +143,7 @@ export function GroupedTable() {
   const monthStr = typeof data?.metadata?.month === 'string' ? data?.metadata?.month : '';
   const totalShifts = monthStr
     ? getTotalDaysInMonth(Number(monthStr.split('-')[0]), Number(monthStr.split('-')[1])) *
-    totalStaff
+      totalStaff
     : 0;
 
   const renderShiftCell = useCallback(
@@ -316,7 +305,7 @@ export function GroupedTable() {
             ),
             td: 'p-0',
             tr: 'rounded-none',
-            thead: 'after:content-none'
+            thead: 'after:content-none',
           }}
         >
           <TableHeader columns={columns}>
@@ -366,7 +355,7 @@ export function GroupedTable() {
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground">
-        Hiển thị {totalStaff} nhân viên • {totalShifts} bản ghi ca làm việc
+        {t('detailed_time_sheet.summary', { staff: totalStaff, shifts: totalShifts })}
       </p>
     </div>
   );

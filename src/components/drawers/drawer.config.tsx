@@ -1,5 +1,7 @@
+import { NAMESPACES } from '@/i18n/constants';
 import { DrawerType } from '@/store/useDrawer';
 import type { DrawerProps } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 import { ProfileDetailsDrawer } from '@/features/staff-management/profile-staff/components/profile-details-drawer';
 import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling/explanation-management/components/explanation-detail-drawer';
@@ -19,60 +21,48 @@ type DrawerConfig = {
   };
 };
 
-export const DRAWER_CONFIG: Record<DrawerType, DrawerConfig> = {
-  [DrawerType.WORK_SHIFTS]: {
-    title: 'Phân ca làm việc',
-    component: <WorkShiftsForm />,
-    drawerProps: {
-      placement: 'right',
-      size: '2xl',
+export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
+  const { t } = useTranslation(NAMESPACES.COMMON);
+
+  return {
+    [DrawerType.WORK_SHIFTS]: {
+      title: t('drawer.work_shifts'),
+      component: <WorkShiftsForm />,
+      drawerProps: { placement: 'right', size: '2xl' },
+      classNames: { header: 'text-[30px] px-6 pt-6 pb-3' },
     },
-    classNames: {
-      header: 'text-[30px] px-6 pt-6 pb-3',
+    [DrawerType.CHANGE_SHIFT_DIVISION]: {
+      title: t('drawer.change_shift_division'),
+      component: <ChangeShiftDivision />,
+      drawerProps: { placement: 'right', size: '2xl' },
+      classNames: { header: 'text-[30px] px-6 pt-6 pb-3' },
     },
-  },
-  [DrawerType.CHANGE_SHIFT_DIVISION]: {
-    title: 'Thay đổi phân ca',
-    component: <ChangeShiftDivision />,
-    drawerProps: {
-      placement: 'right',
-      size: '2xl',
-    },
-    classNames: {
-      header: 'text-[30px] px-6 pt-6 pb-3',
-    },
-  },
-  [DrawerType.EXPLANATION_DETAIL]: {
-    title: 'Giải trình ca',
-    component: <ExplanationDetailDrawer />,
-    drawerProps: {
-      placement: 'right',
-      size: '2xl',
-      classNames: {
-        body: 'p-0 bg-[#F4F4F5]',
+    [DrawerType.EXPLANATION_DETAIL]: {
+      title: t('drawer.explanation_detail'),
+      component: <ExplanationDetailDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
       },
     },
-  },
-  [DrawerType.TIME_SHEET_DETAIL]: {
-    title: 'Chi tiết ca',
-    component: <ShiftDetailsDrawer />,
-    drawerProps: {
-      placement: 'right',
-      size: '2xl',
-      classNames: {
-        body: 'p-0 bg-[#F4F4F5]',
+    [DrawerType.TIME_SHEET_DETAIL]: {
+      title: t('drawer.time_sheet_detail'),
+      component: <ShiftDetailsDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
       },
     },
-  },
-  [DrawerType.PROFILE_STAFF_DETAIL]: {
-    title: 'Chi tiết hồ sơ nhân viên',
-    component: <ProfileDetailsDrawer />,
-    drawerProps: {
-      placement: 'right',
-      size: '2xl',
-      classNames: {
-        body: 'p-0 bg-[#F4F4F5]',
+    [DrawerType.PROFILE_STAFF_DETAIL]: {
+      title: t('drawer.profile_staff_detail'),
+      component: <ProfileDetailsDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
       },
     },
-  },
+  };
 };

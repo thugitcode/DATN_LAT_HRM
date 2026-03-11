@@ -1,7 +1,5 @@
 import { useMemo, useState, type FC } from 'react';
 
-import type { ApiResponse } from '@/types';
-import { StaffPosition } from '@/types/global.type';
 import { cn } from '@/lib/utils';
 import { TableEmpty } from '@/components/table/table-empty';
 import { TableLoading } from '@/components/table/table-loading';
@@ -10,13 +8,12 @@ import { getDaysInMonth } from '@/features/timekeeping-shift-scheduling/helper';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
 
 import { SUMMARY_COL_W } from '../../constants/data';
-import { TOTAL_HOUR_COLUMNS } from '../../hooks/use-columns-hourly-payroll';
+import { useColumnsHourlyPayroll } from '../../hooks/use-columns-hourly-payroll';
 import type {
   AttendanceByHoursResponse,
   DailyHourEntry,
 } from '../../types/timekeeping-management.type';
-import { GridStickyHeaderRow } from '../work-sheet-by-shift/grid-sticky-header-row';
-import { GridHourlyPayrollScheduleRow, type DayRecord } from './grid-hourly-payroll-schedule-row';
+import { GridHourlyPayrollScheduleRow } from './grid-hourly-payroll-schedule-row';
 import { GridStickyHourlyHeaderRow } from './grid-sticky-hourly-header-row';
 
 interface HourlyPayrollGridProps {
@@ -26,6 +23,7 @@ interface HourlyPayrollGridProps {
 
 export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoading }) => {
   const { month, year } = useYearMonth();
+  const { totalHourColumns } = useColumnsHourlyPayroll();
 
   const [hoveredRow, setHoveredRow] = useState<number | null>(null);
   const [hoveredDay, setHoveredDay] = useState<number | null>(null);
@@ -43,6 +41,7 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
           setHoveredDay={setHoveredDay}
           hoveredSummaryCol={hoveredSummaryCol}
           setHoveredSummaryCol={setHoveredSummaryCol}
+          totalHourColumns={totalHourColumns}
         />
 
         <tbody>
@@ -56,7 +55,7 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
                 <tr
                   key={row.staffId}
                   className={cn(
-                    'h-16 transition-colors duration-100 ',
+                    'h-16 transition-colors duration-100',
                     hoveredRow === ri ? 'bg-blue-50/40' : 'bg-white',
                   )}
                   onMouseEnter={() => setHoveredRow(ri)}
@@ -64,7 +63,7 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
                 >
                   <td
                     className={cn(
-                      'sticky left-0 border-r border-[#11111126] z-10 w-52 px-2.25  py-3 p-0 ',
+                      'sticky left-0 border-r border-[#11111126] z-10 w-52 px-2.25 py-3 p-0',
                       'transition-colors duration-100',
                       ri % 2 ? 'bg-[#F4F4F5]' : 'bg-white',
                     )}
@@ -87,7 +86,7 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
                     onDayLeave={() => setHoveredDay(null)}
                   />
 
-                  {TOTAL_HOUR_COLUMNS.map((col) => {
+                  {totalHourColumns.map((col) => {
                     const isColHovered = hoveredSummaryCol === col.key;
 
                     return (
@@ -97,11 +96,7 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
                         style={{
                           width: SUMMARY_COL_W,
                           minWidth: SUMMARY_COL_W,
-                          backgroundColor: isColHovered
-                            ? '#EFF6FF'
-                            : isColHovered
-                              ? 'rgba(239,246,255,0.4)'
-                              : '#ffffff',
+                          backgroundColor: isColHovered ? '#EFF6FF' : '#ffffff',
                         }}
                       >
                         {col.render(null, row)}
