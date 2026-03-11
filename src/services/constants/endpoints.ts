@@ -3,6 +3,7 @@ export const API_ENDPOINTS = {
     WORK_SCHEDULE: '/work-schedule',
     WORK_SCHEDULE_RANGE: '/work-schedule/range',
     STAFF: '/staff',
+    STAFF_PROFILE: '/staff-profile',
 
     ROOM: '/room',
     DEPARTMENT: '/department',
@@ -18,6 +19,7 @@ export const API_ENDPOINTS = {
     ATTENDANCE_EXPLANATION: '/attendance-explanation',
 
     LEAVE_REQUEST: '/leave-request',
+    UPLOAD: '/upload',
   },
 
   OTHER_SERVICE: {

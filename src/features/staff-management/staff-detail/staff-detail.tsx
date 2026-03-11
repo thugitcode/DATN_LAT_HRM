@@ -3,7 +3,7 @@ import { useStaffDetail, useUpdateStaff } from '@/query-options/staff';
 import { Button, Tab, Tabs } from '@heroui/react';
 import { IconDeviceFloppy, IconPencil, IconX } from '@tabler/icons-react';
 import { useState } from 'react';
-import { ProfileStaff } from '../profile-staff/profile-staff';
+import { StaffProfile } from '../profile-staff/staff-profile';
 import { SalaryAndBenefits } from '../salary-and-benefits/salary-and-benefits';
 import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
 import { StaffContractInfo, StaffDetailHeader, StaffDetailInfo } from './components';
@@ -144,7 +144,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                     </Tab>
                     <Tab key={TAB_KEYS.SALARY} title="Lương và phúc lợi" ><SalaryAndBenefits /></Tab>
                     <Tab key={TAB_KEYS.ATTENDANCE} title="Quản lý chấm công" ><TimeAttendanceManagementTab /></Tab>
-                    <Tab key={TAB_KEYS.DOCUMENTS} title="Hồ sơ nhân viên" ><ProfileStaff /></Tab>
+                    <Tab key={TAB_KEYS.DOCUMENTS} title="Hồ sơ nhân viên" ><StaffProfile /></Tab>
                 </Tabs>
             </div>
         </PageContainer>

@@ -9,9 +9,6 @@ import { Chip, Select, SelectItem, type SharedSelection } from '@heroui/react';
 
 export const PageFilter: React.FC = () => {
     const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
-    useEffect(() => {
-        setFilter("filter", "DA_MO_GAN_DAY,THEM_MOI_GAN_DAY")
-    }, [])
     const handleSearchChange = useCallback(
         (value: string | undefined) => {
             setFilter('search', value);
@@ -22,16 +19,15 @@ export const PageFilter: React.FC = () => {
     const handleFilter = useCallback(
         (keys: SharedSelection) => {
             
-            const values = Array.from(keys) as string[];
-
-            setFilter("filter", values); // truyền nguyên mảng
+            // const values = Array.from(keys) as string[];            
+            setFilter("sortBy", keys.currentKey); // truyền nguyên mảng
         },
         [setFilter],
     );
 
     const options = [
-        { label: "Đã mở gần đây", key: "DA_MO_GAN_DAY" },
-        { label: "Thêm mới gần đây", key: "THEM_MOI_GAN_DAY" },
+        { label: "Đã mở gần đây", key: "RECENTLY_OPENED" },
+        { label: "Thêm mới gần đây", key: "RECENTLY_ADDED" },
     ]
     
     return (
@@ -50,9 +46,9 @@ export const PageFilter: React.FC = () => {
                 /> */}
                 <Select
                     classNames={{ trigger: "bg-white" }}
-                    selectionMode="multiple"
+                    // selectionMode="multiple"
                     onSelectionChange={(values) => handleFilter(values)}
-                    defaultSelectedKeys={"all"}
+                    defaultSelectedKeys={["RECENTLY_ADDED"]}
                     renderValue={(items) => {                        
                         return (
                             <div className="flex flex-nowrap gap-2">
@@ -63,8 +59,8 @@ export const PageFilter: React.FC = () => {
                         );
                     }}
                 >
-                    {options.map((animal) => (
-                        <SelectItem key={animal.key}>{animal.label}</SelectItem>
+                    {options.map((op) => (
+                        <SelectItem key={op.key}>{op.label}</SelectItem>
                     ))}
                 </Select>
             </div>

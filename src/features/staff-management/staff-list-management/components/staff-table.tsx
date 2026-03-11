@@ -186,6 +186,7 @@ export const StaffTable: FC<StaffTableProps> = ({
     return (
         // <div className="p-4 bg-white flex-1 overflow-auto">
             <DataTable
+                selectionMode='single'
                 columns={columnsWithHandlers}
                 dataSource={data}
                 loading={loading}
