@@ -58,7 +58,10 @@ export const useColumns = () => {
       title: 'Thời gian bắt đầu',
       minWidth: 100,
       render: (_, row) => (
-        <span className="text-sm text-[#11181C] whitespace-nowrap">{formatDate(row.fromDate)}</span>
+        <div className="text-sm text-[#11181C] whitespace-nowrap flex flex-row items-center gap-1">
+          {!!row?.startTime && <span>{row.startTime?.slice(0, 5)}</span>}
+          <span>{formatDate(row.fromDate)}</span>
+        </div>
       ),
     },
     {
@@ -66,7 +69,10 @@ export const useColumns = () => {
       title: 'Thời gian kết thúc',
       minWidth: 100,
       render: (_, row) => (
-        <span className="text-sm text-[#11181C] whitespace-nowrap">{formatDate(row.toDate)}</span>
+        <div className="text-sm text-[#11181C] whitespace-nowrap flex flex-row items-center gap-1">
+          {!!row?.startTime && <span>{row.endTime?.slice(0, 5)}</span>}
+          <span>{formatDate(row.toDate)}</span>
+        </div>
       ),
     },
     {

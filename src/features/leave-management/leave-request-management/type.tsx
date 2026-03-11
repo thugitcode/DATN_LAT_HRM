@@ -43,6 +43,8 @@ export interface LeaveRequest {
   cancelledReason: string | null;
   createdAt: string;
   updatedAt: string;
+  startTime: string | null;
+  endTime: string | null;
 }
 
 export interface MetadataLeaveRequest {
