@@ -350,28 +350,29 @@ const toMinutes = (time: string) => {
  * @param breaks mảng break
  * @returns số giờ làm việc, 2 chữ số thập phân
  */
+
 export function calculateWorkingHoursOvernight(
   checkIn: string,
   checkOut: string,
   breaks: BreakTime[] = [],
 ) {
   const start = toMinutes(checkIn);
-  const end = toMinutes(checkOut);
+  let end = toMinutes(checkOut);
 
   // Nếu ca qua ngày
   if (end <= start) {
-    consend += 24 * 60;
+    end += 24 * 60;
   }
 
   const totalWorkMinutes = end - start;
 
   const totalBreakMinutes = breaks.reduce((total, br) => {
     const brStart = toMinutes(br.breakStartTime);
-    const brEnd = toMinutes(br.breakEndTime);
+    let brEnd = toMinutes(br.breakEndTime);
 
     // Nếu break qua ngày
     if (brEnd <= brStart) {
-      consbrEnd += 24 * 60;
+      brEnd += 24 * 60;
     }
 
     // Break có thể lặp lại nhiều lần nếu nằm ngoài 0-24h, kiểm tra overlap
@@ -393,16 +394,6 @@ export function calculateWorkingHoursOvernight(
   const workingMinutes = totalWorkMinutes - totalBreakMinutes;
 
   return +(workingMinutes / 60).toFixed(2);
-}
-
-interface Shift {
-  id: string;
-  name: string;
-  startTime: string;
-  endTime: string;
-  breakMinutes: number;
-  convertCompHours?: boolean; // có quy đổi giờ bù không
-  compHourRate?: number; // tỷ lệ quy đổi (vd: 1h OT = 1.5h bù)
 }
 
 export function calculateCompHours(
