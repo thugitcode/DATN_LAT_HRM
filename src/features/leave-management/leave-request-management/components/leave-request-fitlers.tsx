@@ -51,14 +51,14 @@ export const LeaveRequestFitlers = () => {
 
       <FilterSelect
         options={departmentOptions}
-        value={filters.departmentId as string}
+        value={filters.departmentIds as string}
         onChange={handleKhoaChange}
         placeholder="Khoa"
       />
 
       <FilterSelect
         options={roomOptions}
-        value={filters.roomId as string}
+        value={filters.roomIds as string}
         onChange={handlePhongChange}
         placeholder="Phòng"
       />
