@@ -73,9 +73,11 @@ export const useColumns = () => {
       key: 'totalDays',
       title: 'Tổng thời gian nghỉ',
       minWidth: 100,
-      render: (_, row) => (
-        <span className="text-sm text-[#11181C] whitespace-nowrap">{row.totalDays}</span>
-      ),
+      render: (_, row) => {
+        const days = Number(row.totalDays);
+        const display = days % 1 === 0 ? Math.floor(days) : days;
+        return <span className="text-sm text-[#11181C] whitespace-nowrap">{display} ngày</span>;
+      },
     },
     {
       key: 'reason',

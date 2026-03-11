@@ -1,7 +1,5 @@
-import { useState } from 'react';
-import { Button, Checkbox, Popover, PopoverContent, PopoverTrigger, Tooltip } from '@heroui/react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { icons } from '@/lib/icons';
 import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
@@ -9,69 +7,30 @@ import { ColumnVisibilityPopover } from '@/components/column-visibility-popover'
 import DataTable from '@/components/data-table/data-table';
 import { PageContainer } from '@/components/page-container';
 import { PageFilter } from '@/components/page-filter';
-import { StatusSummaryItem } from '@/components/status-summary-tabs/status-summary-item';
-import { StatusSummaryTabs } from '@/components/status-summary-tabs/status-summary-tabs';
 import { TitlePage } from '@/components/title-page';
 
+import { SummaryBadges } from './components/summary-badges';
 import { useColumns } from './hooks/use-columns';
 import { useLeaveRequestManagementList } from './hooks/use-leave-request';
-import type { LeaveRequestManagementFilters, MetadataLeaveRequest } from './type';
-
-type SummaryKey = keyof MetadataLeaveRequest;
-
-interface SummaryBadgeConfig {
-  key: SummaryKey;
-  icon: React.ReactNode;
-  label: string;
-  color: string;
-  bgColor: string;
-}
-
-const SUMMARY_BADGES: SummaryBadgeConfig[] = [
-  {
-    key: 'totalAll',
-    icon: icons.questionCircle,
-    label: 'Tổng yêu cầu',
-    color: '#006FEE',
-    bgColor: '#E6F1FE',
-  },
-  {
-    key: 'totalApproved',
-    icon: <icons.tickCircle />,
-    label: 'Đã duyệt',
-    color: '#17C964',
-    bgColor: '#E8FAF0',
-  },
-  {
-    key: 'totalRejected',
-    icon: <icons.closeSquare />,
-    label: 'Từ chối',
-    color: '#F31260',
-    bgColor: '#FEE7EF',
-  },
-  {
-    key: 'totalPending',
-    icon: <icons.refreshCircle />,
-    label: 'Chờ duyệt',
-    color: '#F5A524',
-    bgColor: '#FEF4E6',
-  },
-];
+import type { LeaveRequestManagementFilters } from './type';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-400px)]' } as const;
 
-const VerticalDivider = () => <div className="w-px h-10 bg-[#E4E4E7] shrink-0" />;
-
 export const LeaveRequestManagement = () => {
   const { filters } = useQueryFilter<LeaveRequestManagementFilters>();
-  const { departmentId, month, roomId, search, status, type, page, limit } = filters;
+  const { departmentId, month, roomId, search, status, type, page, limit, departmentIds, roomIds } =
+    filters;
 
   const { columns } = useColumns();
   const { startDate, endDate } = useMonthDateRange(month);
 
-  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(
+  const defaultVisibleColumns = useMemo(
     () => new Set(columns.map((col) => col.key)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
+
+  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(defaultVisibleColumns);
 
   const { data, isLoading } = useLeaveRequestManagementList({
     fromDate: startDate,
@@ -83,14 +42,25 @@ export const LeaveRequestManagement = () => {
     type,
     page,
     limit,
+    departmentIds,
+    roomIds,
   });
 
-  const summary = data?.metadata;
-  const pagination = data?.pagination;
-
-  const handleApplyColumns = (visibleKeys: Set<string>, saveAsDefault: boolean) => {
+  const handleApplyColumns = useCallback((visibleKeys: Set<string>, _saveAsDefault: boolean) => {
     setVisibleColumns(visibleKeys);
-  };
+  }, []);
+
+  const paginationConfig = useMemo(
+    () => ({
+      current: Number(page),
+      showSizeChanger: true,
+      pageSizeOptions: PAGE_SIZE_OPTIONS,
+      total: data?.pagination?.total,
+      pageSize: Number(limit),
+      totalPage: data?.pagination?.totalPage,
+    }),
+    [page, limit, data?.pagination],
+  );
 
   return (
     <PageContainer className="space-y-3.75">
@@ -106,21 +76,7 @@ export const LeaveRequestManagement = () => {
 
       <PageFilter />
 
-      <StatusSummaryTabs className="flex flex-wrap items-center gap-4">
-        {SUMMARY_BADGES.map(({ key, icon, label, color, bgColor }, index) => (
-          <div key={key} className="flex items-center gap-4">
-            {index !== 0 && <VerticalDivider />}
-            <StatusSummaryItem
-              icon={icon}
-              label={label}
-              count={summary?.[key]}
-              color={color}
-              bgColor={bgColor}
-              className="flex-row items-center! gap-2"
-            />
-          </div>
-        ))}
-      </StatusSummaryTabs>
+      <SummaryBadges summary={data?.metadata} />
 
       <DataTable
         dataSource={data?.data ?? []}
@@ -129,14 +85,7 @@ export const LeaveRequestManagement = () => {
         loading={isLoading}
         classNames={TABLE_CLASS_NAMES}
         visibleColumns={visibleColumns}
-        pagination={{
-          current: Number(page),
-          showSizeChanger: true,
-          pageSizeOptions: PAGE_SIZE_OPTIONS,
-          total: pagination?.total,
-          pageSize: Number(limit),
-          totalPage: pagination?.totalPage,
-        }}
+        pagination={paginationConfig}
       />
     </PageContainer>
   );

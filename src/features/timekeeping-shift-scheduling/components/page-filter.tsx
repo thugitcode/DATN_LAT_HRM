@@ -1,4 +1,6 @@
 import { useCallback } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
 
 import type { ShiftManagementParams } from '@/types';
 import { icons } from '@/lib/icons';
@@ -10,6 +12,8 @@ import { MonthFilter } from '@/components/filters/month-filter';
 import { SearchInput } from '@/components/filters/search-input';
 
 export const PageFilter: React.FC = () => {
+  const { t } = useTranslation(NAMESPACES.COMMON);
+
   const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
 
   const { options: roomOptions } = useRoomOptions(filters?.departmentId);
@@ -53,14 +57,14 @@ export const PageFilter: React.FC = () => {
         options={departmentOptions}
         value={filters.departmentId as string}
         onChange={handleKhoaChange}
-        placeholder="Khoa"
+        placeholder={t('actions.department')}
       />
 
       <FilterSelect
         options={roomOptions}
         value={filters.roomId as string}
         onChange={handlePhongChange}
-        placeholder="Phòng"
+        placeholder={t('actions.room')}
       />
     </div>
   );

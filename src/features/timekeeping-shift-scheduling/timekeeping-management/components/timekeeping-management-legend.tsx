@@ -2,41 +2,43 @@ import { memo, type FC } from 'react';
 
 import type { LegendItem } from '../types/index.type';
 
-export const LegendDot = memo(({ color, shape = 'circle' }: Pick<LegendItem, 'color' | 'shape'>) => {
-  if (shape === 'ring') {
+export const LegendDot = memo(
+  ({ color, shape = 'circle' }: Pick<LegendItem, 'color' | 'shape'>) => {
+    if (shape === 'ring') {
+      return (
+        <span
+          className="inline-block shrink-0 size-4.75"
+          style={{
+            borderRadius: '45%',
+            border: '1.5px solid #E0E0E0',
+            backgroundColor: '#F4F4F5',
+          }}
+        />
+      );
+    }
+    if (shape === 'line') {
+      return (
+        <span
+          className="inline-block shrink-0 "
+          style={{
+            color: 'black',
+          }}
+        >
+          --
+        </span>
+      );
+    }
     return (
       <span
         className="inline-block shrink-0 size-4.75"
         style={{
           borderRadius: '45%',
-          border: '1.5px solid #E0E0E0',
-          backgroundColor: '#F4F4F5',
+          backgroundColor: color,
         }}
       />
     );
-  }
-  if (shape === 'line') {
-    return (
-      <span
-        className="inline-block shrink-0 "
-        style={{
-          color: 'black',
-        }}
-      >
-        --
-      </span>
-    );
-  }
-  return (
-    <span
-      className="inline-block shrink-0 size-4.75"
-      style={{
-        borderRadius: '45%',
-        backgroundColor: color,
-      }}
-    />
-  );
-});
+  },
+);
 
 LegendDot.displayName = 'LegendDot';
 

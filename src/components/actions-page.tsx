@@ -1,5 +1,7 @@
 import type { FC, ReactNode } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { Button, Tooltip } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 import { icons } from '@/lib/icons';
 import { useExcelIO } from '@/hooks/use-excel-io';
@@ -75,12 +77,17 @@ export const ActionsPage = <T extends Record<string, unknown> = Record<string, u
   onImport,
 }: ActionsPageProps<T>) => {
   const { clearFilters } = useQueryFilter({ replace: true });
+  const { t } = useTranslation(NAMESPACES.COMMON);
 
   return (
     <div className="flex items-stretch gap-3">
       <ul className="flex items-center gap-2">
         <li>
-          <ActionButton tooltip="Tải lại" ariaLabel="Reload" onPress={clearFilters}>
+          <ActionButton
+            tooltip={t('actions.reload')}
+            ariaLabel={t('actions.reload')}
+            onPress={clearFilters}
+          >
             {icons.reload}
           </ActionButton>
         </li>
@@ -96,7 +103,11 @@ export const ActionsPage = <T extends Record<string, unknown> = Record<string, u
 
         {onExport && (
           <li>
-            <ActionButton tooltip="Xuất excel" ariaLabel="export excel" onPress={onExport}>
+            <ActionButton
+              tooltip={t('actions.import_excel')}
+              ariaLabel={t('actions.import_excel')}
+              onPress={onExport}
+            >
               {icons.export}
             </ActionButton>
           </li>
@@ -105,8 +116,8 @@ export const ActionsPage = <T extends Record<string, unknown> = Record<string, u
         {onExportTemplate && (
           <li>
             <ActionButton
-              tooltip="Xuất file mẫu"
-              ariaLabel="Export excel template"
+              tooltip={t('actions.export_template')}
+              ariaLabel={t('actions.export_template')}
               onPress={onExportTemplate}
             >
               {icons.exportSampleFile}
@@ -116,7 +127,11 @@ export const ActionsPage = <T extends Record<string, unknown> = Record<string, u
 
         {onPrint && (
           <li>
-            <ActionButton tooltip="In" ariaLabel="In" onPress={onPrint}>
+            <ActionButton
+              tooltip={t('actions.print')}
+              ariaLabel={t('actions.print')}
+              onPress={onPrint}
+            >
               {icons.print}
             </ActionButton>
           </li>

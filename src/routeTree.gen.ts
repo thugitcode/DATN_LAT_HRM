@@ -33,6 +33,7 @@ import { Route as PrivateAdminDashboardLeaveManagementIndexRouteImport } from '.
 import { Route as PrivateAdminDashboardContractManagementIndexRouteImport } from './routes/_private/admin/_dashboard/contract-management/index'
 import { Route as PrivateAdminDashboardStaffManagementTypeRouteImport } from './routes/_private/admin/_dashboard/staff-management/$type'
 import { Route as PrivateAdminDashboardLeaveManagementLeaveRequestManagementRouteImport } from './routes/_private/admin/_dashboard/leave-management/leave-request-management'
+import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/index'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/index'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/index'
 import { Route as PrivateAdminDashboardStaffManagementDetailIdRouteImport } from './routes/_private/admin/_dashboard/staff-management/detail/$id'
@@ -40,10 +41,6 @@ import { Route as PrivateAdminDashboardStaffManagementDetailIdRouteImport } from
 const PrivateAdminDashboardDashboardLazyRouteImport = createFileRoute(
   '/_private/admin/_dashboard/dashboard',
 )()
-const PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRouteImport =
-  createFileRoute(
-    '/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/',
-  )()
 
 const UnauthenticatedRoute = UnauthenticatedRouteImport.update({
   id: '/unauthenticated',
@@ -176,17 +173,13 @@ const PrivateAdminDashboardLeaveManagementLeaveRequestManagementRoute =
     path: '/leave-management/leave-request-management',
     getParentRoute: () => PrivateAdminDashboardRoute,
   } as any)
-const PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute =
-  PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRouteImport.update(
+const PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute =
+  PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport.update(
     {
       id: '/timekeeping-shift-scheduling/timekeeping-management/',
       path: '/timekeeping-shift-scheduling/timekeeping-management/',
       getParentRoute: () => PrivateAdminDashboardRoute,
     } as any,
-  ).lazy(() =>
-    import('./routes/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/index.lazy').then(
-      (d) => d.Route,
-    ),
   )
 const PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute =
   PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRouteImport.update(
@@ -236,7 +229,7 @@ export interface FileRoutesByFullPath {
   '/admin/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
   '/admin/timekeeping-shift-scheduling/explanation-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/shift-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
-  '/admin/timekeeping-shift-scheduling/timekeeping-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute
+  '/admin/timekeeping-shift-scheduling/timekeeping-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -262,7 +255,7 @@ export interface FileRoutesByTo {
   '/admin/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
   '/admin/timekeeping-shift-scheduling/explanation-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/shift-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
-  '/admin/timekeeping-shift-scheduling/timekeeping-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute
+  '/admin/timekeeping-shift-scheduling/timekeeping-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -292,7 +285,7 @@ export interface FileRoutesById {
   '/_private/admin/_dashboard/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
-  '/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute
+  '/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -554,7 +547,7 @@ declare module '@tanstack/react-router' {
       id: '/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/'
       path: '/timekeeping-shift-scheduling/timekeeping-management'
       fullPath: '/admin/timekeeping-shift-scheduling/timekeeping-management/'
-      preLoaderRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRouteImport
+      preLoaderRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
     '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/': {
@@ -617,7 +610,7 @@ interface PrivateAdminDashboardRouteChildren {
   PrivateAdminDashboardStaffManagementDetailIdRoute: typeof PrivateAdminDashboardStaffManagementDetailIdRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
-  PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute
+  PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
 }
 
 const PrivateAdminDashboardRouteChildren: PrivateAdminDashboardRouteChildren = {
@@ -647,8 +640,8 @@ const PrivateAdminDashboardRouteChildren: PrivateAdminDashboardRouteChildren = {
     PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute,
   PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute:
     PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute,
-  PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute:
-    PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexLazyRoute,
+  PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute:
+    PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute,
 }
 
 const PrivateAdminDashboardRouteWithChildren =

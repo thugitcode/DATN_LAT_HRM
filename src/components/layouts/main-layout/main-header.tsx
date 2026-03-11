@@ -7,7 +7,8 @@ import {
   DropdownTrigger,
 } from '@heroui/react';
 
-import { icons } from './constant/icons';
+import { LanguageSwitcher } from '@/components/language-switcher';
+
 import { MainHeaderNav } from './main-header-nav';
 import { MainLogo } from './main-logo';
 
@@ -29,6 +30,8 @@ export const MainHeader = () => {
         <Button isIconOnly className="bg-white/10 hover:bg-white/20 size-11 rounded-[14px] transition-colors">
           {icons.bell}
         </Button> */}
+
+        <LanguageSwitcher />
 
         <Dropdown placement="bottom-end">
           <DropdownTrigger>

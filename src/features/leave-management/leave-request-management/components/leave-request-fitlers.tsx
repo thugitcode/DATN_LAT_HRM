@@ -9,7 +9,7 @@ import { FilterSelect } from '@/components/filters/filter-select';
 import { MonthFilter } from '@/components/filters/month-filter';
 import { SearchInput } from '@/components/filters/search-input';
 
-export const PageFilter = () => {
+export const LeaveRequestFitlers = () => {
   const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
 
   const { options: roomOptions } = useRoomOptions(filters?.departmentId);
@@ -31,14 +31,14 @@ export const PageFilter = () => {
 
   const handleKhoaChange = useCallback(
     (value: string | undefined) => {
-      setFilter('departmentId', value);
+      setFilter('departmentIds', value);
     },
     [setFilter],
   );
 
   const handlePhongChange = useCallback(
     (value: string | undefined) => {
-      setFilter('roomId', value);
+      setFilter('roomIds', value);
     },
     [setFilter],
   );

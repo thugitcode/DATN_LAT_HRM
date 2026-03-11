@@ -1,5 +1,75 @@
+import type { NAMESPACES } from '@/i18n/constants';
+import type { TFunction } from 'i18next';
+
 import type { MenuItem } from '@/types/global.type';
 import { icons } from '@/lib/icons';
+
+export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem[] => [
+  {
+    id: '2',
+    path: '/admin/timekeeping-shift-scheduling',
+    label: t('sidebar.timekeeping_shift_scheduling'),
+    icon: icons.calendar,
+    children: [
+      {
+        id: '1',
+        label: t('sidebar.timekeeping_management'),
+        path: '/admin/timekeeping-shift-scheduling/timekeeping-management',
+      },
+      {
+        id: '2',
+        label: t('sidebar.explanation_management'),
+        path: '/admin/timekeeping-shift-scheduling/explanation-management',
+      },
+      {
+        id: '3',
+        label: t('sidebar.shift_management'),
+        path: '/admin/timekeeping-shift-scheduling/shift-management',
+      },
+    ],
+  },
+  {
+    id: '3',
+    path: '/admin/leave-management',
+    label: t('sidebar.leave_management'),
+    icon: icons.clockX,
+    children: [
+      {
+        id: '1',
+        label: t('sidebar.leave_request_management'),
+        path: '/admin/leave-management/leave-request-management',
+      },
+    ],
+  },
+  {
+    id: '4',
+    path: '/admin/staff-management',
+    label: t('sidebar.staff_management'),
+    icon: icons.userInfor,
+    children: [
+      {
+        id: '1',
+        label: t('sidebar.official_staff'),
+        path: '/admin/staff-management/official-staff',
+      },
+      {
+        id: '2',
+        label: t('sidebar.probationary_staff'),
+        path: '/admin/staff-management/probationary-staff',
+      },
+      {
+        id: '3',
+        label: t('sidebar.apprentice_staff'),
+        path: '/admin/staff-management/apprentice-staff',
+      },
+      {
+        id: '4',
+        label: t('sidebar.partner_staff'),
+        path: '/admin/staff-management/partner-staff',
+      },
+    ],
+  },
+];
 
 export const menuSidebar: MenuItem[] = [
   // {

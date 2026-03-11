@@ -1,0 +1,36 @@
+{
+  "actions": {
+    "reload": "Tải lại",
+    "import_excel": "Nhập file excel",
+    "export_excel": "Xuất excel",
+    "export_template": "Xuất file mẫu",
+    "print": "In",
+    "search": "Tìm kiếm",
+    "department": "Khoa",
+    "room": "Phòng"
+  },
+
+  "layout": {
+    "list": "Dạng danh sách",
+    "grid": "Dạng lưới"
+  },
+
+  "sidebar": {
+    "dashboard": "Tổng quan",
+    "timekeeping_shift_scheduling": "Chấm công và phân ca",
+    "timekeeping_management": "Quản lý chấm công",
+    "explanation_management": "Quản lý giải trình",
+    "shift_management": "Quản lý phân ca",
+    "leave_management": "Quản lý nghỉ",
+    "leave_request_management": "Quản lý đăng ký nghỉ",
+    "staff_management": "Quản lý nhân sự",
+    "official_staff": "Nhân viên chính thức",
+    "probationary_staff": "Nhân viên thử việc",
+    "apprentice_staff": "Nhân viên học việc",
+    "partner_staff": "Nhân sự hợp tác",
+    "contract_management": "Quản lý hợp đồng",
+    "payroll_management": "Quản lý lương",
+    "recruitment_management": "Quản lý tuyển dụng",
+    "management_report": "Báo cáo quản trị"
+  }
+}

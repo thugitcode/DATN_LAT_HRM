@@ -10,6 +10,8 @@ export interface LeaveRequestManagementFilters {
   page?: string;
   limit?: string;
   month?: string;
+  departmentIds?: string;
+  roomIds?: string;
 
   [key: string]: unknown;
 }

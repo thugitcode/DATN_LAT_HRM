@@ -1,0 +1,32 @@
+{
+  "timekeeping_management": {
+    "tabs": {
+      "worksheet_by_shift": "Bảng công theo ca",
+      "hourly_payroll": "Bảng công theo giờ",
+      "detailed_time_sheet": "Bảng công chi tiết"
+    },
+    "coming_soon": {
+      "title": "Coming Soon",
+      "description": "Chúng tôi đang nỗ lực để hoàn thành tính năng này.",
+      "description_2": "Vui lòng chờ bản cập nhật sắp tới!",
+      "understood": "Đã hiểu"
+    }
+  },
+
+  "legend": {
+    "on_time": "Đúng giờ",
+    "absent": "Vắng mặt",
+    "late": "Đi muộn",
+    "early_leave": "Về sớm",
+    "late_and_early": "Muộn & về sớm",
+    "overtime": "Công tác",
+    "work_from_home": "Làm tại nhà",
+    "short_hours": "Thiếu giờ",
+    "missing_punch": "Quên chấm công",
+    "day_off": "Ngày nghỉ",
+    "full_hours": "Đủ giờ",
+    "missing": "Thiếu",
+    "exceed": "Thừa",
+    "off": "Nghỉ"
+  }
+}

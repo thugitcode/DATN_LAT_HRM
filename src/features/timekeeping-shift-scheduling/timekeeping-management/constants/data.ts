@@ -1,3 +1,6 @@
+import type { NAMESPACES } from '@/i18n/constants';
+import type { TFunction } from 'i18next';
+
 import {
   AttendanceStatus,
   DetailedTimeSheetStatus,
@@ -8,10 +11,51 @@ import {
   type TabItem,
 } from '../types/index.type';
 
+export const getTabs = (t: TFunction<typeof NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING>) => [
+  { label: t('timekeeping_management.tabs.worksheet_by_shift'), key: TAB_KEYS.WORKSHEET_BY_SHIFT },
+  { label: t('timekeeping_management.tabs.hourly_payroll'), key: TAB_KEYS.HOURLY_PAYROLL },
+  {
+    label: t('timekeeping_management.tabs.detailed_time_sheet'),
+    key: TAB_KEYS.DETAILED_TIME_SHEET,
+  },
+];
+
 export const tabs: TabItem[] = [
   { label: 'Bảng công theo ca', key: TAB_KEYS.WORKSHEET_BY_SHIFT },
   { label: 'Bảng công theo giờ', key: TAB_KEYS.HOURLY_PAYROLL },
   { label: 'Bảng công chi tiết', key: TAB_KEYS.DETAILED_TIME_SHEET },
+];
+
+type TTimekeeping = TFunction<typeof NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING>;
+
+export const getWorkSheetLegendItems = (t: TTimekeeping): LegendItem[] => [
+  { status: AttendanceStatus.OnTime, label: t('legend.on_time'), color: '#3874B8' },
+  { status: AttendanceStatus.Absent, label: t('legend.absent'), color: '#9734EE' },
+  { status: AttendanceStatus.Late, label: t('legend.late'), color: '#D55829' },
+  { status: AttendanceStatus.EarlyLeave, label: t('legend.early_leave'), color: '#73C9C6' },
+  { status: AttendanceStatus.LateAndEarly, label: t('legend.late_and_early'), color: '#E8873A' },
+  { status: AttendanceStatus.Overtime, label: t('legend.overtime'), color: '#F5AF24' },
+  { status: AttendanceStatus.WorkFromHome, label: t('legend.work_from_home'), color: '#9DCAFF' },
+  { status: AttendanceStatus.ShortHours, label: t('legend.short_hours'), color: '#FF93B8' },
+  { status: AttendanceStatus.MissingPunch, label: t('legend.missing_punch'), color: '#17C964' },
+  {
+    status: AttendanceStatus.DayOff,
+    label: t('legend.day_off'),
+    color: 'transparent',
+    shape: 'ring',
+  },
+];
+
+export const getHourlyPayrollLegendItems = (t: TTimekeeping): LegendItem[] => [
+  { status: HoursStatusEnum.FULL, label: t('legend.full_hours'), color: '#006FEE' },
+  { status: HoursStatusEnum.MISSING, label: t('legend.missing'), color: '#F31260' },
+  { status: HoursStatusEnum.OVERTIME, label: t('legend.exceed'), color: '#52525B' },
+  { status: HoursStatusEnum.OFF, label: t('legend.off'), color: '#000000', shape: 'line' },
+];
+
+export const getDetailedTimeSheetLegendItems = (t: TTimekeeping): LegendItem[] => [
+  { status: DetailedTimeSheetStatus.M, label: t('legend.late'), color: '#D55829' },
+  { status: DetailedTimeSheetStatus.S, label: t('legend.early_leave'), color: '#73C9C6' },
 ];
 
 export const WORK_SHEET_LEGEND_ITEMS: LegendItem[] = [

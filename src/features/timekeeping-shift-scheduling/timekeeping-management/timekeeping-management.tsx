@@ -17,19 +17,22 @@ import { TitlePage } from '@/components/title-page';
 import { PageFilter } from '../components/page-filter';
 import { useCurrentLayout } from '../hooks/use-current-layout';
 import { TAB_CONTENT_MAP } from './components/tab-content-map';
-import { TAB_LEGEND_MAP } from './components/tab-legend-map';
+import { getTabLegendMap } from './components/tab-legend-map';
 import { TimekeepingManagementLegend } from './components/timekeeping-management-legend';
 import { TimekeepingManagementPrint } from './components/timekeeping-management-print';
 import { useTimekeepingExport } from './hooks/use-timekeeping-export';
 import { useTimekeepingPrint } from './hooks/use-timekeeping-print';
 import { useTimekeepingTabData } from './hooks/use-timekeeping-tab-data';
 import { useTimekeepingTabs } from './hooks/use-timekeeping-tabs';
+import { useTimekeepingTranslation } from './hooks/use-timekeeping-translation';
 import { TAB_KEYS } from './types/index.type';
 
 export const TimekeepingManagement = () => {
+  const { t } = useTimekeepingTranslation();
   const currentLayout = useCurrentLayout();
   const { tabs, activeKey, activeTab, onSelectionChange } = useTimekeepingTabs();
   const tabData = useTimekeepingTabData(activeKey);
+  const tabLegendMap = getTabLegendMap(t);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { onExport } = useTimekeepingExport(activeKey, tabData);
@@ -68,7 +71,7 @@ export const TimekeepingManagement = () => {
 
       <TimekeepingManagementLegend
         showStatus={activeKey !== TAB_KEYS.HOURLY_PAYROLL}
-        legendItems={TAB_LEGEND_MAP[activeKey]}
+        legendItems={tabLegendMap[activeKey]}
       />
 
       <Modal
@@ -85,7 +88,9 @@ export const TimekeepingManagement = () => {
                 <div className="bg-primary/10 text-primary p-3 rounded-full">
                   <IconSparkles size={28} />
                 </div>
-                <h2 className="text-xl font-bold text-center">Coming Soon </h2>
+                <h2 className="text-xl font-bold text-center">
+                  {t('timekeeping_management.coming_soon.title')}
+                </h2>
               </ModalHeader>
 
               <ModalBody>
