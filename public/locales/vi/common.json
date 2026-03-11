@@ -32,5 +32,13 @@
     "payroll_management": "Quản lý lương",
     "recruitment_management": "Quản lý tuyển dụng",
     "management_report": "Báo cáo quản trị"
+  },
+
+  "drawer": {
+    "work_shifts": "Phân ca làm việc",
+    "change_shift_division": "Thay đổi phân ca",
+    "explanation_detail": "Giải trình ca",
+    "time_sheet_detail": "Chi tiết ca",
+    "profile_staff_detail": "Chi tiết hồ sơ nhân viên"
   }
 }

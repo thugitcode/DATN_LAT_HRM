@@ -5,14 +5,15 @@ import { Drawer, DrawerBody, DrawerContent, DrawerHeader } from '@heroui/react';
 
 import { cn } from '@/lib/utils';
 
-import { DRAWER_CONFIG } from './drawer.config';
+import { useDrawerConfig } from './drawer.config';
 
 export function MainDrawer() {
   const { isOpen, type, onClose } = useDrawer((state) => state);
+  const drawerConfig = useDrawerConfig();
 
   if (!type) return null;
 
-  const config = DRAWER_CONFIG[type];
+  const config = drawerConfig[type];
 
   return (
     <Drawer

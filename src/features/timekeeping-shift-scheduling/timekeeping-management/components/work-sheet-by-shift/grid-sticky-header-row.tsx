@@ -1,11 +1,12 @@
 import { type FC } from 'react';
 
 import { cn } from '@/lib/utils';
+import type { Column } from '@/components/table/types';
 import { dayNames, isWeekend } from '@/features/timekeeping-shift-scheduling/helper';
 import type { DayColumn } from '@/features/timekeeping-shift-scheduling/shift-management/types/type';
 
 import { CELL_W, STICKY_COL_W, SUMMARY_COL_W } from '../../constants/data';
-import { SUMMARY_COLUMNS } from '../../hooks/use-work-sheet-columns';
+import type { WorkSheetByShiftRow } from '../../types/timekeeping-management.type';
 
 interface GridStickyHeaderRowProps {
   hoveredDay: number | null;
@@ -13,6 +14,7 @@ interface GridStickyHeaderRowProps {
   hoveredSummaryCol: string | null;
   setHoveredSummaryCol: (key: string | null) => void;
   days: DayColumn[];
+  summaryColumns: Column<WorkSheetByShiftRow>[];
 }
 
 export const GridStickyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> = ({
@@ -21,6 +23,7 @@ export const GridStickyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> = ({
   hoveredSummaryCol,
   setHoveredSummaryCol,
   days,
+  summaryColumns,
 }) => {
   return (
     <thead className="sticky top-0 z-30">
@@ -62,7 +65,7 @@ export const GridStickyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> = ({
           );
         })}
 
-        {SUMMARY_COLUMNS.map((col, ci) => (
+        {summaryColumns.map((col, ci) => (
           <th
             key={col.key}
             onMouseEnter={() => setHoveredSummaryCol(col.key)}
@@ -71,7 +74,7 @@ export const GridStickyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> = ({
               'h-17.5 text-[11px] font-semibold border-0 p-0 cursor-default bg-white',
               'text-center align-middle text-gray-500 transition-colors duration-100',
               ci === 0 && 'border-l border-gray-200',
-              ci === SUMMARY_COLUMNS.length - 1 && 'rounded-tr-[14px]',
+              ci === summaryColumns.length - 1 && 'rounded-tr-[14px]',
             )}
             style={{
               width: SUMMARY_COL_W,
