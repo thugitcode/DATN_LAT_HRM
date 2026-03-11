@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, type FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import type { Options } from '@/types/global.type';
 import {
@@ -48,8 +50,10 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
   department,
   room,
 }) => {
-  const { options: caseCategoryOptions } = useCaseCategoryOptions();
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
 
+  const { options: caseCategoryOptions } = useCaseCategoryOptions();
   const { mutate } = useUpdateShiftManagement();
   const isMounted = useRef(false);
 
@@ -68,7 +72,6 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
       departmentId: department?.id ?? '',
       caId: shift?.id ?? '',
       roomId: room?.id ?? '',
-
       startTime: shiftRow?.startTime?.slice(0, 5),
       endTime: shiftRow?.endTime?.slice(0, 5),
       note: note ?? '',
@@ -97,7 +100,6 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
 
   useEffect(() => {
     if (caId === initialCaId.current) return;
-
     if (selectedCa) {
       setValue('startTime', selectedCa.startTime?.slice(0, 5) ?? '');
       setValue('endTime', selectedCa.endTime?.slice(0, 5) ?? '');
@@ -106,16 +108,6 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
 
   const onSubmit = async (values: ShiftDivisinFormValues) => {
     if (shift?.id && workScheduleId) {
-      const otherDetails =
-        matchedSchedule?.shifts
-          ?.filter((s) => s.workScheduleId !== workScheduleId)
-          ?.map((s) => ({
-            startTime: s.startTime,
-            endTime: s.endTime,
-            shiftTemplateId: s.shiftTemplateId ?? '',
-            // note: s.note ?? '',
-          })) ?? [];
-
       const updatedDetail = {
         startTime: values.startTime,
         endTime: values.endTime,
@@ -129,7 +121,6 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
           roomId: values.roomId,
           status: StatusUpdateShift.SCHEDULED,
           departmentId: values.departmentId,
-          // details: [...otherDetails, updatedDetail],
           details: [updatedDetail],
         },
       };
@@ -145,21 +136,21 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
 
   const roomStaffOptions: Options[] = useMemo(
     () => staffRow?.rooms?.map((d) => ({ key: d.id, label: d.name })) ?? [],
-
     [staffRow],
   );
+
   return (
     <Form
-      className="w-full space-y-2 h-full flex-1 flex flex-col justify-between "
+      className="w-full space-y-2 h-full flex-1 flex flex-col justify-between"
       validationBehavior="aria"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="p-6 w-full flex-1 min-h-0 overflow-auto">
-        <div className="bg-white rounded-xl p-3 space-y-3 ">
+        <div className="bg-white rounded-xl p-3 space-y-3">
           <FormAutocomplete
             control={control}
             name="departmentId"
-            label="Khoa làm việc"
+            label={t('change_shift_division.department')}
             isRequired
             options={departmentStaffOptions}
           />
@@ -167,14 +158,14 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
           <FormAutocomplete
             control={control}
             name="roomId"
-            label="Phòng làm việc"
+            label={t('change_shift_division.room')}
             options={roomStaffOptions}
           />
 
           <FormSelect
             control={control}
-            name={'caId'}
-            label="Chọn ca"
+            name="caId"
+            label={t('change_shift_division.select_shift')}
             isRequired
             disabled={isSubmitting}
             options={caseCategoryOptions}
@@ -182,33 +173,39 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
 
           <FormTimePicker
             control={control}
-            name={`startTime`}
-            label={isFixed ? "Giờ vào" : "Ghi chú giờ vào"}
+            name="startTime"
+            label={
+              isFixed
+                ? t('shift_details.card.check_in') // reuse key đã có
+                : t('change_shift_division.check_in_note')
+            }
             isRequired
-            // disabled={caId === ShiftTypeEnum.FIXED}
             disabled={isFixed}
           />
 
           <FormTimePicker
             control={control}
-            name={`endTime`}
-            label={isFixed ? "Giờ ra" : "Ghi chú giờ ra"}
+            name="endTime"
+            label={
+              isFixed
+                ? t('shift_details.card.check_out') // reuse key đã có
+                : t('change_shift_division.check_out_note')
+            }
             isRequired
-            // disabled={caId === ShiftTypeEnum.FIXED}
             disabled={isFixed}
           />
 
           <FormArea
             control={control}
-            name={'note'}
-            label="Lý do"
+            name="note"
+            label={t('change_shift_division.reason')}
             disabled={isSubmitting}
             maxRows={16}
           />
         </div>
       </div>
 
-      <FooterFrawer isLoading={isSubmitting} submitLabel="Cập nhật" />
+      <FooterFrawer isLoading={isSubmitting} submitLabel={tc('button.update')} />
     </Form>
   );
 };

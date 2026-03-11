@@ -1,7 +1,9 @@
 /* eslint-disable react-hooks/set-state-in-render */
 import { useCallback, useMemo, useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date';
+import { useTranslation } from 'react-i18next';
 
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
@@ -15,24 +17,10 @@ interface MonthFilterProps {
   className?: string;
 }
 
-const MONTH_ABBR_VI = [
-  'Th.1',
-  'Th.2',
-  'Th.3',
-  'Th.4',
-  'Th.5',
-  'Th.6',
-  'Th.7',
-  'Th.8',
-  'Th.9',
-  'Th.10',
-  'Th.11',
-  'Th.12',
-];
-
 export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, className = '' }) => {
+  const { t } = useTranslation(NAMESPACES.COMMON);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { filters, setFilter, setFilters } = useQueryFilter();
+  const { filters, setFilter } = useQueryFilter();
 
   const currentMonth = useMemo<CalendarDate>(() => {
     if (value) {
@@ -43,9 +31,19 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
     return new CalendarDate(now.year, now.month, 1);
   }, [value]);
 
+  const monthAbbrs = useMemo(
+    () => Array.from({ length: 12 }, (_, i) => t(`month_filter.abbr.${i}`)),
+    [t],
+  );
+
+  const monthNames = useMemo(
+    () => Array.from({ length: 12 }, (_, i) => t(`month_filter.name.${i}`)),
+    [t],
+  );
+
   const monthDisplay = useMemo<string>(() => {
-    return `${MONTH_NAMES[currentMonth.month - 1]} ${currentMonth.year}`;
-  }, [currentMonth]);
+    return `${monthNames[currentMonth.month - 1]} ${currentMonth.year}`;
+  }, [currentMonth, monthNames]);
 
   const [popoverYear, setPopoverYear] = useState<number>(currentMonth.year);
 
@@ -87,7 +85,7 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
         variant="light"
         onPress={handlePreviousMonth}
         className="min-w-8 w-8 h-8"
-        aria-label="Tháng trước"
+        aria-label={t('month_filter.prev_month')}
       >
         {icons.arrowLeft}
       </Button>
@@ -96,7 +94,7 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
         <PopoverTrigger>
           <button
             className="flex-1 text-center text-sm font-medium text-black hover:bg-gray-50 rounded px-2 py-1 transition-colors"
-            aria-label={`Chọn tháng, hiện tại: ${monthDisplay}`}
+            aria-label={t('month_filter.select_month', { month: monthDisplay })}
           >
             {monthDisplay}
           </button>
@@ -110,7 +108,7 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
                 variant="light"
                 onPress={() => setPopoverYear((y) => y - 1)}
                 className="min-w-8 w-8 h-8"
-                aria-label="năm trước"
+                aria-label={t('month_filter.prev_year')}
               >
                 {icons.arrowLeft}
               </Button>
@@ -123,14 +121,14 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
                 variant="light"
                 onPress={() => setPopoverYear((y) => y + 1)}
                 className="min-w-8 w-8 h-8"
-                aria-label="năm sau"
+                aria-label={t('month_filter.next_year')}
               >
                 {icons.arrowRight}
               </Button>
             </div>
 
             <div className="grid grid-cols-3 gap-y-2 gap-x-1">
-              {MONTH_ABBR_VI.map((abbr, idx) => {
+              {monthAbbrs.map((abbr, idx) => {
                 const isSelected =
                   popoverYear === currentMonth.year && idx + 1 === currentMonth.month;
                 const isCurrentMonth =
@@ -140,7 +138,7 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
                   <button
                     key={idx}
                     onClick={() => handleSelectMonth(idx)}
-                    aria-label={`Tháng ${idx + 1} ${popoverYear}`}
+                    aria-label={t('month_filter.month_year', { month: idx + 1, year: popoverYear })}
                     aria-pressed={isSelected}
                     className={cn(
                       'h-9 rounded-lg text-sm font-medium transition-colors',
@@ -166,7 +164,7 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
         variant="light"
         onPress={handleNextMonth}
         className="min-w-8 w-8 h-8"
-        aria-label="Tháng sau"
+        aria-label={t('month_filter.next_month')}
       >
         {icons.arrowRight}
       </Button>

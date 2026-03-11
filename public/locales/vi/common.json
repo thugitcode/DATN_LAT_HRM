@@ -40,5 +40,60 @@
     "explanation_detail": "Giải trình ca",
     "time_sheet_detail": "Chi tiết ca",
     "profile_staff_detail": "Chi tiết hồ sơ nhân viên"
+  },
+
+  "button": {
+    "cancel": "Hủy",
+    "update": "Cập nhật",
+    "create_ca": "Thêm phân ca",
+    "save": "Lưu"
+  },
+
+  "weekdays": {
+    "0": "Chủ nhật",
+    "1": "Thứ 2",
+    "2": "Thứ 3",
+    "3": "Thứ 4",
+    "4": "Thứ 5",
+    "5": "Thứ 6",
+    "6": "Thứ 7"
+  },
+  "date_format": "ngày {{date}}",
+
+  "month_filter": {
+    "prev_month": "Tháng trước",
+    "next_month": "Tháng sau",
+    "prev_year": "Năm trước",
+    "next_year": "Năm sau",
+    "select_month": "Chọn tháng, hiện tại: {{month}}",
+    "month_year": "Tháng {{month}} {{year}}",
+    "name": {
+      "0": "Tháng 1",
+      "1": "Tháng 2",
+      "2": "Tháng 3",
+      "3": "Tháng 4",
+      "4": "Tháng 5",
+      "5": "Tháng 6",
+      "6": "Tháng 7",
+      "7": "Tháng 8",
+      "8": "Tháng 9",
+      "9": "Tháng 10",
+      "10": "Tháng 11",
+      "11": "Tháng 12"
+    },
+    "abbr": {
+      "0": "Th.1",
+      "1": "Th.2",
+      "2": "Th.3",
+      "3": "Th.4",
+      "4": "Th.5",
+      "5": "Th.6",
+      "6": "Th.7",
+      "7": "Th.8",
+      "8": "Th.9",
+      "9": "Th.10",
+      "10": "Th.11",
+      "11": "Th.12"
+    }
   }
 }

@@ -1,5 +1,7 @@
 import { memo, useMemo, type FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { Accordion, AccordionItem } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 import { ShiftTypeEnum } from '@/types/shift-management.type';
 
@@ -47,12 +49,13 @@ const formatStandardHours = (hours?: string): string => {
 
 const ShiftTime: FC<Pick<CardUserShiftProps, 'type' | 'standardHours' | 'startTime' | 'endTime'>> =
   memo(({ type, standardHours, startTime, endTime }) => {
+    const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
     const isFlexible = type !== undefined && FLEXIBLE_SHIFT_TYPES.has(type);
 
     return (
       <span className="text-base font-medium text-[#A1A1AA]">
         {isFlexible
-          ? `${formatStandardHours(standardHours)} giờ`
+          ? t('card_user_shift.standard_hours', { hours: formatStandardHours(standardHours) })
           : `${startTime?.slice(0, 5)} - ${endTime?.slice(0, 5)}`}
       </span>
     );
@@ -106,6 +109,7 @@ export const CardUserShift: FC<Readonly<CardUserShiftProps>> = memo(
     type,
     standardHours,
   }) => {
+    const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
     const formattedWorkDate = useMemo(() => formatWorkDate(workDate), [workDate]);
 
     return (
@@ -117,7 +121,7 @@ export const CardUserShift: FC<Readonly<CardUserShiftProps>> = memo(
               <div className="flex flex-col">
                 <span className="text-base font-medium">{name}</span>
                 <span className="text-xs text-[#A1A1AA]">
-                  Mã nhân viên: <span>{code}</span>
+                  {t('shift_details.card.employee_code')}: <span>{code}</span>{' '}
                 </span>
               </div>
             </div>

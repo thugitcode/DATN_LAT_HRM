@@ -9,7 +9,7 @@ import type { Column } from '@/components/table/types';
 
 import { dayNames, getWeeksInMonth, isWeekend } from '../../helper';
 import { useYearMonth } from '../../hooks/use-year-month';
-import { STAFF_POSITION } from '../../shift-management/constants/data';
+import { getStaffPosition } from '../../shift-management/constants/data';
 import { DepartmentRoomInfo } from '../components/work-sheet-by-shift/department-room-info';
 import { getHourlyPayrollLegendItems, HoursStatusEnum } from '../constants/data';
 import type { AttendanceByHoursResponse } from '../types/timekeeping-management.type';
@@ -43,6 +43,7 @@ export const useColumnsHourlyPayroll = () => {
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
 
   const legendItems = useMemo(() => getHourlyPayrollLegendItems(t), [t]);
+  const staffPosition = useMemo(() => getStaffPosition(t), [t]);
 
   const baseColumns = useMemo<Column<AttendanceByHoursResponse>[]>(
     () => [
@@ -66,7 +67,7 @@ export const useColumnsHourlyPayroll = () => {
         title: t('columns.employee_code'),
         width: 120,
         align: 'center',
-        render: (_, record) => <div className="w-32.5">{record?.staffCode}</div>,
+        render: (_, record) => <div className="w-32.5 text-left">{record?.staffCode}</div>,
       },
       {
         key: 'staffName',
@@ -82,12 +83,12 @@ export const useColumnsHourlyPayroll = () => {
         align: 'center',
         render: (_, record) => (
           <div className="w-32.5">
-            {record?.position ? STAFF_POSITION?.[record.position as StaffPosition] : '-'}
+            {record?.position ? staffPosition?.[record.position as StaffPosition] : '-'}
           </div>
         ),
       },
     ],
-    [t],
+    [staffPosition, t],
   );
 
   const totalHourColumns = useMemo<Column<AttendanceByHoursResponse>[]>(

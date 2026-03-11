@@ -14,7 +14,7 @@ import {
 } from '@/features/timekeeping-shift-scheduling/helper';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
 
-import { STAFF_POSITION } from '../../shift-management/constants/data';
+import { getStaffPosition } from '../../shift-management/constants/data';
 import { DepartmentRoomInfo } from '../components/work-sheet-by-shift/department-room-info';
 import { STATUS_COLOR_MAP } from '../constants/data';
 import type { ShiftCode } from '../types/index.type';
@@ -84,6 +84,8 @@ export const useWorkSheetColumns = () => {
   const { month, year } = useYearMonth();
   const weeks = useMemo(() => getWeeksInMonth(year, month), [year, month]);
 
+  const staffPosition = useMemo(() => getStaffPosition(t), [t]);
+
   const baseColumns = useMemo<Column<WorkSheetByShiftType>[]>(
     () => [
       {
@@ -115,12 +117,12 @@ export const useWorkSheetColumns = () => {
         render: (_, record) => (
           <div>
             <p className="text-sm font-medium text-gray-800 w-50">{record.staff.name}</p>
-            <p className="text-xs text-[#A1A1AA]">{STAFF_POSITION?.[record.staff.position]}</p>
+            <p className="text-xs text-[#A1A1AA]">{staffPosition?.[record.staff.position]}</p>
           </div>
         ),
       },
     ],
-    [t],
+    [staffPosition, t],
   );
 
   const summaryColumns = useMemo<Column<WorkSheetByShiftRow>[]>(

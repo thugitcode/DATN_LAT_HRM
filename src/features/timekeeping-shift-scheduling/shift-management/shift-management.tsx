@@ -1,6 +1,8 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 
 import type { ShiftManagementParams } from '@/types';
@@ -20,13 +22,15 @@ import { ShiftImportReviewModal } from './components/shift-import-review-modal';
 import { ShiftManagementFilter } from './components/shift-management-filter';
 import { ShiftManagementListview } from './components/shift-management-listview';
 import { ShiftManagementPrint } from './components/shift-management-print';
-import { SHIFT_CA_LEGEND } from './constants/data';
+import { getShiftCaLegend } from './constants/data';
 import { useShiftExport } from './hooks/use-shift-export';
 import type { ParseShiftResult } from './hooks/use-shift-import';
 import { useShiftImport } from './hooks/use-shift-import';
 import { useShiftManagementList } from './hooks/use-shift-management';
 
 export const ShiftManagement = () => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+
   const currentLayout = useCurrentLayout();
   const printRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -46,18 +50,16 @@ export const ShiftManagement = () => {
   });
 
   const { onExport, onExportTemplate } = useShiftExport(data?.data ?? []);
-
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
   const [parsedImport, setParsedImport] = useState<ParseShiftResult | null>(null);
 
   const { handleFile } = useShiftImport({
     onParsed: (result) => setParsedImport(result),
-    onError: (err) => {
-      console.error(err);
-      // toast.error('Import thất bại: ' + err.message);
-    },
+    onError: (err) => console.error(err),
   });
+
+  const shiftCaLegend = getShiftCaLegend(t);
 
   return (
     <>
@@ -65,8 +67,7 @@ export const ShiftManagement = () => {
         <div className="space-y-3">
           <WrapperToolBar className="space-y-4 flex flex-col">
             <div className="flex items-center justify-between">
-              <TitlePage title="Quản lý phân ca" />
-
+              <TitlePage title={t('shift_management.title')} />
               <ActionsPage
                 actions={<BtnCreateShift />}
                 onExport={onExport}
@@ -100,9 +101,7 @@ export const ShiftManagement = () => {
             }}
           />
         </div>
-
-        <TimekeepingManagementLegend legendItems={SHIFT_CA_LEGEND} />
-
+        <TimekeepingManagementLegend legendItems={shiftCaLegend} />
         <div style={{ display: 'none' }}>
           <ShiftManagementPrint
             ref={printRef}
