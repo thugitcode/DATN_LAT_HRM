@@ -1,0 +1,32 @@
+{
+  "timekeeping_management": {
+    "tabs": {
+      "worksheet_by_shift": "Worksheet by Shift",
+      "hourly_payroll": "Hourly Payroll",
+      "detailed_time_sheet": "Detailed Time Sheet"
+    },
+    "coming_soon": {
+      "title": "Coming Soon",
+      "description": "We are working hard to complete this feature.",
+      "description_2": "Please wait for the upcoming update!",
+      "understood": "Got it"
+    }
+  },
+
+  "legend": {
+    "on_time": "On Time",
+    "absent": "Absent",
+    "late": "Late",
+    "early_leave": "Early Leave",
+    "late_and_early": "Late & Early",
+    "overtime": "Business Trip",
+    "work_from_home": "Work From Home",
+    "short_hours": "Short Hours",
+    "missing_punch": "Missing Punch",
+    "day_off": "Day Off",
+    "full_hours": "Full Hours",
+    "missing": "Missing",
+    "exceed": "Exceed",
+    "off": "Off"
+  }
+}

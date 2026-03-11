@@ -35,10 +35,25 @@ class LeaveRequestManagementService extends BaseApiService<
   async getAll(
     params?: LeaveRequestManagementFilters,
   ): Promise<ApiResponse<LeaveRequest[], MetadataLeaveRequest>> {
-    const res = await super.getAll({ ...DEFAULT_PAGINATION, ...params });
+    const res = await this.request(async () => {
+      const response = await this.instance.get(this.url(), {
+        params: { ...DEFAULT_PAGINATION, ...params },
+        paramsSerializer: (p) =>
+          Object.entries(p)
+            .flatMap(([key, val]) =>
+              Array.isArray(val)
+                ? val.map((v) => `${key}=${encodeURIComponent(v)}`)
+                : val != null
+                  ? [`${key}=${encodeURIComponent(val)}`]
+                  : [],
+            )
+            .join('&'),
+      });
+      return response.data;
+    });
+
     return res as ApiResponse<LeaveRequest[], MetadataLeaveRequest>;
   }
-
   async getDetail(id: string): Promise<ApiResponse<AttendanceExplanation>> {
     return this.request(async () => {
       const res = await this.instance.get(this.url(id));

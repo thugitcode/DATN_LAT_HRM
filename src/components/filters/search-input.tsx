@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { Input } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 interface SearchInputProps {
   value?: string;
@@ -15,12 +17,14 @@ const INPUT_WRAPPER_CLASSES = '!bg-white border-none shadow-none h-10 min-h-10';
 export const SearchInput: React.FC<SearchInputProps> = ({
   value,
   onChange,
-  placeholder = 'Tìm kiếm...',
+  placeholder,
   startIcon,
   className = '',
   debounceMs = 300,
 }) => {
   const [localValue, setLocalValue] = useState(value ?? '');
+  const { t } = useTranslation(NAMESPACES.COMMON);
+
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onChangeRef = useRef(onChange);
 
@@ -51,16 +55,16 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
-  const handleKeyDown = (keyCode: number)=>{
-    const ENTER_KEYCODE = 13
-    if(keyCode === ENTER_KEYCODE) {
-      onChangeRef.current(localValue)
+  const handleKeyDown = (keyCode: number) => {
+    const ENTER_KEYCODE = 13;
+    if (keyCode === ENTER_KEYCODE) {
+      onChangeRef.current(localValue);
     }
-  }
+  };
   return (
     <Input
-      onKeyDown={({keyCode})=> handleKeyDown(keyCode)}
-      placeholder={placeholder}
+      onKeyDown={({ keyCode }) => handleKeyDown(keyCode)}
+      placeholder={placeholder ?? t('actions.search')}
       variant="flat"
       startContent={startIcon}
       value={localValue}
@@ -73,8 +77,7 @@ export const SearchInput: React.FC<SearchInputProps> = ({
       }}
       aria-label={placeholder}
       isClearable
-      
-      onClear={() =>onChangeRef.current("")}
+      onClear={() => onChangeRef.current('')}
     />
   );
 };

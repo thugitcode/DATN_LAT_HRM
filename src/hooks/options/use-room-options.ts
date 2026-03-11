@@ -4,7 +4,7 @@ export const useRoomOptions = (departmentId?: string) => {
   const { data } = useRoom({
     page: 1,
     limit: 100,
-    departmentId: departmentId
+    departmentId: departmentId,
   });
   return {
     options:

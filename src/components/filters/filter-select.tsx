@@ -13,7 +13,7 @@ interface FilterSelectProps {
   placeholder?: string;
   label?: string;
   className?: string;
-  multiple?: boolean
+  multiple?: boolean;
 }
 
 export const FilterSelect: React.FC<FilterSelectProps> = ({
@@ -23,7 +23,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
   placeholder = 'Chọn...',
   label,
   className = '',
-  multiple = false
+  multiple = false,
 }) => {
   const handleSelectionChange = useCallback(
     (keys: 'all' | Set<React.Key>) => {
@@ -36,7 +36,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
 
   return (
     <Select
-      selectionMode={multiple ? "multiple" : "single"}
+      selectionMode={multiple ? 'multiple' : 'single'}
       label={label}
       placeholder={placeholder}
       size="sm"

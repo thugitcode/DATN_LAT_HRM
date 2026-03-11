@@ -1,0 +1,36 @@
+{
+  "actions": {
+    "reload": "Reload",
+    "import_excel": "Import excel",
+    "export_excel": "Export excel",
+    "export_template": "Export template",
+    "print": "Print",
+    "search": "Seach",
+    "department": "Department",
+    "room": "Room"
+  },
+
+  "layout": {
+    "list": "List",
+    "grid": "Grid"
+  },
+
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "timekeeping_shift_scheduling": "Timekeeping & Shift",
+    "timekeeping_management": "Timekeeping Management",
+    "explanation_management": "Explanation Management",
+    "shift_management": "Shift Management",
+    "leave_management": "Leave Management",
+    "leave_request_management": "Leave Request Management",
+    "staff_management": "Staff Management",
+    "official_staff": "Official Staff",
+    "probationary_staff": "Probationary Staff",
+    "apprentice_staff": "Apprentice Staff",
+    "partner_staff": "Partner Staff",
+    "contract_management": "Contract Management",
+    "payroll_management": "Payroll Management",
+    "recruitment_management": "Recruitment Management",
+    "management_report": "Management Report"
+  }
+}

@@ -1,12 +1,17 @@
+import type { NAMESPACES } from '@/i18n/constants';
+import type { TFunction } from 'i18next';
+
 import {
-  DETAILED_TIME_SHEET_LEGEND_ITEMS,
-  HOURLY_PAYROLL_LEGEND_ITEMS,
-  WORK_SHEET_LEGEND_ITEMS,
+  getDetailedTimeSheetLegendItems,
+  getHourlyPayrollLegendItems,
+  getWorkSheetLegendItems,
 } from '../constants/data';
 import { TAB_KEYS, type LegendItem } from '../types/index.type';
 
-export const TAB_LEGEND_MAP: Record<TAB_KEYS, LegendItem[]> = {
-  [TAB_KEYS.WORKSHEET_BY_SHIFT]: WORK_SHEET_LEGEND_ITEMS,
-  [TAB_KEYS.HOURLY_PAYROLL]: HOURLY_PAYROLL_LEGEND_ITEMS,
-  [TAB_KEYS.DETAILED_TIME_SHEET]: DETAILED_TIME_SHEET_LEGEND_ITEMS,
-};
+type TTimekeeping = TFunction<typeof NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING>;
+
+export const getTabLegendMap = (t: TTimekeeping): Record<TAB_KEYS, LegendItem[]> => ({
+  [TAB_KEYS.WORKSHEET_BY_SHIFT]: getWorkSheetLegendItems(t),
+  [TAB_KEYS.HOURLY_PAYROLL]: getHourlyPayrollLegendItems(t),
+  [TAB_KEYS.DETAILED_TIME_SHEET]: getDetailedTimeSheetLegendItems(t),
+});

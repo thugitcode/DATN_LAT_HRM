@@ -1,12 +1,15 @@
 import { useLocation } from '@tanstack/react-router';
+import { NAMESPACES } from '@/i18n/constants';
 import { useLayoutStore } from '@/store/useLayoutStore';
 import { Tooltip } from '@heroui/react';
 import { Tab, Tabs } from '@heroui/tabs';
+import { useTranslation } from 'react-i18next';
 
 import { LayoutSwitcherEnum } from '@/types/global.type';
 import { icons } from '@/lib/icons';
 
 export const LayoutSwitcher = () => {
+  const { t } = useTranslation(NAMESPACES.COMMON);
   const { pathname = '/' } = useLocation();
   const { getLayout, setLayout } = useLayoutStore();
 
@@ -41,7 +44,7 @@ export const LayoutSwitcher = () => {
         key={LayoutSwitcherEnum.LIST}
         aria-label="layout-list"
         title={
-          <Tooltip content="Dạng danh sách" offset={20} showArrow>
+          <Tooltip content={t('layout.list')} offset={20} showArrow>
             {icons.net}
           </Tooltip>
         }
@@ -51,7 +54,7 @@ export const LayoutSwitcher = () => {
         key={LayoutSwitcherEnum.GRID}
         aria-label="layout-grid"
         title={
-          <Tooltip content="Dạng lưới" offset={20} showArrow>
+          <Tooltip content={t('layout.grid')} offset={20} showArrow>
             {icons.grib}
           </Tooltip>
         }

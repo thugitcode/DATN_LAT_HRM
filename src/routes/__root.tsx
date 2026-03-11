@@ -5,6 +5,8 @@ import { AxiosError } from 'axios';
 import type { AuthContext } from '@/types/auth.type';
 import { CommonErrorComponent } from '@/components/common-error-component';
 
+import i18n from '../i18n';
+
 // import { CommonErrorComponent } from '@/components/common/common-error-component';
 // import { CommonNotFoundComponent } from '@/components/common/common-not-found-component';
 
