@@ -145,5 +145,66 @@
     "remove_shift": "Remove Shift",
     "start_time": "Start Time",
     "end_time": "End Time"
+  },
+  "print": {
+    "month_year": "MONTH {{month}} / {{year}}",
+    "employee_code_short": "Emp. ID",
+    "full_name": "Full Name",
+    "department": "Department",
+    "position": "Position",
+    "company_name_1": "COMPANY LTD",
+    "company_name_2": "GENERAL HOSPITAL",
+    "title": "SHIFT SCHEDULE MONTH {{month}} YEAR {{year}}",
+    "department_label": "DEPT",
+    "footer_date": "….............., date __ month __ year {{year}}",
+    "footer_unit_head": "Unit Head",
+    "footer_hr": "HR Department",
+    "footer_prepared_by": "Prepared By",
+    "sign_note": "(Signature, full name)",
+    "month_label": "MONTH",
+    "dept_room": "Department/Room",
+    "dept_room_required": "Department/Room",
+    "employee_code_required": "Employee Code",
+    "full_name_required": "Full Name",
+    "sheet_name": "Shift Schedule"
+  },
+
+  "explanation_management": {
+    "title": "Explanation Management",
+    "confirm_count": "Confirm ({{count}})",
+    "modal_title": "Confirm Approval",
+    "modal_body": "Are you sure you want to confirm {{count}} selected explanations? This action cannot be undone.",
+    "confirm": "Confirm",
+    "summary": {
+      "label": "Overview:",
+      "total": "Total Requests",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending"
+    },
+
+    "columns": {
+      "position": "POSITION",
+      "date": "DATE",
+      "error_type": "ERROR TYPE",
+      "explanation": "EXPLANATION",
+      "attachment": "ATTACHMENT",
+      "manager": "MANAGER",
+      "action": "ACTION"
+    },
+
+    "row_actions": {
+      "approve_title": "Confirm Approval",
+      "approve_desc": "Are you sure you want to approve this explanation? This action cannot be undone.",
+      "approve_label": "Approve",
+      "approve_success": "Explanation approved successfully",
+      "reject_title": "Confirm Rejection",
+      "reject_desc": "Please enter a reason for rejection so the staff member is informed.",
+      "reject_label": "Reject",
+      "reject_success": "Explanation rejected successfully",
+      "reject_reason_label": "Rejection Reason",
+      "reject_reason_placeholder": "Enter rejection reason...",
+      "max_chars": "Maximum {{max}} characters"
+    }
   }
 }

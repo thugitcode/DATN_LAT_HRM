@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import {
   Button,
   Checkbox,
@@ -9,6 +10,7 @@ import {
   PopoverTrigger,
   Tooltip,
 } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 import { icons } from '@/lib/icons';
 import type { ColumnDef } from '@/components/data-table/data-table';
@@ -24,9 +26,12 @@ export function ColumnVisibilityPopover<T extends object>({
   visibleColumns,
   onApply,
 }: ColumnVisibilityPopoverProps<T>) {
+  const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
+
   const [isOpen, setIsOpen] = useState(false);
-  const [draft, setDraft] = useState<Set<string>>(visibleColumns);
   const [saveAsDefault, setSaveAsDefault] = useState(false);
+  const [draft, setDraft] = useState<Set<string>>(visibleColumns);
   const [draftBeforeDefault, setDraftBeforeDefault] = useState<Set<string> | null>(null);
 
   const allKeys = new Set(
@@ -70,7 +75,7 @@ export function ColumnVisibilityPopover<T extends object>({
 
   return (
     <Popover placement="bottom-end" isOpen={isOpen} onOpenChange={handleOpenChange}>
-      <Tooltip content="Tuỳ chỉnh cột" showArrow>
+      <Tooltip content={t('leave_request.column_visibility.title')} showArrow>
         <div>
           <PopoverTrigger>
             <Button
@@ -87,7 +92,9 @@ export function ColumnVisibilityPopover<T extends object>({
       </Tooltip>
 
       <PopoverContent className="px-6 pt-6 min-w-115 rounded-[14px] shadow-lg items-start">
-        <p className="text-2xl font-medium text-[#11181C]">Tuỳ chỉnh cột</p>
+        <p className="text-2xl font-medium text-[#11181C]">
+          {t('leave_request.column_visibility.title')}
+        </p>
 
         <div className="mt-3 grid grid-cols-2 max-h-72 overflow-y-auto">
           {hideableColumns.map((col) => (
@@ -110,7 +117,9 @@ export function ColumnVisibilityPopover<T extends object>({
         <div className="flex items-center justify-between py-3 w-full">
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <Checkbox size="sm" isSelected={saveAsDefault} onValueChange={handleToggleDefault} />
-            <span className="text-base text-[#11181C]">Cấu hình hiển thị mặc định</span>
+            <span className="text-base text-[#11181C]">
+              {t('leave_request.column_visibility.default_config')}
+            </span>
           </label>
 
           <div className="flex items-center gap-2">
@@ -119,10 +128,10 @@ export function ColumnVisibilityPopover<T extends object>({
               className="rounded-lg border-[#E4E4E7] text-[#3F3F46] min-w-16"
               onPress={() => setIsOpen(false)}
             >
-              Huỷ
+              {tc('button.cancel')}
             </Button>
             <Button color="primary" className="rounded-lg min-w-20" onPress={handleApply}>
-              Cập nhật
+              {tc('button.confirm')}
             </Button>
           </div>
         </div>

@@ -1,11 +1,13 @@
-import { forwardRef, type CSSProperties } from 'react';
+import { forwardRef, useMemo, type CSSProperties } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 import type { StaffSchedule } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
 
 import { getDaysInMonth, getWeeksInMonth } from '../../helper';
-import { STAFF_POSITION } from '../constants/data';
+import { getStaffPosition } from '../constants/data';
 
 const DAY_SHORT: Record<number, string> = {
   0: 'CN',
@@ -17,14 +19,29 @@ const DAY_SHORT: Record<number, string> = {
   6: 'T7',
 };
 
+const COLOR = {
+  headerBg: '#374151',
+  weekBg: '#BFDBFE',
+  dayNumBg: '#93C5FD',
+  dayNameBg: '#DBEAFE',
+  headerText: '#1E3A5F',
+  border: '#D1D5DB',
+  rowEven: '#FFFFFF',
+  rowOdd: '#F9FAFB',
+};
+
 interface ShiftManagementPrintProps {
   data: StaffSchedule[];
   monthQuery?: string;
   layout: LayoutSwitcherEnum;
+  departmentName?: string;
 }
 
 export const ShiftManagementPrint = forwardRef<HTMLDivElement, ShiftManagementPrintProps>(
-  ({ data, monthQuery, layout }, ref) => {
+  ({ data, monthQuery, layout, departmentName = '' }, ref) => {
+    const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+    const staffPosition = useMemo(() => getStaffPosition(t), [t]);
+
     const current = monthQuery ? dayjs(monthQuery) : dayjs();
     const year = current.year();
     const month = current.month();
@@ -34,36 +51,24 @@ export const ShiftManagementPrint = forwardRef<HTMLDivElement, ShiftManagementPr
     const days = getDaysInMonth(year, month);
     const isGrid = layout === LayoutSwitcherEnum.GRID;
 
-    const thTitleStyle: CSSProperties = {
-      backgroundColor: '#374151',
-      color: '#fff',
-      fontWeight: 'bold',
-      border: '1px solid #9ca3af',
-      textAlign: 'center',
-      verticalAlign: 'middle',
-      padding: '2px',
-    };
-    const thWeekStyle: CSSProperties = {
-      backgroundColor: '#6b7280',
-      color: '#fff',
-      fontWeight: 'bold',
-      border: '1px solid #9ca3af',
-      textAlign: 'center',
-      verticalAlign: 'middle',
-      padding: '2px',
-    };
-    const thDayStyle: CSSProperties = {
-      backgroundColor: '#9ca3af',
-      color: '#fff',
-      fontWeight: 'bold',
-      border: '1px solid #9ca3af',
+    const borderStyle = `1px solid ${COLOR.border}`;
+
+    const thBase: CSSProperties = {
+      border: borderStyle,
       textAlign: 'center',
       verticalAlign: 'middle',
       padding: '2px',
       fontSize: '9px',
+      fontWeight: 'bold',
+      color: COLOR.headerText,
     };
+
+    const thWeek: CSSProperties = { ...thBase, backgroundColor: COLOR.weekBg };
+    const thDayNum: CSSProperties = { ...thBase, backgroundColor: COLOR.dayNumBg };
+    const thDayName: CSSProperties = { ...thBase, backgroundColor: COLOR.dayNameBg };
+
     const tdBase: CSSProperties = {
-      border: '1px solid #9ca3af',
+      border: borderStyle,
       textAlign: 'center',
       verticalAlign: 'middle',
       padding: '2px',
@@ -71,18 +76,110 @@ export const ShiftManagementPrint = forwardRef<HTMLDivElement, ShiftManagementPr
       lineHeight: '1.3',
       fontSize: '9px',
     };
-    const tdEven: CSSProperties = { ...tdBase, backgroundColor: '#ffffff' };
-    const tdOdd: CSSProperties = { ...tdBase, backgroundColor: '#f9fafb' };
+    const tdEven: CSSProperties = { ...tdBase, backgroundColor: COLOR.rowEven };
+    const tdOdd: CSSProperties = { ...tdBase, backgroundColor: COLOR.rowOdd };
     const tdLeft: CSSProperties = { textAlign: 'left', paddingLeft: '3px' };
+
+    const tableStyle: CSSProperties = {
+      width: '100%',
+      borderCollapse: 'collapse',
+      tableLayout: 'fixed',
+    };
+
+    const renderGridThead = () => (
+      <thead>
+        <tr>
+          <th colSpan={5} style={thWeek} />
+          <th colSpan={days.length} style={thWeek}>
+            {t('print.month_year', { month: month + 1, year })}
+          </th>
+        </tr>
+        <tr>
+          <th style={thDayNum}>{t('columns.stt')}</th>
+          <th style={thDayNum}>{t('print.employee_code_short')}</th>
+          <th style={thDayNum}>{t('print.full_name')}</th>
+          <th style={thDayNum}>{t('print.department')}</th>
+          <th style={thDayNum}>{t('print.position')}</th>
+          {days.map((d) => (
+            <th key={d.date} style={thDayNum}>
+              {dayjs(d.date).date()}
+            </th>
+          ))}
+        </tr>
+        <tr>
+          <th style={thDayName} />
+          <th style={thDayName} />
+          <th style={thDayName} />
+          <th style={thDayName} />
+          <th style={thDayName} />
+          {days.map((d) => (
+            <th key={d.date} style={thDayName}>
+              {DAY_SHORT[d.dayOfWeek]}
+            </th>
+          ))}
+        </tr>
+      </thead>
+    );
+
+    const renderWeekThead = () => (
+      <thead>
+        <tr>
+          <th rowSpan={3} style={thWeek}>
+            {t('columns.stt')}
+          </th>
+          <th rowSpan={3} style={thWeek}>
+            {t('print.employee_code_short')}
+          </th>
+          <th rowSpan={3} style={thWeek}>
+            {t('print.full_name')}
+          </th>
+          <th rowSpan={3} style={thWeek}>
+            {t('print.position')}
+          </th>
+          {weeks.map((week) => (
+            <th key={week.weekNumber} colSpan={week.days.length} style={thWeek}>
+              {t('columns.week', { week: week.weekNumber })}: {week.startDay}/{month + 1} -{' '}
+              {week.endDay}/{month + 1}
+            </th>
+          ))}
+        </tr>
+        <tr>
+          {allDays.map((day) => (
+            <th key={`num-${day.day}`} style={thDayNum}>
+              {day.day}
+            </th>
+          ))}
+        </tr>
+        <tr>
+          {allDays.map((day) => (
+            <th key={`name-${day.day}`} style={thDayName}>
+              {DAY_SHORT[day.dayOfWeek]}
+            </th>
+          ))}
+        </tr>
+      </thead>
+    );
 
     return (
       <div ref={ref}>
-        <style>{`@media print {
-          body * { visibility: hidden; }
-          .shift-print-wrap, .shift-print-wrap * { visibility: visible; }
-          .shift-print-wrap { position: fixed; inset: 0; padding: 8mm 10mm; background: white; }
-          @page { size: A3 landscape; margin: 0; }
-        }`}</style>
+        <style>{`
+          @media print {
+            body, html { margin: 0; padding: 0; }
+            body * { visibility: hidden; }
+            .shift-print-wrap, .shift-print-wrap * { visibility: visible; }
+            .shift-print-wrap {
+              position: absolute;
+              top: 0; left: 0;
+              width: 100%;
+              padding: 6mm 8mm;
+              box-sizing: border-box;
+              background: white;
+            }
+            @page { size: A4 landscape; margin: 10mm 8mm; }
+            thead { display: table-header-group; }
+            .staff-tbody { page-break-inside: avoid; break-inside: avoid; }
+          }
+        `}</style>
 
         <div
           className="shift-print-wrap"
@@ -93,113 +190,117 @@ export const ShiftManagementPrint = forwardRef<HTMLDivElement, ShiftManagementPr
             padding: '16px',
           }}
         >
-          <div
-            style={{
-              textAlign: 'center',
-              fontSize: '13px',
-              fontWeight: 'bold',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              background: '#374151',
-              color: '#fff',
-              padding: '5px 0',
-              marginBottom: '6px',
-            }}
-          >
-            BẢNG PHÂN CA THÁNG {month + 1} NĂM {year}
+          {/* ── Header: đồng bộ Excel ── */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+            {/* Góc trái */}
+            <div style={{ lineHeight: '1.6' }}>
+              <div style={{ fontWeight: 'bold', fontSize: '10px' }}>
+                {t('print.company_name_1')}
+              </div>
+              <div style={{ fontWeight: 'bold', fontSize: '10px' }}>
+                {t('print.company_name_2')}
+              </div>
+            </div>
+
+            {/* Góc phải – tiêu đề + khoa */}
+            <div style={{ textAlign: 'center', flex: 1, paddingLeft: '16px' }}>
+              <div
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: '13px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                }}
+              >
+                {t('print.title', { month: month + 1, year })}
+              </div>
+              {departmentName && (
+                <div style={{ fontSize: '10px', marginTop: '2px' }}>
+                  {t('print.department_label')}: <strong>{departmentName}</strong>
+                </div>
+              )}
+            </div>
+
+            {/* Placeholder cân bằng bên phải */}
+            <div style={{ minWidth: '120px' }} />
           </div>
 
+          {/* ── Bảng ── */}
           {isGrid ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+            <table style={tableStyle}>
               <colgroup>
                 <col style={{ width: '22px' }} />
-                <col style={{ width: '60px' }} />
-                <col style={{ width: '90px' }} />
-                <col style={{ width: '80px' }} />
-                <col style={{ width: '50px' }} />
+                <col style={{ width: '40px' }} />
+                <col style={{ width: '40px' }} />
+                <col style={{ width: '40px' }} />
+                <col style={{ width: '40px' }} />
                 {days.map((_, i) => (
                   <col key={i} style={{ width: `${Math.floor(450 / days.length)}px` }} />
                 ))}
               </colgroup>
-              <thead>
-                <tr>
-                  <th style={thDayStyle}>STT</th>
-                  <th style={thDayStyle}>Mã NV</th>
-                  <th style={thDayStyle}>Họ và tên</th>
-                  <th style={thDayStyle}>Khoa/Phòng</th>
-                  <th style={thDayStyle}>Chức vụ</th>
-                  {days.map((d) => (
-                    <th key={d.date} style={thDayStyle}>
-                      <div>{DAY_SHORT[d.dayOfWeek]}</div>
-                      <div>{dayjs(d.date).format('D/M')}</div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((record, idx) => {
-                  const { staff, schedules = [] } = record;
-                  const maxSlots = Math.max(
-                    1,
-                    ...days.map(
-                      (d) => schedules.find((s) => s.date === d.date)?.shifts?.length ?? 0,
-                    ),
-                  );
-                  const isEven = idx % 2 === 0;
-                  const td = isEven ? tdEven : tdOdd;
-
-                  return Array.from({ length: maxSlots }).flatMap((_, slotIdx) => [
-                    <tr key={`${staff.id}-${slotIdx}-name`}>
-                      {slotIdx === 0 && (
-                        <>
-                          <td rowSpan={maxSlots * 2} style={td}>
-                            {idx + 1}
-                          </td>
-                          <td rowSpan={maxSlots * 2} style={td}>
-                            {staff.code}
-                          </td>
-                          <td rowSpan={maxSlots * 2} style={{ ...td, ...tdLeft }}>
-                            {staff.name}
-                          </td>
-                          <td rowSpan={maxSlots * 2} style={{ ...td, ...tdLeft }}>
-                            {staff.departments?.map((d) => d.name).join(', ')}
-                          </td>
-                          <td rowSpan={maxSlots * 2} style={td}>
-                            {STAFF_POSITION[staff.position ?? ''] ?? ''}
-                          </td>
-                        </>
-                      )}
-                      {days.map((d) => {
-                        const shift = schedules.find((s) => s.date === d.date)?.shifts?.[slotIdx];
-                        return (
-                          <td key={d.date} style={td}>
-                            {shift && (
-                              <div style={{ fontWeight: 600 }}>{shift.shiftTemplateName}</div>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>,
-                    <tr key={`${staff.id}-${slotIdx}-time`}>
-                      {days.map((d) => {
-                        const shift = schedules.find((s) => s.date === d.date)?.shifts?.[slotIdx];
-                        return (
-                          <td key={d.date} style={td}>
-                            {shift && (
-                              <div style={{ fontSize: '8px', color: '#374151' }}>
-                                {shift.startTime?.slice(0, 5)} - {shift.endTime?.slice(0, 5)}
-                              </div>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>,
-                  ]);
-                })}
-              </tbody>
+              {renderGridThead()}
+              {data.map((record, idx) => {
+                const { staff, schedules = [] } = record;
+                const maxSlots = Math.max(
+                  1,
+                  ...days.map((d) => schedules.find((s) => s.date === d.date)?.shifts?.length ?? 0),
+                );
+                const td = idx % 2 === 0 ? tdEven : tdOdd;
+                return (
+                  <tbody key={staff.id} className="staff-tbody">
+                    {Array.from({ length: maxSlots }).flatMap((_, slotIdx) => [
+                      <tr key={`${staff.id}-${slotIdx}-name`}>
+                        {slotIdx === 0 && (
+                          <>
+                            <td rowSpan={maxSlots * 2} style={td}>
+                              {idx + 1}
+                            </td>
+                            <td rowSpan={maxSlots * 2} style={td}>
+                              {staff.code}
+                            </td>
+                            <td rowSpan={maxSlots * 2} style={{ ...td, ...tdLeft }}>
+                              {staff.name}
+                            </td>
+                            <td rowSpan={maxSlots * 2} style={{ ...td, ...tdLeft }}>
+                              {staff.departments?.map((d) => d.name).join(', ')}
+                            </td>
+                            <td rowSpan={maxSlots * 2} style={td}>
+                              {staffPosition[staff.position ?? ''] ?? ''}{' '}
+                            </td>
+                          </>
+                        )}
+                        {days.map((d) => {
+                          const shift = schedules.find((s) => s.date === d.date)?.shifts?.[slotIdx];
+                          return (
+                            <td key={d.date} style={td}>
+                              {shift && (
+                                <div style={{ fontWeight: 600 }}>{shift.shiftTemplateName}</div>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>,
+                      <tr key={`${staff.id}-${slotIdx}-time`}>
+                        {days.map((d) => {
+                          const shift = schedules.find((s) => s.date === d.date)?.shifts?.[slotIdx];
+                          return (
+                            <td key={d.date} style={td}>
+                              {shift && (
+                                <div style={{ fontSize: '8px', color: '#374151' }}>
+                                  {shift.startTime?.slice(0, 5)} - {shift.endTime?.slice(0, 5)}
+                                </div>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>,
+                    ])}
+                  </tbody>
+                );
+              })}
             </table>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed' }}>
+            <table style={tableStyle}>
               <colgroup>
                 <col style={{ width: '16px' }} />
                 <col style={{ width: '34px' }} />
@@ -209,119 +310,106 @@ export const ShiftManagementPrint = forwardRef<HTMLDivElement, ShiftManagementPr
                   <col key={i} style={{ width: `${Math.floor(470 / allDays.length)}px` }} />
                 ))}
               </colgroup>
-              <thead>
-                <tr>
-                  <th rowSpan={2} style={thTitleStyle}>
-                    STT
-                  </th>
-                  <th rowSpan={2} style={thTitleStyle}>
-                    Mã NV
-                  </th>
-                  <th rowSpan={2} style={thTitleStyle}>
-                    Họ và tên
-                  </th>
-                  <th rowSpan={2} style={thTitleStyle}>
-                    Chức vụ
-                  </th>
-                  {weeks.map((week) => (
-                    <th key={week.weekNumber} colSpan={week.days.length} style={thWeekStyle}>
-                      TUẦN {week.weekNumber}: {week.startDay}/{month + 1} - {week.endDay}/
-                      {month + 1}
-                    </th>
-                  ))}
-                </tr>
-                <tr>
-                  {allDays.map((day) => (
-                    <th key={day.day} style={thDayStyle}>
-                      <div>{DAY_SHORT[day.dayOfWeek]}</div>
-                      <div>
-                        {day.day}/{month + 1}
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((record, idx) => {
-                  const { staff, schedules = [] } = record;
-                  const maxSlots = Math.max(
-                    1,
-                    ...allDays.map((day) => {
-                      const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
-                      return schedules.find((s) => s.date === dateStr)?.shifts?.length ?? 0;
-                    }),
-                  );
-                  const isEven = idx % 2 === 0;
-                  const td = isEven ? tdEven : tdOdd;
-
-                  return Array.from({ length: maxSlots }).flatMap((_, slotIdx) => [
-                    <tr key={`${staff.id}-${slotIdx}-name`}>
-                      {slotIdx === 0 && (
-                        <>
-                          <td rowSpan={maxSlots * 2} style={td}>
-                            {idx + 1}
-                          </td>
-                          <td rowSpan={maxSlots * 2} style={td}>
-                            {staff.code}
-                          </td>
-                          <td rowSpan={maxSlots * 2} style={{ ...td, ...tdLeft }}>
-                            {staff.name}
-                          </td>
-                          <td rowSpan={maxSlots * 2} style={td}>
-                            {STAFF_POSITION[staff.position ?? ''] ?? ''}
-                          </td>
-                        </>
-                      )}
-                      {allDays.map((day) => {
-                        const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
-                        const shift = schedules.find((s) => s.date === dateStr)?.shifts?.[slotIdx];
-                        return (
-                          <td key={day.day} style={td}>
-                            {shift && (
-                              <div style={{ fontWeight: 600 }}>{shift.shiftTemplateName}</div>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>,
-                    <tr key={`${staff.id}-${slotIdx}-time`}>
-                      {allDays.map((day) => {
-                        const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
-                        const shift = schedules.find((s) => s.date === dateStr)?.shifts?.[slotIdx];
-                        return (
-                          <td key={day.day} style={td}>
-                            {shift && (
-                              <div style={{ fontSize: '8px', color: '#374151' }}>
-                                {shift.startTime?.slice(0, 5)} - {shift.endTime?.slice(0, 5)}
-                              </div>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>,
-                  ]);
-                })}
-              </tbody>
+              {renderWeekThead()}
+              {data.map((record, idx) => {
+                const { staff, schedules = [] } = record;
+                const maxSlots = Math.max(
+                  1,
+                  ...allDays.map((day) => {
+                    const dateStr = dayjs(new Date(year, month, day.day)).format('YYYY-MM-DD');
+                    return schedules.find((s) => s.date === dateStr)?.shifts?.length ?? 0;
+                  }),
+                );
+                const td = idx % 2 === 0 ? tdEven : tdOdd;
+                return (
+                  <tbody key={staff.id} className="staff-tbody">
+                    {Array.from({ length: maxSlots }).flatMap((_, slotIdx) => [
+                      <tr key={`${staff.id}-${slotIdx}-name`}>
+                        {slotIdx === 0 && (
+                          <>
+                            <td rowSpan={maxSlots * 2} style={td}>
+                              {idx + 1}
+                            </td>
+                            <td rowSpan={maxSlots * 2} style={td}>
+                              {staff.code}
+                            </td>
+                            <td rowSpan={maxSlots * 2} style={{ ...td, ...tdLeft }}>
+                              {staff.name}
+                            </td>
+                            <td rowSpan={maxSlots * 2} style={td}>
+                              {staffPosition[staff.position ?? ''] ?? ''}{' '}
+                            </td>
+                          </>
+                        )}
+                        {allDays.map((day) => {
+                          const dateStr = dayjs(new Date(year, month, day.day)).format(
+                            'YYYY-MM-DD',
+                          );
+                          const shift = schedules.find((s) => s.date === dateStr)?.shifts?.[
+                            slotIdx
+                          ];
+                          return (
+                            <td key={day.day} style={td}>
+                              {shift && (
+                                <div style={{ fontWeight: 600 }}>{shift.shiftTemplateName}</div>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>,
+                      <tr key={`${staff.id}-${slotIdx}-time`}>
+                        {allDays.map((day) => {
+                          const dateStr = dayjs(new Date(year, month, day.day)).format(
+                            'YYYY-MM-DD',
+                          );
+                          const shift = schedules.find((s) => s.date === dateStr)?.shifts?.[
+                            slotIdx
+                          ];
+                          return (
+                            <td key={day.day} style={td}>
+                              {shift && (
+                                <div style={{ fontSize: '8px', color: '#374151' }}>
+                                  {shift.startTime?.slice(0, 5)} - {shift.endTime?.slice(0, 5)}
+                                </div>
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>,
+                    ])}
+                  </tbody>
+                );
+              })}
             </table>
           )}
 
-          {/* Chữ ký */}
-          <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
-            {['Trưởng Đơn Vị', 'TL. Hành chánh - Nhân sự', 'Lập Bảng'].map((title) => (
-              <div key={title} style={{ width: '30%', textAlign: 'center' }}>
-                <div style={{ fontWeight: 'bold', fontSize: '10px', marginBottom: '28px' }}>
-                  {title}
+          {/* ── Footer ── */}
+          <div style={{ marginTop: '16px' }}>
+            <div
+              style={{
+                textAlign: 'right',
+                paddingRight: '8%',
+                fontSize: '10px',
+                marginBottom: '4px',
+              }}
+            >
+              ….............., ngày __ tháng __ năm {year}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+              {['Trưởng Đơn Vị', 'TL. Hành chánh - Nhân sự', 'Lập Bảng'].map((title) => (
+                <div key={title} style={{ width: '30%', textAlign: 'center' }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '10px', marginBottom: '28px' }}>
+                    {title}
+                  </div>
+                  <div style={{ fontStyle: 'italic', fontSize: '9px' }}>(Ký, họ tên)</div>
                 </div>
-                <div style={{ fontStyle: 'italic', fontSize: '9px' }}>(Ký, họ tên)</div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
     );
   },
 );
-
-ShiftManagementPrint.displayName = 'ShiftManagementPrint';
 
 ShiftManagementPrint.displayName = 'ShiftManagementPrint';

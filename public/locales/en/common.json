@@ -7,7 +7,8 @@
     "print": "Print",
     "search": "Seach",
     "department": "Department",
-    "room": "Room"
+    "room": "Room",
+    "status": "Status"
   },
 
   "layout": {
@@ -46,7 +47,8 @@
     "cancel": "Cancel",
     "update": "Update",
     "create_ca": "Add shift division",
-    "save": "Lưu"
+    "save": "Save",
+    "confirm": "Confirm"
   },
 
   "weekdays": {

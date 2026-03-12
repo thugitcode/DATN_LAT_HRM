@@ -1,0 +1,47 @@
+{
+  "leave_request": {
+    "title": "Leave Request Management",
+
+    "summary": {
+      "total": "Total Requests",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending"
+    },
+
+    "columns": {
+      "department": "Department",
+      "staff_code": "Staff Code",
+      "staff_name": "Staff Name",
+      "position": "Position",
+      "leave_type": "Leave Type",
+      "from_date": "Start Time",
+      "to_date": "End Time",
+      "total_days": "Total Leave",
+      "days_count": "{{count}} day(s)",
+      "reason": "Reason",
+      "replacement": "Replacement",
+      "approved_by": "Approved By"
+    },
+
+    "actions": {
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "confirm": "Confirm",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approve_title": "Approve Leave Request",
+      "approve_desc": "Are you sure you want to approve the leave request of {{name}}?",
+      "reject_title": "Reject Leave Request",
+      "reject_desc": "Please enter a reason for rejection so {{name}} is informed."
+    },
+
+    "column_visibility": {
+      "title": "Customize Columns",
+      "tooltip": "Customize columns",
+      "default_config": "Set as default display configuration",
+      "cancel": "Cancel",
+      "apply": "Apply"
+    }
+  }
+}

@@ -1,7 +1,9 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
 import type { DetailsTimeSheetRecord } from '@/types/shift-details.type';
+import { useDepartmentOptions } from '@/hooks/options/use-department-options';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
 
 import { TAB_KEYS } from '../types/index.type';
@@ -19,6 +21,14 @@ export function useTimekeepingPrint(activeKey: TAB_KEYS, data: unknown[] = []) {
   const { month, year } = useYearMonth();
   const printRef = useRef<HTMLDivElement>(null);
 
+  const { filters } = useQueryFilter();
+  const { options: departmentOptions } = useDepartmentOptions();
+
+  const departmentName = useMemo(() => {
+    if (!filters?.departmentId) return '';
+    return departmentOptions.find((d) => d.key === filters.departmentId)?.label ?? '';
+  }, [departmentOptions, filters.departmentId]);
+
   const triggerPrint = useReactToPrint({ contentRef: printRef });
 
   const onPrint = useCallback(() => {
@@ -30,5 +40,5 @@ export function useTimekeepingPrint(activeKey: TAB_KEYS, data: unknown[] = []) {
     data,
   } as TimekeepingPrintState;
 
-  return { onPrint, printState, printRef, year, month };
+  return { onPrint, printState, printRef, year, month, departmentName };
 }

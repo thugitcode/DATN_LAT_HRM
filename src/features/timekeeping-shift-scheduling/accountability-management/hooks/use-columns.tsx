@@ -1,32 +1,36 @@
+import { NAMESPACES } from '@/i18n/constants';
 import { IconPaperclip } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 import type { ColumnDef } from '@/components/data-table/data-table';
 
-import { STAFF_POSITION } from '../../shift-management/constants/data';
+import { getStaffPosition } from '../../shift-management/constants/data';
+import { DepartmentRoomInfo } from '../../timekeeping-management/components/work-sheet-by-shift/department-room-info';
 import { RowActions } from '../components/row-actions';
 import type { AttendanceExplanation } from '../types';
-import { DepartmentRoomInfo } from '../../timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 export const useColumns = () => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+
+  const staffPosition = getStaffPosition(t);
+
   const columns: ColumnDef<AttendanceExplanation>[] = [
     {
       key: 'departmentName',
-      title: 'KHOA/PHÒNG',
+      title: t('columns.department'),
       minWidth: 120,
-      render: (_, row) => (
-        <DepartmentRoomInfo departments={row.departments} rooms={row.rooms} />
-      ),
+      render: (_, row) => <DepartmentRoomInfo departments={row.departments} rooms={row.rooms} />,
     },
     {
       key: 'staffCode',
-      title: 'MÃ NHÂN VIÊN',
+      title: t('columns.employee_code'),
       minWidth: 120,
       render: (_, row) => <span className="text-sm font-mono text-gray-700">{row.staffCode}</span>,
     },
     {
       key: 'staffName',
-      title: 'TÊN NHÂN VIÊN',
+      title: t('columns.employee_name'),
       minWidth: 130,
       render: (_, row) => (
         <span className="text-sm font-medium text-gray-800">{row.staffName}</span>
@@ -34,14 +38,13 @@ export const useColumns = () => {
     },
     {
       key: 'position',
-      title: 'CHỨC VỤ',
+      title: t('explanation_management.columns.position'),
       minWidth: 80,
-
-      render: (_, row) => <span>{STAFF_POSITION?.[row.position]}</span>,
+      render: (_, row) => <span>{staffPosition?.[row.position]}</span>,
     },
     {
       key: 'date',
-      title: 'NGÀY',
+      title: t('explanation_management.columns.date'),
       minWidth: 100,
       render: (_, row) => (
         <span className="text-sm text-gray-600 whitespace-nowrap">
@@ -51,16 +54,15 @@ export const useColumns = () => {
     },
     {
       key: 'typeLabel',
-      title: 'LOẠI LỖI',
+      title: t('explanation_management.columns.error_type'),
       minWidth: 100,
-
       render: (_, row) => (
         <span className="text-sm text-gray-600 whitespace-nowrap">{row.typeLabel}</span>
       ),
     },
     {
       key: 'reason',
-      title: 'GIẢI TRÌNH',
+      title: t('explanation_management.columns.explanation'),
       minWidth: 80,
       render: (_, row) => (
         <span className="text-sm text-gray-600">{row.totalWorkHours || row.reason || '—'}</span>
@@ -68,7 +70,7 @@ export const useColumns = () => {
     },
     {
       key: 'firstAttachmentName',
-      title: 'FILE ĐÍNH KÈM',
+      title: t('explanation_management.columns.attachment'),
       minWidth: 140,
       render: (_, row) =>
         row.attachmentCount > 0 ? (
@@ -84,7 +86,7 @@ export const useColumns = () => {
     },
     {
       key: 'managerName',
-      title: 'QUẢN LÝ QUYẾT',
+      title: t('explanation_management.columns.manager'),
       minWidth: 130,
       render: (_, row) => (
         <span className="text-sm text-gray-700 whitespace-nowrap">
@@ -94,10 +96,11 @@ export const useColumns = () => {
     },
     {
       key: 'status',
-      title: 'HÀNH ĐỘNG',
+      title: t('explanation_management.columns.action'),
       minWidth: 160,
       render: (_, row) => <RowActions dataRow={row} />,
     },
   ];
+
   return { columns };
 };

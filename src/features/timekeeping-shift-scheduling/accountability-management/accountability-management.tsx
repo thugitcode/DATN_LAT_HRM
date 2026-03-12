@@ -1,7 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 import type { Selection } from '@heroui/react';
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import { IconAlertTriangle, IconCheck } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 
 import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
@@ -19,8 +22,8 @@ import {
 } from './hooks/use-approve-accountability';
 import { useColumns } from './hooks/use-columns';
 import { AttendanceExplanationStatus, type AttendanceExplanationFilters } from './types';
-import { DrawerType, useDrawer } from '@/store/useDrawer';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DEFAULT_SUMMARY = {
   totalRequests: 0,
   pending: 0,
@@ -30,6 +33,9 @@ export const DEFAULT_SUMMARY = {
 };
 
 export const AccountabilityManagement = () => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
+
   const { filters } = useQueryFilter<AttendanceExplanationFilters>();
   const { departmentId, month, roomId, search, status, type, page, limit } = filters;
 
@@ -51,6 +57,7 @@ export const AccountabilityManagement = () => {
     page,
     limit,
   });
+
   const { onOpen } = useDrawer((state) => state);
 
   const summary = useMemo(() => data?.metadata ?? DEFAULT_SUMMARY, [data]);
@@ -62,25 +69,43 @@ export const AccountabilityManagement = () => {
 
   const hasSelection = selectedIds.length > 0;
 
-  const handleSelectionChange = useCallback((keys: Selection) => {
-    if (keys !== "all") {
-      const intersection = new Set(
-        data?.data.filter(item => keys.has(item.id) && [AttendanceExplanationStatus.APPROVED, AttendanceExplanationStatus.REJECTED].includes(item.status))?.map(ite => ite.id)
-      );
-      setSelectedKeys(intersection);
-    } else {
-      const intersection = new Set(
-        data?.data.filter(item => [AttendanceExplanationStatus.APPROVED, AttendanceExplanationStatus.REJECTED].includes(item.status))?.map(ite => ite.id)
-      );
-      setSelectedKeys(pre => {
-        if (pre instanceof Set && pre.size === intersection.size) {
-          return new Set()
-        } else {
-          return intersection
-        }
-      });
-    }
-  }, [data?.data]);
+  const handleSelectionChange = useCallback(
+    (keys: Selection) => {
+      if (keys !== 'all') {
+        const intersection = new Set(
+          data?.data
+            .filter(
+              (item) =>
+                keys.has(item.id) &&
+                [
+                  AttendanceExplanationStatus.APPROVED,
+                  AttendanceExplanationStatus.REJECTED,
+                ].includes(item.status),
+            )
+            ?.map((ite) => ite.id),
+        );
+        setSelectedKeys(intersection);
+      } else {
+        const intersection = new Set(
+          data?.data
+            .filter((item) =>
+              [AttendanceExplanationStatus.APPROVED, AttendanceExplanationStatus.REJECTED].includes(
+                item.status,
+              ),
+            )
+            ?.map((ite) => ite.id),
+        );
+        setSelectedKeys((pre) => {
+          if (pre instanceof Set && pre.size === intersection.size) {
+            return new Set();
+          } else {
+            return intersection;
+          }
+        });
+      }
+    },
+    [data?.data],
+  );
 
   const handleOpenBulkConfirm = useCallback(() => {
     setIsBulkConfirmOpen(true);
@@ -107,11 +132,10 @@ export const AccountabilityManagement = () => {
   return (
     <PageContainer className="space-y-3.75">
       <div className="flex items-center justify-between">
-        <TitlePage title="Quản lý giải trình ca" className='h-10' />
-
+        <TitlePage title={t('explanation_management.title')} className="h-10" />
         {hasSelection && (
           <Button color="primary" className="h-10 px-4 font-medium" onPress={handleOpenBulkConfirm}>
-            Xác nhận ({selectedIds.length})
+            {t('explanation_management.confirm_count', { count: selectedIds.length })}
           </Button>
         )}
       </div>
@@ -147,18 +171,16 @@ export const AccountabilityManagement = () => {
         <ModalContent>
           <ModalHeader className="flex items-center gap-2">
             <IconAlertTriangle size={20} className="text-primary" />
-            <span>Xác nhận phê duyệt</span>
+            <span>{t('explanation_management.modal_title')}</span>
           </ModalHeader>
           <ModalBody>
             <p className="text-sm text-default-600">
-              Bạn có chắc chắn muốn xác nhận{' '}
-              <span className="font-semibold text-foreground">{selectedIds.length}</span> giải trình
-              công đã chọn không? Hành động này không thể hoàn tác.
+              {t('explanation_management.modal_body', { count: selectedIds.length })}
             </p>
           </ModalBody>
           <ModalFooter>
             <Button variant="flat" isDisabled={isBulkApproving} onPress={handleCloseBulkConfirm}>
-              Hủy
+              {tc('button.cancel')}
             </Button>
             <Button
               color="primary"
@@ -166,7 +188,7 @@ export const AccountabilityManagement = () => {
               startContent={!isBulkApproving && <IconCheck size={16} />}
               onPress={handleBulkApprove}
             >
-              Xác nhận
+              {t('explanation_management.confirm')}
             </Button>
           </ModalFooter>
         </ModalContent>

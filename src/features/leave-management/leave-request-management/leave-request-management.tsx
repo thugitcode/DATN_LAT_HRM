@@ -1,4 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
 
 import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
@@ -6,7 +8,6 @@ import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ColumnVisibilityPopover } from '@/components/column-visibility-popover';
 import DataTable from '@/components/data-table/data-table';
 import { PageContainer } from '@/components/page-container';
-import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 
 import { LeaveRequestFitlers } from './components/leave-request-fitlers';
@@ -18,6 +19,8 @@ import type { LeaveRequestManagementFilters } from './type';
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-400px)]' } as const;
 
 export const LeaveRequestManagement = () => {
+  const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);
+
   const { filters } = useQueryFilter<LeaveRequestManagementFilters>();
   const { departmentId, month, roomId, search, status, type, page, limit, departmentIds, roomIds } =
     filters;
@@ -66,7 +69,7 @@ export const LeaveRequestManagement = () => {
   return (
     <PageContainer className="space-y-3.75">
       <div className="flex items-center justify-between">
-        <TitlePage title="Quản lý đăng ký nghỉ" />
+        <TitlePage title={t('leave_request.title')} />
 
         <ColumnVisibilityPopover
           columns={columns}

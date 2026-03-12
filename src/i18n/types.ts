@@ -4,7 +4,7 @@ import type dashboard from '@public/locales/en/dashboard.json';
 // import type auth from '@public/locales/en/auth.json';
 // import type staffManagement from '@public/locales/en/staff-management.json';
 // import type contractManagement from '@public/locales/en/contract-management.json';
-// import type leaveManagement from '@public/locales/en/leave-management.json';
+import type leaveManagement from '@public/locales/vi/leave-management.json';
 // import type payrollManagement from '@public/locales/en/payroll-management.json';
 // import type recruitmentManagement from '@public/locales/en/recruitment-management.json';
 // import type managementReport from '@public/locales/en/management-report.json';
@@ -18,7 +18,7 @@ type I18nResources = {
   // [NAMESPACES.AUTH]: typeof auth;
   // [NAMESPACES.STAFF_MANAGEMENT]: typeof staffManagement;
   // [NAMESPACES.CONTRACT_MANAGEMENT]: typeof contractManagement;
-  // [NAMESPACES.LEAVE_MANAGEMENT]: typeof leaveManagement;
+  [NAMESPACES.LEAVE_MANAGEMENT]: typeof leaveManagement;
   // [NAMESPACES.PAYROLL_MANAGEMENT]: typeof payrollManagement;
   // [NAMESPACES.RECRUITMENT_MANAGEMENT]: typeof recruitmentManagement;
   // [NAMESPACES.MANAGEMENT_REPORT]: typeof managementReport;

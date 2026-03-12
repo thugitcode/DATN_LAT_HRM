@@ -147,5 +147,67 @@
     "remove_shift": "Xóa ca",
     "start_time": "Giờ bắt đầu",
     "end_time": "Giờ kết thúc"
+  },
+
+  "print": {
+    "month_year": "THÁNG {{month}} / {{year}}",
+    "employee_code_short": "Mã NV",
+    "full_name": "Họ và tên",
+    "department": "Khoa/Phòng",
+    "position": "Chức vụ",
+    "company_name_1": "CÔNG TY TNHH",
+    "company_name_2": "BỆNH VIỆN ĐA KHOA",
+    "title": "BẢNG PHÂN CA THÁNG {{month}} NĂM {{year}}",
+    "department_label": "KHOA",
+    "footer_date": "….............., ngày __ tháng __ năm {{year}}",
+    "footer_unit_head": "Trưởng Đơn Vị",
+    "footer_hr": "TL. Hành chánh - Nhân sự",
+    "footer_prepared_by": "Lập Bảng",
+    "sign_note": "(Ký, họ tên)",
+    "month_label": "THÁNG",
+    "dept_room": "Khoa/phòng",
+    "sheet_name": "Phân ca",
+    "dept_room_required": "Khoa/phòng",
+    "employee_code_required": "Mã nhân viên",
+    "full_name_required": "Tên nhân viên"
+  },
+
+  "explanation_management": {
+    "title": "Quản lý giải trình ca",
+    "confirm_count": "Xác nhận ({{count}})",
+    "modal_title": "Xác nhận phê duyệt",
+    "modal_body": "Bạn có chắc chắn muốn xác nhận {{count}} giải trình công đã chọn không? Hành động này không thể hoàn tác.",
+    "confirm": "Xác nhận",
+    "summary": {
+      "label": "Tổng quát:",
+      "total": "Tổng yêu cầu",
+      "approved": "Đã xác nhận",
+      "rejected": "Từ chối",
+      "pending": "Chờ xác nhận"
+    },
+
+    "columns": {
+      "position": "CHỨC VỤ",
+      "date": "NGÀY",
+      "error_type": "LOẠI LỖI",
+      "explanation": "GIẢI TRÌNH",
+      "attachment": "FILE ĐÍNH KÈM",
+      "manager": "QUẢN LÝ QUYẾT",
+      "action": "HÀNH ĐỘNG"
+    },
+
+    "row_actions": {
+      "approve_title": "Xác nhận phê duyệt",
+      "approve_desc": "Bạn có chắc chắn muốn xác nhận giải trình công này không? Hành động này không thể hoàn tác.",
+      "approve_label": "Xác nhận",
+      "approve_success": "Duyệt giải trình thành công",
+      "reject_title": "Xác nhận từ chối",
+      "reject_desc": "Vui lòng nhập lý do từ chối để nhân viên có thể nắm được thông tin.",
+      "reject_label": "Từ chối",
+      "reject_success": "Từ chối giải trình thành công",
+      "reject_reason_label": "Lý do từ chối",
+      "reject_reason_placeholder": "Nhập lý do từ chối...",
+      "max_chars": "Tối đa {{max}} ký tự"
+    }
   }
 }

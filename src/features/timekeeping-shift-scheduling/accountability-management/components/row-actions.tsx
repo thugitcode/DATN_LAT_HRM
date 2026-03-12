@@ -1,4 +1,5 @@
 import { useCallback, useState, type FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import {
   addToast,
   Button,
@@ -11,15 +12,16 @@ import {
   Textarea,
 } from '@heroui/react';
 import { IconAlertTriangle, IconCheck, IconX } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 
 import { icons } from '@/lib/icons';
+import { useUpdateAttendanceExplanation } from '@/hooks/use-attendance-explanation';
 
 import {
   useApproveAccountability,
   useRejectAccountability,
 } from '../hooks/use-approve-accountability';
 import { AttendanceExplanationStatus, type AttendanceExplanation } from '../types';
-import { useUpdateAttendanceExplanation } from '@/hooks/use-attendance-explanation';
 
 type ConfirmAction = 'approve' | 'reject';
 
@@ -36,28 +38,32 @@ interface RowActionsProps {
   dataRow?: AttendanceExplanation;
 }
 
-export const CONFIRM_CONFIG: Record<ConfirmAction, ConfirmConfig> = {
-  approve: {
-    action: 'approve',
-    title: 'Xác nhận phê duyệt',
-    description:
-      'Bạn có chắc chắn muốn xác nhận giải trình công này không? Hành động này không thể hoàn tác.',
-    confirmLabel: 'Xác nhận',
-    confirmColor: 'primary',
-  },
-  reject: {
-    action: 'reject',
-    title: 'Xác nhận từ chối',
-    description: 'Vui lòng nhập lý do từ chối để nhân viên có thể nắm được thông tin.',
-    confirmLabel: 'Từ chối',
-    confirmColor: 'danger',
-    requireReason: true,
-  },
+const useConfirmConfig = (): Record<ConfirmAction, ConfirmConfig> => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+  return {
+    approve: {
+      action: 'approve',
+      title: t('explanation_management.row_actions.approve_title'),
+      description: t('explanation_management.row_actions.approve_desc'),
+      confirmLabel: t('explanation_management.row_actions.approve_label'),
+      confirmColor: 'primary',
+    },
+    reject: {
+      action: 'reject',
+      title: t('explanation_management.row_actions.reject_title'),
+      description: t('explanation_management.row_actions.reject_desc'),
+      confirmLabel: t('explanation_management.row_actions.reject_label'),
+      confirmColor: 'danger',
+      requireReason: true,
+    },
+  };
 };
 
 const MAX_REASON_LENGTH = 500;
 
 const StatusChip: FC<{ status: 'APPROVED' | 'REJECTED' }> = ({ status }) => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+
   const isApproved = status === 'APPROVED';
 
   return (
@@ -77,7 +83,9 @@ const StatusChip: FC<{ status: 'APPROVED' | 'REJECTED' }> = ({ status }) => {
         )
       }
     >
-      {isApproved ? 'Đã xác nhận' : 'Từ chối'}
+      {isApproved
+        ? t('explanation_management.summary.approved')
+        : t('explanation_management.summary.rejected')}
     </Chip>
   );
 };
@@ -94,32 +102,36 @@ const ActionButtons: FC<ActionButtonsProps> = ({
   onReject,
   isApproving,
   isRejecting,
-}) => (
-  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-    <Button
-      size="md"
-      variant="flat"
-      isIconOnly
-      isLoading={isRejecting}
-      isDisabled={isApproving || isRejecting}
-      className="rounded-lg h-8 w-8 min-w-8"
-      title="Từ chối"
-      onPress={onReject}
-    >
-      {!isRejecting && <IconX size={16} color="red" />}
-    </Button>
-    <Button
-      size="md"
-      color="primary"
-      isLoading={isApproving}
-      isDisabled={isApproving || isRejecting}
-      className="rounded-lg font-medium h-8 px-3 text-sm"
-      onPress={onApprove}
-    >
-      Xác nhận
-    </Button>
-  </div>
-);
+}) => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+
+  return (
+    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+      <Button
+        size="md"
+        variant="flat"
+        isIconOnly
+        isLoading={isRejecting}
+        isDisabled={isApproving || isRejecting}
+        className="rounded-lg h-8 w-8 min-w-8"
+        title={t('explanation_management.row_actions.reject_label')}
+        onPress={onReject}
+      >
+        {!isRejecting && <IconX size={16} color="red" />}
+      </Button>
+      <Button
+        size="md"
+        color="primary"
+        isLoading={isApproving}
+        isDisabled={isApproving || isRejecting}
+        className="rounded-lg font-medium h-8 px-3 text-sm"
+        onPress={onApprove}
+      >
+        {t('explanation_management.confirm')}
+      </Button>
+    </div>
+  );
+};
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -140,6 +152,9 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
   onConfirm,
   onClose,
 }) => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
+
   if (!config) return null;
 
   const isOverLimit = reason.length > MAX_REASON_LENGTH;
@@ -153,7 +168,7 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
       isDismissable={!isLoading}
       hideCloseButton={isLoading}
       size="sm"
-      onClick={e => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
     >
       <ModalContent>
         <ModalHeader className="flex items-center gap-2">
@@ -170,13 +185,17 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
           {config.requireReason && (
             <Textarea
               autoFocus
-              label="Lý do từ chối"
-              placeholder="Nhập lý do từ chối..."
+              label={t('explanation_management.row_actions.reject_reason_label')}
+              placeholder={t('explanation_management.row_actions.reject_reason_placeholder')}
               value={reason}
               onValueChange={onReasonChange}
               isDisabled={isLoading}
               isInvalid={isOverLimit}
-              errorMessage={isOverLimit ? `Tối đa ${MAX_REASON_LENGTH} ký tự` : undefined}
+              errorMessage={
+                isOverLimit
+                  ? t('explanation_management.row_actions.max_chars', { max: MAX_REASON_LENGTH })
+                  : undefined
+              }
               description={!isOverLimit ? `${reason.length}/${MAX_REASON_LENGTH}` : undefined}
               minRows={3}
               maxRows={5}
@@ -208,6 +227,9 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
 };
 
 export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+  const confirmConfig = useConfirmConfig();
+
   const [pendingAction, setPendingAction] = useState<ConfirmAction | null>(null);
   const [reason, setReason] = useState('');
 
@@ -234,25 +256,39 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
       setReason('');
     };
     if (pendingAction === 'approve') {
-      update({
-        id: dataRow?.id,
-        status: AttendanceExplanationStatus.APPROVED,
-      }, {
-        onSuccess() {
-          addToast({ description: "Duyệt giải trình thành công", color: "success" })
-        }, onSettled: onSettled,
-      });
+      update(
+        {
+          id: dataRow?.id,
+          status: AttendanceExplanationStatus.APPROVED,
+        },
+        {
+          onSuccess: () =>
+            addToast({
+              description: t('explanation_management.row_actions.approve_success'),
+              color: 'success',
+            }),
+
+          onSettled: onSettled,
+        },
+      );
       // approve({ id: dataRow.id }, { onSuccess: onSettled, onError: onSettled });
     } else {
-      update({
-        id: dataRow?.id,
-        status: AttendanceExplanationStatus.REJECTED,
-        reason: reason
-      }, {
-        onSuccess() {
-          addToast({ description: "Từ chối giải trình thành công", color: "success" })
-        }, onSettled: onSettled,
-      });
+      update(
+        {
+          id: dataRow?.id,
+          status: AttendanceExplanationStatus.REJECTED,
+          reason: reason,
+        },
+        {
+          onSuccess: () =>
+            addToast({
+              description: t('explanation_management.row_actions.reject_success'),
+              color: 'success',
+            }),
+
+          onSettled: onSettled,
+        },
+      );
     }
     // if (pendingAction === 'approve') {
     //   approve({ id: dataRow.id }, { onSuccess: onSettled, onError: onSettled });
@@ -267,7 +303,7 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
     //     { onSuccess: onSettled, onError: onSettled },
     //   );
     // }
-  }, [dataRow, pendingAction, reason, approve, reject]);
+  }, [dataRow?.id, pendingAction, update, t, reason]);
 
   const renderContent = () => {
     const { status } = dataRow ?? {};
@@ -296,7 +332,7 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
 
       <ConfirmModal
         isOpen={!!pendingAction}
-        config={pendingAction ? CONFIRM_CONFIG[pendingAction] : null}
+        config={pendingAction ? confirmConfig[pendingAction] : null}
         isLoading={isApproving || isRejecting}
         reason={reason}
         onReasonChange={setReason}

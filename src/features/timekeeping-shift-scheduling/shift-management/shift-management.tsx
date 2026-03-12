@@ -1,12 +1,13 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 
 import type { ShiftManagementParams } from '@/types';
 import { LayoutSwitcherEnum } from '@/types/global.type';
+import { useDepartmentOptions } from '@/hooks/options/use-department-options';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionsPage } from '@/components/actions-page';
@@ -37,6 +38,7 @@ export const ShiftManagement = () => {
 
   const { filters } = useQueryFilter<ShiftManagementParams>();
   const { startDate, endDate } = useMonthDateRange(filters.month);
+  const { options: departmentOptions } = useDepartmentOptions();
 
   const { data, isLoading } = useShiftManagementList({
     page: filters.page ?? 1,
@@ -49,7 +51,13 @@ export const ShiftManagement = () => {
     getAll: currentLayout === LayoutSwitcherEnum.GRID ? true : undefined,
   });
 
-  const { onExport, onExportTemplate } = useShiftExport(data?.data ?? []);
+  const departmentName = useMemo(() => {
+    if (!filters?.departmentId) return '';
+    const dept = departmentOptions.find((d) => d.key === filters.departmentId);
+    return dept?.label ?? '';
+  }, [departmentOptions, filters.departmentId]);
+
+  const { onExport, onExportTemplate } = useShiftExport(data?.data ?? [], departmentName);
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
   const [parsedImport, setParsedImport] = useState<ParseShiftResult | null>(null);
@@ -108,6 +116,7 @@ export const ShiftManagement = () => {
             data={data?.data ?? []}
             monthQuery={filters.month}
             layout={currentLayout}
+            departmentName={departmentName}
           />
         </div>
       </div>
