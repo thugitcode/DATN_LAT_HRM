@@ -33,26 +33,19 @@ export function exportDetailedTimeSheet(
   data: DetailsTimeSheetRecord[],
   year: number,
   month: number,
+  departmentName: string = '',
 ) {
   const rows: SheetData['rows'] = [];
   const staffGroups: SheetData['staffGroups'] = [];
   const merges: import('xlsx-js-style').Range[] = [];
 
-  let currentRow = 2; // title(0) + colHeader(1)
+  // 2 company rows (prepended by buildSheet) + 1 col header row = 3
+  // so data starts at row index 3
+  let currentRow = 3;
   let globalIdx = 1;
 
-  data.forEach((record, staffIdx) => {
+  data.forEach((record) => {
     const { staff, days } = record;
-    const numDays = Math.max(days.length, 1);
-
-    staffGroups.push({ startRow: currentRow, rowCount: numDays });
-
-    // // Merge fixed info cols across all day rows for this staff
-    // if (numDays > 1) {
-    //   for (let c = 0; c < 6; c++) {
-    //     merges.push({ s: { r: currentRow, c }, e: { r: currentRow + numDays - 1, c } });
-    //   }
-    // }
     const { start, end } = getMonthRange(month + 1, year);
     const allDaysOfMonth = fillMissingDaysWithDayjs(
       days,
@@ -60,16 +53,17 @@ export function exportDetailedTimeSheet(
       dayjs(end).format('YYYY-MM-DD'),
     );
 
+    const numDays = Math.max(allDaysOfMonth?.length ?? 1, 1);
+    staffGroups.push({ startRow: currentRow, rowCount: numDays });
+
     allDaysOfMonth?.forEach((day, dayIdx) => {
       const isFirst = dayIdx === 0;
-      const cells: unknown[] = []
-
-      cells.push(
+      const cells: unknown[] = [
         globalIdx++,
         staff.code ?? '',
         staff.name ?? '',
-        staff.departments?.map(it => it.name)?.join(", ") ?? '',
-        staff.rooms?.map(it => it.name)?.join(", ") ?? '',
+        staff.departments?.map((it) => it.name)?.join(', ') ?? '',
+        staff.rooms?.map((it) => it.name)?.join(', ') ?? '',
         translatePosition(staff.position ?? ''),
         dayjs(day.date).format('DD/MM/YYYY'),
         day.shiftCode ?? '',
@@ -82,7 +76,7 @@ export function exportDetailedTimeSheet(
         day.totalWorkHours?.toFixed(2) ?? '',
         day.overtimeHours?.toFixed(2) ?? '',
         day.compHours ?? '',
-      );
+      ];
 
       rows.push({ cells, isContinuation: !isFirst });
       currentRow += 1;
@@ -94,11 +88,16 @@ export function exportDetailedTimeSheet(
   const sheetData: SheetData = {
     config: {
       title: `BẢNG CHẤM CÔNG CHI TIẾT THÁNG ${month + 1} NĂM ${year}`,
+      companyName1: 'TÊN CÔNG TY / ĐƠN VỊ',
+      companyName2: 'Bộ phận / Phòng ban',
+      departmentName,
       fixedCols: FIXED_COLS,
       dayCols: [],
       summaryCols: [],
-      headerRowCount: 2,
+      // 2 company rows + 1 col header row = 3
+      headerRowCount: 3,
       leftAlignDataCols: new Set([1, 2, 3, 4, 5]),
+      year,
     },
     extraHeaderRows: [colHeaderRow],
     extraHeaderMerges: merges,

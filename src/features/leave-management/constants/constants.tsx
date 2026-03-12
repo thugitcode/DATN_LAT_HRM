@@ -12,6 +12,33 @@ interface SummaryBadgeConfig {
   bgColor: string;
 }
 
+export const SUMMARY_BADGE_KEYS = [
+  {
+    key: 'totalAll' satisfies SummaryKey,
+    icon: icons.questionCircle,
+    color: '#006FEE',
+    bgColor: '#E6F1FE',
+  },
+  {
+    key: 'totalApproved' satisfies SummaryKey,
+    icon: <icons.tickCircle />,
+    color: '#17C964',
+    bgColor: '#E8FAF0',
+  },
+  {
+    key: 'totalRejected' satisfies SummaryKey,
+    icon: <icons.closeSquare />,
+    color: '#F31260',
+    bgColor: '#FEE7EF',
+  },
+  {
+    key: 'totalPending' satisfies SummaryKey,
+    icon: <icons.refreshCircle />,
+    color: '#F5A524',
+    bgColor: '#FEF4E6',
+  },
+] as const;
+
 export const SUMMARY_BADGES = [
   {
     key: 'totalAll' satisfies SummaryKey,

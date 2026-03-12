@@ -1,0 +1,45 @@
+{
+  "leave_request": {
+    "title": "Quản lý đăng ký nghỉ",
+
+    "summary": {
+      "total": "Tổng yêu cầu",
+      "approved": "Đã duyệt",
+      "rejected": "Từ chối",
+      "pending": "Chờ duyệt"
+    },
+
+    "columns": {
+      "department": "Khoa/phòng",
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "position": "Chức vụ",
+      "leave_type": "Loại nghỉ",
+      "from_date": "Thời gian bắt đầu",
+      "to_date": "Thời gian kết thúc",
+      "total_days": "Tổng thời gian nghỉ",
+      "days_count": "{{count}} ngày",
+      "reason": "Lý do nghỉ",
+      "replacement": "Người thay thế",
+      "approved_by": "Quản lý duyệt"
+    },
+
+    "actions": {
+      "approved": "Đã xác nhận",
+      "rejected": "Từ chối",
+      "confirm": "Xác nhận",
+      "approve": "Phê duyệt",
+      "reject": "Từ chối",
+      "approve_title": "Phê duyệt đăng ký nghỉ",
+      "approve_desc": "Bạn có chắc chắn muốn phê duyệt đăng ký nghỉ của {{name}}?",
+      "reject_title": "Từ chối đăng ký nghỉ",
+      "reject_desc": "Vui lòng nhập lý do từ chối để nhân viên {{name}} nắm được thông tin."
+    },
+
+    "column_visibility": {
+      "title": "Tuỳ chỉnh cột",
+      "tooltip": "Tuỳ chỉnh cột",
+      "default_config": "Cấu hình hiển thị mặc định"
+    }
+  }
+}

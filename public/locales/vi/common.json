@@ -7,7 +7,8 @@
     "print": "In",
     "search": "Tìm kiếm",
     "department": "Khoa",
-    "room": "Phòng"
+    "room": "Phòng",
+    "status": "Trạng thái"
   },
 
   "layout": {
@@ -46,7 +47,8 @@
     "cancel": "Hủy",
     "update": "Cập nhật",
     "create_ca": "Thêm phân ca",
-    "save": "Lưu"
+    "save": "Lưu",
+    "confirm": "Xác nhận"
   },
 
   "weekdays": {

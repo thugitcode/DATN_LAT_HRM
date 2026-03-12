@@ -24,36 +24,50 @@ const DAY_SHORT: Record<number, string> = {
   6: 'T7',
 };
 
+// Match ShiftManagementPrint COLOR palette
+const COLOR = {
+  headerBg: '#374151',
+  weekBg: '#BFDBFE',
+  dayNumBg: '#93C5FD',
+  dayNameBg: '#DBEAFE',
+  headerText: '#1E3A5F',
+  border: '#D1D5DB',
+  rowEven: '#FFFFFF',
+  rowOdd: '#F9FAFB',
+  titleText: '#fff',
+  summaryBg: '#EFF6FF',
+};
+
 const thTitle: CSSProperties = {
-  backgroundColor: '#374151',
-  color: '#fff',
+  backgroundColor: COLOR.headerBg,
+  color: COLOR.titleText,
   fontWeight: 'bold',
-  border: '1px solid #9ca3af',
+  border: `1px solid ${COLOR.border}`,
   textAlign: 'center',
   verticalAlign: 'middle',
   padding: '2px',
 };
 const thWeek: CSSProperties = {
-  backgroundColor: '#6b7280',
-  color: '#fff',
+  backgroundColor: COLOR.weekBg,
+  color: COLOR.headerText,
   fontWeight: 'bold',
-  border: '1px solid #9ca3af',
+  border: `1px solid ${COLOR.border}`,
   textAlign: 'center',
   verticalAlign: 'middle',
   padding: '2px',
 };
 const thDay: CSSProperties = {
-  backgroundColor: '#9ca3af',
-  color: '#fff',
+  backgroundColor: COLOR.dayNumBg,
+  color: COLOR.headerText,
   fontWeight: 'bold',
-  border: '1px solid #9ca3af',
+  border: `1px solid ${COLOR.border}`,
   textAlign: 'center',
   verticalAlign: 'middle',
   padding: '2px',
   fontSize: '9px',
 };
 const tdBase: CSSProperties = {
-  border: '1px solid #9ca3af',
+  border: `1px solid ${COLOR.border}`,
   textAlign: 'center',
   verticalAlign: 'middle',
   padding: '2px',
@@ -61,8 +75,8 @@ const tdBase: CSSProperties = {
   lineHeight: '1.3',
   fontSize: '9px',
 };
-const tdEven: CSSProperties = { ...tdBase, backgroundColor: '#ffffff' };
-const tdOdd: CSSProperties = { ...tdBase, backgroundColor: '#f9fafb' };
+const tdEven: CSSProperties = { ...tdBase, backgroundColor: COLOR.rowEven };
+const tdOdd: CSSProperties = { ...tdBase, backgroundColor: COLOR.rowOdd };
 const tdLeft: CSSProperties = { textAlign: 'left', paddingLeft: '3px' };
 
 const SUMMARY_COLS = [
@@ -95,26 +109,121 @@ const DETAIL_COLS = [
 
 // ─── Signature footer ─────────────────────────────────────────────────────────
 
-const SignatureFooter = () => (
-  <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between' }}>
-    {['Trưởng Đơn Vị', 'TL. Hành chánh - Nhân sự', 'Lập Bảng'].map((title) => (
-      <div key={title} style={{ width: '30%', textAlign: 'center' }}>
-        <div style={{ fontWeight: 'bold', fontSize: '10px', marginBottom: '28px' }}>{title}</div>
-        <div style={{ fontStyle: 'italic', fontSize: '9px' }}>(Ký, họ tên)</div>
+const SignatureFooter = ({ year }: { year: number }) => (
+  <div style={{ marginTop: '16px' }}>
+    <div
+      style={{
+        textAlign: 'right',
+        paddingRight: '8%',
+        fontSize: '10px',
+        marginBottom: '4px',
+        fontStyle: 'italic',
+      }}
+    >
+      ….............., ngày __ tháng __ năm {year}
+    </div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+      {['Trưởng Đơn Vị', 'TL. Hành chánh - Nhân sự', 'Lập Bảng'].map((title) => (
+        <div key={title} style={{ width: '30%', textAlign: 'center' }}>
+          <div style={{ fontWeight: 'bold', fontSize: '10px', marginBottom: '28px' }}>{title}</div>
+          <div style={{ fontStyle: 'italic', fontSize: '9px' }}>(Ký, họ tên)</div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// ─── Page Header ──────────────────────────────────────────────────────────────
+
+const PageHeader = ({
+  title,
+  month,
+  year,
+  departmentName,
+}: {
+  title: string;
+  month: number;
+  year: number;
+  departmentName?: string;
+}) => (
+  <div
+    className="print-page-header"
+    style={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginBottom: '6px',
+      alignItems: 'flex-start',
+    }}
+  >
+    {/* Left – company info */}
+    <div style={{ lineHeight: '1.6' }}>
+      <div style={{ fontWeight: 'bold', fontSize: '10px' }}>BỆNH VIỆN ĐA KHOA</div>
+      <div style={{ fontWeight: 'bold', fontSize: '10px' }}>TRUNG TÂM Y TẾ</div>
+    </div>
+
+    {/* Center – title */}
+    <div style={{ textAlign: 'center', flex: 1, paddingLeft: '16px' }}>
+      <div
+        style={{
+          fontWeight: 'bold',
+          fontSize: '13px',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+        }}
+      >
+        {title} THÁNG {month + 1} NĂM {year}
       </div>
-    ))}
+      {departmentName && (
+        <div style={{ fontSize: '10px', marginTop: '2px' }}>
+          Khoa/Phòng: <strong>{departmentName}</strong>
+        </div>
+      )}
+    </div>
+
+    {/* Right placeholder */}
+    <div style={{ minWidth: '120px' }} />
   </div>
 );
 
 // ─── Print style ──────────────────────────────────────────────────────────────
 
 const PrintStyle = () => (
-  <style>{`@media print {
-    body * { visibility: hidden; }
-    .timekeeping-print-wrap, .timekeeping-print-wrap * { visibility: visible; }
-    .timekeeping-print-wrap { position: fixed; inset: 0; padding: 8mm 10mm; background: white; }
-    @page { size: A3 landscape; margin: 0; }
-  }`}</style>
+  <style>{`
+    @media print {
+      body, html { margin: 0; padding: 0; }
+      body * { visibility: hidden; }
+      .timekeeping-print-wrap, .timekeeping-print-wrap * { visibility: visible; }
+      .timekeeping-print-wrap {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 6mm 8mm;
+        box-sizing: border-box;
+        background: white;
+      }
+      @page {
+        size: A4 landscape;
+        margin: 10mm 8mm;
+      }
+
+      /* Allow table to break across pages */
+      table {
+        page-break-inside: auto;
+      }
+      /* Repeat thead on every page */
+      thead {
+        display: table-header-group;
+      }
+      tfoot {
+        display: table-footer-group;
+      }
+      tr {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+    }
+  `}</style>
 );
 
 // ─── WorkSheetByShift print ───────────────────────────────────────────────────
@@ -168,7 +277,7 @@ function WorkSheetByShiftPrintTable({
         {/* Week row (list only) */}
         {!isGrid && (
           <tr>
-            <th colSpan={6} style={thTitle} />
+            <th colSpan={6} style={thWeek} />
             {weeks.map((week) => (
               <th key={week.weekNumber} colSpan={week.days.length} style={thWeek}>
                 T{week.weekNumber}: {week.startDay}/{month + 1}-{week.endDay}/{month + 1}
@@ -236,7 +345,6 @@ function WorkSheetByShiftPrintTable({
           const td = isEven ? tdEven : tdOdd;
           const numShifts = Math.max(shifts.length, 1);
 
-          // Aggregate summary
           const totalSummary = shifts.reduce(
             (acc, s) => {
               SUMMARY_COLS.forEach(({ key }) => {
@@ -250,7 +358,7 @@ function WorkSheetByShiftPrintTable({
           return shifts.map((shiftEntry, shiftIdx) => {
             const isFirst = shiftIdx === 0;
             return (
-              <tr key={`${staff.id}-${shiftIdx}`}>
+              <tr key={`${staff.id}-${shiftIdx}`} style={{ pageBreakInside: 'avoid' }}>
                 {isFirst && (
                   <>
                     <td rowSpan={numShifts} style={td}>
@@ -290,7 +398,6 @@ function WorkSheetByShiftPrintTable({
                   </>
                 )}
 
-                {/* Ca label */}
                 <td style={td}>
                   <div style={{ fontWeight: 600, fontSize: '8px' }}>{shiftEntry.shift.name}</div>
                   <div style={{ fontSize: '7px', color: '#6b7280' }}>
@@ -299,7 +406,6 @@ function WorkSheetByShiftPrintTable({
                   </div>
                 </td>
 
-                {/* Day cells */}
                 {colDays.map((d) => {
                   const dateStr = isGrid
                     ? (d as ReturnType<typeof getDaysInMonth>[number]).date
@@ -318,10 +424,13 @@ function WorkSheetByShiftPrintTable({
                   );
                 })}
 
-                {/* Summary (first shift row only) */}
                 {isFirst
                   ? SUMMARY_COLS.map(({ key }) => (
-                      <td key={key} rowSpan={numShifts} style={td}>
+                      <td
+                        key={key}
+                        rowSpan={numShifts}
+                        style={{ ...td, backgroundColor: COLOR.summaryBg, fontWeight: 600 }}
+                      >
                         {totalSummary[key] ?? ''}
                       </td>
                     ))
@@ -382,7 +491,7 @@ function HourlyPayrollPrintTable({
       <thead>
         {!isGrid && (
           <tr>
-            <th colSpan={5} style={thTitle} />
+            <th colSpan={5} style={thWeek} />
             {weeks.map((week) => (
               <th key={week.weekNumber} colSpan={week.days.length} style={thWeek}>
                 T{week.weekNumber}: {week.startDay}/{month + 1}-{week.endDay}/{month + 1}
@@ -433,7 +542,9 @@ function HourlyPayrollPrintTable({
               </th>
             );
           })}
-          <th style={thDay}>Tổng giờ</th>
+          <th style={{ ...thDay, backgroundColor: COLOR.summaryBg, color: COLOR.headerText }}>
+            Tổng giờ
+          </th>
         </tr>
       </thead>
 
@@ -443,7 +554,7 @@ function HourlyPayrollPrintTable({
           const td = isEven ? tdEven : tdOdd;
 
           return (
-            <tr key={record.staffId}>
+            <tr key={record.staffId} style={{ pageBreakInside: 'avoid' }}>
               <td style={td}>{idx + 1}</td>
               {isGrid ? (
                 <>
@@ -484,7 +595,9 @@ function HourlyPayrollPrintTable({
                   </td>
                 );
               })}
-              <td style={{ ...td, fontWeight: 600 }}>{record.totalHours ?? ''}</td>
+              <td style={{ ...td, fontWeight: 600, backgroundColor: COLOR.summaryBg }}>
+                {record.totalHours ?? ''}
+              </td>
             </tr>
           );
         })}
@@ -512,12 +625,12 @@ function DetailedTimeSheetPrintTable({ data }: { data: DetailsTimeSheetRecord[] 
 
       <thead>
         <tr>
-          <th style={thTitle}>STT</th>
-          <th style={thTitle}>Mã NV</th>
-          <th style={thTitle}>Họ và tên</th>
-          <th style={thTitle}>Khoa/Phòng</th>
-          <th style={thTitle}>Phòng</th>
-          <th style={thTitle}>Chức vụ</th>
+          <th style={thDay}>STT</th>
+          <th style={thDay}>Mã NV</th>
+          <th style={thDay}>Họ và tên</th>
+          <th style={thDay}>Khoa/Phòng</th>
+          <th style={thDay}>Phòng</th>
+          <th style={thDay}>Chức vụ</th>
           {DETAIL_COLS.map((c) => (
             <th key={c.key} style={thDay}>
               {c.label}
@@ -536,7 +649,7 @@ function DetailedTimeSheetPrintTable({ data }: { data: DetailsTimeSheetRecord[] 
           return days.map((day, dayIdx) => {
             const isFirst = dayIdx === 0;
             return (
-              <tr key={`${staff.code}-${day.date}`}>
+              <tr key={`${staff.code}-${day.date}`} style={{ pageBreakInside: 'avoid' }}>
                 {isFirst && (
                   <>
                     <td rowSpan={numDays} style={td}>
@@ -585,6 +698,8 @@ type TimekeepingManagementPrintProps = TimekeepingPrintData & {
   year: number;
   month: number;
   layout: LayoutSwitcherEnum;
+  /** Optional department name to show in header subtitle */
+  departmentName?: string;
 };
 
 const TAB_TITLE: Record<TAB_KEYS, string> = {
@@ -598,7 +713,7 @@ const TAB_TITLE: Record<TAB_KEYS, string> = {
 export const TimekeepingManagementPrint = forwardRef<
   HTMLDivElement,
   TimekeepingManagementPrintProps
->(({ tab, data, year, month, layout }, ref) => {
+>(({ tab, data, year, month, layout, departmentName }, ref) => {
   const isGrid = layout === LayoutSwitcherEnum.GRID;
 
   const renderTable = () => {
@@ -640,26 +755,19 @@ export const TimekeepingManagementPrint = forwardRef<
           padding: '16px',
         }}
       >
-        {/* Title */}
-        <div
-          style={{
-            textAlign: 'center',
-            fontSize: '13px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            background: '#374151',
-            color: '#fff',
-            padding: '5px 0',
-            marginBottom: '6px',
-          }}
-        >
-          {TAB_TITLE[tab]} THÁNG {month + 1} NĂM {year}
-        </div>
+        {/* ── Header: đồng bộ với ShiftManagementPrint ── */}
+        <PageHeader
+          title={TAB_TITLE[tab]}
+          month={month}
+          year={year}
+          departmentName={departmentName}
+        />
 
+        {/* ── Table ── */}
         {renderTable()}
 
-        <SignatureFooter />
+        {/* ── Signature footer ── */}
+        <SignatureFooter year={year} />
       </div>
     </div>
   );

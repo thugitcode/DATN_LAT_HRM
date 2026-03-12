@@ -36,7 +36,10 @@ export const TimekeepingManagement = () => {
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { onExport } = useTimekeepingExport(activeKey, tabData);
-  const { onPrint, printState, printRef, year, month } = useTimekeepingPrint(activeKey, tabData);
+  const { onPrint, printState, printRef, year, month, departmentName } = useTimekeepingPrint(
+    activeKey,
+    tabData,
+  );
 
   return (
     <div className="flex flex-col justify-between h-full">
@@ -124,6 +127,7 @@ export const TimekeepingManagement = () => {
           year={year}
           month={month}
           layout={currentLayout}
+          departmentName={departmentName}
         />
       </div>
     </div>

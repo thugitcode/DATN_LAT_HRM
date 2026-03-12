@@ -1,16 +1,19 @@
 import type { FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { useConfirmStore } from '@/store/useConfirmStore';
 import { Button, Chip } from '@heroui/react';
 import { IconX } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 
 import { Status } from '@/types/global.type';
 import { icons } from '@/lib/icons';
-import { useRejectAccountability } from '@/features/timekeeping-shift-scheduling/accountability-management/hooks/use-approve-accountability';
 
 import { useApproveLeaveRequest, useRejectLeaveRequest } from '../hooks/use-leave-request';
 import type { LeaveRequest } from '../type';
 
 const StatusChip: FC<{ status: 'APPROVED' | 'REJECTED' }> = ({ status }) => {
+  const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);
+
   const isApproved = status === 'APPROVED';
 
   return (
@@ -30,7 +33,7 @@ const StatusChip: FC<{ status: 'APPROVED' | 'REJECTED' }> = ({ status }) => {
         )
       }
     >
-      {isApproved ? 'Đã xác nhận' : 'Từ chối'}
+      {isApproved ? t('leave_request.actions.approved') : t('leave_request.actions.rejected')}
     </Chip>
   );
 };
@@ -47,35 +50,40 @@ const ActionButtons: FC<ActionButtonsProps> = ({
   onReject,
   isApproving,
   isRejecting,
-}) => (
-  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-    <Button
-      size="md"
-      variant="flat"
-      isIconOnly
-      isLoading={isRejecting}
-      isDisabled={isApproving || isRejecting}
-      className="rounded-lg h-8 w-8 min-w-8"
-      title="Từ chối"
-      onPress={onReject}
-    >
-      {!isRejecting && <IconX size={16} color="red" />}
-    </Button>
-    <Button
-      size="md"
-      color="primary"
-      isLoading={isApproving}
-      isDisabled={isApproving || isRejecting}
-      className="rounded-lg font-medium h-8 px-3 text-sm"
-      onPress={onApprove}
-    >
-      Xác nhận
-    </Button>
-  </div>
-);
+}) => {
+  const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);
+
+  return (
+    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+      <Button
+        size="md"
+        variant="flat"
+        isIconOnly
+        isLoading={isRejecting}
+        isDisabled={isApproving || isRejecting}
+        className="rounded-lg h-8 w-8 min-w-8"
+        title={t('leave_request.actions.reject')}
+        onPress={onReject}
+      >
+        {!isRejecting && <IconX size={16} color="red" />}
+      </Button>
+      <Button
+        size="md"
+        color="primary"
+        isLoading={isApproving}
+        isDisabled={isApproving || isRejecting}
+        className="rounded-lg font-medium h-8 px-3 text-sm"
+        onPress={onApprove}
+      >
+        {t('leave_request.actions.confirm')}
+      </Button>
+    </div>
+  );
+};
 
 export const RowLeaveRequestActions: FC<{ dataRow?: LeaveRequest }> = ({ dataRow }) => {
   const status = dataRow?.status;
+  const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);
 
   const open = useConfirmStore((state) => state.open);
   const { mutate: approve, isPending: isApproving } = useApproveLeaveRequest();
@@ -117,9 +125,9 @@ export const RowLeaveRequestActions: FC<{ dataRow?: LeaveRequest }> = ({ dataRow
   const handleApproveClick = () => {
     open(
       {
-        title: 'Phê duyệt đăng ký nghỉ',
-        description: `Bạn có chắc chắn muốn phê duyệt đăng ký nghỉ của ${dataRow?.staffName}?`,
-        confirmLabel: 'Phê duyệt',
+        title: t('leave_request.actions.approve_title'),
+        description: t('leave_request.actions.approve_desc', { name: dataRow?.staffName }),
+        confirmLabel: t('leave_request.actions.approve'),
         confirmColor: 'primary',
         requireReason: false,
       },
@@ -130,9 +138,9 @@ export const RowLeaveRequestActions: FC<{ dataRow?: LeaveRequest }> = ({ dataRow
   const handleRejectClick = () => {
     open(
       {
-        title: 'Từ chối đăng ký nghỉ',
-        description: `Vui lòng nhập lý do từ chối để nhân viên ${dataRow?.staffName} nắm được thông tin.`,
-        confirmLabel: 'Từ chối',
+        title: t('leave_request.actions.reject_title'),
+        description: t('leave_request.actions.reject_desc', { name: dataRow?.staffName }),
+        confirmLabel: t('leave_request.actions.reject'),
         confirmColor: 'danger',
         requireReason: true,
       },

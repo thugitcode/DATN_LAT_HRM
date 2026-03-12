@@ -1,19 +1,21 @@
 import type { FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
 
 import type {
   AttendanceExplanationSummary,
   AttendanceExplanationTypeCount,
 } from '@/types/attendance-explanation.type';
 import { icons } from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 import { ExplanationSummaryBox } from './explanation-summary-box';
 import { ExplanationTypeRow } from './explanation-type-row';
-import { cn } from '@/lib/utils';
 
 interface ExplanationSummaryProps {
   summary?: AttendanceExplanationSummary | null;
   explanationTypes?: AttendanceExplanationTypeCount[] | null;
-  showLabel?: boolean
+  showLabel?: boolean;
 }
 
 const GRID_COLS = 3;
@@ -61,11 +63,46 @@ const SUMMARY_BADGES: Array<{
   },
 ];
 
+const getSummaryBadges = (t: ReturnType<typeof useTranslation>['t']) => [
+  {
+    key: 'totalRequests' as SummaryKey,
+    icon: icons.questionCircle,
+    label: t('explanation_management.summary.total'),
+    color: '#006FEE',
+    bgColor: '#E6F1FE',
+  },
+  {
+    key: 'approved' as SummaryKey,
+    icon: <icons.tickCircle />,
+    label: t('explanation_management.summary.approved'),
+    color: '#17C964',
+    bgColor: '#E8FAF0',
+  },
+  {
+    key: 'rejected' as SummaryKey,
+    icon: <icons.closeSquare />,
+    label: t('explanation_management.summary.rejected'),
+    color: '#F31260',
+    bgColor: '#FEE7EF',
+  },
+  {
+    key: 'pending' as SummaryKey,
+    icon: <icons.refreshCircle />,
+    label: t('explanation_management.summary.pending'),
+    color: '#F5A524',
+    bgColor: '#FEF4E6',
+  },
+];
+
 export const ExplanationSummary: FC<Readonly<ExplanationSummaryProps>> = ({
   summary,
   explanationTypes = [],
-  showLabel = true
+  showLabel = true,
 }) => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+
+  const summaryBadges = getSummaryBadges(t);
+
   const types = explanationTypes ?? [];
   const maxCount = Math.max(...types.map((t) => t.count), 0);
 
@@ -76,12 +113,21 @@ export const ExplanationSummary: FC<Readonly<ExplanationSummaryProps>> = ({
   ];
 
   return (
-    <div className={cn(!showLabel ? "rounded-b-xl" :"rounded-xl", "flex flex-wrap items-stretch gap-6 bg-white p-5")}>
+    <div
+      className={cn(
+        !showLabel ? 'rounded-b-xl' : 'rounded-xl',
+        'flex flex-wrap items-stretch gap-6 bg-white p-5',
+      )}
+    >
       <div className="flex flex-wrap items-center gap-4">
-        {showLabel && <span className="text-2xl font-semibold text-[#11181C] whitespace-nowrap">Tổng quát:</span>}
+        {showLabel && (
+          <span className="text-2xl font-semibold text-[#11181C] whitespace-nowrap">
+            {t('explanation_management.summary.label')}
+          </span>
+        )}
 
         <div className="flex flex-wrap items-center gap-4">
-          {SUMMARY_BADGES.map(({ key, icon, label, color, bgColor }, index) => (
+          {summaryBadges.map(({ key, icon, label, color, bgColor }, index) => (
             <div key={key} className="flex items-center gap-4">
               {index !== 0 && VERTICAL_DIVIDER}
               <ExplanationSummaryBox

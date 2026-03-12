@@ -1,16 +1,27 @@
+import { useMemo } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
+
 import { formatDate } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
-import { STAFF_POSITION } from '@/features/timekeeping-shift-scheduling/shift-management/constants/data';
+import {
+  getStaffPosition,
+  STAFF_POSITION,
+} from '@/features/timekeeping-shift-scheduling/shift-management/constants/data';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 import { RowLeaveRequestActions } from '../components/row-leave-request-actions';
 import type { LeaveRequest } from '../type';
 
 export const useColumns = () => {
+  const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);
+  const { t: tts } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+  const staffPosition = useMemo(() => getStaffPosition(tts), [tts]);
+
   const columns: ColumnDef<LeaveRequest>[] = [
     {
       key: 'departments',
-      title: 'Khoa/phòng',
+      title: t('leave_request.columns.department'),
       minWidth: 120,
       render: (_, row) => (
         <div className="w-50">
@@ -20,7 +31,7 @@ export const useColumns = () => {
     },
     {
       key: 'staffCode',
-      title: 'Mã nhân viên',
+      title: t('leave_request.columns.staff_code'),
       minWidth: 120,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">{row.staffCode}</span>
@@ -28,7 +39,7 @@ export const useColumns = () => {
     },
     {
       key: 'staffName',
-      title: 'Tên nhân viên',
+      title: t('leave_request.columns.staff_name'),
       minWidth: 130,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">{row.staffName}</span>
@@ -36,18 +47,17 @@ export const useColumns = () => {
     },
     {
       key: 'staffPosition',
-      title: 'Chức vụ',
+      title: t('leave_request.columns.position'),
       minWidth: 80,
-
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">
-          {STAFF_POSITION?.[row.staffPosition]}
+          {staffPosition?.[row?.staffPosition]}
         </span>
       ),
     },
     {
       key: 'leaveReasonName',
-      title: 'Loại nghỉ',
+      title: t('leave_request.columns.leave_type'),
       minWidth: 100,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">{row.leaveReasonName}</span>
@@ -55,7 +65,7 @@ export const useColumns = () => {
     },
     {
       key: 'fromDate',
-      title: 'Thời gian bắt đầu',
+      title: t('leave_request.columns.from_date'),
       minWidth: 100,
       render: (_, row) => (
         <div className="text-sm text-[#11181C] whitespace-nowrap flex flex-row items-center gap-1">
@@ -66,7 +76,7 @@ export const useColumns = () => {
     },
     {
       key: 'toDate',
-      title: 'Thời gian kết thúc',
+      title: t('leave_request.columns.to_date'),
       minWidth: 100,
       render: (_, row) => (
         <div className="text-sm text-[#11181C] whitespace-nowrap flex flex-row items-center gap-1">
@@ -77,17 +87,21 @@ export const useColumns = () => {
     },
     {
       key: 'totalDays',
-      title: 'Tổng thời gian nghỉ',
+      title: t('leave_request.columns.total_days'),
       minWidth: 100,
       render: (_, row) => {
         const days = Number(row.totalDays);
         const display = days % 1 === 0 ? Math.floor(days) : days;
-        return <span className="text-sm text-[#11181C] whitespace-nowrap">{display} ngày</span>;
+        return (
+          <span className="text-sm text-[#11181C] whitespace-nowrap">
+            {t('leave_request.columns.days_count', { count: display })}
+          </span>
+        );
       },
     },
     {
       key: 'reason',
-      title: 'Lý do nghỉ',
+      title: t('leave_request.columns.reason'),
       minWidth: 100,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">{row.reason}</span>
@@ -95,7 +109,7 @@ export const useColumns = () => {
     },
     {
       key: 'replacementStaffName',
-      title: 'Người thay thế',
+      title: t('leave_request.columns.replacement'),
       minWidth: 100,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">{row.replacementStaffName}</span>
@@ -103,7 +117,7 @@ export const useColumns = () => {
     },
     {
       key: 'approvedByName',
-      title: 'Quản lý duyệt',
+      title: t('leave_request.columns.approved_by'),
       minWidth: 100,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">
@@ -111,7 +125,6 @@ export const useColumns = () => {
         </span>
       ),
     },
-
     {
       key: 'actions',
       title: '',

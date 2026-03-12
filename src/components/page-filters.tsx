@@ -1,4 +1,6 @@
 import { useCallback, type FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
 
 import type { ShiftManagementParams } from '@/types';
 import type { Options } from '@/types/global.type';
@@ -15,6 +17,8 @@ interface PageFiltersProps {
 }
 
 export const PageFilters: FC<Readonly<PageFiltersProps>> = ({ statusOptions }) => {
+  const { t } = useTranslation(NAMESPACES.COMMON);
+
   const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
 
   const { options: roomOptions } = useRoomOptions(filters?.departmentId);
@@ -66,7 +70,7 @@ export const PageFilters: FC<Readonly<PageFiltersProps>> = ({ statusOptions }) =
           options={statusOptions}
           value={filters.status as string}
           onChange={handleStatusChange}
-          placeholder="Trạng thái"
+          placeholder={t('actions.status')}
         />
       )}
 
@@ -74,14 +78,14 @@ export const PageFilters: FC<Readonly<PageFiltersProps>> = ({ statusOptions }) =
         options={departmentOptions}
         value={filters.departmentId as string}
         onChange={handleKhoaChange}
-        placeholder="Khoa"
+        placeholder={t('actions.department')}
       />
 
       <FilterSelect
         options={roomOptions}
         value={filters.roomId as string}
         onChange={handlePhongChange}
-        placeholder="Phòng"
+        placeholder={t('actions.room')}
       />
     </div>
   );

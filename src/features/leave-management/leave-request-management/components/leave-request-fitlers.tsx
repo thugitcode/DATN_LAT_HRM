@@ -1,4 +1,6 @@
 import { useCallback } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
 
 import type { ShiftManagementParams } from '@/types';
 import { icons } from '@/lib/icons';
@@ -11,6 +13,7 @@ import { SearchInput } from '@/components/filters/search-input';
 
 export const LeaveRequestFitlers = () => {
   const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
+  const { t } = useTranslation(NAMESPACES.COMMON);
 
   const { options: roomOptions } = useRoomOptions(filters?.departmentId);
   const { options: departmentOptions } = useDepartmentOptions();
@@ -53,14 +56,14 @@ export const LeaveRequestFitlers = () => {
         options={departmentOptions}
         value={filters.departmentIds as string}
         onChange={handleKhoaChange}
-        placeholder="Khoa"
+        placeholder={t('actions.department')}
       />
 
       <FilterSelect
         options={roomOptions}
         value={filters.roomIds as string}
         onChange={handlePhongChange}
-        placeholder="Phòng"
+        placeholder={t('actions.room')}
       />
     </div>
   );

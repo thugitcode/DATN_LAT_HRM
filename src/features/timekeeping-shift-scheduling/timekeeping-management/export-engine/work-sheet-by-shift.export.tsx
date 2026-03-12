@@ -16,7 +16,6 @@ import {
 
 // ─── Summary columns config ───────────────────────────────────────────────────
 
-// Order and keys mirror SUMMARY_COLUMNS in work-sheet-by-shift-list.tsx
 const SUMMARY_COLS = [
   { key: 'totalAttendance', label: 'Tổng công', wch: 11 },
   { key: 'actualWorkDays', label: 'Ngày làm', wch: 10 },
@@ -53,6 +52,7 @@ export function exportWorkSheetByShiftTable(
   data: WorkSheetByShiftType[],
   year: number,
   month: number,
+  departmentName: string = '',
 ) {
   const weeks = getWeeksInMonth(year, month);
   const allDays = weeks.flatMap((w) => w.days);
@@ -73,9 +73,12 @@ export function exportWorkSheetByShiftTable(
 
   const FIXED = FIXED_COLS.length;
   const totalDayCols = allDays.length;
+  // totalCols does NOT include the 2 company rows — just structural cols
   const totalCols = FIXED + totalDayCols + SUMMARY_COLS.length;
 
-  // ── Extra header: week row ─────────────────────────────────────────────────
+  // ── Week row (row index 2 in sheet, index 0 in extraHeaderRows) ───────────
+  // Note: rows 0-1 are the company rows added by buildSheet automatically.
+  // extraHeaderRows start at row 2.
   const weekRow: unknown[] = Array(FIXED).fill('');
   weeks.forEach((week) => {
     weekRow.push(
@@ -85,31 +88,38 @@ export function exportWorkSheetByShiftTable(
   });
   SUMMARY_COLS.forEach((c) => weekRow.push(c.label));
 
-  const weekMerges: XLSX.Range[] = [];
-  let weekColStart = FIXED;
-  weeks.forEach((week) => {
-    if (week.days.length > 1) {
-      weekMerges.push({
-        s: { r: 1, c: weekColStart },
-        e: { r: 1, c: weekColStart + week.days.length - 1 },
-      });
-    }
-    weekColStart += week.days.length;
-  });
-  // merge summary label across all summary cols in week row
-  weekMerges.push({ s: { r: 1, c: FIXED + totalDayCols }, e: { r: 1, c: totalCols - 1 } });
-
-  // ── Col header row ─────────────────────────────────────────────────────────
+  // ── Col header row (row index 3 in sheet, index 1 in extraHeaderRows) ─────
   const colHeaderRow: unknown[] = FIXED_COLS.map((c) => c.label);
   allDays.forEach((d) =>
     colHeaderRow.push(`${DAY_SHORT[d.dayOfWeek]}\n${formatDateLabel(year, month, d.day)}`),
   );
   SUMMARY_COLS.forEach((c) => colHeaderRow.push(c.label));
 
-  // ── Data rows ──────────────────────────────────────────────────────────────
+  // ── Merges for week row (offset +2 because buildSheet prepends 2 company rows)
+  const weekMerges: XLSX.Range[] = [];
+  const ROW_OFFSET = 2; // 2 company rows prepended by buildSheet
+
+  let weekColStart = FIXED;
+  weeks.forEach((week) => {
+    if (week.days.length > 1) {
+      weekMerges.push({
+        s: { r: ROW_OFFSET + 0, c: weekColStart },
+        e: { r: ROW_OFFSET + 0, c: weekColStart + week.days.length - 1 },
+      });
+    }
+    weekColStart += week.days.length;
+  });
+  // Merge summary header in week row
+  weekMerges.push({
+    s: { r: ROW_OFFSET + 0, c: FIXED + totalDayCols },
+    e: { r: ROW_OFFSET + 0, c: totalCols - 1 },
+  });
+
+  // ── Data rows ─────────────────────────────────────────────────────────────
   const rows: SheetData['rows'] = [];
   const staffGroups: SheetData['staffGroups'] = [];
-  let currentRow = 3; // title(0) + week(1) + colHeader(2)
+  // data starts at row: 2 (company) + 2 (extraHeaderRows) = 4
+  let currentRow = ROW_OFFSET + 2;
 
   data.forEach((record, idx) => {
     const { staff, shifts } = record;
@@ -157,18 +167,22 @@ export function exportWorkSheetByShiftTable(
       currentRow += 1;
     });
 
-    // Apply vertical merges
     mergeRanges.forEach((m) => weekMerges.push(m));
   });
 
   const sheetData: SheetData = {
     config: {
       title: `BẢNG CHẤM CÔNG THEO CA THÁNG ${month + 1} NĂM ${year}`,
+      companyName1: 'TÊN CÔNG TY / ĐƠN VỊ',
+      companyName2: '',
+      departmentName,
       fixedCols: FIXED_COLS,
       dayCols: DAY_COLS,
       summaryCols: SUMMARY_COLS.map((c) => ({ label: c.label, wch: c.wch })),
-      headerRowCount: 3,
+      // 2 company rows + 1 week row + 1 col header row = 4
+      headerRowCount: 4,
       leftAlignDataCols: new Set([1, 2, 3, 4]),
+      year,
     },
     extraHeaderRows: [weekRow, colHeaderRow],
     extraHeaderMerges: weekMerges,
@@ -190,6 +204,7 @@ export function exportWorkSheetByShiftGrid(
   data: WorkSheetByShiftType[],
   year: number,
   month: number,
+  departmentName: string = '',
 ) {
   const days = getDaysInMonth(year, month);
 
@@ -210,6 +225,7 @@ export function exportWorkSheetByShiftGrid(
 
   const FIXED = FIXED_COLS.length;
   const totalCols = FIXED + days.length + SUMMARY_COLS.length;
+  const ROW_OFFSET = 2; // 2 company rows prepended by buildSheet
 
   // ── Col header row only (no week row for grid) ─────────────────────────────
   const colHeaderRow: unknown[] = FIXED_COLS.map((c) => c.label);
@@ -221,7 +237,8 @@ export function exportWorkSheetByShiftGrid(
   const extraMerges: XLSX.Range[] = [];
   const rows: SheetData['rows'] = [];
   const staffGroups: SheetData['staffGroups'] = [];
-  let currentRow = 2; // title(0) + colHeader(1)
+  // data starts at row: 2 (company) + 1 (colHeader) = 3
+  let currentRow = ROW_OFFSET + 1;
 
   data.forEach((record, idx) => {
     const { staff, shifts } = record;
@@ -266,20 +283,21 @@ export function exportWorkSheetByShiftGrid(
       rows.push({ cells, isContinuation: !isFirst });
       currentRow += 1;
     });
-
-    extraMerges.forEach((m) => {
-      /* already pushed above */
-    });
   });
 
   const sheetData: SheetData = {
     config: {
       title: `BẢNG CHẤM CÔNG THEO CA THÁNG ${month + 1} NĂM ${year}`,
+      companyName1: 'TÊN CÔNG TY / ĐƠN VỊ',
+      companyName2: '',
+      departmentName,
       fixedCols: FIXED_COLS,
       dayCols: DAY_COLS,
       summaryCols: SUMMARY_COLS.map((c) => ({ label: c.label, wch: c.wch })),
-      headerRowCount: 2,
+      // 2 company rows + 1 col header row = 3
+      headerRowCount: 3,
       leftAlignDataCols: new Set([1, 2, 3, 4, 5]),
+      year,
     },
     extraHeaderRows: [colHeaderRow],
     extraHeaderMerges: extraMerges,

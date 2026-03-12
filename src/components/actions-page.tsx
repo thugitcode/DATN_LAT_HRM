@@ -104,8 +104,8 @@ export const ActionsPage = <T extends Record<string, unknown> = Record<string, u
         {onExport && (
           <li>
             <ActionButton
-              tooltip={t('actions.import_excel')}
-              ariaLabel={t('actions.import_excel')}
+              tooltip={t('actions.export_excel')}
+              ariaLabel={t('actions.export_excel')}
               onPress={onExport}
             >
               {icons.export}
