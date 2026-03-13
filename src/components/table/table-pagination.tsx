@@ -48,6 +48,9 @@ export const TablePagination: FC<Readonly<TablePaginationProps>> = ({ total = 0 
           selectedKeys={[String(limit)]}
           onChange={handleLimitChange}
           aria-label="Rows per page"
+          classNames={{
+            trigger: 'bg-white',
+          }}
         >
           {LIMIT_OPTIONS.map((opt) => (
             <SelectItem key={opt.value}>{opt.label}</SelectItem>
@@ -57,7 +60,18 @@ export const TablePagination: FC<Readonly<TablePaginationProps>> = ({ total = 0 
       </div>
 
       {total > 0 && (
-        <Pagination isCompact showControls page={page} total={total} onChange={handlePageChange} />
+        <Pagination
+          isCompact
+          showControls
+          page={page}
+          total={total}
+          onChange={handlePageChange}
+          classNames={{
+            item: 'bg-white',
+            prev: 'bg-white',
+            next: 'bg-white',
+          }}
+        />
       )}
     </div>
   );

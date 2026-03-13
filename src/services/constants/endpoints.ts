@@ -18,6 +18,13 @@ export const API_ENDPOINTS = {
 
     ATTENDANCE_EXPLANATION: '/attendance-explanation',
 
+    OTHER_REQUESTS_MANAGEMENT: {
+      BUSINESS_TRIP: '/other-request',
+      OVERTIME: '/overtime',
+      REMOTE_WORK: '/remote-work',
+      TRAINING: '/training',
+    },
+
     LEAVE_REQUEST: '/leave-request',
     UPLOAD: '/upload',
   },

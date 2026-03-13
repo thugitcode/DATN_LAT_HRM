@@ -69,6 +69,35 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
       },
     ],
   },
+
+  {
+    id: '8',
+    path: '/admin/other-requests-management',
+    label: t('sidebar.other_requests_management'),
+    icon: icons.listMenu,
+    children: [
+      {
+        id: '1',
+        label: t('sidebar.business_trip_management'),
+        path: '/admin/other-requests-management/business-trip-management',
+      },
+      {
+        id: '2',
+        label: t('sidebar.overtime_management'),
+        path: '/admin/other-requests-management/overtime-management',
+      },
+      {
+        id: '3',
+        label: t('sidebar.remote_work_management'),
+        path: '/admin/other-requests-management/remote-work-management',
+      },
+      {
+        id: '4',
+        label: t('sidebar.training_registration_management'),
+        path: '/admin/other-requests-management/training-registration-ranagement',
+      },
+    ],
+  },
 ];
 
 export const menuSidebar: MenuItem[] = [
@@ -160,8 +189,9 @@ export const menuSidebar: MenuItem[] = [
   //   label: 'Quản lý tuyển dụng',
   //   icon: icons.plusUser,
   // },
+
   // {
-  //   id: '8',
+  //   id: '9',
   //   path: '/admin/management-report',
   //   label: 'Báo cáo quản trị',
   //   icon: icons.note,

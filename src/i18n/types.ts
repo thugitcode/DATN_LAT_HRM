@@ -5,6 +5,7 @@ import type dashboard from '@public/locales/en/dashboard.json';
 // import type staffManagement from '@public/locales/en/staff-management.json';
 // import type contractManagement from '@public/locales/en/contract-management.json';
 import type leaveManagement from '@public/locales/vi/leave-management.json';
+import type otherRequestsManagement from '@public/locales/vi/other-requests-management.json';
 // import type payrollManagement from '@public/locales/en/payroll-management.json';
 // import type recruitmentManagement from '@public/locales/en/recruitment-management.json';
 // import type managementReport from '@public/locales/en/management-report.json';
@@ -23,6 +24,7 @@ type I18nResources = {
   // [NAMESPACES.RECRUITMENT_MANAGEMENT]: typeof recruitmentManagement;
   // [NAMESPACES.MANAGEMENT_REPORT]: typeof managementReport;
   [NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING]: typeof timekeepingShiftScheduling;
+  [NAMESPACES.OTHER_REQUESTS_MANGAGEMENT]: typeof otherRequestsManagement;
 };
 
 declare module 'i18next' {

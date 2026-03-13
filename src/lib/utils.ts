@@ -439,3 +439,14 @@ export const convertMimeToExtension = (mime: string) => {
 
   return map[mime.toLowerCase()] ?? null;
 };
+
+export const toHHMM = (time: string): string => {
+  if (!time) return '-';
+  const [hours, minutes] = time.split(':');
+  return `${hours}:${minutes}`;
+};
+
+export const toDDMMYYYY = (date: string): string => {
+  if (!date) return '-';
+  return dayjs(date).format('DD/MM/YYYY');
+};

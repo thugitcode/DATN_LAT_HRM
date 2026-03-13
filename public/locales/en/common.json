@@ -32,7 +32,13 @@
     "contract_management": "Contract Management",
     "payroll_management": "Payroll Management",
     "recruitment_management": "Recruitment Management",
-    "management_report": "Management Report"
+    "management_report": "Management Report",
+
+    "other_requests_management": "Other Requests Management",
+    "business_trip_management": "Business Trip Management",
+    "overtime_management": "Overtime Management",
+    "remote_work_management": "Remote Work Management",
+    "training_registration_management": "Training Registration Management"
   },
 
   "drawer": {
@@ -97,5 +103,11 @@
       "10": "Nov",
       "11": "Dec"
     }
+  },
+
+  "status": {
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "pending": "Pending"
   }
 }

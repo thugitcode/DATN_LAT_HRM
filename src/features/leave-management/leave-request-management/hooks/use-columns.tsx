@@ -4,10 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { formatDate } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
-import {
-  getStaffPosition,
-  STAFF_POSITION,
-} from '@/features/timekeeping-shift-scheduling/shift-management/constants/data';
+import { getStaffPosition } from '@/features/timekeeping-shift-scheduling/shift-management/constants/data';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 import { RowLeaveRequestActions } from '../components/row-leave-request-actions';

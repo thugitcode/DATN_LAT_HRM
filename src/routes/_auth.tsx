@@ -1,18 +1,19 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { identityQueryOptions } from '@/query-options';
 
+import { apiTokens } from '@/lib/axios';
 import { useBootstrapStaticData } from '@/hooks/common/use-bootstrap-static-data';
 import { MainLayout } from '@/components/layouts/main-layout/main-layout';
 
 export const Route = createFileRoute('/_auth')({
-  // beforeLoad: ({ context: { auth } }) => {
-  //   if (auth.isLoggedIn) {
-  //     throw redirect({ to: '/admin' });
-  //   }
+  beforeLoad: ({ context: { auth } }) => {
+    if (auth.isLoggedIn) {
+      throw redirect({ to: '/admin' });
+    }
 
-  //   apiTokens.accessToken = undefined;
-  //   apiTokens.refreshToken = undefined;
-  // },
+    apiTokens.accessToken = undefined;
+    apiTokens.refreshToken = undefined;
+  },
 
   // loader: async ({ context: { queryClient } }) => {
   //   await queryClient.ensureQueryData(identityQueryOptions());
@@ -24,8 +25,8 @@ function RouteComponent() {
   // const { isBootstrapping } = useBootstrapStaticData();
 
   return (
-    <MainLayout>
+    <>
       <Outlet />
-    </MainLayout>
+    </>
   );
 }
