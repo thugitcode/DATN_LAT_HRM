@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 
 import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
-import { useDepartmentOptions } from '@/hooks/options/use-department-options';
+import { useColumnVisibility } from '@/hooks/use-column-visibility';
+import { useDepartmentName } from '@/hooks/use-department-name';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionsPage } from '@/components/actions-page';
@@ -33,19 +34,11 @@ export const LeaveRequestManagement = () => {
   const { columns } = useColumns();
   const { startDate, endDate } = useMonthDateRange(month);
 
-  const { options: departmentOptions } = useDepartmentOptions();
-  const departmentName = useMemo(() => {
-    if (!departmentIds) return '';
-    return departmentOptions.find((d) => d.key === departmentIds)?.label ?? '';
-  }, [departmentOptions, departmentIds]);
+  const { departmentName } = useDepartmentName({ departmentId: departmentIds });
 
-  const defaultVisibleColumns = useMemo(
-    () => new Set(columns.map((col) => col.key)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  );
-
-  const [visibleColumns, setVisibleColumns] = useState<Set<string>>(defaultVisibleColumns);
+  const { visibleColumns, handleApplyColumns } = useColumnVisibility({
+    columns,
+  });
 
   const { data, isLoading } = useLeaveRequestManagementList({
     fromDate: startDate,
@@ -61,17 +54,11 @@ export const LeaveRequestManagement = () => {
     roomIds,
   });
 
-  const handleApplyColumns = useCallback((visibleKeys: Set<string>, _saveAsDefault: boolean) => {
-    setVisibleColumns(visibleKeys);
-  }, []);
-
-  // ── Export ────────────────────────────────────────────────────────────────
   const handleExport = useCallback(() => {
     const exportKeys = new Set([...visibleColumns].filter((k) => k !== 'actions'));
     exportLeaveRequestToExcel(data?.data ?? [], exportKeys, departmentName);
   }, [data?.data, visibleColumns, departmentName]);
 
-  // ── Print ─────────────────────────────────────────────────────────────────
   const printRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
@@ -116,12 +103,11 @@ export const LeaveRequestManagement = () => {
         pagination={paginationConfig}
       />
 
-      {/* Hidden print area */}
       <div style={{ display: 'none' }}>
         <LeaveRequestPrint
           ref={printRef}
           data={data?.data ?? []}
-          visibleColumns={visibleColumns}
+          // visibleColumns={visibleColumns}
           departmentName={departmentName}
         />
       </div>

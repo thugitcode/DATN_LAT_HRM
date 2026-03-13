@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { Button, Card, CardBody } from '@heroui/react';
 import imageLoginBg from '@public/images/login-bg.jpg';
 import imageLogoH247 from '@public/images/logo-h247.svg';
 import { useKeycloak } from '@react-keycloak/web';
@@ -15,54 +16,62 @@ export const Login = () => {
   useEventListener('message', handleMessage, window, true);
 
   return (
-    // <BackgroundImage src={imageLoginBg}>
-    //   <Container size="xl" h="100dvh" p="xl">
-    //     <Stack h="100%" gap="xl" justify="space-between">
-    //       <Box h="30dvh" />
+    <div
+      className="relative min-h-dvh w-full bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${imageLoginBg})` }}
+    >
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black/40" />
 
-    //       <Paper p="xl" radius="lg">
-    //         <Container size="sm">
-    //           <Stack align="center" gap="xl">
-    //             <Image src={imageLogoH247} w={220} />
+      <div className="relative z-10 mx-auto flex h-dvh max-w-7xl flex-col justify-between px-6 py-8">
+        {/* Spacer top */}
+        <div className="h-[30dvh]" />
 
-    //             <Text ta="center" fz="lg">
-    //               Giải pháp thông minh quản lý phòng khám, chuỗi phòng khám đa khoa hiệu quả, tiện
-    //               dụng, mọi lúc, mọi nơi trên mọi nền tảng
-    //             </Text>
+        {/* Login Card */}
+        <Card className="mx-auto w-full max-w-lg rounded-2xl shadow-2xl" shadow="lg">
+          <CardBody className="px-8 py-10">
+            <div className="flex flex-col items-center gap-6">
+              {/* Logo */}
+              <img src={imageLogoH247} alt="H247 Logo" className="w-[220px]" />
 
-    //             <Button
-    //               size="lg"
-    //               onClick={handleLogin}
-    //               bg="#ff548e"
-    //               rightSection={<IconCircleArrowRightFilled />}
-    //             >
-    //               Đăng nhập
-    //             </Button>
-    //           </Stack>
-    //         </Container>
-    //       </Paper>
+              {/* Description */}
+              <p className="text-center text-base text-default-600">
+                Giải pháp thông minh quản lý phòng khám, chuỗi phòng khám đa khoa hiệu quả, tiện
+                dụng, mọi lúc, mọi nơi trên mọi nền tảng
+              </p>
 
-    //       <Group c="white" justify="space-between" fw={500}>
-    //         <Text fw="inherit">
-    //           Địa chỉ: Số 35 Lê Văn Thiêm, Phường Thanh Xuân Trung, Quận Thanh Xuân, TP Hà Nội
-    //         </Text>
+              {/* Login Button */}
+              <Button
+                size="lg"
+                onPress={handleLogin}
+                className="bg-[#ff548e] font-semibold text-white"
+                endContent={<IconCircleArrowRightFilled size={20} />}
+              >
+                Đăng nhập
+              </Button>
+            </div>
+          </CardBody>
+        </Card>
 
-    //         <Text fw="inherit">
-    //           Website:{' '}
-    //           <Text component="a" href="https://deepcare.io" fw="inherit" td="underline">
-    //             Deepcare.io
-    //           </Text>
-    //         </Text>
+        {/* Footer */}
+        <div className="flex flex-wrap justify-between gap-2 font-medium text-white">
+          <span>
+            Địa chỉ: Số 35 Lê Văn Thiêm, Phường Thanh Xuân Trung, Quận Thanh Xuân, TP Hà Nội
+          </span>
 
-    //         <Text fw="inherit">Hotline: 1900 068 856</Text>
+          <span>
+            Website:{' '}
+            <a href="https://deepcare.io" className="underline" target="_blank" rel="noreferrer">
+              Deepcare.io
+            </a>
+          </span>
 
-    //         <Text fw="inherit">Email: contact@deepcare.io</Text>
-    //       </Group>
-    //     </Stack>
-    //   </Container>
-    // </BackgroundImage>
+          <span>Hotline: 1900 068 856</span>
 
-    <div>Login</div>
+          <span>Email: contact@deepcare.io</span>
+        </div>
+      </div>
+    </div>
   );
 
   async function handleLogin() {

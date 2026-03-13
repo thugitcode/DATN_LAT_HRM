@@ -32,7 +32,13 @@
     "contract_management": "Quản lý hợp đồng",
     "payroll_management": "Quản lý lương",
     "recruitment_management": "Quản lý tuyển dụng",
-    "management_report": "Báo cáo quản trị"
+    "management_report": "Báo cáo quản trị",
+
+    "other_requests_management": "Quản lý các yêu cầu khác",
+    "business_trip_management": "Quản lý công tác",
+    "overtime_management": "Quản lý làm thêm giờ",
+    "remote_work_management": "Quản lý làm việc từ xa",
+    "training_registration_management": "Quản lý đăng ký đào tạo"
   },
 
   "drawer": {
@@ -97,5 +103,11 @@
       "10": "Th.11",
       "11": "Th.12"
     }
+  },
+
+  "status": {
+    "approved": "Đã duyệt",
+    "rejected": "Từ chối",
+    "pending": "Chờ duyệt"
   }
 }

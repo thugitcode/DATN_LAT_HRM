@@ -10,10 +10,6 @@ export interface SheetConfig {
   applyStyles: (ws: XLSX.WorkSheet) => void;
 }
 
-/**
- * Generic builder — nhận config, trả về ws đã style.
- * Tất cả template excel đều dùng hàm này.
- */
 export const buildSheet = (config: SheetConfig): XLSX.WorkSheet => {
   const ws = XLSX.utils.aoa_to_sheet(config.aoa);
   ws['!merges'] = config.merges;
@@ -31,7 +27,6 @@ export const writeWorkbook = (ws: XLSX.WorkSheet, sheetName: string, filename: s
   XLSX.writeFile(wb, filename);
 };
 
-/** Apply style to every cell in a range — tái sử dụng trong mọi template */
 export const applyStyleToRange = (
   ws: XLSX.WorkSheet,
   getCellStyle: (r: number, c: number) => XLSX.CellStyle | null,

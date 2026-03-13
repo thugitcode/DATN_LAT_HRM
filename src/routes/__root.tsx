@@ -18,6 +18,9 @@ export const Route = createRootRouteWithContext<{
   notFoundComponent: () => <div>Not found</div>,
   errorComponent: ({ error }) => {
     let isUnauthenticated = false;
+    let isUnauthorized = false;
+
+    console.log('error_________________________', error);
 
     if (
       (error instanceof AxiosError && error.status === 401) ||
@@ -26,7 +29,13 @@ export const Route = createRootRouteWithContext<{
       isUnauthenticated = true;
     }
 
+    if (error instanceof AxiosError && error.status === 403) {
+      isUnauthorized = true;
+    }
+
     return <CommonErrorComponent isUnauthenticated={isUnauthenticated} />;
+
+    // return <div>Bố m ở root</div>;
   },
 });
 

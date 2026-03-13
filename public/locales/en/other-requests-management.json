@@ -1,0 +1,45 @@
+{
+  "businessTripManagement": {
+    "title": "Business Trip Management"
+  },
+
+  "trainingRegistrationManagement": {
+    "title": "Training Registration Management"
+  },
+
+  "overtimeManagement": {
+    "title": "Overtime Management"
+  },
+
+  "remoteManagement": {
+    "title": "Remote Work Management"
+  },
+
+  "columns": {
+    "department": "Department",
+    "staffCode": "Staff Code",
+    "staffName": "Staff Name",
+    "overtimeType": "Overtime Type",
+    "overtimeDate": "Overtime Date",
+    "trainingDate": "Training Date",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "totalTime": "Total Time",
+    "trainingLocation": "Training Location",
+    "reason": "Reason",
+    "directManager": "Direct Manager",
+    "status": "Status",
+    "remoteDate": "Remote Work Date",
+    "type": "Type"
+  },
+
+  "hour": "hour",
+  "day": "day",
+
+  "print": {
+    "footer_date": "….............., date __ month __ year {{year}}",
+    "footer_unit_head": "Unit Head",
+    "footer_hr": "HR Department",
+    "footer_prepared_by": "Prepared By"
+  }
+}
