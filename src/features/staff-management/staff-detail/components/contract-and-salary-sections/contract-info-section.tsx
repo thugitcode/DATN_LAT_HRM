@@ -1,5 +1,5 @@
 // sections/ContractInfoSection.tsx
-import { FC } from 'react';
+import type { FC } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { IconChevronDown, IconFileDescription } from '@tabler/icons-react';
 

@@ -109,5 +109,6 @@
     "approved": "Approved",
     "rejected": "Rejected",
     "pending": "Pending"
-  }
+  },
+  "select": "Select"
 }

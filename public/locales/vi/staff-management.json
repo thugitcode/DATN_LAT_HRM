@@ -1,0 +1,261 @@
+{
+  "errors": {
+    "avatar": {
+      "maxSize": "Dung lượng file tối đa ~15MB"
+    },
+    "code": {
+      "required": "Mã nhân viên không được để trống",
+      "duplicate": "Trùng mã nhân viên."
+    },
+    "name": {
+      "required": "Họ và tên không được để trống",
+      "max": "Họ và tên tối đa 100 ký tự"
+    },
+    "birthday": {
+      "required": "Ngày sinh không được để trống",
+      "future": "Ngày sinh phải nhỏ hơn ngày hiện tại.",
+      "underage": "Nhân viên phải đủ 18 tuổi trở lên."
+    },
+    "gender": {
+      "required": "Giới tính không được để trống"
+    },
+    "identityIssueDate": {
+      "future": "Ngày cấp CCCD/Passport phải nhỏ hơn ngày hiện tại."
+    },
+    "taxCode": {
+      "format": "Mã số thuế phải là 10 chữ số"
+    },
+    "insuranceNumber": {
+      "format": "Số BHYT/BHXH phải là 10-15 ký tự số và chữ."
+    },
+    "phone": {
+      "required": "Số điện thoại không được để trống",
+      "format": "Số điện thoại phải là 10 chữ số",
+      "duplicate": "Số điện thoại đã được sử dụng"
+    },
+    "email": {
+      "required": "Email không được để trống",
+      "format": "Email không đúng định dạng"
+    },
+    "emergencyContactPhone": {
+      "format": "Số điện thoại người liên hệ khẩn cấp phải là 10 chữ số"
+    },
+    "departmentIds": {
+      "required": "Phải chọn ít nhất một phòng ban"
+    },
+    "roomIds": {
+      "required": "Phải chọn ít nhất một phòng làm việc"
+    },
+    "jobTitle": {
+      "required": "Chức danh không được để trống"
+    },
+    "position": {
+      "required": "Vị trí công việc không được để trống"
+    },
+    "contractType": {
+      "required": "Loại hợp đồng không được để trống"
+    },
+    "qualification": {
+      "required": "Trình độ không được để trống"
+    },
+    "certificateExpiryDate": {
+      "past": "Ngày hết hạn chứng chỉ phải trong tương lai"
+    }
+  },
+  "staffForm": {
+    "sections": {
+      "personnel": "Thông tin nhân sự",
+      "department": "Khoa/phòng làm việc",
+      "additional": "Thông tin bổ sung",
+      "contact": "Thông tin liên hệ",
+      "personalContact": "Thông tin cá nhân",
+      "emergencyContact": "Thông tin liên hệ khẩn cấp",
+      "qualification": "Bằng cấp chuyên môn",
+      "notes": "Ghi chú"
+    },
+    "fields": {
+      "avatar": {
+        "uploadNote": "* JPG, JPEG, PNG. Tối đa 15MB (180x180 px)",
+        "limitAlert": "Dung lượng file tối đa 15MB"
+      },
+      "code": {
+        "label": "Mã nhân viên",
+        "placeholder": "Nhập mã nhân viên"
+      },
+      "name": {
+        "label": "Tên nhân viên",
+        "placeholder": "Nhập tên nhân viên"
+      },
+      "birthday": {
+        "label": "Ngày sinh"
+      },
+      "gender": {
+        "label": "Giới tính",
+        "options": {
+          "male": "Nam",
+          "female": "Nữ",
+          "other": "Khác"
+        }
+      },
+      "identity": {
+        "label": "Số CCCD/Passport",
+        "placeholder": "Nhập số CCCD/Passport"
+      },
+      "identityIssueDate": {
+        "label": "Ngày cấp"
+      },
+      "identityIssuePlace": {
+        "label": "Nơi cấp",
+        "placeholder": "Nhập nơi cấp"
+      },
+      "nationality": {
+        "label": "Quốc tịch",
+        "options": {
+          "vietnam": "Việt Nam",
+          "other": "Khác"
+        }
+      },
+      "address": {
+        "label": "Địa chỉ",
+        "placeholder": "Nhập địa chỉ"
+      },
+      "departmentIds": {
+        "label": "Khoa quản lý"
+      },
+      "roomIds": {
+        "label": "Phòng quản lý"
+      },
+      "workType": {
+        "label": "Loại hình",
+        "options": {
+          "fullTime": "Toàn thời gian",
+          "partTime": "Bán thời gian"
+        }
+      },
+      "jobTitle": {
+        "label": "Chức danh"
+      },
+      "position": {
+        "label": "Cấp bậc"
+      },
+      "contractType": {
+        "label": "Loại hợp đồng"
+      },
+      "contractDuration": {
+        "label": "Thời hạn hợp đồng",
+        "placeholder": "Nhập thời hạn"
+      },
+      "taxCode": {
+        "label": "Mã số thuế",
+        "placeholder": "Nhập mã số thuế"
+      },
+      "insuranceNumber": {
+        "label": "Số BHXH",
+        "placeholder": "Nhập số BHXH"
+      },
+      "accountNumber": {
+        "label": "Số tài khoản",
+        "placeholder": "Nhập số tài khoản"
+      },
+      "beneficiaryName": {
+        "label": "Tên người thụ hưởng",
+        "placeholder": "Nhập tên người thụ hưởng"
+      },
+      "bankName": {
+        "label": "Tên ngân hàng",
+        "placeholder": "Nhập tên ngân hàng"
+      },
+      "phone": {
+        "label": "Số điện thoại",
+        "placeholder": "Nhập số điện thoại"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "abc@domain.com"
+      },
+      "emergencyContactName": {
+        "label": "Tên người liên hệ",
+        "placeholder": "Nhập tên người liên hệ"
+      },
+      "emergencyContactPhone": {
+        "label": "Số điện thoại",
+        "placeholder": "Nhập số điện thoại"
+      },
+      "emergencyContactAddress": {
+        "label": "Địa chỉ",
+        "placeholder": "Nhập địa chỉ"
+      },
+      "emergencyContactRelationship": {
+        "label": "Mối quan hệ",
+        "placeholder": "Nhập mối quan hệ (vd: Bố, Mẹ, Vợ...)"
+      },
+      "qualification": {
+        "label": "Trình độ chuyên môn"
+      },
+      "major": {
+        "label": "Chuyên ngành",
+        "placeholder": "Nhập chuyên ngành"
+      },
+      "academicTitles": {
+        "label": "Học hàm học vị"
+      },
+      "certificateNumber": {
+        "label": "Số CCHN",
+        "placeholder": "Nhập số chứng chỉ hành nghề"
+      },
+      "certificateIssuePlace": {
+        "label": "Nơi cấp",
+        "placeholder": "Nhập nơi cấp chứng chỉ"
+      },
+      "certificateExpiryDate": {
+        "label": "Ngày hết hạn",
+        "placeholder": "Chọn ngày hết hạn"
+      },
+      "note": {
+        "placeholder": "Nhập ghi chú"
+      }
+    }
+  },
+  "options": {
+    "jobTitle": {
+      "doctor": "Bác sĩ",
+      "nurse": "Điều dưỡng",
+      "technician": "Kỹ thuật viên",
+      "midwife": "Hộ sinh",
+      "physicianAssistant": "Y sĩ",
+      "officeStaff": "Nhân viên văn phòng"
+    },
+    "position": {
+      "STAFF": "Nhân viên",
+      "HEAD_OF_DEPARTMENT": "Trưởng khoa",
+      "DEPUTY_HEAD_OF_DEPARTMENT": "Phó khoa",
+      "CHIEF_NURSE": "Điều dưỡng trưởng",
+      "MANAGER": "Trưởng phòng",
+      "HEAD_OF_UNIT": "Trưởng bộ phận",
+      "DEPUTY_MANAGER": "Phó phòng"
+    },
+    "contractType": {
+      "official": "Chính thức",
+      "probation": "Thử việc",
+      "internship": "Học việc/Thực tập",
+      "expert": "Chuyên gia"
+    },
+    "qualification": {
+      "intermediate": "Trung cấp",
+      "college": "Cao đẳng",
+      "bachelor": "Cử nhân",
+      "master": "Thạc sĩ",
+      "doctor": "Bác sĩ",
+      "phd": "Tiến sĩ",
+      "specialist": "BS Chuyên khoa",
+      "other": "Khác"
+    },
+    "academicTitles": {
+      "doctor": "Bác sĩ",
+      "master": "Thạc sĩ",
+      "phd": "Tiến sĩ",
+      "spec1": "BS Chuyên khoa I",
+      "spec2": "BS Chuyên khoa II"
+    }
+  }
+}

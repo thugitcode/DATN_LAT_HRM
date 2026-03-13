@@ -2,7 +2,7 @@
 import type common from '@public/locales/en/common.json';
 import type dashboard from '@public/locales/en/dashboard.json';
 // import type auth from '@public/locales/en/auth.json';
-// import type staffManagement from '@public/locales/en/staff-management.json';
+import type staffManagement from '@public/locales/vi/staff-management.json';
 // import type contractManagement from '@public/locales/en/contract-management.json';
 import type leaveManagement from '@public/locales/vi/leave-management.json';
 import type otherRequestsManagement from '@public/locales/vi/other-requests-management.json';
@@ -17,7 +17,7 @@ type I18nResources = {
   [NAMESPACES.COMMON]: typeof common;
   [NAMESPACES.DASHBOARD]: typeof dashboard;
   // [NAMESPACES.AUTH]: typeof auth;
-  // [NAMESPACES.STAFF_MANAGEMENT]: typeof staffManagement;
+  [NAMESPACES.STAFF_MANAGEMENT]: typeof staffManagement;
   // [NAMESPACES.CONTRACT_MANAGEMENT]: typeof contractManagement;
   [NAMESPACES.LEAVE_MANAGEMENT]: typeof leaveManagement;
   // [NAMESPACES.PAYROLL_MANAGEMENT]: typeof payrollManagement;
