@@ -5,6 +5,8 @@ import type { FieldValues } from 'react-hook-form';
 import { FormErrorText } from './form-error-text';
 import { FormLabel } from './form-label';
 import type { BaseFieldProps } from './types';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 type Option = { key: string; label: string };
 
@@ -27,12 +29,13 @@ export function FormSelect<T extends FieldValues>({
   selectionMode = 'single',
   ...props
 }: Props<T>) {
+  const { t } = useTranslation(NAMESPACES.COMMON)
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1.5">
           <FormLabel label={label} isRequired={isRequired} isError={!!fieldState.error} />
 
           <Select
@@ -59,7 +62,7 @@ export function FormSelect<T extends FieldValues>({
                 onSelect?.(value);
               }
             }}
-            placeholder={placeholder ?? 'Chọn'}
+            placeholder={placeholder ?? t("select")}
             {...(selectionMode === "multiple" && {
               renderValue: (items) => (
                 <div className="flex flex-nowrap gap-2">

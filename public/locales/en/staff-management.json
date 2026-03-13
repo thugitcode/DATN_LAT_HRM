@@ -1,0 +1,261 @@
+{
+  "errors": {
+    "avatar": {
+      "maxSize": "Maximum file size is ~15MB"
+    },
+    "code": {
+      "required": "Employee code is required",
+      "duplicate": "Employee code already exists"
+    },
+    "name": {
+      "required": "Full name is required",
+      "max": "Full name must be at most 100 characters"
+    },
+    "birthday": {
+      "required": "Date of birth is required",
+      "future": "Date of birth must be in the past",
+      "underage": "Employee must be at least 18 years old"
+    },
+    "gender": {
+      "required": "Gender is required"
+    },
+    "identityIssueDate": {
+      "future": "ID/Passport issue date must be in the past"
+    },
+    "taxCode": {
+      "format": "Tax code must be 10 digits"
+    },
+    "insuranceNumber": {
+      "format": "Insurance number must be 10-15 alphanumeric characters"
+    },
+    "phone": {
+      "required": "Phone number is required",
+      "format": "Phone number must be 10 digits",
+      "duplicate": "Phone number is already in use"
+    },
+    "email": {
+      "required": "Email is required",
+      "format": "Invalid email format"
+    },
+    "emergencyContactPhone": {
+      "format": "Emergency contact phone must be 10 digits"
+    },
+    "departmentIds": {
+      "required": "At least one department must be selected"
+    },
+    "roomIds": {
+      "required": "At least one work room must be selected"
+    },
+    "jobTitle": {
+      "required": "Job title is required"
+    },
+    "position": {
+      "required": "Position is required"
+    },
+    "contractType": {
+      "required": "Contract type is required"
+    },
+    "qualification": {
+      "required": "Qualification is required"
+    },
+    "certificateExpiryDate": {
+      "past": "Certificate expiry date must be in the future"
+    }
+  },
+  "staffForm": {
+    "sections": {
+      "personnel": "Personnel Information",
+      "department": "Department/Work Room",
+      "additional": "Additional Information",
+      "contact": "Contact Information",
+      "personalContact": "Personal Contact",
+      "emergencyContact": "Emergency Contact",
+      "qualification": "Professional Qualifications",
+      "notes": "Notes"
+    },
+    "fields": {
+      "avatar": {
+        "uploadNote": "* JPG, JPEG, PNG. Max 15MB (180x180 px)",
+        "limitAlert": "Maximum file size is 15MB"
+      },
+      "code": {
+        "label": "Employee Code",
+        "placeholder": "Enter employee code"
+      },
+      "name": {
+        "label": "Employee Name",
+        "placeholder": "Enter full name"
+      },
+      "birthday": {
+        "label": "Date of Birth"
+      },
+      "gender": {
+        "label": "Gender",
+        "options": {
+          "male": "Male",
+          "female": "Female",
+          "other": "Other"
+        }
+      },
+      "identity": {
+        "label": "ID Card/Passport No.",
+        "placeholder": "Enter ID or Passport number"
+      },
+      "identityIssueDate": {
+        "label": "Issue Date"
+      },
+      "identityIssuePlace": {
+        "label": "Issue Place",
+        "placeholder": "Enter issue place"
+      },
+      "nationality": {
+        "label": "Nationality",
+        "options": {
+          "vietnam": "Vietnam",
+          "other": "Other"
+        }
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Enter address"
+      },
+      "departmentIds": {
+        "label": "Managing Department"
+      },
+      "roomIds": {
+        "label": "Managing Room"
+      },
+      "workType": {
+        "label": "Work Type",
+        "options": {
+          "fullTime": "Full-time",
+          "partTime": "Part-time"
+        }
+      },
+      "jobTitle": {
+        "label": "Job Title"
+      },
+      "position": {
+        "label": "Position Level"
+      },
+      "contractType": {
+        "label": "Contract Type"
+      },
+      "contractDuration": {
+        "label": "Contract Duration",
+        "placeholder": "Enter duration"
+      },
+      "taxCode": {
+        "label": "Tax Code",
+        "placeholder": "Enter tax code"
+      },
+      "insuranceNumber": {
+        "label": "Insurance No.",
+        "placeholder": "Enter social insurance number"
+      },
+      "accountNumber": {
+        "label": "Account Number",
+        "placeholder": "Enter bank account number"
+      },
+      "beneficiaryName": {
+        "label": "Beneficiary Name",
+        "placeholder": "Enter beneficiary name"
+      },
+      "bankName": {
+        "label": "Bank Name",
+        "placeholder": "Enter bank name"
+      },
+      "phone": {
+        "label": "Phone Number",
+        "placeholder": "Enter phone number"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "abc@domain.com"
+      },
+      "emergencyContactName": {
+        "label": "Contact Name",
+        "placeholder": "Enter contact person's name"
+      },
+      "emergencyContactPhone": {
+        "label": "Phone Number",
+        "placeholder": "Enter contact phone number"
+      },
+      "emergencyContactAddress": {
+        "label": "Address",
+        "placeholder": "Enter contact address"
+      },
+      "emergencyContactRelationship": {
+        "label": "Relationship",
+        "placeholder": "Enter relationship (e.g. Father, Mother, Wife...)"
+      },
+      "qualification": {
+        "label": "Professional Qualification"
+      },
+      "major": {
+        "label": "Major",
+        "placeholder": "Enter major"
+      },
+      "academicTitles": {
+        "label": "Academic Titles"
+      },
+      "certificateNumber": {
+        "label": "Practice Certificate No.",
+        "placeholder": "Enter certificate number"
+      },
+      "certificateIssuePlace": {
+        "label": "Issue Place",
+        "placeholder": "Enter certificate issue place"
+      },
+      "certificateExpiryDate": {
+        "label": "Expiry Date",
+        "placeholder": "Select expiry date"
+      },
+      "note": {
+        "placeholder": "Enter notes"
+      }
+    }
+  },
+  "options": {
+    "jobTitle": {
+      "doctor": "Doctor",
+      "nurse": "Nurse",
+      "technician": "Technician",
+      "midwife": "Midwife",
+      "physicianAssistant": "Physician Assistant",
+      "officeStaff": "Office Staff"
+    },
+    "position": {
+      "STAFF": "Staff",
+      "HEAD_OF_DEPARTMENT": "Head of Department",
+      "DEPUTY_HEAD_OF_DEPARTMENT": "Deputy Head of Department",
+      "CHIEF_NURSE": "Chief Nurse",
+      "MANAGER": "Manager",
+      "HEAD_OF_UNIT": "Head of Unit",
+      "DEPUTY_MANAGER": "Deputy Manager"
+    },
+    "contractType": {
+      "official": "Official",
+      "probation": "Probationary",
+      "internship": "Apprentice/Intern",
+      "expert": "Expert"
+    },
+    "qualification": {
+      "intermediate": "Intermediate",
+      "college": "College",
+      "bachelor": "Bachelor",
+      "master": "Master",
+      "doctor": "Doctor",
+      "phd": "PhD",
+      "specialist": "Specialist Doctor",
+      "other": "Other"
+    },
+    "academicTitles": {
+      "doctor": "MD",
+      "master": "MSc",
+      "phd": "PhD",
+      "spec1": "Specialist I",
+      "spec2": "Specialist II"
+    }
+  }
+}

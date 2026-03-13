@@ -109,5 +109,6 @@
     "approved": "Đã duyệt",
     "rejected": "Từ chối",
     "pending": "Chờ duyệt"
-  }
+  },
+  "select": "Chọn"
 }
