@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import i18n from '@/i18n';
 import { NAMESPACES } from '@/i18n/constants';
 import { Button, Chip, Pagination, Select, SelectItem, Switch } from '@heroui/react';
 import {
@@ -13,10 +14,10 @@ import { useTranslation } from 'react-i18next';
 
 import type { Staff } from '@/types/staff.type';
 import { icons } from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 import { translateJobTitle } from '../../time-attendance-management/helpers';
 import { renderStatusChip } from '../hooks/use-staff-columns';
-import i18n from '@/i18n';
 
 const translatePosition = (position: string) => {
   const positions: Record<string, string> = {
@@ -125,18 +126,20 @@ export const StaffGrid: FC<StaffGridProps> = ({
                 {/* Details Box */}
                 <div className="bg-[#F4F4F5] rounded-xl p-3 border border-[#11111126] space-y-2">
                   <div className="font-medium text-[13px] text-[#11181C]">#&nbsp; {staff.code}</div>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-[#11181C]">
+                  <div className="flex gap-2 text-xs text-[#11181C]">
                     <div
-                      className="flex items-center gap-1.5 line-clamp-1"
+                      className="flex flex-1 items-center gap-1.5 line-clamp-1"
                       title={t(`options.staff_position.${staff.position}` as any)}
                     >
                       <IconBriefcase className="stroke-1 size-3" />
                       {t(`options.staff_position.${staff.position}` as any)}
                     </div>
-                    <div className="flex items-center gap-1.5 line-clamp-1">
-                      <IconClock className="stroke-1 size-3" />
-                      {staff.workType ? t(`options.work_type.${staff.workType}` as any) : '—'}
-                    </div>
+                    {staff.workType && (
+                      <div className="flex flex-1 items-center gap-1.5 line-clamp-1">
+                        <IconClock className="stroke-1 size-3" />
+                        {staff.workType ? t(`options.work_type.${staff.workType}` as any) : '—'}
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-1.5 text-xs text-[#006FEE]">
                     <IconMail className="stroke-1 size-3  text-black" /> {staff.email}
@@ -148,7 +151,12 @@ export const StaffGrid: FC<StaffGridProps> = ({
 
                 {/* Footer */}
                 <div className="flex items-center justify-between pt-3 relative">
-                  <div className="text-[11px] text-[#71717A] flex items-center gap-1">
+                  <div
+                    className={cn(
+                      !staff.endDate && 'opacity-0 pointer-events-none',
+                      'text-[11px] text-[#71717A] flex items-center gap-1',
+                    )}
+                  >
                     {/* Dịch nhãn "Hết hạn HĐ" */}
                     {t('staff_card.contract_expiry')}:{' '}
                     <span className="font-medium text-[#11181C]">
