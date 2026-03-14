@@ -1,22 +1,25 @@
 // sections/ContractInfoSection.tsx
-import type { FC } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
 import { IconChevronDown, IconFileDescription } from '@tabler/icons-react';
+import type { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
 
-import { useQuery } from '@tanstack/react-query';
+import { useStaffList } from '@/query-options/staff';
 import { departmentQueryOptions } from '@/services/query-options/department.query';
 import { roomQueryOptions } from '@/services/query-options/room.query';
-import { useStaffList } from '@/query-options/staff';
 import { StaffPositionEnum } from '@/types/staff.type';
+import { useQuery } from '@tanstack/react-query';
 
 // Các custom component bạn đã có
-import { Button, Checkbox, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
-import { FormSelect } from '@/components/form-fields/form-select';
-import { FormInput } from '@/components/form-fields/form-input';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
-import { FormNumberInput } from '@/components/form-fields/form-number-input';
-import { cn } from '@/lib/utils';
+import { FormInput } from '@/components/form-fields/form-input';
 import { FormLabel } from '@/components/form-fields/form-label';
+import { FormNumberInput } from '@/components/form-fields/form-number-input';
+import { FormSelect } from '@/components/form-fields/form-select';
+import { jobTitleOptions } from '@/features/staff-management/staff-list-management/constants/constants';
+import { NAMESPACES } from '@/i18n/constants';
+import { cn } from '@/lib/utils';
+import { Button, Checkbox, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 import { WorkingAreaSection } from './working-area-section';
 
 // Nếu bạn có FormMultiSelect hoặc FormCheckboxGroup thì càng tốt
@@ -24,7 +27,7 @@ import { WorkingAreaSection } from './working-area-section';
 
 export const ContractInfoSection: FC = () => {
   const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
-
+  const {t} = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
   // Master data
   const { data: departmentsRes } = useQuery(departmentQueryOptions.list({ getAll: true }));
   const departments = departmentsRes?.data || [];
@@ -62,13 +65,6 @@ export const ContractInfoSection: FC = () => {
     { key: 'PART_TIME', label: 'Parttime' },
   ];
 
-  const jobTitleOptions = [
-    { key: 'DOCTOR', label: 'Bác sĩ' },
-    { key: 'NURSE', label: 'Điều dưỡng' },
-    { key: 'TECHNICIAN', label: 'Kỹ thuật viên' },
-    { key: 'OFFICE_STAFF', label: 'Nhân viên văn phòng' },
-    { key: 'PHARMACIST', label: 'Dược sĩ' },
-  ];
 
   const positionOptions = [
     { key: 'STAFF', label: 'Nhân viên' },
@@ -145,7 +141,7 @@ export const ContractInfoSection: FC = () => {
             name="jobTitle"
             label="Chức danh"
             isRequired
-            options={jobTitleOptions}
+            options={jobTitleOptions(t)}
             disabled={isSubmitting}
           />
 

@@ -45,6 +45,12 @@ export enum StaffAcademicTitleEnum {
   ENGINEER = 'ENGINEER', // Kỹ sư
 }
 
+export enum StaffStatusEnum {
+  WORKING = 'WORKING', // Đang làm việc
+  RESIGNED = 'RESIGNED', // Đã nghỉ việc
+  PENDING = 'PENDING', // Chờ nhận việc
+}
+
 export enum StaffQualificationEnum {
   INTERMEDIATE = 'INTERMEDIATE', // Trung cấp
   COLLEGE = 'COLLEGE', // Cao đẳng
@@ -105,7 +111,7 @@ export interface StaffSalary {
   positionAllowance?: number;
   hazardAllowance?: number;
   mealAllowance?: number;
-  mealAllowanceUnit?: "DAY" | "MONTH";
+  mealAllowanceUnit?: 'DAY' | 'MONTH';
   fuelAllowance?: number;
   phoneAllowance?: number;
   businessTripAllowance?: number;
@@ -127,7 +133,7 @@ export interface StaffSalary {
   dependentsCount?: number;
   hasPersonalIncomeTax?: boolean;
   personalIncomeTaxRate?: number;
-  salaryType: "GROSS" | "NET";
+  salaryType: 'GROSS' | 'NET';
   netSalary?: number;
   grossSalary?: number;
 }
@@ -195,7 +201,10 @@ export interface Staff {
 
   // Detail API returns nested relation format
   rlsStaffDepartments?: { id: string; department: { id: string; code?: string; name: string } }[];
-  rlsStaffRooms?: { id: string; room: { id: string; code?: string; name: string; department?: { id: string; name: string } } }[];
+  rlsStaffRooms?: {
+    id: string;
+    room: { id: string; code?: string; name: string; department?: { id: string; name: string } };
+  }[];
 
   // Detail fields
   identity?: string;

@@ -1,6 +1,12 @@
 // StaffFilters.tsx
+import { NAMESPACES } from '@/i18n/constants';
 import { Input, Select, SelectItem } from '@heroui/react';
 import { IconSearch } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+
+import { StaffJobTitleEnum, StaffPositionEnum, StaffStatusEnum } from '@/types/staff.type';
+
+import { positionOptions } from '../constants/constants';
 
 interface StaffFiltersProps {
   filters: {
@@ -14,9 +20,8 @@ interface StaffFiltersProps {
   setFilters: (f: Partial<StaffFiltersProps['filters']>) => void;
   deptLoading?: boolean;
   roomLoading?: boolean;
-  departmentOptions: { key: string; label: string }[];
-  roomOptions: { key: string; label: string }[];
-  position_options: { key: string; label: string }[];
+  departmentOptions: { value: string; label: string }[];
+  roomOptions: { value: string; label: string }[];
 }
 
 export const StaffFilters: React.FC<StaffFiltersProps> = ({
@@ -26,15 +31,14 @@ export const StaffFilters: React.FC<StaffFiltersProps> = ({
   roomLoading,
   departmentOptions,
   roomOptions,
-  position_options,
 }) => {
-  const baseClass =
-    'bg-white border-1 border-[#E4E4E7] shadow-sm rounded-xl h-10';
-
+  const baseClass = 'bg-white border-1 border-[#E4E4E7] shadow-sm rounded-xl h-10';
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
   const handleSelectChange = (
     key: keyof StaffFiltersProps['filters'],
     val: string,
-    isArray?: boolean
+    isArray?: boolean,
   ) => {
     if (val === 'ALL') {
       setFilters({ [key]: undefined });
@@ -44,69 +48,78 @@ export const StaffFilters: React.FC<StaffFiltersProps> = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-4">
+    <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-4 px-5">
       {/* Search */}
       <Input
-        placeholder="Tìm kiếm"
+        placeholder={tc('actions.search')}
         startContent={<IconSearch size={18} className="text-[#A1A1AA]" />}
         value={filters.search || ''}
         onValueChange={(val) => setFilters({ search: val })}
         classNames={{ inputWrapper: baseClass }}
+        isClearable
       />
 
       {/* Job Title */}
       <Select
-        placeholder="Chức danh"
+        placeholder={t('options.job_title.ALL')}
         classNames={{ trigger: baseClass }}
         selectedKeys={filters.jobTitle ? [filters.jobTitle] : ['ALL']}
-        onSelectionChange={(keys) =>
-          handleSelectChange('jobTitle', Array.from(keys)[0] as string)
-        }
+        onSelectionChange={(keys) => handleSelectChange('jobTitle', Array.from(keys)[0] as string)}
+        // isClearable
       >
-        <SelectItem key="ALL">Tất cả chức danh</SelectItem>
-        <SelectItem key="DOCTOR">Bác sĩ</SelectItem>
-        <SelectItem key="NURSE">Điều dưỡng</SelectItem>
-        <SelectItem key="TECHNICIAN">Kỹ thuật viên</SelectItem>
-        <SelectItem key="MIDWIFE">Hộ sinh</SelectItem>
-        <SelectItem key="PHYSICIAN_ASSISTANT">Y sĩ</SelectItem>
-        <SelectItem key="PHARMACIST">Dược sĩ</SelectItem>
-        <SelectItem key="RECEPTIONIST">Lễ tân</SelectItem>
-        <SelectItem key="MANAGEMENT">Quản trị</SelectItem>
+        {[
+          <SelectItem key="ALL">{t('options.job_title.ALL')}</SelectItem>,
+          ...Object.values(StaffJobTitleEnum).map((status) => (
+            <SelectItem key={status}>{t(`options.job_title.${status}`)}</SelectItem>
+          )),
+        ]}
       </Select>
 
       {/* Position */}
       <Select
-        placeholder="Cấp bậc"
+        placeholder={t('options.staff_position.ALL')}
         classNames={{ trigger: baseClass }}
-        selectedKeys={filters.positions ? [filters.positions[0]] : 'ALL'}
-        onSelectionChange={(keys) =>
-          handleSelectChange('positions', Array.from(keys)[0] as string, true)
-        }
+        // Xử lý selectedKeys: nếu có filters.positions thì lấy giá trị đầu, không thì mặc định 'ALL'
+        selectedKeys={[filters.positions?.[0] ?? 'ALL']}
+        onSelectionChange={(keys) => {
+          const selectedValue = Array.from(keys)[0] as string;
+          // Truyền true vào handleSelectChange nếu bạn xử lý filter dạng mảng (multiple)
+          handleSelectChange('positions', selectedValue, true);
+        }}
+        // isClearable
       >
-        <SelectItem key="ALL">Tất cả cấp bậc</SelectItem>
-        {position_options.map((o) => (
-          <SelectItem key={o.key}>{o.label}</SelectItem>
-        ))}
+        {[
+          <SelectItem key="ALL">{t('options.staff_position.ALL')}</SelectItem>,
+          ...Object.values(StaffPositionEnum).map((status) => (
+            <SelectItem key={status}>{t(`options.staff_position.${status}`)}</SelectItem>
+          )),
+        ]}
       </Select>
 
       {/* Status */}
       <Select
-        placeholder="Trạng thái"
+        placeholder={t('options.staff_status.ALL')}
         classNames={{ trigger: baseClass }}
+        // Đảm bảo selectedKeys luôn là một mảng để tránh lỗi UI
         selectedKeys={filters.status ? [filters.status] : ['ALL']}
-        onSelectionChange={(keys) =>
-          handleSelectChange('status', Array.from(keys)[0] as string)
-        }
+        onSelectionChange={(keys) => {
+          const value = Array.from(keys)[0] as string;
+          handleSelectChange('status', value);
+        }}
+        // isClearable
       >
-        <SelectItem key="ALL">Tất cả trạng thái</SelectItem>
-        <SelectItem key="WORKING">Đang làm việc</SelectItem>
-        <SelectItem key="PENDING">Chờ duyệt</SelectItem>
-        <SelectItem key="RESIGNED">Đã nghỉ</SelectItem>
+        {/* Option mặc định */}
+        {[
+          <SelectItem key="ALL">{t('options.staff_status.ALL')}</SelectItem>,
+          ...Object.values(StaffStatusEnum).map((status) => (
+            <SelectItem key={status}>{t(`options.staff_status.${status}`)}</SelectItem>
+          )),
+        ]}
       </Select>
 
       {/* Department */}
       <Select
-        placeholder="Khoa"
+        placeholder={tc('actions.department')}
         isLoading={deptLoading}
         classNames={{ trigger: baseClass }}
         selectedKeys={filters.departmentId ? [filters.departmentId] : ['ALL']}
@@ -117,8 +130,8 @@ export const StaffFilters: React.FC<StaffFiltersProps> = ({
             roomId: undefined,
           });
         }}
+        isClearable
       >
-        <SelectItem key="ALL">Tất cả khoa</SelectItem>
         {departmentOptions.map((opt) => (
           <SelectItem key={opt.value}>{opt.label}</SelectItem>
         ))}
@@ -126,15 +139,13 @@ export const StaffFilters: React.FC<StaffFiltersProps> = ({
 
       {/* Room */}
       <Select
-        placeholder="Phòng"
+        isClearable
+        placeholder={tc('actions.room')}
         isLoading={roomLoading}
         classNames={{ trigger: baseClass }}
         selectedKeys={filters.roomId ? [filters.roomId] : ['ALL']}
-        onSelectionChange={(keys) =>
-          handleSelectChange('roomId', Array.from(keys)[0] as string)
-        }
+        onSelectionChange={(keys) => handleSelectChange('roomId', Array.from(keys)[0] as string)}
       >
-        <SelectItem key="ALL">Tất cả phòng</SelectItem>
         {roomOptions.map((opt) => (
           <SelectItem key={opt.value}>{opt.label}</SelectItem>
         ))}

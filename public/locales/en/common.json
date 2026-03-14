@@ -117,5 +117,8 @@
     "rejected": "Rejected",
     "pending": "Pending"
   },
-  "select": "Select"
+  "select": "Select",
+  "table": {
+    "empty": "No data"
+  }
 }

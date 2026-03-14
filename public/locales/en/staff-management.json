@@ -153,6 +153,10 @@
         "label": "Insurance No.",
         "placeholder": "Enter social insurance number"
       },
+      "healthInsuranceNumber": {
+        "label": "Health Insurance Number",
+        "placeholder": "Enter Health Insurance Number"
+      },
       "accountNumber": {
         "label": "Account Number",
         "placeholder": "Enter bank account number"
@@ -217,15 +221,30 @@
     }
   },
   "options": {
-    "jobTitle": {
-      "doctor": "Doctor",
-      "nurse": "Nurse",
-      "technician": "Technician",
-      "midwife": "Midwife",
-      "physicianAssistant": "Physician Assistant",
-      "officeStaff": "Office Staff"
+    "job_title": {
+      "ALL": "All Job Titles",
+      "DOCTOR": "Doctor",
+      "NURSE": "Nurse",
+      "TECHNICIAN": "Technician",
+      "MIDWIFE": "Midwife",
+      "PHYSICIAN_ASSISTANT": "Physician Assistant",
+      "OFFICE_STAFF": "Office Staff",
+      "MANAGEMENT": "Management",
+      "LAB_TECHNICIAN": "Lab Technician",
+      "IMAGING_TECHNICIAN": "Imaging Technician",
+      "CASHIER": "Cashier",
+      "RECEPTIONIST": "Receptionist",
+      "WAREHOUSE_KEEPER": "Warehouse Keeper",
+      "PHARMACIST": "Pharmacist",
+      "SALES": "Sales",
+      "TELESALES": "Telesales",
+      "MARKETING": "Marketing",
+      "CUSTOMER_SUPPORT": "Customer Support",
+      "MARKETING_LEAD": "Marketing Lead",
+      "CUSTOMER_SUPPORT_LEAD": "Customer Support Lead"
     },
-    "position": {
+    "staff_position": {
+      "ALL": "All Positions",
       "STAFF": "Staff",
       "HEAD_OF_DEPARTMENT": "Head of Department",
       "DEPUTY_HEAD_OF_DEPARTMENT": "Deputy Head of Department",
@@ -233,6 +252,12 @@
       "MANAGER": "Manager",
       "HEAD_OF_UNIT": "Head of Unit",
       "DEPUTY_MANAGER": "Deputy Manager"
+    },
+    "staff_status": {
+      "ALL": "All Statuses",
+      "WORKING": "Working",
+      "PENDING": "Pending",
+      "RESIGNED": "Resigned"
     },
     "contractType": {
       "official": "Official",
@@ -257,5 +282,43 @@
       "spec1": "Specialist I",
       "spec2": "Specialist II"
     }
+  },
+  "staff_table": {
+    "columns": {
+      "name": "STAFF",
+      "birthday": "BIRTHDAY",
+      "gender": "GENDER",
+      "contact": "CONTACT",
+      "job_title": "JOB TITLE",
+      "position": "POSITION",
+      "departments": "DEPT/ROOM",
+      "work_type": "WORK TYPE",
+      "end_date": "CONTRACT EXPIRY",
+      "actions": "ACTIONS"
+    },
+    "gender": {
+      "MALE": "Male",
+      "FEMALE": "Female",
+      "OTHER": "Other"
+    },
+    "work_type": {
+      "Fulltime": "Full-time",
+      "Parttime": "Part-time"
+    }
+  },
+  "button": {
+    "add_staff": "Add New Staff"
+  },
+  "off": "Resigned",
+  "staff_types": {
+    "official": "Official Staff",
+    "probationary": "Probationary Staff",
+    "apprentice": "Apprentice Staff",
+    "partner": "Partner Staff"
+  },
+  "staff_card": {
+    "contract_expiry": "Contract Expiry",
+    "view_detail": "View Details",
+    "no_date": "—"
   }
 }

@@ -117,5 +117,8 @@
     "rejected": "Từ chối",
     "pending": "Chờ duyệt"
   },
-  "select": "Chọn"
+  "select": "Chọn",
+  "table": {
+    "empty": "Không có dữ liệu"
+  }
 }

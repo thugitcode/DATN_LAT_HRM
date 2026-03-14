@@ -153,6 +153,10 @@
         "label": "Số BHXH",
         "placeholder": "Nhập số BHXH"
       },
+      "healthInsuranceNumber": {
+        "label": "Số BHYT",
+        "placeholder": "Nhập số BHYT"
+      },
       "accountNumber": {
         "label": "Số tài khoản",
         "placeholder": "Nhập số tài khoản"
@@ -217,15 +221,30 @@
     }
   },
   "options": {
-    "jobTitle": {
-      "doctor": "Bác sĩ",
-      "nurse": "Điều dưỡng",
-      "technician": "Kỹ thuật viên",
-      "midwife": "Hộ sinh",
-      "physicianAssistant": "Y sĩ",
-      "officeStaff": "Nhân viên văn phòng"
+    "job_title": {
+      "ALL": "Tất cả chức danh",
+      "DOCTOR": "Bác sĩ",
+      "NURSE": "Điều dưỡng",
+      "TECHNICIAN": "Kỹ thuật viên",
+      "MIDWIFE": "Hộ sinh",
+      "PHYSICIAN_ASSISTANT": "Y sĩ",
+      "OFFICE_STAFF": "Nhân viên văn phòng",
+      "MANAGEMENT": "Quản trị",
+      "LAB_TECHNICIAN": "Kỹ thuật viên xét nghiệm",
+      "IMAGING_TECHNICIAN": "Kỹ thuật viên CĐHA",
+      "CASHIER": "Thu ngân",
+      "RECEPTIONIST": "Lễ tân",
+      "WAREHOUSE_KEEPER": "Thủ kho",
+      "PHARMACIST": "Dược sĩ",
+      "SALES": "Sale",
+      "TELESALES": "Telesale",
+      "MARKETING": "Marketing",
+      "CUSTOMER_SUPPORT": "Chăm sóc khách hàng",
+      "MARKETING_LEAD": "Trưởng nhóm Marketing",
+      "CUSTOMER_SUPPORT_LEAD": "Trưởng nhóm CSKH"
     },
-    "position": {
+    "staff_position": {
+      "ALL": "Tất cả cấp bậc",
       "STAFF": "Nhân viên",
       "HEAD_OF_DEPARTMENT": "Trưởng khoa",
       "DEPUTY_HEAD_OF_DEPARTMENT": "Phó khoa",
@@ -233,6 +252,12 @@
       "MANAGER": "Trưởng phòng",
       "HEAD_OF_UNIT": "Trưởng bộ phận",
       "DEPUTY_MANAGER": "Phó phòng"
+    },
+    "staff_status": {
+      "ALL": "Tất cả trạng thái",
+      "WORKING": "Đang làm việc",
+      "PENDING": "Chờ nhận việc",
+      "RESIGNED": "Đã nghỉ việc"
     },
     "contractType": {
       "official": "Chính thức",
@@ -257,5 +282,43 @@
       "spec1": "BS Chuyên khoa I",
       "spec2": "BS Chuyên khoa II"
     }
+  },
+  "staff_table": {
+    "columns": {
+      "name": "NHÂN VIÊN",
+      "birthday": "NGÀY SINH",
+      "gender": "GIỚI TÍNH",
+      "contact": "LIÊN HỆ",
+      "job_title": "CHỨC DANH",
+      "position": "CẤP BẬC",
+      "departments": "KHOA/PHÒNG",
+      "work_type": "LOẠI HÌNH",
+      "end_date": "NGÀY HẾT HẠN HĐ",
+      "actions": "HÀNH ĐỘNG"
+    },
+    "gender": {
+      "MALE": "Nam",
+      "FEMALE": "Nữ",
+      "OTHER": "Khác"
+    },
+    "work_type": {
+      "Fulltime": "Toàn thời gian",
+      "Parttime": "Bán thời gian"
+    }
+  },
+  "button": {
+    "add_staff": "Thêm mới nhân viên"
+  },
+  "off": "Nghỉ",
+  "staff_types": {
+    "official": "Nhân viên chính thức",
+    "probationary": "Nhân viên thử việc",
+    "apprentice": "Nhân viên học việc",
+    "partner": "Nhân sự hợp tác"
+  },
+  "staff_card": {
+    "contract_expiry": "Hết hạn HĐ",
+    "view_detail": "Xem chi tiết",
+    "no_date": "—"
   }
 }
