@@ -189,6 +189,7 @@ export const StaffFormDrawer = ({ isOpen, onClose, editData }: StaffFormDrawerPr
                 body: "bg-[#F4F4F5] p-0",
                 footer: "border-t bg-white border-[#E4E4E7] p-4 gap-3",
             }}
+            isDismissable={false}
         >
             <DrawerContent>
                 {(handleClose) => (
