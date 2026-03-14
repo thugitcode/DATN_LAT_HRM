@@ -1,9 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
-import { identityQueryOptions } from '@/query-options';
 
 import { apiTokens } from '@/lib/axios';
-import { useBootstrapStaticData } from '@/hooks/common/use-bootstrap-static-data';
-import { MainLayout } from '@/components/layouts/main-layout/main-layout';
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: ({ context: { auth } }) => {

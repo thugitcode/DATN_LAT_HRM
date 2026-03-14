@@ -25,6 +25,10 @@ export const API_ENDPOINTS = {
       TRAINING: '/training',
     },
 
+    PAYROLL_MANAGEMENT: {
+      PAYROLL_FEEDBACK: '/payroll/feedback',
+    },
+
     LEAVE_REQUEST: '/leave-request',
     UPLOAD: '/upload',
   },

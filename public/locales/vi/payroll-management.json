@@ -1,0 +1,70 @@
+{
+  "payrollCalculation": {
+    "title": "Bảng công",
+    "columns": {
+      "stt": "STT",
+      "department": "Khoa/Phòng",
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "job_title": "Chức danh",
+      "salary_template": "Mẫu bảng lương",
+      "base_salary": "Lương CB",
+      "total_gross": "Tổng Gross",
+      "total_paid_working_days": "Tổng công hưởng lương",
+      "total_overtime_hours": "Tổng giờ làm thêm hưởng lương",
+      "kpi_completion": "Hoàn thành KPI",
+      "allowance": "Phụ cấp",
+      "bonus": "Thưởng",
+      "deduction": "Khấu trừ",
+      "net_salary": "Lương Net",
+      "note": "Ghi chú",
+      "status": "Trạng thái",
+      "action": "Thao tác"
+    }
+  },
+
+  "payslipFeedback": {
+    "title": "Phản hồi phiếu lương",
+    "columns": {
+      "stt": "STT",
+      "department": "Khoa/Phòng",
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "net_salary": "Lương Net",
+      "status": "Trạng thái",
+      "confirmed_at": "Thời gian xác nhận",
+      "feedback": "Phản hồi",
+      "action": "Thao tác"
+    }
+  },
+
+  "data_summary": {
+    "tabs": {
+      "attendance_data": "Dữ liệu chấm công",
+      "revenue": "Doanh số",
+      "kpi": "KPI",
+      "other_income": "Các khoản thu nhập khác",
+      "summary_finalize": "Tổng hợp và chốt"
+    }
+  },
+  "attendance_data": {
+    "viewDetail": "Xem chi tiết"
+  },
+
+  "columns": {
+    "stt": "STT",
+    "department": "Khoa/Phòng",
+    "staff_code": "Mã nhân viên",
+    "staff_name": "Tên nhân viên",
+    "total_work_days": "Tổng công",
+    "paid_leave": "Nghỉ phép",
+    "unpaid_leave": "Nghỉ không phép",
+    "on_duty": "Công trực",
+    "compensatory_leave": "Nghỉ bù trực",
+    "holiday_leave": "Nghỉ lễ",
+    "other_leave": "Nghỉ khác",
+    "overtime": "Tăng ca",
+    "compensatory_hours": "Giờ bù",
+    "violation": "Vi phạm"
+  }
+}

@@ -20,8 +20,6 @@ export const Route = createRootRouteWithContext<{
     let isUnauthenticated = false;
     let isUnauthorized = false;
 
-    console.log('error_________________________', error);
-
     if (
       (error instanceof AxiosError && error.status === 401) ||
       error.message.includes('Invalid token')

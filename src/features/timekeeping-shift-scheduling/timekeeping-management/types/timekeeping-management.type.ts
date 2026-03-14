@@ -82,6 +82,12 @@ export interface Summary {
   totalAttendance: number;
   compHours: number;
   compLeave: number;
+
+  compRest: number;
+  socialInsuranceLeave: number;
+  unpaidLeave: number;
+  violationCount: number;
+  totalWorkHours: number;
 }
 
 export interface ShiftEntry {
@@ -93,6 +99,7 @@ export interface ShiftEntry {
 export interface WorkSheetByShiftType {
   staff: StaffTimeKeeping;
   shifts: ShiftEntry[];
+  summary: Summary;
 }
 
 export interface AttendanceByHoursResponse {

@@ -1,0 +1,63 @@
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
+
+import type { ShiftManagementParams } from '@/types';
+import { useMonthDateRange } from '@/hooks/use-month-date-range';
+import { usePaginationConfig } from '@/hooks/use-pagination-config';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import DataTable from '@/components/data-table/data-table';
+import { PageContainer } from '@/components/page-container';
+import { PageFilter } from '@/components/page-filter';
+import { TitlePage } from '@/components/title-page';
+import { useShiftManagementList } from '@/features/timekeeping-shift-scheduling/shift-management/hooks/use-shift-management';
+
+import { usePayrollCalculationColumns } from '../colums/use-payroll-calculation-columns';
+
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-400px)]' } as const;
+
+export const PayrollCalculation = () => {
+  const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
+  const { columns } = usePayrollCalculationColumns();
+
+  const { filters } = useQueryFilter<ShiftManagementParams>();
+  const { departmentId, month, roomId, search, status, page, limit } = filters;
+  const { startDate, endDate } = useMonthDateRange(month);
+
+  const { data, isLoading } = useShiftManagementList({
+    page: filters.page ?? 1,
+    limit: filters.limit ?? 10,
+    startDate,
+    endDate,
+    search: filters.search,
+    departmentId: filters.departmentId,
+    roomId: filters.roomId,
+  });
+
+  const { paginationConfig } = usePaginationConfig({
+    page,
+    limit,
+    total: data?.pagination?.total,
+    totalPage: data?.pagination?.totalPage,
+  });
+
+  return (
+    <PageContainer className="space-y-3">
+      <div className="flex items-center justify-between">
+        <TitlePage title={t('payrollCalculation.title')} />
+
+        <div>Action</div>
+      </div>
+
+      <PageFilter />
+
+      <DataTable
+        dataSource={data?.data ?? []}
+        columns={columns}
+        selectionMode="single"
+        loading={isLoading}
+        classNames={TABLE_CLASS_NAMES}
+        pagination={paginationConfig}
+      />
+    </PageContainer>
+  );
+};

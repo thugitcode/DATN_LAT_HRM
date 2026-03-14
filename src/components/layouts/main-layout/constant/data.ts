@@ -71,6 +71,35 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
   },
 
   {
+    id: '6',
+    path: '/admin/payroll-management',
+    label: t('sidebar.payroll_management'),
+    icon: icons.payroll,
+    children: [
+      {
+        id: '1',
+        label: t('sidebar.payroll_data_summary'),
+        path: '/admin/payroll-management/data-summary',
+      },
+      {
+        id: '2',
+        label: t('sidebar.payroll_calculation'),
+        path: '/admin/payroll-management/payroll-calculation',
+      },
+      {
+        id: '3',
+        label: t('sidebar.payslip_feedback'),
+        path: '/admin/payroll-management/payslip-feedback',
+      },
+      {
+        id: '4',
+        label: t('sidebar.employee_salary_history'),
+        path: '/admin/payroll-management/salary-history',
+      },
+    ],
+  },
+
+  {
     id: '8',
     path: '/admin/other-requests-management',
     label: t('sidebar.other_requests_management'),

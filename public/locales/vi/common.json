@@ -30,7 +30,7 @@
     "apprentice_staff": "Nhân viên học việc",
     "partner_staff": "Nhân sự hợp tác",
     "contract_management": "Quản lý hợp đồng",
-    "payroll_management": "Quản lý lương",
+
     "recruitment_management": "Quản lý tuyển dụng",
     "management_report": "Báo cáo quản trị",
 
@@ -38,7 +38,13 @@
     "business_trip_management": "Quản lý công tác",
     "overtime_management": "Quản lý làm thêm giờ",
     "remote_work_management": "Quản lý làm việc từ xa",
-    "training_registration_management": "Quản lý đăng ký đào tạo"
+    "training_registration_management": "Quản lý đăng ký đào tạo",
+
+    "payroll_management": "Quản lý lương",
+    "payroll_data_summary": "Tổng hợp dữ liệu",
+    "payroll_calculation": "Tính lương",
+    "payslip_feedback": "Phản hồi phiếu lương",
+    "employee_salary_history": "Lịch sử lương nhân viên"
   },
 
   "drawer": {
@@ -46,7 +52,8 @@
     "change_shift_division": "Thay đổi phân ca",
     "explanation_detail": "Giải trình ca",
     "time_sheet_detail": "Chi tiết ca",
-    "profile_staff_detail": "Chi tiết hồ sơ nhân viên"
+    "profile_staff_detail": "Chi tiết hồ sơ nhân viên",
+    "timekeepingDetails": "Chi tiết chấm công"
   },
 
   "button": {
