@@ -52,3 +52,23 @@ export interface Options {
   key: string;
   label: string;
 }
+
+export interface RequestsParams {
+  page?: number;
+  limit?: number;
+  staffId?: string;
+  staffCode?: string;
+  departmentId?: string;
+  roomId?: string;
+  startDate?: string;
+  endDate?: string;
+  position?: StaffPosition;
+  search?: string;
+  month?: string;
+  status?: string;
+  getAll?: boolean;
+  fromDate?: string;
+  toDate?: string;
+
+  [key: string]: unknown;
+}

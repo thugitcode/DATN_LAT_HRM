@@ -3,6 +3,7 @@ import { DrawerType } from '@/store/useDrawer';
 import type { DrawerProps } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
+import { TimekeepingDetails } from '@/features/payroll-management/components/timekeeping-details';
 import { ProfileDetailsDrawer } from '@/features/staff-management/profile-staff/components/profile-details-drawer';
 import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling/explanation-management/components/explanation-detail-drawer';
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
@@ -61,6 +62,16 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
       drawerProps: {
         placement: 'right',
         size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.TIMEKEEPING_DETAILS]: {
+      title: t('drawer.timekeepingDetails'),
+      component: <TimekeepingDetails />,
+      drawerProps: {
+        placement: 'right',
+        size: '5xl',
+        style: { width: '97vw', maxWidth: '97vw' },
         classNames: { body: 'p-0 bg-[#F4F4F5]' },
       },
     },

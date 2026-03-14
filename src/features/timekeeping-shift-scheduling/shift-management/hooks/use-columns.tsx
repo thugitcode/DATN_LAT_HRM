@@ -184,7 +184,7 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
     });
 
     return cols;
-  }, [weeks, month, year, maxShiftsPerRow, onOpen, t, shiftCaLegend]); // ✅ thêm deps
+  }, [weeks, month, year, maxShiftsPerRow, onOpen, t, shiftCaLegend]);
 
   return { columns };
 };

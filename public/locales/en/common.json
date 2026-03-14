@@ -30,7 +30,7 @@
     "apprentice_staff": "Apprentice Staff",
     "partner_staff": "Partner Staff",
     "contract_management": "Contract Management",
-    "payroll_management": "Payroll Management",
+
     "recruitment_management": "Recruitment Management",
     "management_report": "Management Report",
 
@@ -38,7 +38,13 @@
     "business_trip_management": "Business Trip Management",
     "overtime_management": "Overtime Management",
     "remote_work_management": "Remote Work Management",
-    "training_registration_management": "Training Registration Management"
+    "training_registration_management": "Training Registration Management",
+
+    "payroll_management": "Payroll Management",
+    "payroll_data_summary": "Payroll Data Summary",
+    "payroll_calculation": "Payroll Calculation",
+    "payslip_feedback": "Payslip Feedback",
+    "employee_salary_history": "Employee Salary History"
   },
 
   "drawer": {
@@ -46,7 +52,8 @@
     "change_shift_division": "Change Shift Division",
     "explanation_detail": "Shift Explanation",
     "time_sheet_detail": "Shift Details",
-    "profile_staff_detail": "Employee Profile Details"
+    "profile_staff_detail": "Employee Profile Details",
+    "timekeepingDetails": "Timekeeping details"
   },
 
   "button": {

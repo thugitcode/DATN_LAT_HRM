@@ -52,7 +52,7 @@ export abstract class BaseApiService<
   }
 
   async create(data: TCreate, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    return this.request(async () => {      
+    return this.request(async () => {
       const res = await this.instance.post(this.url(), data, config);
       return res.data;
     });
