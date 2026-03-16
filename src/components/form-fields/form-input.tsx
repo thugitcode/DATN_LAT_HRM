@@ -10,7 +10,7 @@ type Props<T extends FieldValues> = BaseFieldProps<T> & {
   type?: 'text' | 'time' | 'date';
   placeholder?: string;
   endContent?: ReactNode
-};
+} & Partial<InputProps>;
 
 export function FormInput<T extends FieldValues>({
   control,
@@ -20,7 +20,8 @@ export function FormInput<T extends FieldValues>({
   placeholder,
   isRequired,
   disabled,
-  endContent
+  endContent,
+  ...props
 }: Props<T>) {
   return (
     <Controller
@@ -50,6 +51,7 @@ export function FormInput<T extends FieldValues>({
           lang="en-GB"
           step={60}
           endContent={endContent}
+          {...props}
         />
       )}
     />

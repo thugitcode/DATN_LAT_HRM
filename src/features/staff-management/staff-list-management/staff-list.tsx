@@ -23,6 +23,7 @@ import { StaffGrid } from './components/staff-grid';
 import { StaffListPrint } from './components/staff-list-print';
 import { StaffTable } from './components/staff-table';
 import { exportStaffTemplate, useStaffExport } from './hooks/use-staff-export';
+import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
 
 const POSITION_OPTIONS = [
   { key: 'STAFF', label: 'Nhân viên' },
@@ -88,8 +89,9 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const workingCount = (response?.metadata?.WORKING as number) || 0;
   const resignedCount = (response?.metadata?.RESIGNED as number) || 0;
   const { exportStaff, onExportStaffTemplate } = useStaffExport(staffData);
-
+  const {setMode} = useControlMode()
   const handleViewDetail = (id: string) => {
+    setMode(ControlMode.edit)
     navigate({
       to: '/admin/staff-management/detail/$id',
       params: { id },

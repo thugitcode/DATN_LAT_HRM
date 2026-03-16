@@ -1,4 +1,4 @@
-import { Textarea, type SlotsToClasses } from '@heroui/react';
+import { Textarea, type SlotsToClasses, type TextAreaProps } from '@heroui/react';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
 
@@ -22,7 +22,7 @@ type Props<T extends FieldValues> = BaseFieldProps<T> & {
         | 'helperWrapper'
       >
     | undefined;
-};
+} & Partial<TextAreaProps>;
 
 export function FormArea<T extends FieldValues>({
   control,
@@ -34,6 +34,7 @@ export function FormArea<T extends FieldValues>({
   minRows = 3,
   maxRows = 8,
   classNames,
+  ...props
 }: Props<T>) {
   return (
     <Controller
@@ -56,6 +57,7 @@ export function FormArea<T extends FieldValues>({
             label: 'text-base! font-normal leading-4 text-[#52525B]!',
             ...classNames,
           }}
+          {...props}
         />
       )}
     />

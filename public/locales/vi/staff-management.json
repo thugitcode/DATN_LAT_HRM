@@ -14,7 +14,7 @@
     "birthday": {
       "required": "Ngày sinh không được để trống",
       "future": "Ngày sinh phải nhỏ hơn ngày hiện tại.",
-      "underage": "Nhân viên phải đủ 18 tuổi trở lên."
+      "underage": "Yêu cầu ngày sinh lớn hơn hoặc bằng 18 tuổi."
     },
     "gender": {
       "required": "Giới tính không được để trống"
@@ -26,7 +26,10 @@
       "format": "Mã số thuế phải là 10 chữ số"
     },
     "insuranceNumber": {
-      "format": "Số BHYT/BHXH phải là 10-15 ký tự số và chữ."
+      "format": "Số BHXH phải là 10-15 ký tự số và chữ."
+    },
+    "healthInsuranceNumber": {
+      "format": "Số BHXH phải là 10 ký tự số và chữ."
     },
     "phone": {
       "required": "Số điện thoại không được để trống",
@@ -63,6 +66,8 @@
     }
   },
   "staffForm": {
+    "addTitle": "Thêm mới nhân viên",
+    "editTitle": "Cập nhật thông tin nhân viên",
     "sections": {
       "personnel": "Thông tin nhân sự",
       "department": "Khoa/phòng làm việc",
@@ -142,7 +147,7 @@
         "label": "Loại hợp đồng"
       },
       "contractDuration": {
-        "label": "Thời hạn hợp đồng",
+        "label": "Thời hạn làm việc",
         "placeholder": "Nhập thời hạn"
       },
       "taxCode": {
@@ -151,11 +156,11 @@
       },
       "insuranceNumber": {
         "label": "Số BHXH",
-        "placeholder": "Nhập số BHXH"
+        "placeholder": "Nhập số bảo hiểm xã hội"
       },
       "healthInsuranceNumber": {
         "label": "Số BHYT",
-        "placeholder": "Nhập số BHYT"
+        "placeholder": "Nhập 10 chữ số BHYT"
       },
       "accountNumber": {
         "label": "Số tài khoản",
@@ -260,10 +265,10 @@
       "RESIGNED": "Đã nghỉ việc"
     },
     "contractType": {
-      "official": "Chính thức",
-      "probation": "Thử việc",
-      "internship": "Học việc/Thực tập",
-      "expert": "Chuyên gia"
+      "FULL_TIME": "Nhân viên chính thức",
+      "PROBATION": "Nhân viên thử việc",
+      "INTERNSHIP": "Nhân viên học việc",
+      "EXPERT_COOPERATION": "Chuyên gia hợp tác"
     },
     "qualification": {
       "intermediate": "Trung cấp",
@@ -320,5 +325,22 @@
     "contract_expiry": "Hết hạn HĐ",
     "view_detail": "Xem chi tiết",
     "no_date": "—"
+  },
+  "staffDetail": {
+    "infoTab": {
+      "title": "Thông tin nhân viên",
+      "buttons": {
+        "edit": "Chỉnh sửa",
+        "save": "Lưu",
+        "cancel": "Hủy"
+      }
+    },
+    "tabs": {
+      "info": "Thông tin nhân viên",
+      "contract": "Thông tin hợp đồng",
+      "salary": "Lương và phúc lợi",
+      "attendance": "Quản lý chấm công",
+      "documents": "Hồ sơ nhân viên"
+    }
   }
 }

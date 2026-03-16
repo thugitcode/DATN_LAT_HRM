@@ -1,5 +1,5 @@
 import { DatePicker } from '@heroui/react';
-import type { DateValue } from '@heroui/react';
+import type { DatePickerProps, DateValue } from '@heroui/react';
 import { parseDate } from '@internationalized/date';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   disabled?: boolean;
   onTrigger?: () => void;
-};
+} & Partial<DatePickerProps>;
 
 export function FormDatePicker<T extends FieldValues>({
   control,
@@ -19,6 +19,7 @@ export function FormDatePicker<T extends FieldValues>({
   isRequired,
   disabled,
   onTrigger,
+  ...props
 }: Props<T>) {
   return (
     <Controller
@@ -47,6 +48,7 @@ export function FormDatePicker<T extends FieldValues>({
             label: cn('text-base font-normal leading-4 text-[#52525B]',
               !!fieldState.error ? 'text-[#F31260]' : 'text-[#52525B]'),
           }}
+          {...props}
         />
       )}
     />

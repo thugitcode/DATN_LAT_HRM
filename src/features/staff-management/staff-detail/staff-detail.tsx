@@ -6,9 +6,18 @@ import { useState } from 'react';
 import { StaffProfile } from '../profile-staff/staff-profile';
 import { SalaryAndBenefits } from '../salary-and-benefits/salary-and-benefits';
 import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
-import { StaffContractInfo, StaffDetailHeader, StaffDetailInfo } from './components';
+import { StaffContractInfo, StaffDetailHeader } from './components';
 import { useStaffDetailTabs } from './hooks/use-staff-detail-tabs';
 import { TAB_KEYS } from './types';
+import { StaffDetailInfo } from './components/staff-detail-info copy';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
+import { icons } from '@/lib/icons';
+import { BtnCancel } from '@/components/btn-cancel';
+import { BtnSave } from '@/components/btn-save';
+import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
+import { useStaffForm } from './hooks/use-staff-form';
+import { Form, FormProvider } from 'react-hook-form';
 
 
 interface StaffDetailProps {
@@ -17,11 +26,14 @@ interface StaffDetailProps {
 
 export const StaffDetail = ({ id }: StaffDetailProps) => {
     const { data: response, isLoading } = useStaffDetail(id);
+    const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
+    const { setMode } = useControlMode()
+    const { handleSubmit, reset, form, onSubmit } = useStaffForm(true, response?.data, () => { })
     const updateStaffMutation = useUpdateStaff();
     const staff = response?.data;
     const [isEditingAll, setIsEditingAll] = useState(false);
     const { staffTabs, activeKey, onSelectionChange, activeTab } = useStaffDetailTabs();
-    
+
     if (isLoading) {
         return (
             <div className="flex h-full items-center justify-center bg-[#F8F9FA]">
@@ -38,46 +50,9 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
         );
     }
 
-    const handleSaveAll = () => {
-        // Collect all edited fields from the form
-        const formEl = document.getElementById('staff-detail-form') as HTMLFormElement;
-        if (formEl) {
-            const formData = new FormData(formEl);
-            const data: Record<string, unknown> = {};
-
-            // Get all unique keys from formData
-            const keys = Array.from(new Set(Array.from((formData as any).keys() as string[])));
-
-            keys.forEach(key => {
-                const values = formData.getAll(key);
-                const isArrayField = ['academicTitles', 'departmentIds', 'roomIds'].includes(key as string);
-
-                if (values.length > 1 || isArrayField) {
-                    // Filter and take first if multiple (unless it's an array field)
-                    if (isArrayField) {
-                        data[key] = values.filter(v => v !== '' && v !== '—');
-                    } else {
-                        const validVal = values.find(v => v !== '' && v !== '—');
-                        data[key] = validVal || null;
-                    }
-                } else {
-                    const value = values[0] as string;
-                    if (value === '—' || value === '') {
-                        data[key] = null;
-                    } else {
-                        data[key] = value;
-                    }
-                }
-            });
-
-            updateStaffMutation.mutate({ id, data }, {
-                onSuccess: () => setIsEditingAll(false),
-            });
-        }
-    };
-
     const handleCancelAll = () => {
         setIsEditingAll(false);
+        setMode(ControlMode.view, null)
     };
 
     return (
@@ -87,64 +62,63 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
             <div className="w-full">
                 <Tabs
                     variant="underlined"
-                    aria-label="Staff detail tabs"
+                    aria-label={t("staffDetail.tabs.info")}
                     selectedKey={activeKey}
                     onSelectionChange={(key) => onSelectionChange(key as TAB_KEYS)}
                 >
-                    <Tab key={TAB_KEYS.INFO} title="Thông tin nhân viên">
-                        {/* Title + Global Edit/Save/Cancel */}
-                        <div className="flex items-center justify-between mt-4 mb-4">
-                            <h2 className="text-lg font-bold text-[#11181C]">Thông tin nhân viên</h2>
-                            <div className="flex items-center gap-2">
-                                {isEditingAll ? (
-                                    <>
-                                        <Button
-                                            variant="bordered"
-                                            size="sm"
-                                            className="bg-white border-[#E4E4E7] text-[#71717A] font-semibold h-9 rounded-lg px-4"
-                                            startContent={<IconX size={16} />}
-                                            onPress={handleCancelAll}
-                                            isDisabled={updateStaffMutation.isPending}
-                                        >
-                                            Hủy
-                                        </Button>
-                                        <Button
-                                            color="primary"
-                                            size="sm"
-                                            className="h-9 px-4 font-semibold rounded-lg bg-[#006FEE]"
-                                            startContent={<IconDeviceFloppy size={16} />}
-                                            onPress={handleSaveAll}
-                                            isLoading={updateStaffMutation.isPending}
-                                        >
-                                            Lưu tất cả
-                                        </Button>
-                                    </>
-                                ) : (
-                                    <Button
-                                        variant="flat"
-                                        size="sm"
-                                        className="bg-[#F4F4F5] text-[#11181C] font-semibold h-9 rounded-lg px-4"
-                                        startContent={<IconPencil size={16} />}
-                                        onPress={() => setIsEditingAll(true)}
-                                    >
-                                        Chỉnh sửa tất cả
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                        <StaffDetailInfo
-                            staff={staff}
-                            isEditingAll={isEditingAll}
-                            onUpdate={(data) => updateStaffMutation.mutate({ id, data })}
-                            isUpdating={updateStaffMutation.isPending}
-                        />
+                    <Tab key={TAB_KEYS.INFO} title={t("staffDetail.tabs.info")}>
+                        <FormProvider {...form}>
+                            <Form id="staff-detail-form" onSubmit={() => onSubmit()}>
+                                <div className="flex items-center justify-between mt-0.75 mb-3.75">
+                                    <h2 className="text-2xl font-medium text-[#11181C]">
+                                        {t("staffDetail.infoTab.title")}
+                                    </h2>
+                                    <div className="flex items-center gap-2">
+                                        {isEditingAll ? (
+                                            <>
+                                                <BtnCancel
+                                                    onPress={handleCancelAll}
+                                                    isDisabled={updateStaffMutation.isPending}
+                                                />
+                                                <BtnSave
+                                                    type='submit'
+                                                    form='staff-detail-form'
+                                                    // onPress={handleSaveAll}
+                                                    isLoading={updateStaffMutation.isPending}
+                                                />
+                                            </>
+                                        ) : (
+                                            <Button
+                                                variant="bordered"
+                                                className="border-primary text-primary font-semibold rounded-xl px-4"
+                                                startContent={<icons.edit stroke='#006FEE' className='size-5' />}
+                                                onPress={() => { setIsEditingAll(true); setMode(ControlMode.edit, "ALL") }}
+                                            >
+                                                {t("staffDetail.infoTab.buttons.edit")}
+                                            </Button>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className='overflow-auto h-[calc(100vh-310px)]'>
+                                    <StaffDetailInfo
+                                        staff={staff}
+                                    />
+                                </div>
+                            </Form>
+                        </FormProvider>
                     </Tab>
-                    <Tab key={TAB_KEYS.CONTRACT} title="Thông tin hợp đồng">
+                    <Tab key={TAB_KEYS.CONTRACT} title={t("staffDetail.tabs.contract")}>
                         <StaffContractInfo staffId={id} />
                     </Tab>
-                    <Tab key={TAB_KEYS.SALARY} title="Lương và phúc lợi" ><SalaryAndBenefits /></Tab>
-                    <Tab key={TAB_KEYS.ATTENDANCE} title="Quản lý chấm công" ><TimeAttendanceManagementTab /></Tab>
-                    <Tab key={TAB_KEYS.DOCUMENTS} title="Hồ sơ nhân viên" ><StaffProfile /></Tab>
+                    <Tab key={TAB_KEYS.SALARY} title={t("staffDetail.tabs.salary")}>
+                        <SalaryAndBenefits />
+                    </Tab>
+                    <Tab key={TAB_KEYS.ATTENDANCE} title={t("staffDetail.tabs.attendance")}>
+                        <TimeAttendanceManagementTab />
+                    </Tab>
+                    <Tab key={TAB_KEYS.DOCUMENTS} title={t("staffDetail.tabs.documents")}>
+                        <StaffProfile />
+                    </Tab>
                 </Tabs>
             </div>
         </PageContainer>

@@ -26,7 +26,10 @@
       "format": "Tax code must be 10 digits"
     },
     "insuranceNumber": {
-      "format": "Insurance number must be 10-15 alphanumeric characters"
+      "format": "Social insurance number must be 10-15 alphanumeric characters."
+    },
+    "healthInsuranceNumber": {
+      "format": "Health insurance number must be exactly 10 digits."
     },
     "phone": {
       "required": "Phone number is required",
@@ -63,6 +66,8 @@
     }
   },
   "staffForm": {
+    "addTitle": "Add New Staff",
+    "editTitle": "Update Staff Information",
     "sections": {
       "personnel": "Personnel Information",
       "department": "Department/Work Room",
@@ -150,12 +155,12 @@
         "placeholder": "Enter tax code"
       },
       "insuranceNumber": {
-        "label": "Insurance No.",
+        "label": "Social Insurance No.",
         "placeholder": "Enter social insurance number"
       },
       "healthInsuranceNumber": {
-        "label": "Health Insurance Number",
-        "placeholder": "Enter Health Insurance Number"
+        "label": "Health Insurance No.",
+        "placeholder": "Enter health insurance number"
       },
       "accountNumber": {
         "label": "Account Number",
@@ -260,10 +265,10 @@
       "RESIGNED": "Resigned"
     },
     "contractType": {
-      "official": "Official",
-      "probation": "Probationary",
-      "internship": "Apprentice/Intern",
-      "expert": "Expert"
+      "FULL_TIME": "Full-time Employee",
+      "PROBATION": "Probationary Employee",
+      "INTERNSHIP": "Intern",
+      "EXPERT_COOPERATION": "Cooperating Expert"
     },
     "qualification": {
       "intermediate": "Intermediate",
@@ -320,5 +325,22 @@
     "contract_expiry": "Contract Expiry",
     "view_detail": "View Details",
     "no_date": "—"
+  },
+  "staffDetail": {
+    "infoTab": {
+      "title": "Staff Information",
+      "buttons": {
+        "edit": "Edit",
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "tabs": {
+      "info": "Employee Info",
+      "contract": "Contract Info",
+      "salary": "Salary & Benefits",
+      "attendance": "Attendance",
+      "documents": "Documents"
+    }
   }
 }

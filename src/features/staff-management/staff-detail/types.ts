@@ -1,5 +1,7 @@
 // types/contract.type.ts
 
+import type { STAFF_SECTION_KEYS } from "./constants/data";
+
 export interface ContractDetailResponse {
   id: string;
   contractType: string;
@@ -172,3 +174,5 @@ export const staffTabs = [
   { key: TAB_KEYS.ATTENDANCE, label: "Quản lý chấm công" },
   { key: TAB_KEYS.DOCUMENTS, label: "Hồ sơ nhân viên" },
 ];
+
+export type StaffSectionKey = typeof STAFF_SECTION_KEYS[keyof typeof STAFF_SECTION_KEYS];
