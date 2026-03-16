@@ -219,6 +219,7 @@ export interface Staff {
   certificateExpiryDate?: string;
   taxCode?: string;
   insuranceNumber?: string;
+  healthInsuranceNumber?: string;
   accountNumber?: string;
   beneficiaryName?: string;
   bankName?: string;
