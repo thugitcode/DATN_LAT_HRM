@@ -1,7 +1,7 @@
 // sections/SalaryStructureSection.tsx
 import type { FC } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { IconCurrencyDollar } from '@tabler/icons-react';
+import { IconCurrencyDollar, IconMoneybag } from '@tabler/icons-react';
 import {
     Dropdown,
     DropdownTrigger,
@@ -13,6 +13,7 @@ import { IconChevronDown } from '@tabler/icons-react';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { FormLabel } from '@/components/form-fields/form-label';
 import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { icons } from '@/lib/icons';
 
 
 export const SalaryStructureSection: FC = () => {
@@ -24,7 +25,7 @@ export const SalaryStructureSection: FC = () => {
     return (
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-2">
-                <IconCurrencyDollar size={20} className="text-[#11181C]" />
+                {icons.moneyBag}
                 <h3 className="text-[15px] font-bold text-[#11181C]">Cấu trúc lương</h3>
             </div>
 

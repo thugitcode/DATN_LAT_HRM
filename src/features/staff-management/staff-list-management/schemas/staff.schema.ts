@@ -38,7 +38,7 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
             ),
 
         // --- Thông tin nhân sự ---
-        code: requiredString(t("errors.code.required")),
+        code: z.string().optional(),
 
         name: z.preprocess(
             normalizeString,

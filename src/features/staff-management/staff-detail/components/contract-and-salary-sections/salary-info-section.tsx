@@ -2,7 +2,7 @@
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { FormSelect } from '@/components/form-fields/form-select';
 import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
-import { IconCurrencyDollar } from '@tabler/icons-react';
+import { IconCoinFilled } from '@tabler/icons-react';
 import type { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -19,7 +19,7 @@ export const SalaryInfoSection: FC = () => {
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
       <div className="flex items-center gap-2 mb-1">
-        <IconCurrencyDollar size={20} className="text-[#11181C]" />
+        <IconCoinFilled size={20} className="text-[#11181C]" />
         <h3 className="text-[15px] font-bold text-[#11181C]">Thông tin lương</h3>
       </div>
 

@@ -19,7 +19,8 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({
   isDetailsEmployee = false,
 }) => {
   const { month, year } = useYearMonth();
-
+  console.log(data,444);
+  
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
     () => new Set(data?.map((d) => d.staff.id) ?? []),
   );
