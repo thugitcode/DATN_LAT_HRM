@@ -3,13 +3,16 @@ import { useShiftManagementGrid } from "@/features/timekeeping-shift-scheduling/
 import { LegendDot } from "@/features/timekeeping-shift-scheduling/timekeeping-management/components/timekeeping-management-legend";
 import { useMonthDateRange } from "@/hooks/use-month-date-range";
 import { useQueryFilter } from "@/hooks/useQueryFilter";
+import { NAMESPACES } from "@/i18n/constants";
 import type { ShiftManagementParams, StaffSchedule } from "@/types";
 import { ShiftTypeEnum } from "@/types/shift-management.type";
 import { useParams } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 export const ShiftManagementContainer = () => {
     const { id } = useParams({ strict: false })
     const { filters } = useQueryFilter<ShiftManagementParams>();
+    const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
 
     const { startDate, endDate } = useMonthDateRange(filters.month);
 
@@ -24,32 +27,27 @@ export const ShiftManagementContainer = () => {
         roomId: filters.roomId,
         staffId: id
     });
-    const SHIFT_CA_LEGEND = [
-        {
-            label: 'Ca cố định',
-            color: '#006FEE',
-            status: ShiftTypeEnum.FIXED,
-            number: data?.metadata?.FIXED as number
-        },
-        {
-            label: 'Ca gãy',
-            color: '#F5A524',
-            status: ShiftTypeEnum.SPLIT,
-            number: data?.metadata?.SPLIT as number
-        },
-        {
-            label: 'Ca trực',
-            color: '#7828C8',
-            status: ShiftTypeEnum.ON_DUTY,
-            number: data?.metadata?.ON_DUTY as number
-        },
-        {
-            label: 'Ca linh hoạt',
-            color: '#17C964',
-            status: ShiftTypeEnum.FLEXIBLE,
-            number: data?.metadata?.FLEXIBLE as number
-        }
-    ];
+
+    // 1. Định nghĩa cấu hình màu sắc/meta cho từng loại ca
+    const SHIFT_CONFIG = {
+        [ShiftTypeEnum.FIXED]: { color: '#006FEE' },
+        [ShiftTypeEnum.SPLIT]: { color: '#F5A524' },
+        [ShiftTypeEnum.ON_DUTY]: { color: '#7828C8' },
+        [ShiftTypeEnum.FLEXIBLE]: { color: '#17C964' },
+    };
+
+    // 2. Map dữ liệu từ Enum để tạo ra Legend
+    const SHIFT_CA_LEGEND = Object.values(ShiftTypeEnum).map((status) => {
+        const config = SHIFT_CONFIG[status];
+        const count = (data?.metadata?.shiftTypesCount as any)?.[status] || 0;
+
+        return {
+            label: t(`shift_type.${status}`), // Map key từ i18n
+            color: config.color,
+            status: status,
+            number: count as number
+        };
+    });
     const StatsSection = ({ stats }: { stats: { label: string; color: string; number: number } }) => {
         return (
             <div className="flex px-6 py-[12.5px] border-r-1 border-[#11111126]">

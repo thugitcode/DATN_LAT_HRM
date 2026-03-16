@@ -44,8 +44,8 @@ export const useStaffForm = (
                     || editData.departments?.[0]?.id || "",
                 roomIds: editData.rlsStaffRooms?.[0]?.room?.id
                     || editData.rooms?.[0]?.id || "",
-                workType: editData.currentWorkType || editData.workType || "FULL_TIME",
-                contractType: editData.currentContractType || "FULL_TIME",
+                workType: editData.currentWorkType || editData.workType,
+                contractType: editData.currentContractType,
             });
         } else {
             reset(STAFF_FORM_DEFAULT_VALUES);

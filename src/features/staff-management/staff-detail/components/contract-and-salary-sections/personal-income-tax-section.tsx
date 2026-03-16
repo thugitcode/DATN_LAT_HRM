@@ -5,6 +5,7 @@ import { IconReceiptTax } from '@tabler/icons-react';
 import { FormCheckbox } from '@/components/form-fields/form-checkbox';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { icons } from '@/lib/icons';
 
 export const PersonalIncomeTaxSection: FC = () => {
     const { control, watch, formState: { isSubmitting } } = useFormContext();
@@ -16,7 +17,7 @@ export const PersonalIncomeTaxSection: FC = () => {
     return (
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-1">
-                <IconReceiptTax size={20} className="text-[#11181C]" />
+                {icons.bill}
                 <h3 className="text-[15px] font-bold text-[#11181C]">Thuế TNCN</h3>
             </div>
 

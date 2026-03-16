@@ -12,25 +12,22 @@ import {
   Drawer,
   DrawerBody,
   DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
+  DrawerHeader
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormProvider, useForm } from 'react-hook-form';
 
 import { BtnCancel } from '@/components/btn-cancel';
 
+import { useQueryClient } from '@tanstack/react-query';
+import { useStaffDetailTabs } from '../hooks/use-staff-detail-tabs';
 import { staffContractSchema, type StaffContractFormValues } from '../schemas';
 import { ContractInfoSection } from './contract-and-salary-sections/contract-info-section';
-import { HealthCareInsuranceSection } from './contract-and-salary-sections/health-care-insurance-section';
 import { InsuranceAndUnionSection } from './contract-and-salary-sections/insurance-and-union-section';
 import { LeaveBenefitsSection } from './contract-and-salary-sections/leave-benefits-section';
 import { PersonalIncomeTaxSection } from './contract-and-salary-sections/personal-income-tax-section';
 import { SalaryInfoSection } from './contract-and-salary-sections/salary-info-section';
 import { SalaryStructureSection } from './contract-and-salary-sections/salary-structure-section';
-import { useStaffDetailTabs } from '../hooks/use-staff-detail-tabs';
-import { useQueryClient } from '@tanstack/react-query';
-import { TAB_KEYS } from '../types';
 
 // import các query hooks khác giữ nguyên...
 
@@ -307,7 +304,6 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                 <div className="flex flex-col gap-6 pb-18">
                   <ContractInfoSection />
                   <InsuranceAndUnionSection />
-                  <HealthCareInsuranceSection />
                   {/* Sau này thêm: WorkingAreaSection, InsuranceSection, ... */}
                 </div>
 

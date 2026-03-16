@@ -342,5 +342,11 @@
       "attendance": "Quản lý chấm công",
       "documents": "Hồ sơ nhân viên"
     }
+  },
+  "shift_type": {
+    "FIXED": "Ca cố định",
+    "SPLIT": "Ca gãy",
+    "ON_DUTY": "Ca trực",
+    "FLEXIBLE": "Ca linh hoạt"
   }
 }

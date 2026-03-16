@@ -342,5 +342,11 @@
       "attendance": "Attendance",
       "documents": "Documents"
     }
+  },
+  "shift_type": {
+    "FIXED": "Fixed Shift",
+    "SPLIT": "Split Shift",
+    "ON_DUTY": "On-duty Shift",
+    "FLEXIBLE": "Flexible Shift"
   }
 }

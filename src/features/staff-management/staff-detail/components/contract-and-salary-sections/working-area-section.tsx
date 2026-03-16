@@ -78,7 +78,7 @@ export const WorkingAreaSection: FC = () => {
                             {fields.length !==1 && <Button
                                 isIconOnly
                                 variant="light"
-                                color="danger"
+                                // color="danger"
                                 size="sm"
                                 className="top-6"
                                 onPress={() => remove(index)}

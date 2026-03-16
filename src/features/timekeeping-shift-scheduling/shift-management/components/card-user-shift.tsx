@@ -56,7 +56,7 @@ const ShiftTime: FC<Pick<CardUserShiftProps, 'type' | 'standardHours' | 'startTi
       <span className="text-base font-medium text-[#A1A1AA]">
         {isFlexible
           ? t('card_user_shift.standard_hours', { hours: formatStandardHours(standardHours) })
-          : `${startTime?.slice(0, 5)} - ${endTime?.slice(0, 5)}`}
+          : `${(startTime ?? "")?.slice(0, 5)} - ${(endTime ?? "")?.slice(0, 5)}`}
       </span>
     );
   });

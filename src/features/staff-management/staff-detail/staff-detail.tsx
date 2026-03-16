@@ -9,7 +9,7 @@ import { TimeAttendanceManagementTab } from '../time-attendance-management/time-
 import { StaffContractInfo, StaffDetailHeader } from './components';
 import { useStaffDetailTabs } from './hooks/use-staff-detail-tabs';
 import { TAB_KEYS } from './types';
-import { StaffDetailInfo } from './components/staff-detail-info copy';
+import { StaffDetailInfo } from './components/staff-detail-info';
 import { useTranslation } from 'react-i18next';
 import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
@@ -100,9 +100,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                                     </div>
                                 </div>
                                 <div className='overflow-auto h-[calc(100vh-310px)]'>
-                                    <StaffDetailInfo
-                                        staff={staff}
-                                    />
+                                    <StaffDetailInfo />
                                 </div>
                             </Form>
                         </FormProvider>

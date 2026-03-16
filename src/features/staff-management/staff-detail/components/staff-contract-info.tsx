@@ -57,6 +57,7 @@ import { roomQueryOptions } from '@/services/query-options/room.query';
 import { shiftTemplateQueryOptions } from '@/services/query-options/shift-template.query';
 import { normalizeAxiosError } from '@/lib/axios';
 import StaffContractEmptyState from './staff-contract-empty-state';
+import { ControlMode, useControlMode } from '../../salary-and-benefits/hooks/use-control-mode-handle';
 
 interface StaffContractInfoProps {
     staffId: string;
@@ -201,6 +202,7 @@ const initFormFromContract = (contract: StaffContract | undefined): EditFormData
 
 export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { setMode } = useControlMode()
     const { data: response, isLoading } = useStaffContracts(staffId);
     const contracts = response?.data || [];
     const currentContract = contracts.find((c) => c.status === ContractStatusEnum.SIGNED) || contracts[0];
@@ -430,7 +432,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 <Button variant="flat" size="sm" startContent={<IconPencil size={18} />} className="bg-[#F4F4F5] text-[#11181C] font-semibold h-9 rounded-xl px-4" onPress={handleStartEdit}>
                                     Chỉnh sửa
                                 </Button>
-                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setSelectedContractId(undefined); onOpen(); }}>
+                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setSelectedContractId(undefined); onOpen(); setMode(ControlMode.create) }}>
                                     Thêm mới hợp đồng
                                 </Button>
                             </>

@@ -128,7 +128,7 @@ export const WorkShiftsForm = () => {
       ? { departments: toNameKeyOptions(staff.departments), rooms: toNameKeyOptions(staff.rooms) }
       : { departments: [], rooms: [] },
   );
-
+  
   const initialDays = useMemo<DayItem[]>(() => {
     if (!date) return [];
     const initialShift: ShiftDetailItem = shift
@@ -274,7 +274,7 @@ export const WorkShiftsForm = () => {
         )}
       >
         <div ref={scrollContainerRef} className="w-full space-y-6 overflow-auto px-6">
-          <WrapperBoxForm title="Thông tin nhân sự">
+          <WrapperBoxForm title={t("work_shifts_form.staff_info")}>
             <div className="grid grid-cols-2 gap-4">
               <FormAutocomplete
                 control={control}
@@ -312,7 +312,7 @@ export const WorkShiftsForm = () => {
             </div>
           </WrapperBoxForm>
 
-          <WrapperBoxForm title="Thông tin ca làm việc">
+          <WrapperBoxForm title={t("work_shifts_form.shift_info")}>
             <div className="mb-4 grid grid-cols-2 gap-3">
               <FormDatePicker
                 control={control}

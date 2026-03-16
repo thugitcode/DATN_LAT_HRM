@@ -21,19 +21,11 @@ import { cn } from '@/lib/utils';
 import { Button, Checkbox, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import { WorkingAreaSection } from './working-area-section';
-
-// Nếu bạn có FormMultiSelect hoặc FormCheckboxGroup thì càng tốt
-// tạm thời giả sử bạn chưa có → mình sẽ xử lý ngày làm việc bằng cách thủ công hoặc sau
+import { icons } from '@/lib/icons';
 
 export const ContractInfoSection: FC = () => {
   const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
-  const {t} = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
-  // Master data
-  const { data: departmentsRes } = useQuery(departmentQueryOptions.list({ getAll: true }));
-  const departments = departmentsRes?.data || [];
-
-  const { data: roomsRes } = useQuery(roomQueryOptions.list({ getAll: true }));
-  const rooms = roomsRes?.data || [];
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
 
   const { data: managersRes } = useStaffList({
     getAll: true,
@@ -50,8 +42,6 @@ export const ContractInfoSection: FC = () => {
 
   // Watch
   const shiftType = watch('shiftType');
-  const departmentId = watch('departmentId');
-
   // Chuẩn bị options cho các Select
   const contractTypeOptions = [
     { key: 'FULL_TIME', label: 'Nhân viên chính thức' },
@@ -74,28 +64,11 @@ export const ContractInfoSection: FC = () => {
     { key: 'DEPUTY_MANAGER', label: 'Phó phòng' },
   ];
 
-  const durationUnitOptions = [
-    { key: 'YEAR', label: 'Năm' },
-    { key: 'MONTH', label: 'Tháng' },
-  ];
-
   const shiftTypeOptions = [
     { key: 'FIXED', label: 'Ca cố định' },
     { key: 'FLEXIBLE', label: 'Ca linh hoạt' },
     { key: 'SPLIT', label: 'Ca gãy' },
   ];
-
-  const departmentOptions = departments.map(d => ({
-    key: d.id,
-    label: d.name,
-  }));
-
-  const roomOptions = rooms
-    .filter(r => !departmentId || r.department?.id === departmentId)
-    .map(r => ({
-      key: r.id,
-      label: r.name,
-    }));
 
   const managerOptions = managers.map(m => ({
     key: m.id,
@@ -109,10 +82,18 @@ export const ContractInfoSection: FC = () => {
     { key: 'C3', label: 'Ca 3 (22:00 - 06:00)' },
   ];
 
+  const WORKING_TIME_UNITS = [
+    { key: "DAY", label: "Ngày" },
+    { key: "WEEK", label: "Tuần" },
+    { key: "MONTH", label: "Tháng" },
+  ];
+
+  const workingTimeUnit = watch("workingTimeUnit") || "MONTH";
+  
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
       <div className="flex items-center gap-2 mb-2">
-        <IconFileDescription size={20} className="text-[#11181C]" />
+        {icons.archiveBook}
         <h3 className="text-[15px] font-bold text-[#11181C]">Thông tin hợp đồng</h3>
       </div>
 
@@ -261,15 +242,17 @@ export const ContractInfoSection: FC = () => {
           selectionMode='multiple'
         />
 
-        <div className={cn(shiftType === 'FIXED' ? "grid-cols-2" : "grid-cols-1", "grid gap-4 items-end")}>
-          <FormSelect
-            control={control}
-            name="shiftType"
-            label="Loại hình làm việc theo ca"
-            isRequired
-            options={shiftTypeOptions}
-            disabled={isSubmitting}
-          />
+        <div className={cn(shiftType === 'FIXED' ? "grid grid-cols-2" : "flex w-full", "gap-4 items-end")}>
+          <div className='flex-1'>
+            <FormSelect
+              control={control}
+              name="shiftType"
+              label="Loại hình làm việc theo ca"
+              isRequired
+              options={shiftTypeOptions}
+              disabled={isSubmitting}
+            />
+          </div>
 
           {shiftType === 'FIXED' && (
             <FormSelect
@@ -281,40 +264,88 @@ export const ContractInfoSection: FC = () => {
               disabled={isSubmitting}
             />
           )}
-        </div>
+          <div className="flex flex-col gap-2 col-span-2 flex-1">
+            <div className="flex flex-col gap-1.5">
+              <FormLabel
+                label="Thời gian làm việc"
+                isRequired
+                isError={!!errors.workingTime}
+              />
 
-        {shiftType === 'FIXED' && (
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[#11181C]">
-              Ngày làm việc <span className="text-danger">*</span>
-            </label>
-            <div className="flex flex-wrap gap-4">
-              {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'].map((day, idx) => {
-                const dayValue = idx === 6 ? 0 : idx + 1;
-                return (
-                  // Nếu chưa có FormCheckboxGroup, tạm dùng Checkbox gốc
-                  // hoặc bạn tạo thêm component FormCheckbox sau
-                  <Checkbox
-                    key={day}
-                    isSelected={watch('workingDays')?.includes(dayValue) ?? false}
-                    onValueChange={checked => {
-                      const current = watch('workingDays') || [];
-                      if (checked) {
-                        setValue('workingDays', [...current, dayValue], { shouldValidate: true });
-                      } else {
-                        setValue('workingDays', current.filter(d => d !== dayValue), { shouldValidate: true });
-                      }
-                    }}
-                    size="sm"
-                  >
-                    {day}
-                  </Checkbox>
-                );
-              })}
+              <FormNumberInput
+                control={control}
+                name="workingTime"
+                placeholder="Nhập"
+                isRequired
+                disabled={isSubmitting}
+                endContent={
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        variant="bordered"
+                        isDisabled={isSubmitting}
+                        className="h-8 min-h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white hover:bg-gray-50"
+                        endContent={<IconChevronDown size={14} />}
+                      >
+                        {WORKING_TIME_UNITS.find((u) => u.key === workingTimeUnit)?.label}
+                      </Button>
+                    </DropdownTrigger>
+
+                    <DropdownMenu
+                      aria-label="Chọn đơn vị"
+                      selectionMode="single"
+                      disallowEmptySelection
+                      selectedKeys={new Set([workingTimeUnit])}
+                      onSelectionChange={(keys) => {
+                        const unit = Array.from(keys)[0] as string;
+                        setValue("workingTimeUnit", unit, { shouldValidate: true });
+                      }}
+                    >
+                      {WORKING_TIME_UNITS.map((unit) => (
+                        <DropdownItem key={unit.key}>
+                          {unit.label}
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
+                }
+              />
             </div>
           </div>
-        )}
+        </div>
       </div>
-    </div>
+
+      {shiftType === 'FIXED' && (
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-[#11181C]">
+            Ngày làm việc <span className="text-danger">*</span>
+          </label>
+          <div className="flex flex-wrap gap-4">
+            {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'].map((day, idx) => {
+              const dayValue = idx === 6 ? 0 : idx + 1;
+              return (
+                // Nếu chưa có FormCheckboxGroup, tạm dùng Checkbox gốc
+                // hoặc bạn tạo thêm component FormCheckbox sau
+                <Checkbox
+                  key={day}
+                  isSelected={watch('workingDays')?.includes(dayValue) ?? false}
+                  onValueChange={checked => {
+                    const current = watch('workingDays') || [];
+                    if (checked) {
+                      setValue('workingDays', [...current, dayValue], { shouldValidate: true });
+                    } else {
+                      setValue('workingDays', current.filter(d => d !== dayValue), { shouldValidate: true });
+                    }
+                  }}
+                  size="sm"
+                >
+                  {day}
+                </Checkbox>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div >
   );
 };
