@@ -51,6 +51,32 @@
     "viewDetail": "Xem chi tiết"
   },
 
+  "kpi": {
+    "title": "KPI",
+    "validation": {
+      "staff_id_required": "Mã nhân viên không được để trống",
+      "name_required": "Tên nhân viên không được để trống",
+      "department_required": "Khoa làm việc không được để trống",
+      "room_required": "Phòng làm việc không được để trống",
+      "kpi_score_required": "Điểm KPI không được để trống",
+      "kpi_score_range": "Điểm KPI phải là số từ 0 đến 100",
+      "evaluator_required": "Người đánh giá không được để trống",
+      "rating_required": "Xếp loại không được để trống"
+    },
+    "form": {
+      "staff_info": "Thông tin nhân viên",
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "department": "Khoa làm việc",
+      "room": "Phòng làm việc",
+      "kpi_section": "Điểm KPI",
+      "kpi_score": "Điểm KPI",
+      "evaluator": "Người đánh giá",
+      "rank": "Xếp loại",
+      "note": "Ghi chú"
+    }
+  },
+
   "columns": {
     "stt": "STT",
     "department": "Khoa/Phòng",
@@ -65,7 +91,13 @@
     "other_leave": "Nghỉ khác",
     "overtime": "Tăng ca",
     "compensatory_hours": "Giờ bù",
-    "violation": "Vi phạm"
+    "violation": "Vi phạm",
+    "kpi_score": "Điểm KPI",
+    "ranking": "Xếp loại",
+    "evaluator": "Người đánh giá",
+    "source": "Nguồn",
+    "status": "Trạng thái",
+    "actions": "Thao tác"
   },
 
   "revenue": {
