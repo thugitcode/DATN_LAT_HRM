@@ -1,0 +1,103 @@
+{
+  "payrollCalculation": {
+    "title": "Timesheet & Payroll",
+    "columns": {
+      "stt": "No.",
+      "department": "Department/Ward",
+      "staff_code": "Staff Code",
+      "staff_name": "Full Name",
+      "job_title": "Job Title",
+      "salary_template": "Salary Template",
+      "base_salary": "Base Salary",
+      "total_gross": "Total Gross",
+      "total_paid_working_days": "Total Paid Days",
+      "total_overtime_hours": "Total Paid OT Hours",
+      "kpi_completion": "KPI Completion",
+      "allowance": "Allowance",
+      "bonus": "Bonus",
+      "deduction": "Deduction",
+      "net_salary": "Net Salary",
+      "note": "Note",
+      "status": "Status",
+      "action": "Action"
+    }
+  },
+
+  "payslipFeedback": {
+    "title": "Payslip Feedback",
+    "columns": {
+      "stt": "No.",
+      "department": "Department/Ward",
+      "staff_code": "Staff Code",
+      "staff_name": "Full Name",
+      "net_salary": "Net Salary",
+      "status": "Status",
+      "confirmed_at": "Confirmation Time",
+      "feedback": "Feedback",
+      "action": "Action"
+    }
+  },
+
+  "data_summary": {
+    "tabs": {
+      "attendance_data": "Attendance Data",
+      "revenue": "Revenue/Sales",
+      "kpi": "KPI",
+      "other_income": "Other Income",
+      "summary_finalize": "Summary & Finalize"
+    }
+  },
+
+  "attendance_data": {
+    "viewDetail": "View Details"
+  },
+
+  "columns": {
+    "stt": "No.",
+    "department": "Department/Ward",
+    "staff_code": "Staff Code",
+    "staff_name": "Full Name",
+    "total_work_days": "Total Workdays",
+    "paid_leave": "Paid Leave",
+    "unpaid_leave": "Unpaid Leave",
+    "on_duty": "On-duty Shift",
+    "compensatory_leave": "Compensatory Leave",
+    "holiday_leave": "Public Holiday",
+    "other_leave": "Other Leave",
+    "overtime": "Overtime",
+    "compensatory_hours": "Compensatory Hours",
+    "violation": "Violations"
+  },
+
+  "revenue": {
+    "columns": {
+      "stt": "No.",
+      "department": "DEPARTMENT",
+      "staff_code": "STAFF CODE",
+      "staff_name": "STAFF NAME",
+      "target_amount": "MONTHLY TARGET",
+      "actual_amount": "ACTUAL ACHIEVED",
+      "achievement_rate": "ACHIEVEMENT RATE",
+      "data_source": "DATA SOURCE",
+      "status": "STATUS",
+      "actions": "ACTIONS"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved"
+    },
+    "form": {
+      "title": "Value",
+      "fields": {
+        "month": "Month",
+        "target": "Target",
+        "actual": "Actual",
+        "achievement_rate": "Achievement Rate"
+      },
+      "placeholders": {
+        "select": "Select",
+        "input": "Enter value"
+      }
+    }
+  }
+}

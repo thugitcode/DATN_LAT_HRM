@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
     WORK_SCHEDULE_RANGE: '/work-schedule/range',
     STAFF: '/staff',
     STAFF_PROFILE: '/staff-profile',
+    STAFF_REVENUE: '/staff-revenue',
 
     ROOM: '/room',
     DEPARTMENT: '/department',
