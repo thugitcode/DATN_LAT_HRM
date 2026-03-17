@@ -1,14 +1,15 @@
-import { Controller, type Control, type FieldValues, type Path } from "react-hook-form";
-import { NumericFormat, type NumericFormatProps } from "react-number-format";
-import { Input, type InputProps } from "@heroui/react";
-import { cn } from "@/lib/utils";
+import { Input, type InputProps } from '@heroui/react';
+import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form';
+import { NumericFormat, type NumericFormatProps } from 'react-number-format';
+
+import { cn } from '@/lib/utils';
 
 type FormNumberInputProps<T extends FieldValues> = {
   name: Path<T>;
   control: Control<T>;
   error?: string;
-} & Omit<NumericFormatProps, "customInput" | "value" | "onChange"> &
-  Omit<InputProps, "value" | "onChange">;
+} & Omit<NumericFormatProps, 'customInput' | 'value' | 'onChange'> &
+  Omit<InputProps, 'value' | 'onChange'>;
 
 export function FormNumberInput<T extends FieldValues>({
   name,
@@ -26,7 +27,7 @@ export function FormNumberInput<T extends FieldValues>({
           value={field.value}
           onBlur={field.onBlur}
           onValueChange={(values) => {
-            field.onChange(values.floatValue?.toString() || "");
+            field.onChange(values.floatValue?.toString() || '');
           }}
           isAllowed={(values) => {
             const { floatValue } = values;
@@ -44,8 +45,10 @@ export function FormNumberInput<T extends FieldValues>({
           isInvalid={!!fieldState.error}
           errorMessage={fieldState.error?.message}
           classNames={{
-            label: cn('text-base font-normal leading-4 text-[#52525B]',
-              !!fieldState.error ? 'text-[#F31260]' : 'text-[#52525B]'),
+            lal: cn(
+              'text-base font-normal leading-4 text-[#52525B]',
+              !!fieldState.error ? 'text-[#F31260]' : 'text-[#52525B]',
+            ),
             inputWrapper: `
             data-[invalid=true]:!bg-[#F4F4F5]
             group-data-[invalid=true]:!bg-[#F4F4F5]

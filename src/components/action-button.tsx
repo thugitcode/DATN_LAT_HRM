@@ -1,6 +1,8 @@
 import type { FC, ReactNode } from 'react';
 import { Button, Tooltip } from '@heroui/react';
 
+import { cn } from '@/lib/utils';
+
 interface ActionButtonProps {
   tooltip: string;
   ariaLabel: string;
@@ -8,6 +10,7 @@ interface ActionButtonProps {
   isLoading?: boolean;
   isDisabled?: boolean;
   children: ReactNode;
+  className?: string;
 }
 
 const ACTION_BTN_CLASS = 'border-none bg-[#D4D4D866] rounded-lg';
@@ -19,6 +22,7 @@ export const ActionButton: FC<ActionButtonProps> = ({
   isLoading,
   isDisabled,
   children,
+  className,
 }) => (
   <Tooltip content={tooltip} showArrow>
     <Button
@@ -26,7 +30,7 @@ export const ActionButton: FC<ActionButtonProps> = ({
       aria-label={ariaLabel}
       variant="faded"
       color="default"
-      className={ACTION_BTN_CLASS}
+      className={cn(ACTION_BTN_CLASS, className)}
       onPress={onPress}
       isLoading={isLoading}
       isDisabled={isDisabled}

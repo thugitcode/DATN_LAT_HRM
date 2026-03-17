@@ -30,7 +30,7 @@ export const BusinessTripManagement = () => {
 
   const { filters } = useQueryFilter<OtherRequestsManagementParams>();
 
-  const { departmentIds, roomIds, month, roomId, search, status, type, page, limit } = filters;
+  const { departmentIds, roomIds, month, search, status, type, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
 
   const { departmentName } = useDepartmentName({ departmentId: departmentIds as string });

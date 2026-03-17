@@ -3,19 +3,19 @@ import { useTranslation } from 'react-i18next';
 
 import type { RequestsParams } from '@/types/global.type';
 import { icons } from '@/lib/icons';
+import { useColumnVisibility } from '@/hooks/use-column-visibility';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { usePaginationConfig } from '@/hooks/use-pagination-config';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionButton } from '@/components/action-button';
 import DataTable from '@/components/data-table/data-table';
-import { PageContainer } from '@/components/page-container';
 import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 import { useAttendanceTable } from '@/features/timekeeping-shift-scheduling/timekeeping-management/hooks/use-timekeeping-management';
 
 import { useAttendanceDataColumns } from '../colums/use-attendance-data-columns';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-380px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-340px)]' } as const;
 
 export const AttendanceData = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -25,7 +25,9 @@ export const AttendanceData = () => {
   const { filters, clearFilters } = useQueryFilter<RequestsParams>();
   const { departmentId, month, roomId, search, status, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
-
+  const { visibleColumns, handleApplyColumns } = useColumnVisibility({
+    columns,
+  });
   const { data, isLoading } = useAttendanceTable({
     page: page ?? 1,
     limit: limit ?? 10,
@@ -44,7 +46,7 @@ export const AttendanceData = () => {
   });
 
   return (
-    <PageContainer className="space-y-3" variant={'fixed'}>
+    <div className="space-y-3 px-0">
       <div className="flex items-center justify-between">
         <TitlePage title={t('data_summary.tabs.attendance_data')} />
 
@@ -71,6 +73,6 @@ export const AttendanceData = () => {
         classNames={TABLE_CLASS_NAMES}
         pagination={paginationConfig}
       />
-    </PageContainer>
+    </div>
   );
 };

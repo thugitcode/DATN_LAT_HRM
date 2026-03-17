@@ -53,7 +53,8 @@
     "explanation_detail": "Giải trình ca",
     "time_sheet_detail": "Chi tiết ca",
     "profile_staff_detail": "Chi tiết hồ sơ nhân viên",
-    "timekeepingDetails": "Chi tiết chấm công"
+    "timekeepingDetails": "Chi tiết chấm công",
+    "enter_kpi": "Nhập KPI"
   },
 
   "button": {
@@ -61,7 +62,8 @@
     "update": "Cập nhật",
     "create_ca": "Thêm phân ca",
     "save": "Lưu",
-    "confirm": "Xác nhận"
+    "confirm": "Xác nhận",
+    "addNew": "Thêm mới"
   },
 
   "weekdays": {
@@ -186,5 +188,8 @@
       "spec2": "BS Chuyên khoa II"
     }
   },
-  "staff": "Nhân viên"
+  "staff": "Nhân viên",
+  "input": {
+    "placeholder": "Nhập"
+  }
 }

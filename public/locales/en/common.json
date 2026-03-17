@@ -53,7 +53,8 @@
     "explanation_detail": "Shift Explanation",
     "time_sheet_detail": "Shift Details",
     "profile_staff_detail": "Employee Profile Details",
-    "timekeepingDetails": "Timekeeping details"
+    "timekeepingDetails": "Timekeeping details",
+    "enter_kpi": "Enter KPI"
   },
 
   "button": {
@@ -61,7 +62,8 @@
     "update": "Update",
     "create_ca": "Add shift division",
     "save": "Save",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "addNew": "Add new"
   },
 
   "weekdays": {
@@ -186,5 +188,8 @@
       "spec2": "Specialist II"
     }
   },
-  "staff": "Staff"
+  "staff": "Staff",
+  "input": {
+    "placeholder": "Enter"
+  }
 }
