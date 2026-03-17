@@ -18,7 +18,7 @@ export function ShiftEntry({
   explanationStatus,
 }: AttendanceDay) {
   return (
-    <Card className={`rounded-[14px]`}>
+    <Card className={`rounded-[14px] shadow-sm`}>
       <CardBody className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1">

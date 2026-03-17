@@ -12,7 +12,7 @@ import { useParams } from "@tanstack/react-router";
 import { useCallback, useMemo, useState } from "react";
 
 
-export const ShiftExplanation = () => {
+export const ShiftExplanation = ({ staffId }: { staffId?: string }) => {
     const { id } = useParams({ strict: false })
     const { filters } = useQueryFilter<AttendanceExplanationFilters>();
     const { departmentId, month, roomId, search, status, type, page, limit } = filters;
@@ -24,7 +24,7 @@ export const ShiftExplanation = () => {
         setSelectedKeys(keys);
     }, []);
     const { data, isLoading } = useAccountabilityManagementList({
-        staffId: id,
+        staffId: id ?? staffId,
         fromDate: startDate,
         toDate: endDate,
         departmentId,
@@ -46,7 +46,7 @@ export const ShiftExplanation = () => {
                 loading={isLoading}
                 selectedKeys={selectedKeys}
                 onSelectionChange={handleSelectionChange}
-                classNames={{ wrapper: 'h-[calc(100vh-565px)]' }}
+                classNames={{ wrapper: staffId?'h-[calc(100vh-445px)]':'h-[calc(100vh-565px)]' }}
                 pagination={{
                     current: Number(filters.page),
                     showSizeChanger: true,

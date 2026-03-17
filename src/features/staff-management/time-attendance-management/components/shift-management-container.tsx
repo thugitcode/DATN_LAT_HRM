@@ -4,12 +4,13 @@ import { LegendDot } from "@/features/timekeeping-shift-scheduling/timekeeping-m
 import { useMonthDateRange } from "@/hooks/use-month-date-range";
 import { useQueryFilter } from "@/hooks/useQueryFilter";
 import { NAMESPACES } from "@/i18n/constants";
-import type { ShiftManagementParams, StaffSchedule } from "@/types";
+import { cn } from "@/lib/utils";
+import type { ShiftManagementParams } from "@/types";
 import { ShiftTypeEnum } from "@/types/shift-management.type";
 import { useParams } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-export const ShiftManagementContainer = () => {
+export const ShiftManagementContainer = ({ staffId }: { staffId?: string }) => {
     const { id } = useParams({ strict: false })
     const { filters } = useQueryFilter<ShiftManagementParams>();
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
@@ -25,7 +26,7 @@ export const ShiftManagementContainer = () => {
         search: filters.search,
         departmentId: filters.departmentId,
         roomId: filters.roomId,
-        staffId: id
+        staffId: id ?? staffId
     });
 
     // 1. Định nghĩa cấu hình màu sắc/meta cho từng loại ca
@@ -67,7 +68,7 @@ export const ShiftManagementContainer = () => {
             <div className="flex bg-white mb-5 rounded-b-xl py-1.5">
                 {SHIFT_CA_LEGEND.map(item => <StatsSection stats={item} />)}
             </div>
-            <ShiftManagementGrid data={data?.data} isLoading={isLoading} height="h-[calc(100vh-480px)] bg-white" />
+            <ShiftManagementGrid data={data?.data} isLoading={isLoading} height={cn(staffId ? 'h-[calc(100vh-360px)]' : "h-[calc(100vh-480px)]", " bg-white")} />
         </>
     )
 }
