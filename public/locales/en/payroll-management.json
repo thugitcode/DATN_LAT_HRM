@@ -52,6 +52,32 @@
     "viewDetail": "View Details"
   },
 
+  "kpi": {
+    "title": "KPI",
+    "validation": {
+      "staff_id_required": "Staff ID is required",
+      "name_required": "Staff name is required",
+      "department_required": "Department is required",
+      "room_required": "Room is required",
+      "kpi_score_required": "KPI score is required",
+      "kpi_score_range": "KPI score must be a number between 0 and 100",
+      "evaluator_required": "Evaluator is required",
+      "rating_required": "Rating is required"
+    },
+    "form": {
+      "staff_info": "Staff Information",
+      "staff_code": "Staff Code",
+      "staff_name": "Staff Name",
+      "department": "Department",
+      "room": "Room",
+      "kpi_section": "KPI Score",
+      "kpi_score": "KPI Score",
+      "evaluator": "Evaluator",
+      "rank": "Rating",
+      "note": "Note"
+    }
+  },
+
   "columns": {
     "stt": "No.",
     "department": "Department/Ward",
@@ -66,7 +92,13 @@
     "other_leave": "Other Leave",
     "overtime": "Overtime",
     "compensatory_hours": "Compensatory Hours",
-    "violation": "Violations"
+    "violation": "Violations",
+    "kpi_score": "KPI Score",
+    "ranking": "Rating",
+    "evaluator": "Evaluator",
+    "source": "Source",
+    "status": "Status",
+    "actions": "Actions"
   },
 
   "revenue": {
