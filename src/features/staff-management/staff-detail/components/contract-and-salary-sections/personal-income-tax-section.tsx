@@ -1,11 +1,10 @@
 // sections/PersonalIncomeTaxSection.tsx
-import type { FC } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { IconReceiptTax } from '@tabler/icons-react';
 import { FormCheckbox } from '@/components/form-fields/form-checkbox';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 import { icons } from '@/lib/icons';
+import type { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 export const PersonalIncomeTaxSection: FC = () => {
     const { control, watch, formState: { isSubmitting } } = useFormContext();
@@ -39,6 +38,7 @@ export const PersonalIncomeTaxSection: FC = () => {
                         disabled={isSubmitting || isView || !hasFamilyDeduction}
                         isRequired={hasFamilyDeduction}
                         variant={variant}
+                        allowNegative={false}
                     />
                 </div>
 
@@ -61,9 +61,11 @@ export const PersonalIncomeTaxSection: FC = () => {
                         disabled={isSubmitting || isView || !hasPersonalIncomeTax}
                         variant={variant}
                         isRequired={hasPersonalIncomeTax}
-                    // Validate %: decimalScale={2}, min={0}, max={100}
-                    // fixedDecimalScale
-                    // allowNegative={false}
+                        // Validate %: decimalScale={2}, 
+                        min={0}
+                        max={100}
+                        // fixedDecimalScale
+                        allowNegative={false}
                     />
                 </div>
             </div>

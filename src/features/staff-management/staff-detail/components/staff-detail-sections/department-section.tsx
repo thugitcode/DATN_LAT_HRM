@@ -5,7 +5,7 @@ import { useDepartmentOptions } from "@/hooks/select-options/use-department-opti
 import { useRoomOptions } from "@/hooks/select-options/use-room-options";
 import { NAMESPACES } from "@/i18n/constants";
 import { icons } from "@/lib/icons";
-import { ContractTypeEnum, StaffJobTitleEnum, StaffPositionEnum } from "@/types/staff.type";
+import { ContractTypeEnum, StaffJobTitleEnum, StaffPositionEnum, WorkingTypeTypeEnum } from "@/types/staff.type";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { STAFF_SECTION_KEYS } from "../../constants/data";
@@ -57,7 +57,7 @@ export const DepartmentSection = () => {
                 // 3. Gọi API cập nhật
                 await updateStaff({
                     id: values.id,
-                    data: {...payload, departmentIds: [payload?.departmentIds],roomIds: [payload?.roomIds]}
+                    data: { ...payload, departmentIds: [payload?.departmentIds], roomIds: [payload?.roomIds] }
                 });
 
                 // 4. Thoát mode chỉnh sửa nếu thành công
@@ -110,10 +110,10 @@ export const DepartmentSection = () => {
                     label={t('staffForm.fields.workType.label')}
                     disabled={!isCreate}
                     variant={variant}
-                    options={[
-                        { key: "FULL_TIME", label: t('staffForm.fields.workType.options.fullTime') },
-                        { key: "PART_TIME", label: t('staffForm.fields.workType.options.partTime') }
-                    ]}
+                    options={Object.values(WorkingTypeTypeEnum).map((val) => ({
+                        label: t(`options.workType.${val}`),
+                        key: val
+                    }))}
                 />
 
                 {/* Chức danh */}

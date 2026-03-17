@@ -1,13 +1,10 @@
 // sections/ContractInfoSection.tsx
-import { IconChevronDown, IconFileDescription } from '@tabler/icons-react';
+import { IconChevronDown } from '@tabler/icons-react';
 import type { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { useStaffList } from '@/query-options/staff';
-import { departmentQueryOptions } from '@/services/query-options/department.query';
-import { roomQueryOptions } from '@/services/query-options/room.query';
-import { StaffPositionEnum } from '@/types/staff.type';
-import { useQuery } from '@tanstack/react-query';
+import { StaffJobTitleEnum, StaffPositionEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
 
 // Các custom component bạn đã có
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
@@ -15,13 +12,12 @@ import { FormInput } from '@/components/form-fields/form-input';
 import { FormLabel } from '@/components/form-fields/form-label';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { FormSelect } from '@/components/form-fields/form-select';
-import { jobTitleOptions } from '@/features/staff-management/staff-list-management/constants/constants';
 import { NAMESPACES } from '@/i18n/constants';
+import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { Button, Checkbox, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 import { WorkingAreaSection } from './working-area-section';
-import { icons } from '@/lib/icons';
 
 export const ContractInfoSection: FC = () => {
   const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
@@ -89,7 +85,7 @@ export const ContractInfoSection: FC = () => {
   ];
 
   const workingTimeUnit = watch("workingTimeUnit") || "MONTH";
-  
+
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
       <div className="flex items-center gap-2 mb-2">
@@ -113,7 +109,10 @@ export const ContractInfoSection: FC = () => {
             name="workType"
             label="Loại hình"
             isRequired
-            options={workTypeOptions}
+            options={Object.values(WorkingTypeTypeEnum).map((val) => ({
+              label: t(`options.workType.${val}`),
+              key: val
+            }))}
             disabled={isSubmitting}
           />
 
@@ -122,7 +121,10 @@ export const ContractInfoSection: FC = () => {
             name="jobTitle"
             label="Chức danh"
             isRequired
-            options={jobTitleOptions(t)}
+            options={Object.values(StaffJobTitleEnum).map((val) => ({
+              label: t(`options.job_title.${val}`),
+              key: val
+            }))}
             disabled={isSubmitting}
           />
 
@@ -131,7 +133,10 @@ export const ContractInfoSection: FC = () => {
             name="position"
             label="Cấp bậc"
             isRequired
-            options={positionOptions}
+            options={Object.values(StaffPositionEnum).map((val) => ({
+              label: t(`options.staff_position.${val}`),
+              key: val
+            }))}
             disabled={isSubmitting}
           />
         </div>

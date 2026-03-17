@@ -17,7 +17,7 @@ import { icons } from '@/lib/icons';
 
 
 export const SalaryStructureSection: FC = () => {
-    const { control, setValue, formState: { isSubmitting, errors } } = useFormContext();
+    const { control, setValue, formState: { isSubmitting, errors }, getValues } = useFormContext();
     const { isView } = useControlMode()
     const variant = isView ? "underlined" : "flat"
     const mealAllowanceUnit = useWatch({ control, name: 'salary.mealAllowanceUnit' });
@@ -40,6 +40,7 @@ export const SalaryStructureSection: FC = () => {
                     isRequired
                     disabled={isSubmitting || isView}
                     variant={variant}
+                    allowNegative={false}
                 />
 
                 {/* Lương đóng BHXH - optional */}
@@ -50,6 +51,7 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập lương đóng BHXH"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
+                    allowNegative={false}
                     variant={variant}
                 />
 
@@ -61,6 +63,7 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
+                    allowNegative={false}
                     variant={variant}
                 />
 
@@ -72,6 +75,7 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
+                    allowNegative={false}
                     variant={variant}
                 />
 
@@ -83,6 +87,7 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
+                    allowNegative={false}
                     variant={variant}
                 />
 
@@ -127,6 +132,7 @@ export const SalaryStructureSection: FC = () => {
                                     </Dropdown>
                                 </div>
                             }
+                            allowNegative={false}
                             disabled={isSubmitting || isView}
                         />
                     </div>
@@ -140,6 +146,7 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
+                    allowNegative={false}
                     variant={variant}
                 />
 
@@ -151,6 +158,7 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
+                    allowNegative={false}
                     variant={variant}
                 />
 
@@ -162,6 +170,7 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
+                    allowNegative={false}
                     variant={variant}
                 />
 
@@ -173,6 +182,7 @@ export const SalaryStructureSection: FC = () => {
                     placeholder="Nhập"
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
+                    allowNegative={false}
                     variant={variant}
                 />
             </div>

@@ -179,6 +179,8 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       position: contract.position || '',
       duration: contract.duration?.toString() || '',
       durationUnit: contract.durationUnit || 'YEAR',
+      workingTime: contract.workingTime?.toString() || '',
+      workingTimeUnit: contract.workingTimeUnit || 'YEAR',
       contractNumber: contract.contractNumber || '',
       startDate: contract.startDate || '',
       endDate: contract.endDate || '',

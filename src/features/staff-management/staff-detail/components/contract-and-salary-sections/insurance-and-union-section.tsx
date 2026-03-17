@@ -46,7 +46,8 @@ export const InsuranceAndUnionSection: FC = () => {
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasHealthInsurance}
             disabled={isSubmitting || isView || !hasHealthInsurance}
-            variant={variant}
+            variant={variant}                    
+            allowNegative={false}
           />
         </div>
 
@@ -67,6 +68,7 @@ export const InsuranceAndUnionSection: FC = () => {
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasSocialInsurance}
             disabled={isSubmitting || isView || !hasSocialInsurance}
+            allowNegative={false}
             variant={variant}
           />
         </div>
@@ -88,6 +90,7 @@ export const InsuranceAndUnionSection: FC = () => {
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasUnemploymentInsurance}
             disabled={isSubmitting || isView || !hasUnemploymentInsurance}
+            allowNegative={false}
             variant={variant}
           />
         </div>
@@ -111,6 +114,7 @@ export const InsuranceAndUnionSection: FC = () => {
             </span>}
             isRequired={hasUnionFee}
             disabled={isSubmitting || isView || !hasUnionFee}
+            allowNegative={false}
             variant={variant}
           // Nếu muốn format tiền Việt Nam: thousandSeparator=".", decimalScale={0}
           />
@@ -141,6 +145,7 @@ export const InsuranceAndUnionSection: FC = () => {
             placeholder="Nhập mức hưởng"
             endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
             disabled={isSubmitting || !hasHealthCareInsurance}
+            allowNegative={false}
             isRequired={hasHealthCareInsurance}
           // Gợi ý: thousandSeparator=".", decimalScale={0} nếu là số nguyên VNĐ
           />
@@ -152,6 +157,7 @@ export const InsuranceAndUnionSection: FC = () => {
             placeholder="Nhập tỷ lệ"
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             disabled={isSubmitting || !hasHealthCareInsurance}
+            allowNegative={false}
             isRequired={hasHealthCareInsurance}
           // Gợi ý: decimalScale={2}, fixedDecimalScale nếu muốn 2 chữ số thập phân
           />
