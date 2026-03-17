@@ -1,3 +1,5 @@
+import type { CategoryGeneralRequest } from './generate-request.type';
+
 export interface OtherRequestsManagementParams {
   page?: number;
   limit?: number;
@@ -8,6 +10,7 @@ export interface OtherRequestsManagementParams {
   month?: string;
   departmentIds?: string;
   roomIds?: string;
+  category?: CategoryGeneralRequest;
 
   [key: string]: unknown;
 }

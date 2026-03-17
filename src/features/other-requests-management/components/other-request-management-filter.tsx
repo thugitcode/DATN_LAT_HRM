@@ -36,14 +36,14 @@ export const OtherRequestManagementFilters = () => {
 
   const handleKhoaChange = useCallback(
     (value: string | undefined) => {
-      setFilter('departmentId', value);
+      setFilter('departmentIds', value);
     },
     [setFilter],
   );
 
   const handlePhongChange = useCallback(
     (value: string | undefined) => {
-      setFilter('roomId', value);
+      setFilter('roomIds', value);
     },
     [setFilter],
   );
@@ -63,21 +63,21 @@ export const OtherRequestManagementFilters = () => {
 
       <FilterSelect
         options={departmentOptions}
-        value={filters.departmentId as string}
+        value={filters.departmentIds as string}
         onChange={handleKhoaChange}
         placeholder={t('actions.department')}
       />
 
       <FilterSelect
         options={roomOptions}
-        value={filters.roomId as string}
+        value={filters.roomIds as string}
         onChange={handlePhongChange}
         placeholder={t('actions.room')}
       />
 
       <FilterSelect
         options={statusOtherRequestOptions}
-        value={filters.roomId as string}
+        value={filters.status as string}
         onChange={handleStatusChange}
         placeholder={t('actions.status')}
       />

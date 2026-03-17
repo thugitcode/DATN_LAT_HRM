@@ -11,12 +11,11 @@ import { ActionsPage } from '@/components/actions-page';
 import { ColumnVisibilityPopover } from '@/components/column-visibility-popover';
 import DataTable from '@/components/data-table/data-table';
 import { PageContainer } from '@/components/page-container';
-import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 
 import { OtherRequestManagementFilters } from '../components/other-request-management-filter';
+import { useOtherRequestpManagement } from '../hooks/use-other-request-management';
 import { useRemoteWorkColumns } from '../hooks/use-remote-work-columns';
-import { useRemoteWorkManagement } from '../hooks/use-remote-work-management';
 import type { OtherRequestsManagementParams } from '../types/type';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-300px)]' } as const;
@@ -27,20 +26,20 @@ export const RemoteWorkManagement = () => {
 
   const { filters } = useQueryFilter<OtherRequestsManagementParams>();
 
-  const { departmentId, month, roomId, search, status, type, page, limit } = filters;
+  const { departmentIds, month, roomIds, search, status, type, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
 
-  const { departmentName } = useDepartmentName({ departmentId: departmentId as string });
+  const { departmentName } = useDepartmentName({ departmentId: departmentIds as string });
 
   const { visibleColumns, handleApplyColumns } = useColumnVisibility({
     columns,
   });
 
-  const { data, isLoading } = useRemoteWorkManagement({
-    // fromDate: startDate,
-    // toDate: endDate,
-    departmentId,
-    roomId,
+  const { data, isLoading } = useOtherRequestpManagement({
+    fromDate: startDate,
+    toDate: endDate,
+    departmentIds,
+    roomIds,
     search,
     status,
     type,

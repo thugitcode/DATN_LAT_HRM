@@ -11,12 +11,12 @@ import { ActionsPage } from '@/components/actions-page';
 import { ColumnVisibilityPopover } from '@/components/column-visibility-popover';
 import DataTable from '@/components/data-table/data-table';
 import { PageContainer } from '@/components/page-container';
-import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 
 import { OtherRequestManagementFilters } from '../components/other-request-management-filter';
+import { useOtherRequestpManagement } from '../hooks/use-other-request-management';
 import { useOvertimeColumns } from '../hooks/use-overtime-columns';
-import { useOvertimeManagement } from '../hooks/use-overtime-management';
+import { CategoryGeneralRequest } from '../types/generate-request.type';
 import type { OtherRequestsManagementParams } from '../types/type';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-300px)]' } as const;
@@ -27,7 +27,8 @@ export const OvertimeManagement = () => {
 
   const { filters } = useQueryFilter<OtherRequestsManagementParams>();
 
-  const { departmentId, month, roomId, search, status, type, page, limit } = filters;
+  const { departmentId, month, roomId, search, status, type, page, limit, departmentIds, roomIds } =
+    filters;
   const { startDate, endDate } = useMonthDateRange(month);
 
   const { departmentName } = useDepartmentName({ departmentId: departmentId as string });
@@ -36,16 +37,17 @@ export const OvertimeManagement = () => {
     columns,
   });
 
-  const { data, isLoading } = useOvertimeManagement({
-    // fromDate: startDate,
-    // toDate: endDate,
-    departmentId,
-    roomId,
+  const { data, isLoading } = useOtherRequestpManagement({
+    fromDate: startDate,
+    toDate: endDate,
+    departmentIds,
+    roomIds,
     search,
     status,
     type,
     page: page ?? 1,
     limit: limit ?? 10,
+    category: CategoryGeneralRequest.OVERTIME,
   });
 
   const paginationConfig = useMemo(
