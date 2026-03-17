@@ -25,7 +25,7 @@ else
 fi
 
 echo -e "${BLUE} Building Docker image [$IMAGE_NAME]... ${RESET}"
-docker build --build-arg CI_ENVIRONMENT_SLUG=env -t $IMAGE_NAME .
+docker build --build-arg CI_ENVIRONMENT_SLUG=env --platform=linux/amd64 -t $IMAGE_NAME .
 
 echo -e "${BLUE} Tagging image as $REGISTRY/$REPO:$TAG ${RESET}"
 docker tag $IMAGE_NAME $REGISTRY/$REPO:$TAG
