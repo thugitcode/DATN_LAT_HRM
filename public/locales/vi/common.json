@@ -54,7 +54,8 @@
     "time_sheet_detail": "Chi tiết ca",
     "profile_staff_detail": "Chi tiết hồ sơ nhân viên",
     "timekeepingDetails": "Chi tiết chấm công",
-    "enter_kpi": "Nhập KPI"
+    "enter_kpi": "Nhập KPI",
+    "revenueDetails": "Nhập doanh số"
   },
 
   "button": {
@@ -63,7 +64,8 @@
     "create_ca": "Thêm phân ca",
     "save": "Lưu",
     "confirm": "Xác nhận",
-    "addNew": "Thêm mới"
+    "addNew": "Thêm mới",
+    "exit": "Thoát"
   },
 
   "weekdays": {

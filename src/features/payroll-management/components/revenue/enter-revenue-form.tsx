@@ -15,7 +15,7 @@ export const EnterRevenueForm: FC = () => {
     const actual = useWatch({ control, name: 'actual' });
 
     // Tính toán tỉ lệ đạt: (Thực đạt / Chỉ tiêu) * 100
-    const achievementRate = target > 0 ? (actual / target) * 100 : 0;
+    const achievementRate = target > 0 ? ((actual ?? 1) / (target ?? 1)) * 100 : 0;
 
     return (
         <div className="bg-white rounded-2xl border border-[#E4E4E7] overflow-hidden shadow-sm">

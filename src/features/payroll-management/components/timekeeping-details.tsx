@@ -1,13 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { Avatar, Button, Chip, Skeleton } from '@heroui/react';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next'; // Giả định bạn dùng thư viện này
 
-import type { ShiftManagementParams } from '@/types';
-import { useMonthDateRange } from '@/hooks/use-month-date-range';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
 import AttendanceSummary from '@/features/staff-management/time-attendance-management/components/attendance-summary';
 import { Header } from '@/features/staff-management/time-attendance-management/components/header';
 import { ShiftEntry } from '@/features/staff-management/time-attendance-management/components/shift-entry';
@@ -18,6 +15,9 @@ import { useTimeAttendanceTabs } from '@/features/staff-management/time-attendan
 import { useStaffDailyAttendance } from '@/features/timekeeping-shift-scheduling/shift-management/hooks/use-shift-management';
 import { useAttendanceTable } from '@/features/timekeeping-shift-scheduling/timekeeping-management/hooks/use-timekeeping-management';
 import type { StaffTimeKeeping } from '@/features/timekeeping-shift-scheduling/timekeeping-management/types/timekeeping-management.type';
+import { useMonthDateRange } from '@/hooks/use-month-date-range';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import type { ShiftManagementParams } from '@/types';
 
 export const TimekeepingDetails = () => {
   const { t } = useTranslation(NAMESPACES.COMMON);
@@ -93,7 +93,7 @@ export const TimekeepingDetails = () => {
             <div className="flex gap-2">
               <Button
                 isIconOnly
-                className="bg-white border"
+                className="bg-white"
                 radius="full"
                 onPress={handlePrev}
                 isDisabled={currentIndex === 0}
@@ -103,7 +103,7 @@ export const TimekeepingDetails = () => {
 
               <Button
                 isIconOnly
-                className="bg-white border"
+                className="bg-white"
                 radius="full"
                 onPress={handleNext}
                 isDisabled={currentIndex === (listStaff?.data?.length ?? 0) - 1}

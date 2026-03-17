@@ -10,6 +10,7 @@ import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
 import { WorkShiftsForm } from '@/features/timekeeping-shift-scheduling/shift-management/components/work-shifts-form';
 import { ShiftDetailsDrawer } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-drawer';
+import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
 
 type DrawerConfig = {
   title: string;
@@ -79,6 +80,15 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
     [DrawerType.CREATE_KPI]: {
       title: t('drawer.timekeepingDetails'),
       component: <FormKpiMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.REVENUE_DETAILS]: {
+      title: t('drawer.revenueDetails'),
+      component: <EnterRevenueDrawer />,
       drawerProps: {
         placement: 'right',
         size: '2xl',
