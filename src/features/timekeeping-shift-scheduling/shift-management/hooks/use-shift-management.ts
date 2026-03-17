@@ -41,6 +41,7 @@ export function useCreateShiftManagement() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: shiftManagementKeys.grids() });
       addToast({
         description: 'Thêm mới phân ca thành công.',
         color: 'success',
@@ -66,6 +67,7 @@ export function useUpdateShiftManagement() {
     onSuccess: (_, { id }) => {
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: shiftManagementKeys.grids() });
 
       addToast({
         description: 'Thay đổi phân ca thành công.',

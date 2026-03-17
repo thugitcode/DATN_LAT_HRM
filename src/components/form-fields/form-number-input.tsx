@@ -28,6 +28,15 @@ export function FormNumberInput<T extends FieldValues>({
           onValueChange={(values) => {
             field.onChange(values.floatValue?.toString() || "");
           }}
+          isAllowed={(values) => {
+            const { floatValue } = values;
+
+            if (floatValue === undefined) return true;
+            if (props?.min !== undefined && floatValue < +props?.min) return false;
+            if (props?.max !== undefined && floatValue > +props?.max) return false;
+
+            return true;
+          }}
           labelPlacement="outside-top"
           thousandSeparator="."
           decimalSeparator=","

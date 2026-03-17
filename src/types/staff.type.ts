@@ -69,6 +69,11 @@ export enum ContractTypeEnum {
   EXPERT_COOPERATION = 'EXPERT_COOPERATION', // Chuyên gia hợp tác
 }
 
+export enum WorkingTypeTypeEnum {
+  FULL_TIME = 'FULL_TIME',
+  PART_TIME = 'PART_TIME',
+}
+
 export enum ShiftTypeEnum {
   FIXED = 'FIXED', // Ca cố định
   FLEXIBLE = 'FLEXIBLE', // Ca linh hoạt
@@ -147,6 +152,8 @@ export interface StaffContract {
   endDate: string;
   duration: number;
   durationUnit: DurationUnitEnum;
+  workingTime: number;
+  workingTimeUnit: DurationUnitEnum;
   jobTitle: StaffJobTitleEnum;
   position: StaffPositionEnum;
   staff?: Staff;

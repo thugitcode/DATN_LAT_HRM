@@ -270,6 +270,10 @@
       "INTERNSHIP": "Nhân viên học việc",
       "EXPERT_COOPERATION": "Chuyên gia hợp tác"
     },
+    "workType": {
+      "FULL_TIME": "Toàn thời gian",
+      "PART_TIME": "Bán thời gian"
+    },
     "qualification": {
       "intermediate": "Trung cấp",
       "college": "Cao đẳng",
