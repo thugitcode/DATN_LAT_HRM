@@ -18,4 +18,9 @@ export const payrollFeedbackOptions = {
       queryKey: payrollFeedbackKeys.list(params),
       queryFn: () => payrollFeedbackService.getAll(params),
     }),
+  detail: (id: string) =>
+    queryOptions({
+      queryKey: payrollFeedbackKeys.detail(id),
+      queryFn: () => payrollFeedbackService.getById(id),
+    }),
 } as const;
