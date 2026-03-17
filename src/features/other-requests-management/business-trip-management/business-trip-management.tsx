@@ -17,7 +17,8 @@ import { TitlePage } from '@/components/title-page';
 import { OtherRequestManagementFilters } from '../components/other-request-management-filter';
 import { useBusinessTripColumns } from '../hooks/use-business-trip-columns';
 import { useBusinessTripExport } from '../hooks/use-business-trip-export';
-import { useBusinessTripManagement } from '../hooks/use-business-trip-management';
+import { useOtherRequestpManagement } from '../hooks/use-other-request-management';
+import { CategoryGeneralRequest } from '../types/generate-request.type';
 import type { OtherRequestsManagementParams } from '../types/type';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-300px)]' } as const;
@@ -29,25 +30,26 @@ export const BusinessTripManagement = () => {
 
   const { filters } = useQueryFilter<OtherRequestsManagementParams>();
 
-  const { departmentId, month, roomId, search, status, type, page, limit } = filters;
+  const { departmentIds, roomIds, month, roomId, search, status, type, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
 
-  const { departmentName } = useDepartmentName({ departmentId: departmentId as string });
+  const { departmentName } = useDepartmentName({ departmentId: departmentIds as string });
 
   const { visibleColumns, handleApplyColumns } = useColumnVisibility({
     columns,
   });
 
-  const { data, isLoading } = useBusinessTripManagement({
+  const { data, isLoading } = useOtherRequestpManagement({
     fromDate: startDate,
     toDate: endDate,
-    departmentId,
-    roomId,
+    departmentIds,
+    roomIds,
     search,
     status,
     type,
     page,
     limit,
+    category: CategoryGeneralRequest.BUSINESS_TRIP,
   });
 
   const paginationConfig = useMemo(

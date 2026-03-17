@@ -1,6 +1,7 @@
-import { formatTime } from "@/lib/utils";
-import { TIMELINE_COLOR_MAP } from "../helpers";
-import type { TimelineSegment } from "../types";
+import { formatTime } from '@/lib/utils';
+
+import { TIMELINE_COLOR_MAP } from '../helpers';
+import type { TimelineSegment } from '../types';
 
 interface ShiftTimelineProps {
   timeline: TimelineSegment[];
@@ -18,10 +19,7 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
         {/* Grid lines background */}
         {timeline.map((slot, i) => (
           <div className="flex justify-between h-2.5 px-2" key={i}>
-            <div
-
-              className="text-xs text-center text-gray-500 py-0"
-            >
+            <div className="text-xs text-center text-gray-500 py-0">
               {formatTime(slot.startTime)}
             </div>
             <div
@@ -51,9 +49,9 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
         `}
             style={{
               gridColumn: `${i + 1} / span ${1}`,
-              top: "26px",
+              top: '26px',
               background: TIMELINE_COLOR_MAP?.[slot.type],
-              color: slot.type === "BREAK" ? "black" : "white"
+              color: slot.type === 'BREAK' ? 'black' : 'white',
             }}
           >
             {slot.label}

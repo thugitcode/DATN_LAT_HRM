@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
       OVERTIME: '/overtime',
       REMOTE_WORK: '/remote-work',
       TRAINING: '/training',
+      GENERAL_REQUEST: '/general-request',
     },
 
     PAYROLL_MANAGEMENT: {

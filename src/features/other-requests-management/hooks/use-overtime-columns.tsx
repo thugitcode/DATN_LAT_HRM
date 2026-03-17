@@ -5,20 +5,24 @@ import { useTranslation } from 'react-i18next';
 import { toDDMMYYYY, toHHMM } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import { StatusChip } from '@/components/status-chip';
+import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
-import type { OverTime } from '../types/overtime.type';
+import type { GeneralRequest } from '../types/generate-request.type';
 
 export const useOvertimeColumns = () => {
   const { t } = useTranslation(NAMESPACES.OTHER_REQUESTS_MANGAGEMENT);
 
   const hourText = t('hour');
 
-  const columns: ColumnDef<OverTime>[] = useMemo(
+  const columns: ColumnDef<GeneralRequest>[] = useMemo(
     () => [
       {
         key: 'department',
         title: t('columns.department'),
         minWidth: 140,
+        render: (_, row) => (
+          <DepartmentRoomInfo departments={row?.departments} rooms={row?.rooms} />
+        ),
       },
       {
         key: 'staffCode',
@@ -36,25 +40,27 @@ export const useOvertimeColumns = () => {
         key: 'overtimeDate',
         title: t('columns.overtimeDate'),
         minWidth: 140,
-        render: (_, row) => <span>{toDDMMYYYY(row.overtimeDate)}</span>,
+        render: (_, row) => <span>{row.fromDate ? toDDMMYYYY(row.fromDate) : '-'}</span>,
       },
       {
         key: 'startTime',
         title: t('columns.startTime'),
         minWidth: 120,
-        render: (_, row) => <span>{toHHMM(row.startTime)}</span>,
+        render: (_, row) => <span>{row.startTime ? toHHMM(row.startTime) : '-'}</span>,
       },
       {
         key: 'endTime',
         title: t('columns.endTime'),
         minWidth: 120,
-        render: (_, row) => <span>{toHHMM(row.endTime)}</span>,
+        render: (_, row) => <span>{row.endTime ? toHHMM(row.endTime) : '-'}</span>,
       },
       {
         key: 'totalHours',
         title: t('columns.totalTime'),
         minWidth: 120,
-        render: (_, row) => <span>{row.totalHours ? `${row.totalHours} ${hourText}` : '-'}</span>,
+        render: (_, row) => (
+          <span>{row.totalHours ? `${Number(row.totalHours)?.toFixed()} ${hourText}` : '-'}</span>
+        ),
       },
       {
         key: 'reason',
@@ -63,10 +69,10 @@ export const useOvertimeColumns = () => {
         render: (_, row) => <span>{row.reason || '-'}</span>,
       },
       {
-        key: 'approvedByName',
+        key: 'managerNames',
         title: t('columns.directManager'),
         minWidth: 180,
-        render: (_, row) => <span>{row.approvedByName || '-'}</span>,
+        render: (_, row) => <span>{row.managerNames?.join(', ') || '-'}</span>,
       },
       {
         key: 'status',

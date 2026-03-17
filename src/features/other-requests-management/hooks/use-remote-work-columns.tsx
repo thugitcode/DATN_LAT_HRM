@@ -1,23 +1,27 @@
-// useRemoteWorkColumns.tsx
 import { useMemo } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
-import { toDDMMYYYY } from '@/lib/utils';
+import { toDDMMYYYY, toHHMM } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import { StatusChip } from '@/components/status-chip';
+import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
-import type { RemoteWork } from '../types/remote-work.type';
+import { RequestAttendanceTypeLabel } from '../constants/constants';
+import type { GeneralRequest } from '../types/generate-request.type';
 
 export const useRemoteWorkColumns = () => {
   const { t } = useTranslation(NAMESPACES.OTHER_REQUESTS_MANGAGEMENT);
 
-  const columns: ColumnDef<RemoteWork>[] = useMemo(
+  const columns: ColumnDef<GeneralRequest>[] = useMemo(
     () => [
       {
         key: 'department',
         title: t('columns.department'),
         minWidth: 140,
+        render: (_, row) => (
+          <DepartmentRoomInfo departments={row?.departments} rooms={row?.rooms} />
+        ),
       },
       {
         key: 'staffCode',
@@ -35,6 +39,7 @@ export const useRemoteWorkColumns = () => {
         key: 'type',
         title: t('columns.type'),
         minWidth: 120,
+        render: (_, row) => <span>{RequestAttendanceTypeLabel[row.requestType] || '-'}</span>,
       },
       {
         key: 'fromDate',
@@ -42,7 +47,8 @@ export const useRemoteWorkColumns = () => {
         minWidth: 160,
         render: (_, row) => (
           <span>
-            {toDDMMYYYY(row.fromDate)} - {toDDMMYYYY(row.toDate)}
+            {row.fromDate ? toDDMMYYYY(row.fromDate) : '-'} -{' '}
+            {row.toDate ? toDDMMYYYY(row.toDate) : '-'}
           </span>
         ),
       },
@@ -50,19 +56,19 @@ export const useRemoteWorkColumns = () => {
         key: 'startTime',
         title: t('columns.startTime'),
         minWidth: 120,
+        render: (_, row) => <span>{row.startTime ? toHHMM(row.startTime) : '-'}</span>,
       },
       {
         key: 'endTime',
         title: t('columns.endTime'),
         minWidth: 120,
+        render: (_, row) => <span>{row.endTime ? toHHMM(row.endTime) : '-'}</span>,
       },
       {
-        key: 'totalDays',
+        key: 'totalHours',
         title: t('columns.totalTime'),
         minWidth: 120,
-        render: (_, row) => (
-          <span>{row.totalDays != null ? `${row.totalDays} ${t('day')}` : '-'}</span>
-        ),
+        render: (_, row) => <span>{Number(row?.totalHours)?.toFixed() ?? '-'}</span>,
       },
       {
         key: 'reason',
@@ -71,10 +77,10 @@ export const useRemoteWorkColumns = () => {
         render: (_, row) => <span>{row.reason || '-'}</span>,
       },
       {
-        key: 'approvedByName',
+        key: 'managerNames',
         title: t('columns.directManager'),
         minWidth: 180,
-        render: (_, row) => <span>{row.approvedByName || '-'}</span>,
+        render: (_, row) => <span>{row.managerNames?.join(', ') || '-'}</span>,
       },
       {
         key: 'status',
