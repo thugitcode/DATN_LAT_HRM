@@ -54,7 +54,8 @@
     "time_sheet_detail": "Shift Details",
     "profile_staff_detail": "Employee Profile Details",
     "timekeepingDetails": "Timekeeping details",
-    "enter_kpi": "Enter KPI"
+    "enter_kpi": "Enter KPI",
+    "revenueDetails": "Enter sales"
   },
 
   "button": {
@@ -63,7 +64,8 @@
     "create_ca": "Add shift division",
     "save": "Save",
     "confirm": "Confirm",
-    "addNew": "Add new"
+    "addNew": "Add new",
+    "exit": "Exit"
   },
 
   "weekdays": {

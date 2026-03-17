@@ -27,6 +27,7 @@ export function FormDatePicker<T extends FieldValues>({
       control={control}
       render={({ field, fieldState }) => (
         <DatePicker
+          showMonthAndYearPickers
           label={label}
           labelPlacement="outside"
           isRequired={isRequired}

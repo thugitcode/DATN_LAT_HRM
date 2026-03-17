@@ -18,7 +18,7 @@ export const RowRevenueActions: FC<RowRevenueActionsProps> = ({ dataRow }) => {
       <Button
         // color="primary"
         variant="light"
-        onPress={() => onOpen(DrawerType.TIMEKEEPING_DETAILS, dataRow?.id)}
+        onPress={() => onOpen(DrawerType.REVENUE_DETAILS, dataRow)}
         isIconOnly
       >
         <icons.edit className='size-5'/>
@@ -26,7 +26,7 @@ export const RowRevenueActions: FC<RowRevenueActionsProps> = ({ dataRow }) => {
       <Button
         // color="primary"
         variant="light"
-        onPress={() => onOpen(DrawerType.TIMEKEEPING_DETAILS, dataRow?.id)}
+        onPress={() => onOpen(DrawerType.REVENUE_DETAILS, dataRow)}
         isIconOnly
       >
         <icons.trash className='size-5'/>

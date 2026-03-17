@@ -65,6 +65,7 @@ export interface StaffTimeKeeping {
   departments: Department[];
   rooms: Room[];
   position: StaffPosition;
+  status: string;
 }
 
 export interface Summary {

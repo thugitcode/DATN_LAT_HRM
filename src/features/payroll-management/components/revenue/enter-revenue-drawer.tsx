@@ -1,116 +1,116 @@
-import { useDrawer } from '@/store/useDrawer';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+'use client';
 
+import { NAMESPACES } from '@/i18n/constants';
+import { useDrawer } from '@/store/useDrawer';
+import { Button, Form, Input } from '@heroui/react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+
+import { WrapperBoxForm } from '@/components/wrapper-box-form';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 
-import { EnterRevenueForm } from './enter-revenue-form';
-import { CardUserShift } from '@/features/timekeeping-shift-scheduling/shift-management/components/card-user-shift';
 import { useGetDetailRevenue } from '../../hooks/use-revenue-management';
-import { Form, FormProvider, useForm } from 'react-hook-form';
-import { Button } from '@heroui/react';
-import { WrapperBoxForm } from '@/components/wrapper-box-form';
-import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { EnterRevenueForm } from './enter-revenue-form';
+import type { CellDataShift } from '@/features/timekeeping-shift-scheduling/shift-management/types/type';
 
-export const ChangeShiftDivision = () => {
-  // const dataRow = useDrawer((state) => state.data)
+export const EnterRevenueDrawer = () => {
+  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
 
-  // const { staff, schedules } = record || {};
+  const onClose = useDrawer((state) => state.onClose);
+  const dataRow = useDrawer((state) => state.data) as any;
+  console.log(dataRow, 8888888);
 
-  // const matchedSchedule = schedules?.find((schedule) => schedule.date === date);
+  // Lấy dữ liệu trực tiếp từ dataRow để hiển thị (View only)
+  const { record, shift, staff } = dataRow ?? {};
 
-  // const { data, isLoading } = useGetDetailRevenue(shift?.workScheduleId as string);
+  // Hiển thị danh sách tên phòng ban/phòng bằng chuỗi
+  const departmentNames = staff?.departments?.map(d => d.name).join(', ') ?? '';
+  const roomNames = staff?.rooms?.map(r => r.name).join(', ') ?? '';
 
-  // // const dataDetail = data?.data;
-  // // const methods = useForm<ExtendedFormValues>({
-  // //   resolver: zodResolver(workShiftAssignSchema) as any,
-  // //   defaultValues: {
-  // //     name: staff?.id ?? '',
-  // //     staffId: staff?.code ?? '',
-  // //     departmentId: autoFillSingle(staff?.departments ?? []),
-  // //     roomId: autoFillSingle(staff?.rooms ?? []),
-  // //     fromDate: date ?? '',
-  // //     toDate: date ?? '',
-  // //     note: '',
-  // //     days: initialDays,
-  // //   },
-  // //   mode: 'onSubmit',
-  // // });
-  // // return (
-  // //   <LoadingWrapper isLoading={isLoading} className="flex flex-col justify-between">
-  // //     <FormProvider {...methods}>
-  // //       <Form
-  // //         className="flex h-full w-full max-w-full flex-col justify-between space-y-6 pt-6"
-  // //         // onSubmit={handleSubmit(onSubmit)}
-  // //         onSubmit={handleSubmit(
-  // //           (values) => {
-  // //             onSubmit(values);
-  // //           },
-  // //           (errors) => {
-  // //             console.error('Validation errors:', errors);
-  // //             scrollToFirstError();
-  // //           },
-  // //         )}
-  // //       >
-  // //         <div ref={scrollContainerRef} className="w-full space-y-6 overflow-auto px-6">
-  // //           <WrapperBoxForm title={t("work_shifts_form.staff_info")}>
-  // //             <div className="grid grid-cols-2 gap-4">
-  // //               <FormAutocomplete
-  // //                 control={control}
-  // //                 name="staffId"
-  // //                 label={t('columns.employee_code')}
-  // //                 isRequired
-  // //                 options={staffByCodeOptions}
-  // //                 onSelect={handleSelectByCode}
-  // //                 disabled={isLoading}
-  // //               />
-  // //               <FormAutocomplete
-  // //                 control={control}
-  // //                 name="name"
-  // //                 label={t('columns.employee_name')}
-  // //                 isRequired
-  // //                 options={staffOptions}
-  // //                 onSelect={handleSelectByName}
-  // //                 disabled={isLoading}
-  // //               />
-  // //               <FormAutocomplete
-  // //                 control={control}
-  // //                 name="departmentId"
-  // //                 label={t('change_shift_division.department')}
-  // //                 isRequired
-  // //                 options={userOptions.departments}
-  // //                 disabled={isLoading}
-  // //               />
-  // //               <FormAutocomplete
-  // //                 control={control}
-  // //                 name="roomId"
-  // //                 label={t('change_shift_division.room')}
-  // //                 options={userOptions.rooms}
-  // //                 disabled={isLoading}
-  // //               />
-  // //             </div>
-  // //           </WrapperBoxForm>
+  const { isLoading: isDetailLoading } = useGetDetailRevenue(shift?.workScheduleId as string);
 
-  // //           <WrapperBoxForm title={t("work_shifts_form.shift_info")}>
-  // //             <EnterRevenueForm />
+  const methods = useForm({
+    mode: 'onSubmit',
+  });
 
-  // //           </WrapperBoxForm>
-  // //         </div>
+  const { handleSubmit, formState: { isSubmitting } } = methods;
+  const isLoading = isDetailLoading || isSubmitting;
 
-  // //         <div className="flex w-full justify-end gap-2 bg-white px-6 pb-6 pt-3">
-  // //           <Button
-  // //             variant="light"
-  // //             onPress={onClose}
-  // //             className="border border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
-  // //           >
-  // //             {tc('button.cancel')}
-  // //           </Button>
-  // //           <Button type="submit" color="primary" isLoading={isLoading}>
-  // //             {tc('button.save')}
-  // //           </Button>
-  // //         </div>
-  // //       </Form>
-  // //     </FormProvider>
+  const onSubmit = (values: any) => {
+    // Logic xử lý submit doanh thu từ EnterRevenueForm
+    console.log('Submit values:', values);
+  };
 
-  // //   </LoadingWrapper>
-  // );
+  return (
+    <LoadingWrapper isLoading={isDetailLoading} className="flex flex-col h-full">
+      <FormProvider {...methods}>
+        <Form
+          className="flex h-full w-full max-w-full flex-col justify-between space-y-6 pt-6"
+          validationBehavior="aria"
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <div className="w-full space-y-6 overflow-auto px-6">
+            {/* Form trên: Chỉ View dữ liệu nhân viên */}
+            <WrapperBoxForm title={t("work_shifts_form.staff_info")}>
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label={t('columns.employee_code')}
+                  value={staff?.code ?? ''}
+                  isReadOnly
+                  variant="bordered"
+                  labelPlacement="outside"
+                  placeholder=" "
+                />
+                <Input
+                  label={t('columns.employee_name')}
+                  value={staff?.name ?? ''}
+                  isReadOnly
+                  variant="bordered"
+                  labelPlacement="outside"
+                  placeholder=" "
+                />
+                <Input
+                  label={t('change_shift_division.department')}
+                  value={departmentNames}
+                  isReadOnly
+                  variant="bordered"
+                  labelPlacement="outside"
+                  placeholder=" "
+                />
+                <Input
+                  label={t('change_shift_division.room')}
+                  value={roomNames}
+                  isReadOnly
+                  variant="bordered"
+                  labelPlacement="outside"
+                  placeholder=" "
+                />
+              </div>
+            </WrapperBoxForm>
+
+            {/* Form dưới: Nhập doanh thu */}
+            <WrapperBoxForm title={t("work_shifts_form.shift_info")}>
+              <EnterRevenueForm />
+            </WrapperBoxForm>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex w-full justify-end gap-2 bg-white px-6 pb-6 pt-3">
+            <Button
+              variant="light"
+              onPress={onClose}
+              className="border border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
+            >
+              {tc('button.cancel')}
+            </Button>
+            <Button type="submit" color="primary" isLoading={isLoading}>
+              {tc('button.save')}
+            </Button>
+          </div>
+        </Form>
+      </FormProvider>
+    </LoadingWrapper>
+  );
 };
