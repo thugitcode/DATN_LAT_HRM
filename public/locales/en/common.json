@@ -115,7 +115,9 @@
   "status": {
     "approved": "Approved",
     "rejected": "Rejected",
-    "pending": "Pending"
+    "pending": "Pending",
+    "working": "Working",
+    "off": "Off"
   },
   "select": "Select",
   "table": {
@@ -183,5 +185,6 @@
       "spec1": "Specialist I",
       "spec2": "Specialist II"
     }
-  }
+  },
+  "staff": "Staff"
 }

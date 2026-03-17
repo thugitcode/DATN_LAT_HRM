@@ -6,6 +6,3 @@ import type { RequestsParams } from '@/types/global.type';
 export function usePayrollFeedbackList(params?: RequestsParams) {
   return useQuery(payrollFeedbackOptions.list(params));
 }
-export function usePayrollFeedbackDetail(id: string) {
-  return useQuery(payrollFeedbackOptions.detail(id));
-}

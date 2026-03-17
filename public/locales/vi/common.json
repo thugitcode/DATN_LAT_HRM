@@ -115,7 +115,9 @@
   "status": {
     "approved": "Đã duyệt",
     "rejected": "Từ chối",
-    "pending": "Chờ duyệt"
+    "pending": "Chờ duyệt",
+    "working": "Đang làm việc",
+    "off": "Nghỉ"
   },
   "select": "Chọn",
   "table": {
@@ -183,5 +185,6 @@
       "spec1": "BS Chuyên khoa I",
       "spec2": "BS Chuyên khoa II"
     }
-  }
+  },
+  "staff": "Nhân viên"
 }

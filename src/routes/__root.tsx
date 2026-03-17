@@ -6,6 +6,9 @@ import type { AuthContext } from '@/types/auth.type';
 import { CommonErrorComponent } from '@/components/common-error-component';
 
 import i18n from '../i18n';
+import { MainDrawer } from '@/components/drawers/main-drawer';
+import { MainConfirmModal } from '@/components/confirm-modal/main-confirm-modal';
+import ModalViewFile from '@/components/modal-view-file';
 
 // import { CommonErrorComponent } from '@/components/common/common-error-component';
 // import { CommonNotFoundComponent } from '@/components/common/common-not-found-component';
@@ -41,7 +44,9 @@ function RootComponent() {
   return (
     <>
       <Outlet />
-
+      <MainDrawer />
+      <MainConfirmModal />
+      <ModalViewFile />
       {/* <TanStackDevtools
         plugins={[
           {

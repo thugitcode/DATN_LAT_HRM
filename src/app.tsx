@@ -112,9 +112,6 @@ export function App() {
         <HeroUIProvider className="h-full">
           <RouterProvider router={router} context={{ queryClient, auth }} />
         </HeroUIProvider>
-        <MainDrawer />
-        <MainConfirmModal />
-        <ModalViewFile />
       </PersistProvider>
     </QueryClientProvider>
   );
