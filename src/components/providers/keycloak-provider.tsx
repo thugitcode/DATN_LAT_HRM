@@ -3,13 +3,15 @@ import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { keycloakClient } from '@/lib/keycloak';
 import { logger } from '@/lib/logger';
 
+import { KeycloakLoadingScreen } from '../keycloak-loading-screen';
+
 type Props = React.PropsWithChildren;
 
 export const KeycloakProvider = ({ children }: Props) => {
   return (
     <ReactKeycloakProvider
       authClient={keycloakClient}
-      LoadingComponent={<div className="h-screen">Hệ thống đang xác thực...</div>}
+      LoadingComponent={<KeycloakLoadingScreen />}
       autoRefreshToken={false}
       onEvent={(event, error) => {
         logger.log('Keycloak Event:', event, error);

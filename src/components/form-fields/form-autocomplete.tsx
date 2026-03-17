@@ -30,7 +30,7 @@ export function FormAutocomplete<T extends FieldValues>({
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
           <FormLabel label={label} isRequired={isRequired} isError={!!fieldState.error} />
 
           <Autocomplete
