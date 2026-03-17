@@ -66,5 +66,37 @@
     "overtime": "Tăng ca",
     "compensatory_hours": "Giờ bù",
     "violation": "Vi phạm"
+  },
+
+  "revenue": {
+    "columns": {
+      "stt": "STT",
+      "department": "KHOA/PHÒNG",
+      "staff_code": "MÃ NHÂN VIÊN",
+      "staff_name": "TÊN NHÂN VIÊN",
+      "target_amount": "CHỈ TIÊU THÁNG",
+      "actual_amount": "THỰC ĐẠT",
+      "achievement_rate": "TỈ LỆ ĐẠT",
+      "data_source": "NGUỒN DỮ LIỆU",
+      "status": "TRẠNG THÁI",
+      "actions": "THAO TÁC"
+    },
+    "status": {
+      "pending": "Chờ xác nhận",
+      "approved": "Đã xác nhận"
+    },
+    "form": {
+      "title": "Giá trị",
+      "fields": {
+        "month": "Tháng",
+        "target": "Chỉ tiêu",
+        "actual": "Thực đạt",
+        "achievement_rate": "Tỉ lệ đạt"
+      },
+      "placeholders": {
+        "select": "Chọn",
+        "input": "Nhập"
+      }
+    }
   }
 }

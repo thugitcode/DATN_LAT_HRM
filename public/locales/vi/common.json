@@ -120,5 +120,68 @@
   "select": "Chọn",
   "table": {
     "empty": "Không có dữ liệu"
+  },
+  "options": {
+    "job_title": {
+      "ALL": "Tất cả chức danh",
+      "DOCTOR": "Bác sĩ",
+      "NURSE": "Điều dưỡng",
+      "TECHNICIAN": "Kỹ thuật viên",
+      "MIDWIFE": "Hộ sinh",
+      "PHYSICIAN_ASSISTANT": "Y sĩ",
+      "OFFICE_STAFF": "Nhân viên văn phòng",
+      "MANAGEMENT": "Quản trị",
+      "LAB_TECHNICIAN": "Kỹ thuật viên xét nghiệm",
+      "IMAGING_TECHNICIAN": "Kỹ thuật viên CĐHA",
+      "CASHIER": "Thu ngân",
+      "RECEPTIONIST": "Lễ tân",
+      "WAREHOUSE_KEEPER": "Thủ kho",
+      "PHARMACIST": "Dược sĩ",
+      "SALES": "Sale",
+      "TELESALES": "Telesale",
+      "MARKETING": "Marketing",
+      "CUSTOMER_SUPPORT": "Chăm sóc khách hàng",
+      "MARKETING_LEAD": "Trưởng nhóm Marketing",
+      "CUSTOMER_SUPPORT_LEAD": "Trưởng nhóm CSKH"
+    },
+    "staff_position": {
+      "ALL": "Tất cả cấp bậc",
+      "STAFF": "Nhân viên",
+      "HEAD_OF_DEPARTMENT": "Trưởng khoa",
+      "DEPUTY_HEAD_OF_DEPARTMENT": "Phó khoa",
+      "CHIEF_NURSE": "Điều dưỡng trưởng",
+      "MANAGER": "Trưởng phòng",
+      "HEAD_OF_UNIT": "Trưởng bộ phận",
+      "DEPUTY_MANAGER": "Phó phòng"
+    },
+    "staff_status": {
+      "ALL": "Tất cả trạng thái",
+      "WORKING": "Đang làm việc",
+      "PENDING": "Chờ nhận việc",
+      "RESIGNED": "Đã nghỉ việc"
+    },
+    "contractType": {
+      "FULL_TIME": "Nhân viên chính thức",
+      "PROBATION": "Nhân viên thử việc",
+      "INTERNSHIP": "Nhân viên học việc",
+      "EXPERT_COOPERATION": "Chuyên gia hợp tác"
+    },
+    "qualification": {
+      "intermediate": "Trung cấp",
+      "college": "Cao đẳng",
+      "bachelor": "Cử nhân",
+      "master": "Thạc sĩ",
+      "doctor": "Bác sĩ",
+      "phd": "Tiến sĩ",
+      "specialist": "BS Chuyên khoa",
+      "other": "Khác"
+    },
+    "academicTitles": {
+      "doctor": "Bác sĩ",
+      "master": "Thạc sĩ",
+      "phd": "Tiến sĩ",
+      "spec1": "BS Chuyên khoa I",
+      "spec2": "BS Chuyên khoa II"
+    }
   }
 }

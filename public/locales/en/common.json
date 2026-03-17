@@ -120,5 +120,68 @@
   "select": "Select",
   "table": {
     "empty": "No data"
+  },
+  "options": {
+    "job_title": {
+      "ALL": "All Job Titles",
+      "DOCTOR": "Doctor",
+      "NURSE": "Nurse",
+      "TECHNICIAN": "Technician",
+      "MIDWIFE": "Midwife",
+      "PHYSICIAN_ASSISTANT": "Physician Assistant",
+      "OFFICE_STAFF": "Office Staff",
+      "MANAGEMENT": "Management",
+      "LAB_TECHNICIAN": "Lab Technician",
+      "IMAGING_TECHNICIAN": "Imaging Technician",
+      "CASHIER": "Cashier",
+      "RECEPTIONIST": "Receptionist",
+      "WAREHOUSE_KEEPER": "Warehouse Keeper",
+      "PHARMACIST": "Pharmacist",
+      "SALES": "Sales",
+      "TELESALES": "Telesales",
+      "MARKETING": "Marketing",
+      "CUSTOMER_SUPPORT": "Customer Support",
+      "MARKETING_LEAD": "Marketing Lead",
+      "CUSTOMER_SUPPORT_LEAD": "Customer Support Lead"
+    },
+    "staff_position": {
+      "ALL": "All Positions",
+      "STAFF": "Staff",
+      "HEAD_OF_DEPARTMENT": "Head of Department",
+      "DEPUTY_HEAD_OF_DEPARTMENT": "Deputy Head of Department",
+      "CHIEF_NURSE": "Chief Nurse",
+      "MANAGER": "Manager",
+      "HEAD_OF_UNIT": "Head of Unit",
+      "DEPUTY_MANAGER": "Deputy Manager"
+    },
+    "staff_status": {
+      "ALL": "All Statuses",
+      "WORKING": "Working",
+      "PENDING": "Pending",
+      "RESIGNED": "Resigned"
+    },
+    "contractType": {
+      "FULL_TIME": "Full-time Employee",
+      "PROBATION": "Probationary Employee",
+      "INTERNSHIP": "Intern",
+      "EXPERT_COOPERATION": "Cooperating Expert"
+    },
+    "qualification": {
+      "intermediate": "Intermediate",
+      "college": "College",
+      "bachelor": "Bachelor",
+      "master": "Master",
+      "doctor": "Doctor",
+      "phd": "PhD",
+      "specialist": "Specialist Doctor",
+      "other": "Other"
+    },
+    "academicTitles": {
+      "doctor": "MD",
+      "master": "MSc",
+      "phd": "PhD",
+      "spec1": "Specialist I",
+      "spec2": "Specialist II"
+    }
   }
 }
