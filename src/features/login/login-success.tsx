@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from '@tanstack/react-router';
 
-import { CommonInitializingComponent } from '@/components/common/common-initializing-component';
 
 import { WINDOW_LOGIN_SUCCESS_MESSAGE } from './libs/constants';
 
