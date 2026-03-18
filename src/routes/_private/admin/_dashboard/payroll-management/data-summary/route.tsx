@@ -18,8 +18,8 @@ function DataSummaryLayout() {
       { key: 'attendance-data', label: t('data_summary.tabs.attendance_data') },
       { key: 'revenue', label: t('data_summary.tabs.revenue') },
       { key: 'kpi', label: t('data_summary.tabs.kpi') },
-      { key: 'other-income', label: t('data_summary.tabs.other_income') },
-      { key: 'summary-finalize', label: t('data_summary.tabs.summary_finalize') },
+      // { key: 'other-income', label: t('data_summary.tabs.other_income') },
+      // { key: 'summary-finalize', label: t('data_summary.tabs.summary_finalize') },
     ],
     [t],
   );

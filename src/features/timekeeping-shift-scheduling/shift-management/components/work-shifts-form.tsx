@@ -218,7 +218,6 @@ export const WorkShiftsForm = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToFirstError = () => {
-    console.log('scroll này ');
     setTimeout(() => {
       const container = scrollContainerRef.current;
       if (!container) return;
@@ -279,7 +278,7 @@ export const WorkShiftsForm = () => {
               <FormAutocomplete
                 control={control}
                 name="staffId"
-                label={t('columns.employee_code')}
+                label={t('columns.employee_code_2')}
                 isRequired
                 options={staffByCodeOptions}
                 onSelect={handleSelectByCode}
@@ -288,7 +287,7 @@ export const WorkShiftsForm = () => {
               <FormAutocomplete
                 control={control}
                 name="name"
-                label={t('columns.employee_name')}
+                label={t('columns.employee_name_2')}
                 isRequired
                 options={staffOptions}
                 onSelect={handleSelectByName}

@@ -22,7 +22,7 @@ export const MainSidebarNav: FC<MainSidebarNavProps> = ({ isCollapsed }) => {
           <Link
             to={menu.path}
             className={cn(
-              'group flex items-center w-full rounded-[14px] h-12 gap-2 py-3 text-[16px] leading-6 tracking-normal text-nowrap transition-colors',
+              'group flex items-center w-full rounded-[14px] overflow-hidden h-12 gap-2 py-3 text-[16px] leading-6 tracking-normal text-nowrap transition-colors',
               isCollapsed ? 'justify-center' : 'px-6',
             )}
             activeProps={{

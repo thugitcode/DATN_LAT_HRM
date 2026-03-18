@@ -37,6 +37,8 @@
     "employee_name": "TÊN NHÂN VIÊN",
     "week": "TUẦN {{week}}",
     "position": "CHỨC VỤ",
+    "employee_code_2": "Mã nhân viên",
+    "employee_name_2": "Tên nhân viên",
 
     "summary": {
       "total_attendance": "TỔNG CÔNG",

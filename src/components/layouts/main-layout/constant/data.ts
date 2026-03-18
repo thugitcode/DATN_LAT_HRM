@@ -91,11 +91,11 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
         label: t('sidebar.payslip_feedback'),
         path: '/admin/payroll-management/payslip-feedback',
       },
-      {
-        id: '4',
-        label: t('sidebar.employee_salary_history'),
-        path: '/admin/payroll-management/salary-history',
-      },
+      // {
+      //   id: '4',
+      //   label: t('sidebar.employee_salary_history'),
+      //   path: '/admin/payroll-management/salary-history',
+      // },
     ],
   },
 
