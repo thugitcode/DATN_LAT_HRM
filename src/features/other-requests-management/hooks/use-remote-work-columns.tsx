@@ -45,12 +45,7 @@ export const useRemoteWorkColumns = () => {
         key: 'fromDate',
         title: t('columns.remoteDate'),
         minWidth: 160,
-        render: (_, row) => (
-          <span>
-            {row.fromDate ? toDDMMYYYY(row.fromDate) : '-'} -{' '}
-            {row.toDate ? toDDMMYYYY(row.toDate) : '-'}
-          </span>
-        ),
+        render: (_, row) => <span>{row.fromDate ? toDDMMYYYY(row.fromDate) : '-'}</span>,
       },
       {
         key: 'startTime',

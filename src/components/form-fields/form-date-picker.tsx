@@ -4,8 +4,9 @@ import { parseDate } from '@internationalized/date';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
 
-import type { BaseFieldProps } from './types';
 import { cn } from '@/lib/utils';
+
+import type { BaseFieldProps } from './types';
 
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   disabled?: boolean;
@@ -46,8 +47,10 @@ export function FormDatePicker<T extends FieldValues>({
               data-[invalid=true]:!bg-[#F4F4F5]
               group-data-[invalid=true]:!bg-[#F4F4F5]
             `,
-            label: cn('text-base font-normal leading-4 text-[#52525B]',
-              !!fieldState.error ? 'text-[#F31260]' : 'text-[#52525B]'),
+            label: cn(
+              'text-base font-normal leading-4 text-[#52525B] mb-1',
+              fieldState.error ? 'text-[#F31260]' : 'text-[#52525B]',
+            ),
           }}
           {...props}
         />

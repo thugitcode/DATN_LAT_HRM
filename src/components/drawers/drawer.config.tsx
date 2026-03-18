@@ -4,13 +4,13 @@ import type { DrawerProps } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
 import { FormKpiMutate } from '@/features/payroll-management/components/form-kpi-mutate';
+import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
 import { TimekeepingDetails } from '@/features/payroll-management/components/timekeeping-details';
 import { ProfileDetailsDrawer } from '@/features/staff-management/profile-staff/components/profile-details-drawer';
 import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling/explanation-management/components/explanation-detail-drawer';
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
 import { WorkShiftsForm } from '@/features/timekeeping-shift-scheduling/shift-management/components/work-shifts-form';
 import { ShiftDetailsDrawer } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-drawer';
-import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
 
 type DrawerConfig = {
   title: string;
