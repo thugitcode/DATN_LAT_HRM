@@ -8,9 +8,9 @@ import { apiTokens } from '@/lib/axios';
 
 export const Route = createFileRoute('/_private')({
   beforeLoad: ({ context: { auth } }) => {
-    if (!auth.isLoggedIn) {
-      throw redirect({ to: '/login' });
-    }
+    // if (!auth.isLoggedIn) {
+    //   throw redirect({ to: '/login' });
+    // }
     apiTokens.accessToken = auth.accessToken;
     apiTokens.refreshToken = auth.refreshToken;
   },
