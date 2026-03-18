@@ -37,6 +37,10 @@
     "employee_name": "EMPLOYEE NAME",
     "week": "WEEK {{week}}",
     "position": "POSITION",
+
+    "employee_code_2": "Employee code",
+    "employee_name_2": "Employee name",
+
     "summary": {
       "total_attendance": "TOTAL",
       "work_days": "WORK DAYS",

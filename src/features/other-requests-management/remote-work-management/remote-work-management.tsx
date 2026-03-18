@@ -16,6 +16,7 @@ import { TitlePage } from '@/components/title-page';
 import { OtherRequestManagementFilters } from '../components/other-request-management-filter';
 import { useOtherRequestpManagement } from '../hooks/use-other-request-management';
 import { useRemoteWorkColumns } from '../hooks/use-remote-work-columns';
+import { CategoryGeneralRequest } from '../types/generate-request.type';
 import type { OtherRequestsManagementParams } from '../types/type';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-300px)]' } as const;
@@ -45,6 +46,7 @@ export const RemoteWorkManagement = () => {
     type,
     page: page ?? 1,
     limit: limit ?? 10,
+    category: CategoryGeneralRequest.REMOTE_WORK,
   });
 
   const paginationConfig = useMemo(
@@ -69,7 +71,7 @@ export const RemoteWorkManagement = () => {
         <TitlePage title={t('remoteManagement.title')} />
 
         <div className="flex items-center gap-2">
-          <ActionsPage onPrint={handlePrint} onExport={handleExport} hiddenLayoutSwitcher />
+          {/* <ActionsPage onPrint={handlePrint} onExport={handleExport} hiddenLayoutSwitcher /> */}
           <ColumnVisibilityPopover
             columns={columns}
             visibleColumns={visibleColumns}
