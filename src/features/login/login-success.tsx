@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from '@tanstack/react-router';
 
-
 import { WINDOW_LOGIN_SUCCESS_MESSAGE } from './libs/constants';
 
 export const LoginSuccess = () => {
@@ -24,6 +23,6 @@ export const LoginSuccess = () => {
   return (
     // <CommonInitializingComponent h="100dvh" title="Đăng nhập thành công. Đang chuyển hướng..." />
 
-    <div>CommonInitializingComponent</div>
+    <div>Đăng nhập thành công, đang chuyển hướng...</div>
   );
 };
