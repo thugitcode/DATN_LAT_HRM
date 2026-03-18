@@ -11,8 +11,8 @@ export const Route = createFileRoute('/_private')({
     // if (!auth.isLoggedIn) {
     //   throw redirect({ to: '/login' });
     // }
-    apiTokens.accessToken = auth.accessToken;
-    apiTokens.refreshToken = auth.refreshToken;
+    // apiTokens.accessToken = auth.accessToken;
+    // apiTokens.refreshToken = auth.refreshToken;
   },
   // loader: async ({ context: { queryClient } }) => {
   //   await queryClient.ensureQueryData(identityQueryOptions());

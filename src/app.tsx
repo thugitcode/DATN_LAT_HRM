@@ -95,14 +95,14 @@ declare module '@tanstack/react-router' {
 }
 
 export function App() {
-  const { keycloak } = useKeycloak();
-  const auth: AuthContext = {
-    isLoggedIn: keycloak.authenticated ?? false,
-    tokenPayload: keycloak.tokenParsed,
-    accessToken: keycloak.token,
-    refreshToken: keycloak.refreshToken,
-    logout: () => keycloak.logout(),
-  };
+  // const { keycloak } = useKeycloak();
+  // const auth: AuthContext = {
+  //   isLoggedIn: keycloak.authenticated ?? false,
+  //   tokenPayload: keycloak.tokenParsed,
+  //   accessToken: keycloak.token,
+  //   refreshToken: keycloak.refreshToken,
+  //   logout: () => keycloak.logout(),
+  // };
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -110,7 +110,7 @@ export function App() {
       <PersistProvider>
         {/* <GlobalLoading /> */}
         <HeroUIProvider className="h-full">
-          <RouterProvider router={router} context={{ queryClient, auth }} />
+          <RouterProvider router={router} context={{ queryClient }} />
         </HeroUIProvider>
       </PersistProvider>
     </QueryClientProvider>
