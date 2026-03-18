@@ -4,12 +4,11 @@ import { apiTokens } from '@/lib/axios';
 
 export const Route = createFileRoute('/_auth')({
   beforeLoad: ({ context: { auth } }) => {
-    if (auth.isLoggedIn) {
-      throw redirect({ to: '/admin' });
-    }
-
-    apiTokens.accessToken = undefined;
-    apiTokens.refreshToken = undefined;
+    // if (auth.isLoggedIn) {
+    //   throw redirect({ to: '/admin' });
+    // }
+    // apiTokens.accessToken = undefined;
+    // apiTokens.refreshToken = undefined;
   },
 
   // loader: async ({ context: { queryClient } }) => {

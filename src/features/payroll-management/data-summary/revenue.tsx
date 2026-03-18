@@ -44,7 +44,7 @@ export const RevenueData = () => {
   });
 
   return (
-    <PageContainer className="space-y-3" variant={'fixed'}>
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <TitlePage title={t('data_summary.tabs.revenue')} />
 
@@ -71,6 +71,6 @@ export const RevenueData = () => {
         classNames={TABLE_CLASS_NAMES}
         pagination={paginationConfig}
       />
-    </PageContainer>
+    </div>
   );
 };

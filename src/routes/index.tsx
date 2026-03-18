@@ -10,7 +10,7 @@ export const Route = createFileRoute('/')({
     if (jwt) {
       localStorage.setItem('jwt', jwt);
     } else if (!localJwt) {
-      throw redirect({ to: '/authenticated' });
+      throw redirect({ to: '/unauthenticated' });
     }
 
     throw redirect({ to: '/admin/timekeeping-shift-scheduling' });
