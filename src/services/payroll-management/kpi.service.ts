@@ -22,6 +22,9 @@ class KpiService extends BaseApiService<Kpi, unknown, unknown, RequestsParams> {
     return super.create(data);
   }
 
+  async update(id: string, data: KpiMutatePayload) {
+    return super.update(id, data);
+  }
   async delete(id: string) {
     return super.delete(id);
   }
