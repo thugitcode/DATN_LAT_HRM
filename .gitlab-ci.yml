@@ -5,7 +5,7 @@ stages:
 
 variables:
   # The path to the repository of the project on ECR
-  PROJECT_REPO_PATH: "deepcare/cis/hrm/hrm-web-ui"
+  PROJECT_REPO_PATH: "deepcare/cis/hrm"
 
   # The name of the project in case it is different fron the gitlab project name
   # Leave empty if using default (gitlab repo name)
