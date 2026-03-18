@@ -27,15 +27,39 @@ export function useCreateKPIManagement() {
   const closedDrawer = useDrawer((state) => state.onClose);
 
   return useMutation({
-    mutationFn: (data: KpiMutatePayload) => {
-      const payloads = Array.isArray(data) ? data : [data];
-      return Promise.all(payloads.map((p) => kpiService.create(p)));
-    },
+    mutationFn: (data: KpiMutatePayload) => kpiService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: kpiKeys.lists() });
 
       addToast({
         description: 'Thêm mới KPI thành công.',
+        color: 'success',
+      });
+      closedDrawer();
+    },
+    onError: (error: unknown) => {
+      const { message } = normalizeAxiosError(error);
+      addToast({
+        description: message,
+        color: 'danger',
+      });
+    },
+  });
+}
+
+export function useUpdateKPIManagement() {
+  const queryClient = useQueryClient();
+  const closedDrawer = useDrawer((state) => state.onClose);
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: KpiMutatePayload }) =>
+      kpiService.update(id, data),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: kpiKeys.lists() });
+
+      addToast({
+        description: 'Chỉnh sửa KPI thành công.',
         color: 'success',
       });
       closedDrawer();
