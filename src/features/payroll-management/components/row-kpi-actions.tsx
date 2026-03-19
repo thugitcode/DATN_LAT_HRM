@@ -33,13 +33,19 @@ export const RowKpiActions: FC<RowKpiActionsProps> = ({ dataRow }) => {
   //   };
 
   return (
-    <div className="flex items-center gap-1">
-      <ActionButton className="bg-white" tooltip="Chỉnh sửa" ariaLabel="edit" onPress={handleEdit}>
-        {icons.pen}
-      </ActionButton>
-      <ActionButton className="bg-white" tooltip="Xóa" ariaLabel="delete" onPress={() => {}}>
-        {icons.bin}
-      </ActionButton>
-    </div>
+    <ActionButton className="bg-white" tooltip="Chỉnh sửa" ariaLabel="edit" onPress={handleEdit}>
+      {icons.pen}
+    </ActionButton>
   );
+
+  // return (
+  //   <div className="flex items-center gap-1">
+  //     <ActionButton className="bg-white" tooltip="Chỉnh sửa" ariaLabel="edit" onPress={handleEdit}>
+  //       {icons.pen}
+  //     </ActionButton>
+  //     <ActionButton className="bg-white" tooltip="Xóa" ariaLabel="delete" onPress={() => {}}>
+  //       {icons.bin}
+  //     </ActionButton>
+  //   </div>
+  // );
 };

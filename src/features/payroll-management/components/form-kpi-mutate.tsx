@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { Button, Form } from '@heroui/react';
@@ -21,13 +22,18 @@ import { LoadingWrapper } from '@/components/loading-wrapper';
 import { WrapperBoxForm } from '@/components/wrapper-box-form';
 
 import { RATING_OPTIONS } from '../constants/kpi';
-import { useCreateKPIManagement, useKpiDetail } from '../hooks/use-payroll-management';
+import {
+  useCreateKPIManagement,
+  useKpiDetail,
+  useUpdateKPIManagement,
+} from '../hooks/use-payroll-management';
 import { createKpiMutateSchema, type KpiMutateFormValues } from '../schemas/kpi-mutate-schema';
-import { KpiSourceEnum, type Kpi, type KpiMutatePayload } from '../types/kpi.type';
+import { KpiRatingEnum, KpiSourceEnum, type Kpi, type KpiMutatePayload } from '../types/kpi.type';
 
 export const FormKpiMutate = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
+  const hasAutofilled = useRef(false);
 
   const onClose = useDrawer((state) => state.onClose);
   const dataRow = useDrawer((state) => state.data) as Kpi;
@@ -42,7 +48,10 @@ export const FormKpiMutate = () => {
   const { options: departmentOptions } = useDepartmentOptions();
   const { options: roomOptions } = useRoomOptions();
 
-  const { mutate: muatateCreate, isPending } = useCreateKPIManagement();
+  const { mutate: mutateCreate, isPending } = useCreateKPIManagement();
+  const { mutate: mutateUpdate, isPending: isPendingUpdate } = useUpdateKPIManagement();
+
+  const [selectedStaff, setSelectedStaff] = useState<(typeof staffOptions)[0] | null>(null);
 
   const staffByCodeOptions = staffOptions.map((item) => ({
     ...item,
@@ -54,14 +63,14 @@ export const FormKpiMutate = () => {
   const methods = useForm<KpiMutateFormValues>({
     resolver: zodResolver(schema) as any,
     defaultValues: {
-      staffCode: dataDetail?.staff?.id ?? '',
+      staffCode: '',
       name: '',
       departmentId: '',
       roomId: '',
       staffId: '',
       month: '',
-      kpiScore: Number(dataDetail?.kpiScore),
-      rating: undefined,
+      kpiScore: '',
+      rating: '',
       evaluatorId: '',
       source: KpiSourceEnum.WEB,
       status: Status.PENDING,
@@ -70,20 +79,93 @@ export const FormKpiMutate = () => {
     mode: 'onSubmit',
   });
 
-  const { control, handleSubmit, setValue } = methods;
+  const { control, handleSubmit, setValue, watch } = methods;
+
+  const kpiScore = watch('kpiScore');
+
+  useEffect(() => {
+    if (!dataDetail || hasAutofilled.current) return;
+    hasAutofilled.current = true;
+    setValue('staffId', dataDetail.staff.id);
+    setValue('staffCode', dataDetail.staff.code);
+    setValue('name', dataDetail.staff.id);
+
+    const emp = staffOptions.find((e) => e.key === dataDetail.staff.id);
+    if (emp) setSelectedStaff(emp);
+
+    if (dataDetail.departments?.length === 1) {
+      setValue('departmentId', dataDetail.departments[0]?.id ?? '');
+    }
+    if (dataDetail.rooms?.length === 1) {
+      setValue('roomId', dataDetail.rooms[0]?.id ?? '');
+    }
+
+    setValue('kpiScore', dataDetail.kpiScore ? String(dataDetail.kpiScore) : '');
+    setValue('rating', dataDetail.rating);
+    setValue('evaluatorId', dataDetail.evaluator?.id ?? '');
+    setValue('source', dataDetail.source);
+    setValue('status', dataDetail.status);
+  }, [dataDetail, staffOptions, hasAutofilled]);
+
+  useEffect(() => {
+    const score = Number(kpiScore);
+    if (!kpiScore || isNaN(score)) return;
+
+    let rating: KpiRatingEnum;
+    if (score < 50) {
+      rating = KpiRatingEnum.NOT_MET;
+    } else if (score <= 100) {
+      rating = KpiRatingEnum.GOOD;
+    } else {
+      rating = KpiRatingEnum.EXCELLENT;
+    }
+
+    setValue('rating', rating, { shouldValidate: true });
+  }, [kpiScore]);
+
+  const filteredDepartmentOptions = useMemo(() => {
+    if (!selectedStaff) return [];
+    return departmentOptions.filter((dept) =>
+      selectedStaff.departments?.some((d) => d.id === dept.key),
+    );
+  }, [selectedStaff, departmentOptions]);
+
+  const filteredRoomOptions = useMemo(() => {
+    if (!selectedStaff) return [];
+    return roomOptions.filter((room) => selectedStaff.rooms?.some((r) => r.id === room.key));
+  }, [selectedStaff, roomOptions]);
 
   const handleSelectByCode = (code: string) => {
     const emp = staffOptions.find((e) => e.code === code);
     if (!emp) return;
+    setSelectedStaff(emp);
     setValue('name', emp.key, { shouldValidate: true });
     setValue('staffId', emp.key, { shouldValidate: true });
+
+    const empDepts = departmentOptions.filter((dept) =>
+      emp.departments?.some((d) => d.id === dept.key),
+    );
+    const empRooms = roomOptions.filter((room) => emp.rooms?.some((r) => r.id === room.key));
+
+    setValue('departmentId', empDepts.length === 1 ? (empDepts[0]?.key ?? '') : '');
+    setValue('roomId', empRooms.length === 1 ? (empRooms[0]?.key ?? '') : '');
   };
 
   const handleSelectByName = (id: string) => {
     const emp = staffOptions.find((e) => e.key === id);
     if (!emp) return;
+    setSelectedStaff(emp);
     setValue('staffCode', emp.code ?? '', { shouldValidate: true });
     setValue('staffId', emp.key, { shouldValidate: true });
+
+    const empDepts = departmentOptions.filter((dept) =>
+      emp.departments?.some((d) => d.id === dept.key),
+    );
+
+    const empRooms = roomOptions.filter((room) => emp.rooms?.some((r) => r.id === room.key));
+
+    setValue('departmentId', empDepts.length === 1 ? (empDepts[0]?.key ?? '') : '');
+    setValue('roomId', empRooms.length === 1 ? (empRooms[0]?.key ?? '') : '');
   };
 
   const onSubmit = (values: KpiMutateFormValues) => {
@@ -91,13 +173,20 @@ export const FormKpiMutate = () => {
       staffId: values.staffId,
       month: '2026-03',
       kpiScore: Number(values.kpiScore),
-      rating: values.rating,
+      rating: values.rating as KpiRatingEnum,
       evaluatorId: values.evaluatorId,
       source: values.source,
       status: values.status,
     };
 
-    muatateCreate(payload);
+    if (!dataDetail) {
+      mutateCreate(payload);
+    } else {
+      mutateUpdate({
+        id: dataDetail.id,
+        payload,
+      });
+    }
   };
 
   return (
@@ -118,7 +207,7 @@ export const FormKpiMutate = () => {
                   isRequired
                   options={staffByCodeOptions}
                   onSelect={handleSelectByCode}
-                  disabled={isPending}
+                  disabled={isPending || !!dataDetail}
                 />
                 <FormAutocomplete
                   control={control}
@@ -127,23 +216,23 @@ export const FormKpiMutate = () => {
                   isRequired
                   options={staffOptions}
                   onSelect={handleSelectByName}
-                  disabled={isPending}
+                  disabled={isPending || !!dataDetail}
                 />
                 <FormSelect
                   control={control}
                   name="departmentId"
                   label={t('kpi.form.department')}
                   isRequired
-                  options={departmentOptions}
-                  disabled={isPending}
+                  options={filteredDepartmentOptions}
+                  disabled={isPending || !!dataDetail}
                 />
                 <FormSelect
                   control={control}
                   name="roomId"
                   label={t('kpi.form.room')}
                   isRequired
-                  options={roomOptions}
-                  disabled={isPending}
+                  options={filteredRoomOptions}
+                  disabled={isPending || !!dataDetail}
                 />
               </div>
             </WrapperBoxForm>
@@ -175,8 +264,7 @@ export const FormKpiMutate = () => {
                   name="rating"
                   label={t('kpi.form.rank')}
                   options={RATING_OPTIONS}
-                  disabled={isPending}
-                  isRequired
+                  disabled={true}
                 />
 
                 <FormArea

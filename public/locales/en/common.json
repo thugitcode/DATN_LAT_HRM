@@ -55,7 +55,8 @@
     "profile_staff_detail": "Employee Profile Details",
     "timekeepingDetails": "Timekeeping details",
     "enter_kpi": "Enter KPI",
-    "revenueDetails": "Enter sales"
+    "revenueDetails": "Enter sales",
+    "additionalArisingAmounts": "Additional arising amounts"
   },
 
   "button": {
@@ -65,7 +66,8 @@
     "save": "Save",
     "confirm": "Confirm",
     "addNew": "Add new",
-    "exit": "Exit"
+    "exit": "Exit",
+    "moreIncome": "More income"
   },
 
   "weekdays": {

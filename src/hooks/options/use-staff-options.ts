@@ -2,8 +2,7 @@ import { useStaffList } from '@/query-options/staff';
 
 export const useStaffOptions = () => {
   const { data } = useStaffList({
-    page: 1,
-    limit: 100,
+    getAll: true,
   });
   return {
     options:
