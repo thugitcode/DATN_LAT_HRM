@@ -23,7 +23,8 @@ hrmInstance.interceptors.request.use((config) => {
     config.headers['Content-Type'] = 'application/json';
   }
   if (jwt) {
-    const xTenantId = jwtDecode(jwt).partner_code;
+    // const xTenantId = jwtDecode(jwt).partner_code;
+    const xTenantId = "noiquoctuan5";
 
     config.headers['x-tenant-id'] = xTenantId;
 
