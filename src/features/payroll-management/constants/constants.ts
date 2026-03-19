@@ -14,3 +14,14 @@ export const statusKpiOptions: Options[] = [
     key: Status.REJECTED,
   },
 ];
+
+export const statusRevenueOptions: Options[] = [
+  {
+    label: 'Đã xác nhận',
+    key: Status.APPROVED,
+  },
+  {
+    label: 'Chờ xác nhận',
+    key: Status.PENDING,
+  }
+];

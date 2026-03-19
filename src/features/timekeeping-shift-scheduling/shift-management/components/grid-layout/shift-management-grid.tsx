@@ -12,19 +12,19 @@ import { DayHeader } from './day-header';
 export interface ShiftManagementGridProps {
   data?: StaffSchedule[];
   isLoading?: boolean;
-  isDetailsEmployee?: boolean;
+  fromDetailsEmployee?: boolean;
   height?: string
 }
 
 export const ShiftManagementGrid: FC<ShiftManagementGridProps> = ({ data, isLoading, height }) => {
   const { id } = useParams({ strict: false });
   const isEmpty = !isLoading && !data?.length;
-  const isDetailsEmployee = !!id;
+  const fromDetailsEmployee = !!id;
   return (
     <div className={cn('w-full rounded-xl relative overflow-auto', height ?? 'h-[calc(100vh-282px)]')}>
       <table className="border-collapse min-w-max w-full table-fixed">
-        <DayHeader data={data} isDetailsEmployee={isDetailsEmployee} />
-        {isEmpty ? <TableEmpty /> : <BodyV2 data={data} isDetailsEmployee={isDetailsEmployee} />}
+        <DayHeader data={data} fromDetailsEmployee={fromDetailsEmployee} />
+        {isEmpty ? <TableEmpty /> : <BodyV2 data={data} fromDetailsEmployee={fromDetailsEmployee} />}
       </table>
 
       {isLoading && <TableLoading />}

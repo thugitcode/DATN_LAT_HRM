@@ -40,7 +40,7 @@ export const ShiftManagementContainer = ({ staffId }: { staffId?: string }) => {
     // 2. Map dữ liệu từ Enum để tạo ra Legend
     const SHIFT_CA_LEGEND = Object.values(ShiftTypeEnum).map((status) => {
         const config = SHIFT_CONFIG[status];
-        const count = (data?.metadata?.shiftTypesCount as any)?.[status] || 0;
+        const count = (data?.data?.shiftTypesCount)?.[status] || 0;
 
         return {
             label: t(`shift_type.${status}`), // Map key từ i18n
@@ -68,7 +68,7 @@ export const ShiftManagementContainer = ({ staffId }: { staffId?: string }) => {
             <div className="flex bg-white mb-5 rounded-b-xl py-1.5">
                 {SHIFT_CA_LEGEND.map(item => <StatsSection stats={item} />)}
             </div>
-            <ShiftManagementGrid data={data?.data} isLoading={isLoading} height={cn(staffId ? 'h-[calc(100vh-360px)]' : "h-[calc(100vh-480px)]", " bg-white")} />
+            <ShiftManagementGrid data={data?.data?.data} isLoading={isLoading} height={cn(staffId ? 'h-[calc(100vh-360px)]' : "h-[calc(100vh-480px)]", " bg-white")} />
         </>
     )
 }

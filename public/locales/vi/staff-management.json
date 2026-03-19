@@ -274,22 +274,29 @@
       "FULL_TIME": "Toàn thời gian",
       "PART_TIME": "Bán thời gian"
     },
-    "qualification": {
-      "intermediate": "Trung cấp",
-      "college": "Cao đẳng",
-      "bachelor": "Cử nhân",
-      "master": "Thạc sĩ",
-      "doctor": "Bác sĩ",
-      "phd": "Tiến sĩ",
-      "specialist": "BS Chuyên khoa",
-      "other": "Khác"
+    "qualifications": {
+      "INTERMEDIATE": "Trung cấp",
+      "COLLEGE": "Cao đẳng",
+      "BACHELOR": "Cử nhân",
+      "DOCTOR": "Bác sĩ",
+      "MASTER": "Thạc sĩ",
+      "PHD": "Tiến sĩ",
+      "SPECIALIST_DOCTOR": "Bác sĩ Chuyên khoa",
+      "OTHER": "Khác"
     },
     "academicTitles": {
-      "doctor": "Bác sĩ",
-      "master": "Thạc sĩ",
-      "phd": "Tiến sĩ",
-      "spec1": "BS Chuyên khoa I",
-      "spec2": "BS Chuyên khoa II"
+      "DOCTOR": "Bác sĩ",
+      "MASTER": "Thạc sĩ",
+      "PHD": "Tiến sĩ",
+      "SPECIALIST_I": "Bác sĩ Chuyên khoa I",
+      "SPECIALIST_II": "Bác sĩ Chuyên khoa II",
+      "RESIDENT_PHYSICIAN": "Bác sĩ Nội trú",
+      "PROFESSOR": "Giáo sư",
+      "ASSOCIATE_PROFESSOR": "Phó Giáo sư",
+      "PEOPLES_PHYSICIAN": "Thầy thuốc Nhân dân",
+      "EMINENT_PHYSICIAN": "Thầy thuốc Ưu tú",
+      "BACHELOR": "Cử nhân",
+      "ENGINEER": "Kỹ sư"
     }
   },
   "staff_table": {

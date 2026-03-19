@@ -29,13 +29,13 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
     z.object({
 
         // --- Ảnh ---
-        avatar: z
-            .any()
-            .optional()
-            .refine(
-                (file) => !file || file.size <= 15 * 1024 * 1024,
-                t("errors.avatar.maxSize"),
-            ),
+        // avatar: z
+        //     .any()
+        //     .optional()
+        //     .refine(
+        //         (file) => !file || file.size <= 15 * 1024 * 1024,
+        //         t("errors.avatar.maxSize"),
+        //     ),
 
         // --- Thông tin nhân sự ---
         code: z.string().optional(),

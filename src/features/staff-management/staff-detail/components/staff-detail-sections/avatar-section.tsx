@@ -2,12 +2,14 @@ import { NAMESPACES } from '@/i18n/constants';
 import { uploadService } from '@/services/upload.service';
 import { Avatar } from '@heroui/react';
 import { IconCamera, IconUser } from '@tabler/icons-react';
+import { useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 export const AvatarSection = () => {
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
-  const { control } = useFormContext();
+  const { control, formState } = useFormContext();
+  const [url, setUrl] = useState<string>("")
   const {
     field: { onChange, value },
   } = useController({
@@ -20,8 +22,11 @@ export const AvatarSection = () => {
     if (file) {
       const uploadRes = await uploadService.upload(file);
 
-      const previewUrl = uploadRes.data.filePath;
-      onChange(previewUrl);
+      const previewPath = uploadRes.data.filePath;
+      // setUrl(uploadRes.data.url)
+      const previewUrl = URL.createObjectURL(file)
+      setUrl(previewUrl)
+      onChange(previewPath);
     }
   };
 
@@ -29,7 +34,7 @@ export const AvatarSection = () => {
     <div className="col-span-12">
       <div className="relative inline-block group">
         <Avatar
-          src={value} // Hiển thị ảnh từ field value
+          src={url || value} // Hiển thị ảnh từ field value
           className="w-24 h-24 text-large bg-[#E4E4E7] border-2 border-white shadow-md"
           fallback={<IconUser size={40} className="text-[#A1A1AA]" />}
         />

@@ -37,15 +37,15 @@ export const useStaffForm = (
                 ...STAFF_FORM_DEFAULT_VALUES,
                 ...editData,
                 healthInsuranceNumber: editData?.healthInsuranceNumber ?? "",
-                birthday: formatDate(editData.birthday),
-                identityIssueDate: formatDate(editData.identityIssueDate),
-                certificateExpiryDate: formatDate(editData.certificateExpiryDate),
-                departmentIds: editData.rlsStaffDepartments?.[0]?.department?.id
-                    || editData.departments?.[0]?.id || "",
-                roomIds: editData.rlsStaffRooms?.[0]?.room?.id
-                    || editData.rooms?.[0]?.id || "",
-                workType: editData.currentWorkType || editData.workType,
-                contractType: editData.currentContractType,
+                birthday: formatDate(editData?.birthday),
+                identityIssueDate: formatDate(editData?.identityIssueDate),
+                certificateExpiryDate: formatDate(editData?.certificateExpiryDate),
+                departmentIds: editData?.rlsStaffDepartments?.[0]?.department?.id
+                    || editData?.departments?.[0]?.id || "",
+                roomIds: editData?.rlsStaffRooms?.[0]?.room?.id
+                    || editData?.rooms?.[0]?.id || "",
+                workType: editData?.currentWorkType || editData?.workType,
+                contractType: editData?.currentContractType || editData?.contractType || editData?.lastContractType,
             });
         } else {
             reset(STAFF_FORM_DEFAULT_VALUES);
@@ -74,7 +74,7 @@ export const useStaffForm = (
 
         try {
             if (editData?.id) {
-                await updateStaff({ id: editData.id, data: payload as any });
+                await updateStaff({ id: editData?.id, data: payload as any });
             } else {
                 await createStaff(payload as any);
             }
