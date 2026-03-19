@@ -118,6 +118,12 @@
       "pending": "Pending",
       "approved": "Approved"
     },
+    "delete_confirm": {
+      "title": "Delete Revenue",
+      "description": "Are you sure you want to delete this revenue? This action cannot be undone.",
+      "confirm": "Delete",
+      "success": "Delete revenue successfully."
+    },
     "form": {
       "title": "Value",
       "fields": {

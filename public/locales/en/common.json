@@ -172,26 +172,39 @@
       "INTERNSHIP": "Intern",
       "EXPERT_COOPERATION": "Cooperating Expert"
     },
-    "qualification": {
-      "intermediate": "Intermediate",
-      "college": "College",
-      "bachelor": "Bachelor",
-      "master": "Master",
-      "doctor": "Doctor",
-      "phd": "PhD",
-      "specialist": "Specialist Doctor",
-      "other": "Other"
+    "qualifications": {
+      "INTERMEDIATE": "Intermediate",
+      "COLLEGE": "College",
+      "BACHELOR": "Bachelor",
+      "DOCTOR": "MD",
+      "MASTER": "MSc",
+      "PHD": "PhD",
+      "SPECIALIST_DOCTOR": "Specialist Doctor",
+      "OTHER": "Other"
     },
     "academicTitles": {
-      "doctor": "MD",
-      "master": "MSc",
-      "phd": "PhD",
-      "spec1": "Specialist I",
-      "spec2": "Specialist II"
+      "DOCTOR": "MD",
+      "MASTER": "MSc",
+      "PHD": "PhD",
+      "SPECIALIST_I": "Spec. I",
+      "SPECIALIST_II": "Spec. II",
+      "RESIDENT_PHYSICIAN": "Resident Physician",
+      "PROFESSOR": "Prof.",
+      "ASSOCIATE_PROFESSOR": "Assoc. Prof.",
+      "PEOPLES_PHYSICIAN": "People's Physician",
+      "EMINENT_PHYSICIAN": "Eminent Physician",
+      "BACHELOR": "Bachelor",
+      "ENGINEER": "Engineer"
     }
   },
   "staff": "Staff",
   "input": {
     "placeholder": "Enter"
+  },
+  "picker": {
+    "placeholder": "Select month/year",
+    "current_month": "Current month",
+    "year": "Year {{year}}",
+    "month_prefix": "M"
   }
 }

@@ -117,6 +117,12 @@
       "pending": "Chờ xác nhận",
       "approved": "Đã xác nhận"
     },
+    "delete_confirm": {
+      "title": "Xóa doanh thu",
+      "description": "Bạn có chắc chắn muốn xóa doanh thu này không? Hành động này không thể hoàn tác.",
+      "confirm": "Xóa",
+      "success": "Xóa doanh thu thành công."
+    },
     "form": {
       "title": "Giá trị",
       "fields": {

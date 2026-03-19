@@ -95,6 +95,13 @@ export interface DaySchedule {
   shifts: Shift[];
 }
 
+export interface INewStaffSchedule {
+  data: {
+    staff: StaffWorkSchedule;
+    schedules: DaySchedule[];
+  }[]
+
+}
 export interface StaffSchedule {
   staff: StaffWorkSchedule;
   schedules: DaySchedule[];

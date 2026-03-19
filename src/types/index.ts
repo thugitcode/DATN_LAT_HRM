@@ -21,7 +21,17 @@ interface PaginationMeta {
 //   metadata: Record<string, unknown> | null;
 //   message: string;
 // }
-
+export interface IApiResponseShiftDivision<T, TMeta = Record<string, unknown>> {
+  statusCode: number;
+  data: {
+    data: T[];
+    shiftTypesCount: Record<string, number>;
+    summary: Record<string, number>;
+  };
+  pagination: PaginationMeta | null;
+  metadata: TMeta | null;
+  message: string;
+}
 interface ApiResponse<T, TMeta = Record<string, unknown>> {
   statusCode: number;
   data: T;

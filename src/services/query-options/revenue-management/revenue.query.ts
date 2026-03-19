@@ -1,7 +1,8 @@
-import { queryOptions } from '@tanstack/react-query';
+import { queryOptions, useMutation } from '@tanstack/react-query';
 
 import type { OtherRequestsManagementParams } from '@/features/other-requests-management/types/type';
 import { revenueService } from '@/services/revenue-management/revenue.service';
+import type { RevenueDataListType } from '@/features/payroll-management/types/revenue.type';
 
 export const revenueKeys = {
   all: ['revenue'] as const,
@@ -22,5 +23,9 @@ export const revenueOptions = {
     queryOptions({
       queryKey: revenueKeys.detail(id),
       queryFn: () => revenueService.getById(id),
+    }),
+  patch: (id: string, data: RevenueDataListType) =>
+    useMutation({
+      mutationFn: () => revenueService.patch(id, data),
     }),
 } as const;

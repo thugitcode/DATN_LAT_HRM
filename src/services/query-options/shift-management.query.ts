@@ -36,7 +36,7 @@ export const shiftManagementQueryOptions = {
   detail: (id: string | number) =>
     queryOptions({
       queryKey: shiftManagementKeys.detail(id),
-      queryFn: () => shiftManagementService.getDetail(id),
+      queryFn: () => shiftManagementService.getDetail(String(id)),
       enabled: !!id,
     }),
 } as const;

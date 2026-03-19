@@ -1,8 +1,9 @@
 import { DEFAULT_PAGINATION } from '@/query-options/constants';
 
-import type { ApiResponse } from '@/types';
+import type { ApiResponse, IApiResponseShiftDivision } from '@/types';
 import type {
   CreateStaffSchedule,
+  INewStaffSchedule,
   StaffSchedule,
   UpdateShift,
   UpdateShiftData,
@@ -47,7 +48,7 @@ class ShiftManagementService extends BaseApiService<
       return res.data;
     });
   }
-  async getAllGrid(params?: StaffParams): Promise<ApiResponse<StaffSchedule[]>> {
+  async getAllGrid(params?: StaffParams): Promise<IApiResponseShiftDivision<INewStaffSchedule>> {
 
     return this.request(async () => {
       const res = await this.instance.get(`${this.url()}/calendar`, { params });

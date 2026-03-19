@@ -1,13 +1,13 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
-import type { RequestsParams } from '@/types/global.type';
-import { icons } from '@/lib/icons';
-import { usePaginationConfig } from '@/hooks/use-pagination-config';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionButton } from '@/components/action-button';
 import DataTable from '@/components/data-table/data-table';
 import { TitlePage } from '@/components/title-page';
+import { usePaginationConfig } from '@/hooks/use-pagination-config';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { icons } from '@/lib/icons';
+import type { RequestsParams } from '@/types/global.type';
 
 import { useKpiColumns } from '../colums/use-kpi-columns';
 import { BtnCreateKpi } from '../components/btn-create-kpi';
