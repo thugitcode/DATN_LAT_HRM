@@ -1,4 +1,4 @@
-﻿// staff-contract-form-drawer.tsx
+// staff-contract-form-drawer.tsx
 import type { FC } from 'react';
 import { useEffect } from 'react';
 // import các section component sẽ tạo sau
@@ -48,7 +48,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
   const { data: contractRes, isLoading: isDetailLoading } = useContractDetail(contractId || '');
   const contract = contractRes?.data;
   const { activeKey } = useStaffDetailTabs()
-  
+
   const createMutation = useCreateContract(staffId);
   const updateMutation = useUpdateContract(staffId);
   const queryClient = useQueryClient();
@@ -60,6 +60,8 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       workType: '',
       jobTitle: '',
       position: '',
+      workingTime: '',
+      workingTimeUnit: 'MONTH',
       duration: '',
       durationUnit: 'YEAR',
       contractNumber: '',
@@ -70,6 +72,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       shiftType: '',
       fixedShiftId: '',
       workingDays: [1, 2, 3, 4, 5],
+      workingAreas: [{ departmentId: '', roomId: [] }],
       salary: {
         hasHealthInsurance: false,
         healthInsuranceRate: '',
@@ -123,6 +126,8 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
         workType: '',
         jobTitle: '',
         position: '',
+        workingTime: '',
+        workingTimeUnit: 'MONTH',
         duration: '',
         durationUnit: 'YEAR',
         contractNumber: '',
@@ -133,7 +138,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
         shiftType: '',
         fixedShiftId: '',
         workingDays: [1, 2, 3, 4, 5],
-        workingAreas: [{ departmentId: '', roomId: '' }],
+        workingAreas: [{ departmentId: '', roomId: [] }],
         salary: {
           hasHealthInsurance: false,
           healthInsuranceRate: '',
@@ -180,7 +185,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       duration: contract.duration?.toString() || '',
       durationUnit: contract.durationUnit || 'YEAR',
       workingTime: contract.workingTime?.toString() || '',
-      workingTimeUnit: contract.workingTimeUnit || 'YEAR',
+      workingTimeUnit: contract.workingTimeUnit || 'MONTH',
       contractNumber: contract.contractNumber || '',
       startDate: contract.startDate || '',
       endDate: contract.endDate || '',
@@ -191,20 +196,15 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       workingDays: contract.workingDays || [1, 2, 3, 4, 5],
 
       // ── Khu vực làm việc (workingAreas) ───────────────────────────
-      workingAreas:
-        (contract?.staff?.rlsStaffDepartments ?? [])?.length > 0
-          ? contract?.staff?.rlsStaffDepartments?.map((rsd: any, idx: number) => {
-            const deptId = rsd.department?.id || '';
-            // Tìm phòng khớp với khoa (lấy phòng đầu tiên nếu có nhiều)
-            const matchingRoom = contract.staff?.rlsStaffRooms?.find(
-              (rsr: any) => rsr.room?.department?.id === deptId,
-            );
-            return {
-              departmentId: deptId,
-              roomId: matchingRoom?.room?.id || '',
-            };
-          })
-          : [{ departmentId: '', roomId: '' }], // fallback nếu không có data
+      managedRoomId: contract?.managedRoom?.id,
+      managedDepartmentId: contract?.managedDepartment?.id,
+      workingAreas: contract?.departments?.map(it => ({
+        departmentId: it?.id || '',
+        roomId: contract?.rooms
+          ?.filter(ite => ite.departmentId === it?.id)
+          ?.map(item => item?.id)
+          .filter(Boolean) as string[]
+      })) ?? [{ departmentId: '', roomId: [] }],
 
       // ── Salary object ─────────────────────────────────────────────
       salary: {
@@ -260,6 +260,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       staffId,
       ...data,
       duration: Number(data.duration),
+      departmentIds: data.workingAreas?.map(it => it.departmentId), roomIds: data.workingAreas?.map(it => it.roomId).flat(Infinity)
       // ... map các field khác
     };
 
@@ -268,8 +269,8 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
     } else {
       await createMutation.mutateAsync(payload, {
         onSuccess() {
-        //  activeKey === TAB_KEYS.SALARY && 
-         queryClient.invalidateQueries({ queryKey: ["salary-details", staffId] })
+          //  activeKey === TAB_KEYS.SALARY && 
+          queryClient.invalidateQueries({ queryKey: ["salary-details", staffId] })
         },
       });
     }
@@ -300,10 +301,10 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
             <FormProvider {...methods}>
               <Form
                 onSubmit={() => onSubmit()}
-                className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full"
+                className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full pb-18 max-md:pb-28"
               >
                 {/* Bắt đầu với phần Thông tin hợp đồng */}
-                <div className="flex flex-col gap-6 pb-18">
+                <div className="flex flex-col gap-6">
                   <ContractInfoSection />
                   <InsuranceAndUnionSection />
                   {/* Sau này thêm: WorkingAreaSection, InsuranceSection, ... */}
