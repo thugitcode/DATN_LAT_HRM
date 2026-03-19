@@ -7,6 +7,7 @@ import { useStaffList } from '@/query-options/staff';
 import { StaffJobTitleEnum, StaffPositionEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
 
 // Các custom component bạn đã có
+import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
 import { FormInput } from '@/components/form-fields/form-input';
 import { FormLabel } from '@/components/form-fields/form-label';
@@ -15,13 +16,20 @@ import { FormSelect } from '@/components/form-fields/form-select';
 import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { shiftTemplateQueryOptions } from '@/services/query-options/shift-template.query';
 import { Button, Checkbox, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { WorkingAreaSection } from './working-area-section';
+import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
+import { useRoomOptions } from '@/hooks/select-options/use-room-options';
 
 export const ContractInfoSection: FC = () => {
   const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
+  const { options: departmentOptions } = useDepartmentOptions();
+  const selectedDepts = watch("departmentIds");
+  const { options: roomOptions } = useRoomOptions(selectedDepts);
 
   const { data: managersRes } = useStaffList({
     getAll: true,
@@ -40,30 +48,16 @@ export const ContractInfoSection: FC = () => {
   const shiftType = watch('shiftType');
   // Chuẩn bị options cho các Select
   const contractTypeOptions = [
-    { key: 'FULL_TIME', label: 'Nhân viên chính thức' },
-    { key: 'PROBATION', label: 'Thử việc' },
-    { key: 'INTERNSHIP', label: 'Học việc' },
-    { key: 'EXPERT_COOPERATION', label: 'Chuyên gia hợp tác' },
-  ];
-
-  const workTypeOptions = [
-    { key: 'FULL_TIME', label: 'Fulltime' },
-    { key: 'PART_TIME', label: 'Parttime' },
-  ];
-
-
-  const positionOptions = [
-    { key: 'STAFF', label: 'Nhân viên' },
-    { key: 'HEAD_OF_DEPARTMENT', label: 'Trưởng khoa' },
-    { key: 'DEPUTY_HEAD_OF_DEPARTMENT', label: 'Phó khoa' },
-    { key: 'MANAGER', label: 'Trưởng phòng' },
-    { key: 'DEPUTY_MANAGER', label: 'Phó phòng' },
+    { key: 'FULL_TIME', label: t('options.contractType.FULL_TIME') },
+    { key: 'PROBATION', label: t('options.contractType.PROBATION') },
+    { key: 'INTERNSHIP', label: t('options.contractType.INTERNSHIP') },
+    { key: 'EXPERT_COOPERATION', label: t('options.contractType.EXPERT_COOPERATION') },
   ];
 
   const shiftTypeOptions = [
-    { key: 'FIXED', label: 'Ca cố định' },
-    { key: 'FLEXIBLE', label: 'Ca linh hoạt' },
-    { key: 'SPLIT', label: 'Ca gãy' },
+    { key: 'FIXED', label: t('shift_type.FIXED') },
+    { key: 'FLEXIBLE', label: t('shift_type.FLEXIBLE') },
+    { key: 'SPLIT', label: t('shift_type.SPLIT') },
   ];
 
   const managerOptions = managers.map(m => ({
@@ -71,17 +65,15 @@ export const ContractInfoSection: FC = () => {
     label: `${m.code} - ${m.name}`,
   }));
 
-  // Ca làm việc (ví dụ tĩnh - thay bằng API thật khi có)
-  const shiftOptions = [
-    { key: 'C1', label: 'Ca 1 (06:00 - 14:00)' },
-    { key: 'C2', label: 'Ca 2 (14:00 - 22:00)' },
-    { key: 'C3', label: 'Ca 3 (22:00 - 06:00)' },
-  ];
+  const { data: shiftsRes } = useQuery({
+    ...shiftTemplateQueryOptions.list({ getAll: true, type: 'FIXED', status: 'ACTIVE' }),
+    enabled: shiftType === 'FIXED',
+  });
 
   const WORKING_TIME_UNITS = [
-    { key: "DAY", label: "Ngày" },
-    { key: "WEEK", label: "Tuần" },
-    { key: "MONTH", label: "Tháng" },
+    { key: "DAY", label: t('contract_info.working_time_units.DAY') },
+    { key: "WEEK", label: t('contract_info.working_time_units.WEEK') },
+    { key: "MONTH", label: t('contract_info.working_time_units.MONTH') },
   ];
 
   const workingTimeUnit = watch("workingTimeUnit") || "MONTH";
@@ -90,7 +82,7 @@ export const ContractInfoSection: FC = () => {
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
       <div className="flex items-center gap-2 mb-2">
         {icons.archiveBook}
-        <h3 className="text-[15px] font-bold text-[#11181C]">Thông tin hợp đồng</h3>
+        <h3 className="text-[15px] font-bold text-[#11181C]">{t('contract_info.title')}</h3>
       </div>
 
       <div className="flex flex-col gap-6">
@@ -98,7 +90,7 @@ export const ContractInfoSection: FC = () => {
           <FormSelect
             control={control}
             name="contractType"
-            label="Loại hợp đồng"
+            label={t('contract_info.contract_type')}
             isRequired
             options={contractTypeOptions}
             disabled={isSubmitting}
@@ -107,7 +99,7 @@ export const ContractInfoSection: FC = () => {
           <FormSelect
             control={control}
             name="workType"
-            label="Loại hình"
+            label={t('contract_info.work_type')}
             isRequired
             options={Object.values(WorkingTypeTypeEnum).map((val) => ({
               label: t(`options.workType.${val}`),
@@ -119,7 +111,7 @@ export const ContractInfoSection: FC = () => {
           <FormSelect
             control={control}
             name="jobTitle"
-            label="Chức danh"
+            label={t('contract_info.job_title')}
             isRequired
             options={Object.values(StaffJobTitleEnum).map((val) => ({
               label: t(`options.job_title.${val}`),
@@ -131,7 +123,7 @@ export const ContractInfoSection: FC = () => {
           <FormSelect
             control={control}
             name="position"
-            label="Cấp bậc"
+            label={t('contract_info.position')}
             isRequired
             options={Object.values(StaffPositionEnum).map((val) => ({
               label: t(`options.staff_position.${val}`),
@@ -145,12 +137,12 @@ export const ContractInfoSection: FC = () => {
           {/* Thời hạn hợp đồng - kết hợp Input + Select unit */}
           <div className="flex flex-col gap-2">
             <div className="flex flex-col gap-1.5">
-              <FormLabel label={"Thời hạn hợp đồng"} isRequired={true} isError={errors.hasOwnProperty('duration')} />
+              <FormLabel label={t('contract_info.duration')} isRequired={true} isError={errors.hasOwnProperty('duration')} />
 
               <FormNumberInput
                 control={control}
                 name="duration"
-                placeholder="Nhập"
+                placeholder={t('contract_info.placeholders.enter')}
                 isRequired
                 disabled={isSubmitting}
                 classNames={{
@@ -166,7 +158,7 @@ export const ContractInfoSection: FC = () => {
                           endContent={<IconChevronDown size={14} />}
                           isDisabled={isSubmitting}
                         >
-                          {watch('durationUnit') === 'YEAR' ? 'Năm' : 'Tháng'}
+                          {watch('durationUnit') === 'YEAR' ? t('contract_info.duration_units.YEAR') : t('contract_info.duration_units.MONTH')}
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu
@@ -179,8 +171,8 @@ export const ContractInfoSection: FC = () => {
                           setValue('durationUnit', unit, { shouldValidate: true });
                         }}
                       >
-                        <DropdownItem key="YEAR">Năm</DropdownItem>
-                        <DropdownItem key="MONTH">Tháng</DropdownItem>
+                        <DropdownItem key="YEAR">{t('contract_info.duration_units.YEAR')}</DropdownItem>
+                        <DropdownItem key="MONTH">{t('contract_info.duration_units.MONTH')}</DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
                   </div>
@@ -192,7 +184,7 @@ export const ContractInfoSection: FC = () => {
           <FormInput
             control={control}
             name="contractNumber"
-            label="Số hợp đồng"
+            label={t('contract_info.contract_number')}
             disabled={isSubmitting}
           />
         </div>
@@ -201,7 +193,7 @@ export const ContractInfoSection: FC = () => {
           <FormDatePicker
             control={control}
             name="startDate"
-            label="Ngày bắt đầu"
+            label={t('contract_info.start_date')}
             isRequired
             disabled={isSubmitting}
           />
@@ -209,38 +201,41 @@ export const ContractInfoSection: FC = () => {
           <FormDatePicker
             control={control}
             name="endDate"
-            label="Ngày kết thúc"
+            label={t('contract_info.end_date')}
             isRequired
             disabled={isSubmitting}
           />
         </div>
 
-        {/* <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
+          {/* Khoa quản lý */}
           <FormSelect
             control={control}
-            name="departmentId"
-            label="Khoa quản lý"
+            name="managedDepartmentId"
+            label={t('staffForm.fields.departmentIds.label')}
+            selectionMode="single"
             isRequired
-            options={departmentOptions}
             disabled={isSubmitting}
-          // Nếu muốn reset room khi đổi khoa, bạn có thể thêm onChange custom
-          // hoặc xử lý trong useEffect + watch
+            options={departmentOptions?.map(it => ({ key: it.value, label: it.label }))}
           />
 
+          {/* Phòng quản lý */}
           <FormSelect
             control={control}
-            name="roomId"
-            label="Phòng quản lý"
-            options={roomOptions}
-            disabled={isSubmitting || !departmentId}
+            name="managedRoomId"
+            label={t('staffForm.fields.roomIds.label')}
+            selectionMode="single"
+            isRequired
+            disabled={isSubmitting}
+            options={roomOptions?.map(it => ({ key: it.value, label: it.label }))}
           />
-        </div> */}
+        </div>
         <WorkingAreaSection />
 
         <FormSelect
           control={control}
           name="directManagerIds"
-          label="Quản lý trực tiếp"
+          label={t('contract_info.direct_manager')}
           isRequired
           options={managerOptions}
           disabled={isSubmitting}
@@ -252,7 +247,7 @@ export const ContractInfoSection: FC = () => {
             <FormSelect
               control={control}
               name="shiftType"
-              label="Loại hình làm việc theo ca"
+              label={t('contract_info.shift_type')}
               isRequired
               options={shiftTypeOptions}
               disabled={isSubmitting}
@@ -260,19 +255,23 @@ export const ContractInfoSection: FC = () => {
           </div>
 
           {shiftType === 'FIXED' && (
-            <FormSelect
+            <FormAutocomplete
               control={control}
               name="fixedShiftId"
-              label="Ca làm việc"
+              label={t('contract_info.working_shift')}
               isRequired
-              options={shiftOptions}
+              placeholder={t('contract_info.placeholders.search_shift')}
+              options={shiftsRes?.data?.map((s) => ({
+                key: s.id,
+                label: `${s.code} - ${s.name}`
+              })) || []}
               disabled={isSubmitting}
             />
           )}
           <div className="flex flex-col gap-2 col-span-2 flex-1">
             <div className="flex flex-col gap-1.5">
               <FormLabel
-                label="Thời gian làm việc"
+                label={t('contract_info.working_time')}
                 isRequired
                 isError={!!errors.workingTime}
               />
@@ -280,7 +279,7 @@ export const ContractInfoSection: FC = () => {
               <FormNumberInput
                 control={control}
                 name="workingTime"
-                placeholder="Nhập"
+                placeholder={t('contract_info.placeholders.enter')}
                 isRequired
                 disabled={isSubmitting}
                 endContent={
@@ -320,37 +319,38 @@ export const ContractInfoSection: FC = () => {
         </div>
       </div>
 
-      {shiftType === 'FIXED' && (
-        <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-[#11181C]">
-            Ngày làm việc <span className="text-danger">*</span>
-          </label>
-          <div className="flex flex-wrap gap-4">
-            {['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'].map((day, idx) => {
-              const dayValue = idx === 6 ? 0 : idx + 1;
-              return (
-                // Nếu chưa có FormCheckboxGroup, tạm dùng Checkbox gốc
-                // hoặc bạn tạo thêm component FormCheckbox sau
-                <Checkbox
-                  key={day}
-                  isSelected={watch('workingDays')?.includes(dayValue) ?? false}
-                  onValueChange={checked => {
-                    const current = watch('workingDays') || [];
-                    if (checked) {
-                      setValue('workingDays', [...current, dayValue], { shouldValidate: true });
-                    } else {
-                      setValue('workingDays', current.filter(d => d !== dayValue), { shouldValidate: true });
-                    }
-                  }}
-                  size="sm"
-                >
-                  {day}
-                </Checkbox>
-              );
-            })}
+      {
+        shiftType === 'FIXED' && (
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-[#11181C]">
+              {t('contract_info.working_days')} <span className="text-danger">*</span>
+            </label>
+            <div className="flex flex-wrap gap-4">
+              {[2, 3, 4, 5, 6, 7, 0].map((dayValue) => {
+                return (
+                  // Nếu chưa có FormCheckboxGroup, tạm dùng Checkbox gốc
+                  // hoặc bạn tạo thêm component FormCheckbox sau
+                  <Checkbox
+                    key={dayValue}
+                    isSelected={watch('workingDays')?.includes(dayValue) ?? false}
+                    onValueChange={checked => {
+                      const current = watch('workingDays') || [];
+                      if (checked) {
+                        setValue('workingDays', [...current, dayValue], { shouldValidate: true });
+                      } else {
+                        setValue('workingDays', current.filter((d: number) => d !== dayValue), { shouldValidate: true });
+                      }
+                    }}
+                    size="sm"
+                  >
+                    {t(`contract_info.days.${dayValue}` as any)}
+                  </Checkbox>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
     </div >
   );
 };
