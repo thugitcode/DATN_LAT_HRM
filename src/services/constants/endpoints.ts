@@ -30,6 +30,8 @@ export const API_ENDPOINTS = {
     PAYROLL_MANAGEMENT: {
       PAYROLL_FEEDBACK: '/payroll/feedback',
       KPI: '/staff-kpi',
+      OTHER_INCOME: '/other-income',
+      SALARY_STAFF_HISTORY: '/payroll/staff',
     },
 
     LEAVE_REQUEST: '/leave-request',

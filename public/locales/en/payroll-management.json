@@ -78,6 +78,66 @@
     }
   },
 
+  "otherIncome": {
+    "title": "Other Income",
+    "validation": {
+      "staff_code_required": "Please enter staff code",
+      "name_required": "Please enter staff name",
+      "department_required": "Please select a department",
+      "room_required": "Please select a room",
+      "staff_id_required": "Missing staff information",
+
+      "type_required": "Please select income type",
+      "allowance_id_required": "Please select an allowance",
+      "amount_required": "Please enter amount",
+      "amount_invalid": "Amount must be a number greater than 0",
+      "date_required": "Please select a date",
+      "entry_person_required": "Please select entry person"
+    },
+    "form": {
+      "staff_info": "Staff Information",
+      "staff_code": "Staff Code",
+      "staff_name": "Staff Name",
+      "department": "Department",
+      "room": "Room",
+      "type": "Type",
+      "allowance": "Allowance Type",
+      "amount": "Amount",
+      "date": "Effective Period",
+      "entry_person": "Entered By",
+      "description": "Reason / Description",
+      "attachment": "Attachment",
+      "account_info": "Account info"
+    }
+  },
+
+  "summary-finalize": {
+    "title": "Summary and Finalization",
+    "input-summary": {
+      "title": "Payroll Input Summary and Finalization",
+      "attendance": "Attendance",
+      "revenue": "Revenue",
+      "kpi": "KPI Score",
+      "other": "Other Items"
+    },
+    "cost-estimate": {
+      "title": "Estimated Total Payroll Cost",
+      "gross": "Total Gross Salary",
+      "bonus": "Total Bonus",
+      "penalty": "Total Deductions",
+      "payout": "Estimated Payout"
+    },
+    "banner": {
+      "ready": "Ready to proceed to Payroll Calculation",
+      "warning": "Once finalized, input data will be locked. Any changes require unfinalizing before editing."
+    },
+    "actions": {
+      "save-draft": "Save Draft",
+      "transfer": "Proceed to Payroll Calculation",
+      "processing": "Processing..."
+    }
+  },
+
   "columns": {
     "stt": "No.",
     "department": "Department/Ward",
@@ -98,6 +158,10 @@
     "evaluator": "Evaluator",
     "source": "Source",
     "status": "Status",
+    "type": "Type",
+    "description": "Reason / Description",
+    "amount": "Amount",
+    "input_by": "Entered by",
     "actions": "Actions"
   },
 
@@ -137,5 +201,9 @@
         "input": "Enter value"
       }
     }
+  },
+
+  "salary-history": {
+    "title": "Employee Salary History"
   }
 }

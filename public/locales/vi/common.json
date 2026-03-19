@@ -55,7 +55,8 @@
     "profile_staff_detail": "Chi tiết hồ sơ nhân viên",
     "timekeepingDetails": "Chi tiết chấm công",
     "enter_kpi": "Nhập KPI",
-    "revenueDetails": "Nhập doanh số"
+    "revenueDetails": "Nhập doanh số",
+    "additionalArisingAmounts": "Thêm khoản phát sinh"
   },
 
   "button": {
@@ -65,7 +66,8 @@
     "save": "Lưu",
     "confirm": "Xác nhận",
     "addNew": "Thêm mới",
-    "exit": "Thoát"
+    "exit": "Thoát",
+    "moreIncome": "Thêm thu nhập"
   },
 
   "weekdays": {

@@ -10,11 +10,14 @@ import type {
 } from '@/types/shift-management.type';
 import type { StaffParams } from '@/types/staff.type';
 import { hrmInstance } from '@/lib/axios';
+import type {
+  AttendanceDay,
+  StaffAttendanceRecord,
+} from '@/features/staff-management/time-attendance-management/types';
 import type { WorkScheduleDetail } from '@/features/timekeeping-shift-scheduling/shift-management/types/type';
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
-import type { AttendanceDay, StaffAttendanceRecord } from '@/features/staff-management/time-attendance-management/types';
 
 class ShiftManagementService extends BaseApiService<
   StaffSchedule,
@@ -48,16 +51,17 @@ class ShiftManagementService extends BaseApiService<
       return res.data;
     });
   }
-  async getAllGrid(params?: StaffParams): Promise<IApiResponseShiftDivision<INewStaffSchedule>> {
 
+  async getAllGrid(params?: StaffParams): Promise<ApiResponse<StaffSchedule[]>> {
     return this.request(async () => {
       const res = await this.instance.get(`${this.url()}/calendar`, { params });
       return res.data;
     });
   }
 
-  async getStaffDailyAttendance(params?: StaffParams): Promise<ApiResponse<StaffAttendanceRecord[]>> {
-
+  async getStaffDailyAttendance(
+    params?: StaffParams,
+  ): Promise<ApiResponse<StaffAttendanceRecord[]>> {
     return this.request(async () => {
       const res = await this.instance.get(`${this.url()}/staff-daily-attendance`, { params });
       return res.data;

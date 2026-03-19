@@ -21,6 +21,11 @@ export type KpiMutatePayload = {
   status: Status;
 };
 
+export type KpiUpdate = {
+  id: string | number;
+  payload: KpiMutatePayload;
+};
+
 export interface Staff {
   id: string;
   name: string;
