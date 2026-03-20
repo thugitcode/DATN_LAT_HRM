@@ -209,5 +209,21 @@
     "year": "Năm {{year}}",
     "month_prefix": "T"
   },
-  "locale": "vi"
+  "locale": "vi",
+
+  "error": {
+    "code_label": "Mã lỗi {{code}}",
+    "helpdesk": "Cần hỗ trợ? Liên hệ IT Helpdesk",
+    "auth": {
+      "title": "Phiên đăng nhập hết hạn",
+      "content": "Phiên đăng nhập của bạn đã hết hạn. Vui lòng đăng nhập lại để tiếp tục sử dụng hệ thống.",
+      "login_again": "Đăng nhập lại"
+    },
+    "system": {
+      "title": "Đã xảy ra lỗi",
+      "content": "Hệ thống gặp sự cố không mong muốn. Vui lòng thử lại hoặc liên hệ bộ phận IT nếu lỗi tiếp tục xảy ra.",
+      "retry": "Thử lại",
+      "home": "Về trang chủ"
+    }
+  }
 }

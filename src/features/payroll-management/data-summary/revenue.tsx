@@ -1,4 +1,5 @@
 import { NAMESPACES } from '@/i18n/constants';
+import { DrawerType } from '@/store/useDrawer';
 import { useTranslation } from 'react-i18next';
 
 import type { RequestsParams } from '@/types/global.type';
@@ -13,11 +14,10 @@ import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 
 import { useRevenueDataColumns } from '../colums/use-revenue-columns';
-import { useRevenueList } from '../hooks/use-revenue-management';
 import { BtnCreateKpi } from '../components/btn-create-kpi';
-import { DrawerType } from '@/store/useDrawer';
 import { PayrollManagementFilters } from '../components/payroll-management-filters';
 import { statusRevenueOptions } from '../constants/constants';
+import { useRevenueList } from '../hooks/use-revenue-management';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-380px)]' } as const;
 

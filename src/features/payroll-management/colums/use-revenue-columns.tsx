@@ -1,11 +1,14 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
+import { cn } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
-import { cn } from '@/lib/utils';
+
 import { RowRevenueActions } from '../components/revenue/row-revenue-actions';
 import { StatusChip } from '../components/revenue/status-chip';
+import { KPI_SOURCE_LABEL } from '../constants/kpi';
+import type { KpiSourceEnum } from '../types/kpi.type';
 import type { RevenueDataListType } from '../types/revenue.type';
 
 // import { RowRevenueActions } from '../components/row-attendance-actions';
@@ -27,10 +30,7 @@ export const useRevenueDataColumns = () => {
       render: (_, record) => (
         <div className="w-full">
           {/* Giữ nguyên component cũ của bạn, lưu ý check null staff.departments */}
-          <DepartmentRoomInfo
-            departments={record?.departments || []}
-            rooms={record?.rooms || []}
-          />
+          <DepartmentRoomInfo departments={record?.departments || []} rooms={record?.rooms || []} />
         </div>
       ),
     },
@@ -66,25 +66,25 @@ export const useRevenueDataColumns = () => {
       title: t('revenue.columns.actual_amount'),
       width: 140,
       align: 'end',
-      render: (_, record) => (
-        <span>{record.actualAmount?.toLocaleString()}</span>
-      ),
+      render: (_, record) => <span>{record.actualAmount?.toLocaleString()}</span>,
     },
     {
       key: 'achievementRate',
       title: t('revenue.columns.achievement_rate'),
       width: 110,
       align: 'center',
-      render: (_, record) => <span className={cn(record.achievementRate > 100 ? "text-success" : "text-danger")}>{record.achievementRate}%</span>,
+      render: (_, record) => (
+        <span className={cn(record.achievementRate > 100 ? 'text-success' : 'text-danger')}>
+          {record.achievementRate}%
+        </span>
+      ),
     },
     {
       key: 'source',
       title: t('revenue.columns.data_source'),
       width: 130,
       align: 'center',
-      render: (_, record) => (
-        record.source
-      ),
+      render: (_, record) => <>{KPI_SOURCE_LABEL?.[record?.source as KpiSourceEnum]}</>,
     },
     {
       key: 'status',

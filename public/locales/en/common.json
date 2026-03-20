@@ -209,5 +209,21 @@
     "year": "Year {{year}}",
     "month_prefix": "M"
   },
-  "locale": "en"
+  "locale": "en",
+
+  "error": {
+    "code_label": "Error Code {{code}}",
+    "helpdesk": "Need help? Contact IT Helpdesk",
+    "auth": {
+      "title": "Session Expired",
+      "content": "Your session has expired. Please log in again to continue using the system.",
+      "login_again": "Log In Again"
+    },
+    "system": {
+      "title": "An Error Occurred",
+      "content": "The system encountered an unexpected issue. Please try again or contact IT if the error persists.",
+      "retry": "Try Again",
+      "home": "Go to Home"
+    }
+  }
 }
