@@ -167,12 +167,12 @@ export const ProfileDetailsDrawer = () => {
     }
   };
   const handleFilesSelect = (index: number, files: File[]) => {
-    if (files.length > 0) {
-      setValue(`documents.${index}.files`, files, {
-        shouldValidate: true,
-        shouldDirty: true
-      });
-    }
+    // if (files.length > 0) {
+    setValue(`documents.${index}.files`, files, {
+      shouldValidate: true,
+      shouldDirty: true
+    });
+    // }
   };
   return (
     <Form
@@ -245,7 +245,7 @@ export const ProfileDetailsDrawer = () => {
                   <FileUploadInput
                     multiple={false}
                     selectedFiles={fileField.value || []}
-                    onFilesSelect={(files) => handleFilesSelect(index, files)}
+                    onFilesSelect={(files) => files ? handleFilesSelect(index, files) : handleFilesSelect(index, [])}
                     error={fieldState.error?.message}
                   />
                 )}

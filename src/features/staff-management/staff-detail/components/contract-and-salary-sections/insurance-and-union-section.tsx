@@ -1,14 +1,16 @@
 // sections/InsuranceAndUnionSection.tsx
-import type { FC } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { IconShieldCheck } from '@tabler/icons-react';
 import { FormCheckbox } from '@/components/form-fields/form-checkbox';
+import { FormInput } from '@/components/form-fields/form-input';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
-import { FormInput } from '@/components/form-fields/form-input';
+import type { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 export const InsuranceAndUnionSection: FC = () => {
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { control, watch, formState: { isSubmitting } } = useFormContext();
 
   const { isView } = useControlMode()
@@ -25,7 +27,7 @@ export const InsuranceAndUnionSection: FC = () => {
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-5">
       <div className="flex items-center gap-2 mb-1">
         {icons.shieldUser}
-        <h3 className="text-[15px] font-bold text-[#11181C]">Bảo hiểm và công đoàn</h3>
+        <h3 className="text-[15px] font-bold text-[#11181C]">{t('insurance_union.title')}</h3>
       </div>
 
       <div className="grid grid-cols-2 gap-6">
@@ -34,19 +36,19 @@ export const InsuranceAndUnionSection: FC = () => {
           <FormCheckbox
             control={control}
             name="salary.hasHealthInsurance"
-            label="Bảo hiểm y tế"
+            label={t('insurance_union.health_insurance')}
             disabled={isSubmitting || isView}
           />
 
           <FormNumberInput
             control={control}
             name="salary.healthInsuranceRate"
-            label="Tỷ lệ đóng"
-            placeholder="Nhập tỷ lệ"
+            label={t('insurance_union.contribution_rate')}
+            placeholder={t('insurance_union.placeholders.enter_rate')}
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasHealthInsurance}
             disabled={isSubmitting || isView || !hasHealthInsurance}
-            variant={variant}                    
+            variant={variant}
             allowNegative={false}
           />
         </div>
@@ -56,15 +58,15 @@ export const InsuranceAndUnionSection: FC = () => {
           <FormCheckbox
             control={control}
             name="salary.hasSocialInsurance"
-            label="Bảo hiểm xã hội"
+            label={t('insurance_union.social_insurance')}
             disabled={isSubmitting || isView}
           />
 
           <FormNumberInput
             control={control}
             name="salary.socialInsuranceRate"
-            label="Tỷ lệ đóng"
-            placeholder="Nhập tỷ lệ"
+            label={t('insurance_union.contribution_rate')}
+            placeholder={t('insurance_union.placeholders.enter_rate')}
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasSocialInsurance}
             disabled={isSubmitting || isView || !hasSocialInsurance}
@@ -78,15 +80,15 @@ export const InsuranceAndUnionSection: FC = () => {
           <FormCheckbox
             control={control}
             name="salary.hasUnemploymentInsurance"
-            label="Bảo hiểm thất nghiệp"
+            label={t('insurance_union.unemployment_insurance')}
             disabled={isSubmitting || isView}
           />
 
           <FormNumberInput
             control={control}
             name="salary.unemploymentInsuranceRate"
-            label="Tỷ lệ đóng"
-            placeholder="Nhập tỷ lệ"
+            label={t('insurance_union.contribution_rate')}
+            placeholder={t('insurance_union.placeholders.enter_rate')}
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasUnemploymentInsurance}
             disabled={isSubmitting || isView || !hasUnemploymentInsurance}
@@ -100,15 +102,15 @@ export const InsuranceAndUnionSection: FC = () => {
           <FormCheckbox
             control={control}
             name="salary.hasUnionFee"
-            label="Công đoàn"
+            label={t('insurance_union.union_fee')}
             disabled={isSubmitting || isView}
           />
 
           <FormNumberInput
             control={control}
             name="salary.unionFee"
-            label="Mức đóng"
-            placeholder="Nhập mức đóng"
+            label={t('insurance_union.contribution_amount')}
+            placeholder={t('insurance_union.placeholders.enter_amount')}
             endContent={<span className="text-[#a1a1aa] text-sm min-w-12.5 text-right">
               {Number(watch("salary.unionFee") || 0) < 100 ? "%" : "VNĐ"}
             </span>}
@@ -124,15 +126,15 @@ export const InsuranceAndUnionSection: FC = () => {
         <FormCheckbox
           control={control}
           name="salary.hasHealthCareInsurance"
-          label="Bảo hiểm sức khỏe"
+          label={t('insurance_union.healthcare_insurance')}
           disabled={isSubmitting}
         />
 
         <FormInput
           control={control}
           name="salary.healthCareInsuranceCompany"
-          label="Tên công ty bảo hiểm"
-          placeholder="Nhập tên công ty"
+          label={t('insurance_union.insurance_company')}
+          placeholder={t('insurance_union.placeholders.enter_company')}
           disabled={isSubmitting || !hasHealthCareInsurance}
           isRequired={hasHealthCareInsurance}
         />
@@ -141,8 +143,8 @@ export const InsuranceAndUnionSection: FC = () => {
           <FormNumberInput
             control={control}
             name="salary.healthCareInsuranceBenefit"
-            label="Mức hưởng"
-            placeholder="Nhập mức hưởng"
+            label={t('insurance_union.benefit_level')}
+            placeholder={t('insurance_union.placeholders.enter_benefit')}
             endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
             disabled={isSubmitting || !hasHealthCareInsurance}
             allowNegative={false}
@@ -153,8 +155,8 @@ export const InsuranceAndUnionSection: FC = () => {
           <FormNumberInput
             control={control}
             name="salary.healthCareInsuranceRate"
-            label="Mức đóng (%)"
-            placeholder="Nhập tỷ lệ"
+            label={t('insurance_union.contribution_rate_percent')}
+            placeholder={t('insurance_union.placeholders.enter_rate')}
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             disabled={isSubmitting || !hasHealthCareInsurance}
             allowNegative={false}

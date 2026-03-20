@@ -439,5 +439,75 @@
     "SPLIT": "Ca gãy",
     "ON_DUTY": "Ca trực",
     "FLEXIBLE": "Ca linh hoạt"
+  },
+  "working_area": {
+    "department": "Khoa làm việc",
+    "room": "Phòng làm việc",
+    "min_required": "Vui lòng thêm ít nhất một khu vực làm việc"
+  },
+  "insurance_union": {
+    "title": "Bảo hiểm và công đoàn",
+    "health_insurance": "Bảo hiểm y tế",
+    "social_insurance": "Bảo hiểm xã hội",
+    "unemployment_insurance": "Bảo hiểm thất nghiệp",
+    "union_fee": "Công đoàn",
+    "healthcare_insurance": "Bảo hiểm sức khỏe",
+    "contribution_rate": "Tỷ lệ đóng",
+    "contribution_rate_percent": "Tỷ lệ đóng (%)",
+    "contribution_amount": "Mức đóng",
+    "insurance_company": "Tên công ty bảo hiểm",
+    "benefit_level": "Mức hưởng",
+    "placeholders": {
+      "enter_rate": "Nhập tỷ lệ",
+      "enter_amount": "Nhập mức đóng",
+      "enter_company": "Nhập tên công ty",
+      "enter_benefit": "Nhập mức hưởng"
+    }
+  },
+  "salary_benefits": {
+    "title": "Lương và phúc lợi",
+    "edit": "Chỉnh sửa",
+    "update_success": "Cập nhật thông tin lương và phúc lợi thành công!",
+    "update_error": "Có lỗi xảy ra, vui lòng thử lại!",
+    "staff_not_found": "Không tìm thấy ID nhân viên",
+    "sections": {
+      "salary_info": "Thông tin lương",
+      "salary_structure": "Cấu trúc lương",
+      "tax": "Thuế thu nhập cá nhân",
+      "insurance_union": "Bảo hiểm & Công đoàn",
+      "leave_benefits": "Chế độ nghỉ phép"
+    },
+    "salary_type": "Loại lương",
+    "salary_net": "Lương net",
+    "salary_gross": "Lương gross",
+    "basic_salary": "Lương cơ bản",
+    "insurance_salary": "Lương đóng BHXH",
+    "responsibility_allowance": "Phụ cấp trách nhiệm",
+    "position_allowance": "Phụ cấp chức vụ",
+    "hazard_allowance": "Phụ cấp độc hại, nguy hiểm",
+    "meal_allowance": "Phụ cấp ăn ca",
+    "fuel_allowance": "Phụ cấp xăng xe",
+    "phone_allowance": "Phụ cấp điện thoại",
+    "business_trip_allowance": "Phụ cấp công tác",
+    "other_allowance": "Phụ cấp khác",
+    "family_deduction": "Giảm trừ gia cảnh",
+    "dependents_count": "Số người phụ thuộc",
+    "tax_rate": "Tỷ lệ (%)",
+    "units": {
+      "day": "Ngày",
+      "month": "Tháng"
+    },
+    "options": {
+      "gross": "Lương Gross",
+      "net": "Lương Net"
+    },
+    "placeholders": {
+      "select": "Chọn",
+      "enter": "Nhập",
+      "enter_count": "Nhập số người",
+      "enter_rate": "Nhập tỷ lệ",
+      "enter_basic": "Nhập lương cơ bản",
+      "enter_insurance": "Nhập lương đóng BHXH"
+    }
   }
 }

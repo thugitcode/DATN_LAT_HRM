@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { fetchStaff, fetchStaffDetail, updateStaff, importStaff, createStaff } from '@/services/staff';
 import { addToast } from '@heroui/react';
 
@@ -31,6 +32,7 @@ export const useStaffDetail = (id: string) => {
 };
 
 export const useUpdateStaff = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -39,15 +41,15 @@ export const useUpdateStaff = () => {
       queryClient.invalidateQueries({ queryKey: STAFF_QUERY_KEY.detail(id) });
       queryClient.invalidateQueries({ queryKey: ['staff', 'list'] });
       addToast({
-        title: 'Cập nhật thành công',
-        description: 'Thông tin nhân viên đã được cập nhật',
+        title: t('toast.success.update'),
+        description: t('toast.description.staff_updated'),
         color: 'success',
       });
     },
     onError: (error: Error) => {
       addToast({
-        title: 'Cập nhật thất bại',
-        description: error.message || 'Có lỗi xảy ra khi cập nhật',
+        title: t('toast.error.update'),
+        description: error.message || t('toast.description.error_update'),
         color: 'danger',
       });
     },
@@ -55,6 +57,7 @@ export const useUpdateStaff = () => {
 };
 
 export const useImportStaff = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -62,15 +65,15 @@ export const useImportStaff = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff', 'list'] });
       addToast({
-        title: 'Import thành công',
-        description: 'Danh sách nhân viên đã được tải lên',
+        title: t('toast.success.import'),
+        description: t('toast.description.staff_imported'),
         color: 'success',
       });
     },
     onError: (error: Error) => {
       addToast({
-        title: 'Import thất bại',
-        description: error.message || 'Có lỗi xảy ra khi tải lên dữ liệu',
+        title: t('toast.error.import'),
+        description: error.message || t('toast.description.error_import'),
         color: 'danger',
       });
     },
@@ -78,6 +81,7 @@ export const useImportStaff = () => {
 };
 
 export const useCreateStaff = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -85,15 +89,15 @@ export const useCreateStaff = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['staff', 'list'] });
       addToast({
-        title: 'Thêm mới thành công',
-        description: 'Nhân viên mới đã được tạo',
+        title: t('toast.success.create'),
+        description: t('toast.description.staff_created'),
         color: 'success',
       });
     },
     onError: (error: Error) => {
       addToast({
-        title: 'Thêm mới thất bại',
-        description: error.message || 'Có lỗi xảy ra khi thêm mới',
+        title: t('toast.error.create'),
+        description: error.message || t('toast.description.error_create'),
         color: 'danger',
       });
     },

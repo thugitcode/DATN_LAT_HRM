@@ -27,7 +27,7 @@ export const salaryInnerSchema = z
         responsibilityAllowance: z.string().optional(),
         positionAllowance: z.string().optional(),
         hazardAllowance: z.string().optional(),
-        mealAllowance: z.string().min(1, 'Vui lòng nhập phụ cấp ăn ca'),
+        mealAllowance: z.string().optional(),
         mealAllowanceUnit: z.enum(['DAY', 'MONTH']).default('DAY').optional(),
         fuelAllowance: z.string().optional(),
         phoneAllowance: z.string().optional(),
@@ -235,12 +235,12 @@ export const salaryInnerSchema = z
         }
         // Làm tương tự cho các field % khác nếu cần
     })
-    // .optional(); // vẫn giữ .optional() cho toàn bộ salary nếu phù hợp
+// .optional(); // vẫn giữ .optional() cho toàn bộ salary nếu phù hợp
 
 
 // Schema chính cho form (có key salary)
 export const salaryFormSchema = z.object({
-  salary: salaryInnerSchema,
+    salary: salaryInnerSchema,
 });
 
 export type SalaryFormValues = z.infer<typeof salaryFormSchema>;

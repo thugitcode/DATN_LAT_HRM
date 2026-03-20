@@ -41,11 +41,10 @@ export function FormNumberInput<T extends FieldValues>({
           labelPlacement="outside-top"
           thousandSeparator="."
           decimalSeparator=","
-          decimalScale={0}
           isInvalid={!!fieldState.error}
           errorMessage={fieldState.error?.message}
           classNames={{
-            lal: cn(
+            label: cn(
               'text-base font-normal leading-4 text-[#52525B]',
               !!fieldState.error ? 'text-[#F31260]' : 'text-[#52525B]',
             ),

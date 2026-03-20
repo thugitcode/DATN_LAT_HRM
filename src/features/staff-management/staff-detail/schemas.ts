@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { salaryInnerSchema } from '../salary-and-benefits/schemas';
+import { requiredString } from '../staff-list-management/schemas/staff.schema';
 
 export const staffContractSchema = z.object({
     contractType: z.string().min(1, 'Vui lòng chọn loại hợp đồng'),
@@ -11,8 +12,8 @@ export const staffContractSchema = z.object({
         'Thời gian làm việc phải là số dương'
     ),
     workingTimeUnit: z.enum(['DAY', 'WEEK', 'MONTH']),
-    managedRoomId: z.string().optional(),
-    managedDepartmentId: z.string().optional(),
+    managedRoomId: requiredString('Vui lòng chọn phòng quản lý'),
+    managedDepartmentId: requiredString('Vui lòng chọn khoa quản lý'),
     duration: z.string().min(1, 'Vui lòng nhập thời hạn').refine(
         (val) => !isNaN(Number(val)) && Number(val) > 0,
         'Thời hạn phải là số dương'

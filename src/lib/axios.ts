@@ -1,7 +1,8 @@
 import axios, { AxiosError } from 'axios';
-import { jwtDecode } from 'jwt-decode';
 
 import { config as configApp } from './config';
+import { getErrorMessage } from './utils';
+import i18n from '@/i18n';
 
 export const apiTokens: {
   accessToken?: string;
@@ -45,7 +46,8 @@ hrmInstance.interceptors.response.use(
 
 export const normalizeAxiosError = (error: unknown): Error => {
   if (error instanceof AxiosError) {
-    const message = error.response?.data?.message ?? error.message ?? 'Request failed';
+
+    const message = getErrorMessage(error.response?.data?.message ?? error.message, i18n.t.bind(i18n)) || 'Request failed';
 
     return new Error(message);
   }

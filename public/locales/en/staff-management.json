@@ -393,5 +393,75 @@
     "SPLIT": "Split Shift",
     "ON_DUTY": "On-duty Shift",
     "FLEXIBLE": "Flexible Shift"
+  },
+  "working_area": {
+    "department": "Working Department",
+    "room": "Working Room",
+    "min_required": "Please add at least one working area"
+  },
+  "insurance_union": {
+    "title": "Insurance and Union",
+    "health_insurance": "Health Insurance",
+    "social_insurance": "Social Insurance",
+    "unemployment_insurance": "Unemployment Insurance",
+    "union_fee": "Union Fee",
+    "healthcare_insurance": "Healthcare Insurance",
+    "contribution_rate": "Contribution Rate",
+    "contribution_rate_percent": "Contribution Rate (%)",
+    "contribution_amount": "Contribution Amount",
+    "insurance_company": "Insurance Company",
+    "benefit_level": "Benefit Level",
+    "placeholders": {
+      "enter_rate": "Enter rate",
+      "enter_amount": "Enter amount",
+      "enter_company": "Enter company name",
+      "enter_benefit": "Enter benefit level"
+    }
+  },
+  "salary_benefits": {
+    "title": "Salary & Benefits",
+    "edit": "Edit",
+    "update_success": "Salary and benefits updated successfully!",
+    "update_error": "An error occurred, please try again!",
+    "staff_not_found": "Staff ID not found",
+    "sections": {
+      "salary_info": "Salary Information",
+      "salary_structure": "Salary Structure",
+      "tax": "Personal Income Tax",
+      "insurance_union": "Insurance & Union",
+      "leave_benefits": "Leave Benefits"
+    },
+    "salary_type": "Salary Type",
+    "salary_net": "Net Salary",
+    "salary_gross": "Gross Salary",
+    "basic_salary": "Basic Salary",
+    "insurance_salary": "Insurance Salary",
+    "responsibility_allowance": "Responsibility Allowance",
+    "position_allowance": "Position Allowance",
+    "hazard_allowance": "Hazardous Allowance",
+    "meal_allowance": "Meal Allowance",
+    "fuel_allowance": "Fuel Allowance",
+    "phone_allowance": "Phone Allowance",
+    "business_trip_allowance": "Business Trip Allowance",
+    "other_allowance": "Other Allowance",
+    "family_deduction": "Family Deduction",
+    "dependents_count": "Number of Dependents",
+    "tax_rate": "Rate (%)",
+    "units": {
+      "day": "Day",
+      "month": "Month"
+    },
+    "options": {
+      "gross": "Gross Salary",
+      "net": "Net Salary"
+    },
+    "placeholders": {
+      "select": "Select",
+      "enter": "Enter",
+      "enter_count": "Enter number of persons",
+      "enter_rate": "Enter rate",
+      "enter_basic": "Enter basic salary",
+      "enter_insurance": "Enter insurance salary"
+    }
   }
 }
