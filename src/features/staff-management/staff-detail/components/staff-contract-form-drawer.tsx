@@ -260,7 +260,9 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       staffId,
       ...data,
       duration: Number(data.duration),
-      departmentIds: data.workingAreas?.map(it => it.departmentId), roomIds: data.workingAreas?.map(it => it.roomId).flat(Infinity)
+      departmentIds: data.workingAreas?.map(it => it.departmentId),
+      roomIds: data.workingAreas?.map(it => it.roomId).flat(Infinity),
+      workType: data.workType || null,
       // ... map các field khác
     };
 
