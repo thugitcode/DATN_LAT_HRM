@@ -1,25 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { Button, Form, Input } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
+import type { Options } from '@/types/global.type';
+import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { WrapperBoxForm } from '@/components/wrapper-box-form';
-import { useStaffOptions } from '@/hooks/options/use-staff-options';
-import type { Options } from '@/types/global.type';
 
-import { useCreateRevenueManagement, useGetDetailRevenue, useUpdateRevenueManagement } from '../../hooks/use-revenue-management';
+import {
+  useCreateRevenueManagement,
+  useGetDetailRevenue,
+  useUpdateRevenueManagement,
+} from '../../hooks/use-revenue-management';
 import { revenueSchema, type RevenueFormValues } from '../../schemas/revenue.schema';
 import type { RevenueDataListType } from '../../types/revenue.type';
 import { EnterRevenueForm } from './enter-revenue-form';
-
 
 // --- Utilities (Giữ nguyên từ mẫu WorkShiftsForm) ---
 const autoFillSingle = (items: { id: string }[]) =>
@@ -37,20 +40,20 @@ export const EnterRevenueDrawer = () => {
   const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
   const { t: tp } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
-  const { mutate: createRevenue } = useCreateRevenueManagement()
-  const { mutate: updateRevenue } = useUpdateRevenueManagement()
+  const { mutate: createRevenue } = useCreateRevenueManagement();
+  const { mutate: updateRevenue } = useUpdateRevenueManagement();
   const onClose = useDrawer((state) => state.onClose);
   const dataRow = useDrawer((state) => state.data) as RevenueDataListType | undefined;
 
   const { staff } = dataRow ?? {};
 
-  // Fetch dữ liệu doanh thu
-  const { data: detailData, isLoading: isDetailLoading } = useGetDetailRevenue(dataRow?.id as string);
+  const { data: detailData, isLoading: isDetailLoading } = useGetDetailRevenue(
+    dataRow?.id as string,
+  );
 
   const { options: staffOptions } = useStaffOptions();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Mapping options cho Autocomplete
   const staffByCodeOptions = useMemo(
     () =>
       staffOptions.map((item) => ({
@@ -71,7 +74,7 @@ export const EnterRevenueDrawer = () => {
   const methods = useForm<RevenueFormValues>({
     resolver: zodResolver(revenueSchema(tp, !!dataRow?.id)) as any,
     defaultValues: {
-      staffCode: staff?.code ?? "",
+      staffCode: staff?.code ?? '',
       name: staff?.name ?? '',
       staffId: staff?.id ?? '',
       departmentId: autoFillSingle(staff?.departments ?? []),
@@ -84,15 +87,23 @@ export const EnterRevenueDrawer = () => {
     mode: 'onChange',
   });
 
-  const { control, handleSubmit, setValue, formState: { isSubmitting }, getValues, reset } = methods;
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { isSubmitting },
+    getValues,
+    reset,
+  } = methods;
   useEffect(() => {
     if (detailData?.data?.id) {
       reset({
-        ...detailData?.data, departmentId: autoFillSingle(staff?.departments ?? []),
-        roomId: autoFillSingle(staff?.rooms ?? [])
-      })
+        ...detailData?.data,
+        departmentId: autoFillSingle(staff?.departments ?? []),
+        roomId: autoFillSingle(staff?.rooms ?? []),
+      });
     }
-  }, [detailData?.data])
+  }, [detailData?.data]);
 
   const isLoading = isDetailLoading || isSubmitting;
 
@@ -108,12 +119,15 @@ export const EnterRevenueDrawer = () => {
   const handleSelectByName = (id: string) => {
     const emp = staffByCodeOptions.find((e) => e.id === id);
 
+    console.log('emp___________=', emp);
+
     if (!emp) return;
+
     applyStaffOptions(emp);
   };
 
   const applyStaffOptions = (emp: (typeof staffOptions)[number]) => {
-    setValue('staffId', emp.key, { shouldValidate: true });
+    setValue('staffCode', emp.key, { shouldValidate: true });
 
     const departments = toNameKeyOptions(emp?.departments);
     const rooms = toNameKeyOptions(emp?.rooms);
@@ -142,10 +156,13 @@ export const EnterRevenueDrawer = () => {
     if (!dataRow) {
       createRevenue({
         ...values,
-        achievementRate: Number(values?.achievementRate) ?? 0
-      })
+        achievementRate: Number(values?.achievementRate) ?? 0,
+      });
     } else {
-      updateRevenue({ id: (dataRow as any).id as string, data: { ...values, achievementRate: Number(values?.achievementRate) ?? 0 } })
+      updateRevenue({
+        id: (dataRow as any).id as string,
+        data: { ...values, achievementRate: Number(values?.achievementRate) ?? 0 },
+      });
     }
     // Logic xử lý submit doanh thu của bạn ở đây
   };
@@ -156,77 +173,75 @@ export const EnterRevenueDrawer = () => {
         <Form
           className="flex h-full w-full max-w-full flex-col justify-between space-y-6 pt-6"
           validationBehavior="aria"
-          onSubmit={handleSubmit(
-            (values) => onSubmit(values),
-            (errors) => {
-              console.error('Validation errors:', errors);
-              scrollToFirstError();
-            }
-          )}
+          onSubmit={handleSubmit((values) => onSubmit(values))}
         >
           <div ref={scrollContainerRef} className="w-full space-y-6 overflow-auto px-6">
             {/* Form trên: Thông tin nhân viên */}
-            <WrapperBoxForm title={t("work_shifts_form.staff_info")}>
-              {!dataRow?.id ? <div className="grid grid-cols-2 gap-4">
-                <FormAutocomplete
-                  control={control}
-                  name="staffCode"
-                  label={t('columns.employee_code')}
-                  isRequired
-                  options={staffByCodeOptions}
-                  onSelect={handleSelectByCode}
-                  disabled={isLoading}
-                />
-                <FormAutocomplete
-                  control={control}
-                  name="name"
-                  label={t('columns.employee_name')}
-                  isRequired
-                  options={staffOptions}
-                  onSelect={handleSelectByName}
-                  disabled={isLoading}
-                />
-                <FormAutocomplete
-                  control={control}
-                  name="departmentId"
-                  label={t('change_shift_division.department')}
-                  isRequired
-                  options={userOptions.departments}
-                  disabled={isLoading}
-                />
-                <FormAutocomplete
-                  control={control}
-                  name="roomId"
-                  label={t('change_shift_division.room')}
-                  options={userOptions.rooms}
-                  disabled={isLoading}
-                />
-              </div> : <div className="grid grid-cols-2 gap-4">
-                <Input
-                  labelPlacement='outside-top'
-                  value={dataRow?.staff?.code ?? ""}
-                  label={t('columns.employee_code')}
-                  readOnly={true}
-                />
-                <Input
-                  labelPlacement='outside-top'
-                  value={dataRow?.staff?.name ?? ""}
-                  label={t('columns.employee_name')}
-                  readOnly={true}
-                />
-                <Input
-                  labelPlacement='outside-top'
-                  value={dataRow?.departments?.[0]?.name ?? ""}
-                  label={t('change_shift_division.department')}
-                  readOnly={true}
-                />
-                <Input
-                  labelPlacement='outside-top'
-                  value={dataRow?.rooms?.[0]?.name ?? ""}
-                  label={t('change_shift_division.room')}
-                  readOnly={true}
-                />
-              </div>}
+            <WrapperBoxForm title={t('work_shifts_form.staff_info')}>
+              {!dataRow?.id ? (
+                <div className="grid grid-cols-2 gap-4">
+                  <FormAutocomplete
+                    control={control}
+                    name="staffCode"
+                    label={t('columns.employee_code_2')}
+                    isRequired
+                    options={staffByCodeOptions}
+                    onSelect={handleSelectByCode}
+                    disabled={isLoading}
+                  />
+                  <FormAutocomplete
+                    control={control}
+                    name="name"
+                    label={t('columns.employee_name_2')}
+                    isRequired
+                    options={staffOptions}
+                    onSelect={handleSelectByName}
+                    disabled={isLoading}
+                  />
+                  <FormAutocomplete
+                    control={control}
+                    name="departmentId"
+                    label={t('change_shift_division.department')}
+                    isRequired
+                    options={userOptions.departments}
+                    disabled={isLoading}
+                  />
+                  <FormAutocomplete
+                    control={control}
+                    name="roomId"
+                    label={t('change_shift_division.room')}
+                    options={userOptions.rooms}
+                    disabled={isLoading}
+                  />
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-4">
+                  <Input
+                    labelPlacement="outside-top"
+                    value={dataRow?.staff?.code ?? ''}
+                    label={t('columns.employee_code_2')}
+                    readOnly={true}
+                  />
+                  <Input
+                    labelPlacement="outside-top"
+                    value={dataRow?.staff?.name ?? ''}
+                    label={t('columns.employee_name_2')}
+                    readOnly={true}
+                  />
+                  <Input
+                    labelPlacement="outside-top"
+                    value={dataRow?.departments?.[0]?.name ?? ''}
+                    label={t('change_shift_division.department')}
+                    readOnly={true}
+                  />
+                  <Input
+                    labelPlacement="outside-top"
+                    value={dataRow?.rooms?.[0]?.name ?? ''}
+                    label={t('change_shift_division.room')}
+                    readOnly={true}
+                  />
+                </div>
+              )}
             </WrapperBoxForm>
 
             {/* Form dưới: Nhập doanh thu */}

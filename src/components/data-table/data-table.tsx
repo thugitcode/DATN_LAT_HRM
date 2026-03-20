@@ -1,4 +1,5 @@
 import { useCallback, type Key, type ReactNode } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import {
   Spinner,
   Table,
@@ -9,6 +10,7 @@ import {
   TableRow,
 } from '@heroui/react';
 import type { Selection } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 import { TablePagination } from '../table/table-pagination';
 import type { PaginationConfig } from '../table/types';
@@ -54,7 +56,7 @@ export function DataTable<T extends object>({
   dataSource,
   rowKey = 'id' as keyof T & string,
   loading = false,
-  emptyContent = 'Không có dữ liệu',
+  emptyContent,
   pagination,
   selectedKeys,
   onSelectionChange,
@@ -64,6 +66,8 @@ export function DataTable<T extends object>({
   onRowClick,
   isHeaderSticky,
 }: DataTableProps<T>) {
+  const { t } = useTranslation(NAMESPACES.COMMON);
+
   const visibleColumnDefs = visibleColumns
     ? columns.filter((col) => visibleColumns.has(col.key))
     : columns;
@@ -90,6 +94,8 @@ export function DataTable<T extends object>({
   );
 
   const items = Array.isArray(dataSource) ? dataSource : [];
+
+  const resolvedEmptyContent = emptyContent ?? t('table.empty');
 
   return (
     <div className="flex flex-col gap-4">
@@ -129,7 +135,7 @@ export function DataTable<T extends object>({
           items={items}
           isLoading={loading}
           loadingContent={<Spinner />}
-          emptyContent={emptyContent}
+          emptyContent={resolvedEmptyContent}
         >
           {(record) => (
             <TableRow
