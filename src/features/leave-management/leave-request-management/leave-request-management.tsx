@@ -1,5 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
+import { exportLeaveRequestToExcel } from '@/templates/excels/leave-requests-management/export-leave-request-excel';
+import { LeaveRequestPrint } from '@/templates/prints/leave-requests-management/leave-request-print';
 import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 
@@ -15,8 +17,6 @@ import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
 
 import { LeaveRequestFitlers } from './components/leave-request-fitlers';
-import { LeaveRequestPrint } from './components/leave-request-print';
-import { exportLeaveRequestToExcel } from './components/leave-request.export';
 import { SummaryBadges } from './components/summary-badges';
 import { useColumns } from './hooks/use-columns';
 import { useLeaveRequestManagementList } from './hooks/use-leave-request';
@@ -53,11 +53,9 @@ export const LeaveRequestManagement = () => {
     departmentIds,
     roomIds,
   });
-
   const handleExport = useCallback(() => {
-    const exportKeys = new Set([...visibleColumns].filter((k) => k !== 'actions'));
-    exportLeaveRequestToExcel(data?.data ?? [], exportKeys, departmentName);
-  }, [data?.data, visibleColumns, departmentName]);
+    exportLeaveRequestToExcel(data?.data ?? [], month, '', '', departmentName);
+  }, [data?.data, month, departmentName]);
 
   const printRef = useRef<HTMLDivElement>(null);
   const handlePrint = useReactToPrint({ contentRef: printRef });
@@ -104,12 +102,7 @@ export const LeaveRequestManagement = () => {
       />
 
       <div style={{ display: 'none' }}>
-        <LeaveRequestPrint
-          ref={printRef}
-          data={data?.data ?? []}
-          // visibleColumns={visibleColumns}
-          departmentName={departmentName}
-        />
+        <LeaveRequestPrint ref={printRef} data={data?.data ?? []} departmentName={departmentName} />
       </div>
     </PageContainer>
   );

@@ -1,3 +1,8 @@
+import {
+  buildExcelFooterRows,
+  buildFooterMerges,
+  type ExcelFooterConfig,
+} from '@/templates/shares/excel-header-footer';
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx-js-style';
 
@@ -122,6 +127,78 @@ export interface SheetData {
 
 // ─── Core builder ─────────────────────────────────────────────────────────────
 
+// export function buildSheet(sheetData: SheetData): XLSX.WorkSheet {
+//   const { config, extraHeaderRows, extraHeaderMerges, rows, staffGroups } = sheetData;
+//   const { fixedCols, dayCols, summaryCols = [], headerRowCount } = config;
+
+//   const totalCols = fixedCols.length + dayCols.length + summaryCols.length;
+//   const aoa: unknown[][] = [];
+
+//   // ── Row 0: Company name 1 (left) + Title (center) ────────────────────────
+//   const companyRow1: unknown[] = [
+//     config.companyName1 ?? '',
+//     '',
+//     '',
+//     config.title,
+//     ...Array(totalCols - 4).fill(''),
+//   ];
+//   aoa.push(companyRow1);
+
+//   // ── Row 1: Company name 2 (left) + Department (center) ───────────────────
+//   const deptLabel = config.departmentName ? `Khoa/Phòng: ${config.departmentName}` : 'Khoa/Phòng:';
+//   const companyRow2: unknown[] = [
+//     config.companyName2 ?? '',
+//     '',
+//     '',
+//     deptLabel,
+//     ...Array(totalCols - 4).fill(''),
+//   ];
+//   aoa.push(companyRow2);
+
+//   // ── Extra header rows (week row, col header row, etc.) ────────────────────
+//   extraHeaderRows.forEach((row) => aoa.push(row));
+
+//   // ── Data rows ─────────────────────────────────────────────────────────────
+//   rows.forEach((row) => aoa.push(row.cells));
+
+//   // ── Footer rows ───────────────────────────────────────────────────────────
+//   const footerRows = buildFooterRows(totalCols, config.year);
+//   footerRows.forEach((row) => aoa.push(row));
+
+//   // ── Build worksheet ───────────────────────────────────────────────────────
+//   const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+//   // Merges: company row merges + all extra merges
+//   const companyMerges: XLSX.Range[] = [
+//     { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
+//     { s: { r: 0, c: 3 }, e: { r: 0, c: totalCols - 1 } },
+//     { s: { r: 1, c: 0 }, e: { r: 1, c: 2 } },
+//     { s: { r: 1, c: 3 }, e: { r: 1, c: totalCols - 1 } },
+//   ];
+//   ws['!merges'] = [...companyMerges, ...extraHeaderMerges];
+
+//   ws['!cols'] = [
+//     ...fixedCols.map((c) => ({ wch: c.wch })),
+//     ...dayCols.map((c) => ({ wch: c.wch })),
+//     ...summaryCols.map((c) => ({ wch: c.wch })),
+//   ];
+//   ws['!rows'] = [{ hpt: config.titleRowHeight ?? 20 }, { hpt: config.titleRowHeight ?? 20 }];
+
+//   // ── Apply cell styles ─────────────────────────────────────────────────────
+//   const range = XLSX.utils.decode_range(ws['!ref'] ?? 'A1');
+//   const lastDataRow = 2 + extraHeaderRows.length + rows.length - 1; // last data row index
+
+//   for (let R = range.s.r; R <= range.e.r; R++) {
+//     for (let C = range.s.c; C <= range.e.c; C++) {
+//       const addr = XLSX.utils.encode_cell({ r: R, c: C });
+//       if (!ws[addr]) ws[addr] = { v: '', t: 's' };
+//       ws[addr].s = getCellStyle(R, C, headerRowCount, lastDataRow, staffGroups, config);
+//     }
+//   }
+
+//   return ws;
+// }
+
 export function buildSheet(sheetData: SheetData): XLSX.WorkSheet {
   const { config, extraHeaderRows, extraHeaderMerges, rows, staffGroups } = sheetData;
   const { fixedCols, dayCols, summaryCols = [], headerRowCount } = config;
@@ -129,7 +206,7 @@ export function buildSheet(sheetData: SheetData): XLSX.WorkSheet {
   const totalCols = fixedCols.length + dayCols.length + summaryCols.length;
   const aoa: unknown[][] = [];
 
-  // ── Row 0: Company name 1 (left) + Title (center) ────────────────────────
+  // ── Rows 0–1: company/title ───────────────────────────────────────────────
   const companyRow1: unknown[] = [
     config.companyName1 ?? '',
     '',
@@ -139,7 +216,6 @@ export function buildSheet(sheetData: SheetData): XLSX.WorkSheet {
   ];
   aoa.push(companyRow1);
 
-  // ── Row 1: Company name 2 (left) + Department (center) ───────────────────
   const deptLabel = config.departmentName ? `Khoa/Phòng: ${config.departmentName}` : 'Khoa/Phòng:';
   const companyRow2: unknown[] = [
     config.companyName2 ?? '',
@@ -150,27 +226,47 @@ export function buildSheet(sheetData: SheetData): XLSX.WorkSheet {
   ];
   aoa.push(companyRow2);
 
-  // ── Extra header rows (week row, col header row, etc.) ────────────────────
+  // ── Extra header rows ─────────────────────────────────────────────────────
   extraHeaderRows.forEach((row) => aoa.push(row));
 
   // ── Data rows ─────────────────────────────────────────────────────────────
   rows.forEach((row) => aoa.push(row.cells));
 
-  // ── Footer rows ───────────────────────────────────────────────────────────
-  const footerRows = buildFooterRows(totalCols, config.year);
-  footerRows.forEach((row) => aoa.push(row));
+  const lastDataRow = 2 + extraHeaderRows.length + rows.length - 1;
+
+  // ── Footer rows — dùng shared ─────────────────────────────────────────────
+  const footerCfg: ExcelFooterConfig = { totalCols };
+  const { blankRow, dateRow, blankSignRow, signRow } = buildExcelFooterRows(footerCfg);
+  const footerOffset = lastDataRow + 1 + 4; // +4 spacers
+  const footerMerges = buildFooterMerges({ totalCols }, footerOffset);
+
+  aoa.push(
+    Array(totalCols).fill(''), // spacer 1
+    Array(totalCols).fill(''), // spacer 2
+    Array(totalCols).fill(''), // spacer 3
+    Array(totalCols).fill(''), // spacer 4
+    blankRow,
+    dateRow,
+    blankSignRow,
+    signRow,
+  );
 
   // ── Build worksheet ───────────────────────────────────────────────────────
   const ws = XLSX.utils.aoa_to_sheet(aoa);
 
-  // Merges: company row merges + all extra merges
+  // Extend !ref — fix empty cell skip issue
+  ws['!ref'] = XLSX.utils.encode_range({
+    s: { r: 0, c: 0 },
+    e: { r: aoa.length - 1, c: totalCols - 1 },
+  });
+
   const companyMerges: XLSX.Range[] = [
     { s: { r: 0, c: 0 }, e: { r: 0, c: 2 } },
     { s: { r: 0, c: 3 }, e: { r: 0, c: totalCols - 1 } },
     { s: { r: 1, c: 0 }, e: { r: 1, c: 2 } },
     { s: { r: 1, c: 3 }, e: { r: 1, c: totalCols - 1 } },
   ];
-  ws['!merges'] = [...companyMerges, ...extraHeaderMerges];
+  ws['!merges'] = [...companyMerges, ...extraHeaderMerges, ...footerMerges]; // ← thêm footerMerges
 
   ws['!cols'] = [
     ...fixedCols.map((c) => ({ wch: c.wch })),
@@ -179,10 +275,8 @@ export function buildSheet(sheetData: SheetData): XLSX.WorkSheet {
   ];
   ws['!rows'] = [{ hpt: config.titleRowHeight ?? 20 }, { hpt: config.titleRowHeight ?? 20 }];
 
-  // ── Apply cell styles ─────────────────────────────────────────────────────
+  // ── Apply styles ──────────────────────────────────────────────────────────
   const range = XLSX.utils.decode_range(ws['!ref'] ?? 'A1');
-  const lastDataRow = 2 + extraHeaderRows.length + rows.length - 1; // last data row index
-
   for (let R = range.s.r; R <= range.e.r; R++) {
     for (let C = range.s.c; C <= range.e.c; C++) {
       const addr = XLSX.utils.encode_cell({ r: R, c: C });
