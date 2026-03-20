@@ -1,19 +1,19 @@
 // sections/WorkingAreaSection.tsx
-import { useFormContext, useFieldArray } from 'react-hook-form';
 import {
     Button,
 } from '@heroui/react'; // hoặc từ thư viện bạn dùng
-import { IconCirclePlus, IconCirclePlusFilled, IconPlus, IconTrash as TrashIcon } from '@tabler/icons-react';
+import { IconCirclePlusFilled, IconTrash as TrashIcon } from '@tabler/icons-react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 
-import { useQuery } from '@tanstack/react-query';
+import { FormSelect } from '@/components/form-fields/form-select';
 import { departmentQueryOptions } from '@/services/query-options/department.query';
 import { roomQueryOptions } from '@/services/query-options/room.query';
+import { useQuery } from '@tanstack/react-query';
 import type { FC } from 'react';
-import { FormSelect } from '@/components/form-fields/form-select';
 
-export const WorkingAreaSection: FC = () => {
-    const { control, watch, formState: { isSubmitting } } = useFormContext();
+export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bordered" | "faded" | "underlined" }> = ({ isView = false, variant = "flat" }) => {
+    const { control, watch, formState: { isSubmitting }, resetField } = useFormContext();
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -33,14 +33,22 @@ export const WorkingAreaSection: FC = () => {
         label: d.name,
     }));
 
-    // Lấy departmentId của từng field để filter phòng
     const workingAreas = watch('workingAreas') || [];
+    const selectedDeptIds = workingAreas.map((wa: any) => wa.departmentId).filter(Boolean);
+
+    // Lấy departmentId của từng field để filter phòng
+    // const workingAreas = watch('workingAreas') || [];
 
     return (
         <div>
             <div className="flex flex-col gap-5">
                 {fields.map((field, index) => {
                     const currentDeptId = watch(`workingAreas.${index}.departmentId`);
+
+                    // Filter khoa: không hiển thị khoa đã được chọn ở các dòng khác
+                    const filteredDeptOptions = departmentOptions.filter(
+                        (opt) => !selectedDeptIds.includes(opt.key) || opt.key === currentDeptId
+                    );
 
                     // Filter phòng theo khoa đã chọn
                     const filteredRoomOptions = rooms
@@ -52,30 +60,35 @@ export const WorkingAreaSection: FC = () => {
 
                     return (
                         <div key={field.id} className="relative flex gap-4">
-                            <div className='w-1/2'>
+                            <div className='w-1/2 min-w-[49%]'>
                                 <FormSelect
                                     control={control}
                                     name={`workingAreas.${index}.departmentId`}
                                     label="Khoa làm việc"
                                     isRequired
-                                    options={departmentOptions}
-                                    disabled={isSubmitting}
+                                    options={filteredDeptOptions}
+                                    disabled={isSubmitting || isView}
+                                    variant={variant}
+                                    onSelect={() => {
+                                        resetField(`workingAreas.${index}.roomId`)
+                                    }}
                                 />
                             </div>
 
-                            <div className='flex-1'>
+                            <div className='w-1/2'>
                                 <FormSelect
+                                    selectionMode='multiple'
                                     control={control}
                                     name={`workingAreas.${index}.roomId`}
                                     label="Phòng làm việc"
                                     options={filteredRoomOptions}
-                                    disabled={isSubmitting || !currentDeptId}
-                                // optional → không bắt buộc
+                                    disabled={isSubmitting || !currentDeptId || isView}
+                                    variant={variant}
                                 />
                             </div>
 
-                            {/* Nút xóa - ẩn nếu chỉ còn 1 dòng và là dòng đầu tiên (tùy logic) */}
-                            {fields.length !==1 && <Button
+                            {/* Nút xóa - ẩn nếu chỉ còn 1 dòng và là dòng đầu tiên */}
+                            {fields.length !== 1 && <Button
                                 isIconOnly
                                 variant="light"
                                 // color="danger"
@@ -96,18 +109,18 @@ export const WorkingAreaSection: FC = () => {
                     </p>
                 )}
             </div>
-            <div className="flex items-center justify-between mt-4">
+            {!isView && <div className="flex items-center justify-between mt-4">
                 <Button
                     variant="light"
                     color="primary"
                     size="sm"
                     startContent={<IconCirclePlusFilled size={16} />}
-                    onPress={() => append({ departmentId: '', roomId: '' })}
+                    onPress={() => append({ departmentId: '', roomId: [] })}
                     isDisabled={isSubmitting}
                 >
                     Thêm mới
                 </Button>
-            </div>
+            </div>}
         </div >
     );
 };

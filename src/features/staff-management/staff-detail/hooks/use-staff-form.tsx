@@ -8,11 +8,12 @@ import { useCreateStaff, useUpdateStaff } from "@/query-options/staff";
 import { useTranslation } from "react-i18next";
 import { NAMESPACES } from "@/i18n/constants";
 import { useControlMode } from "../../salary-and-benefits/hooks/use-control-mode-handle";
+import type { Staff } from "@/types/staff.type";
 
 export const useStaffForm = (
     isOpen: boolean,
-    editData: any,
-    onClose: () => void,
+    editData?: Staff,
+    onClose?: () => void,
 ) => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
     const { mutateAsync: createStaff, isPending } = useCreateStaff();
@@ -24,7 +25,7 @@ export const useStaffForm = (
     });
     const { isCreate, data: typeSubmit } = useControlMode()
 
-    const { handleSubmit, reset } = form;
+    const { handleSubmit, reset, getValues } = form;
 
     // Logic Reset Form khi đóng/mở hoặc chuyển mode Edit
     useEffect(() => {
@@ -40,12 +41,18 @@ export const useStaffForm = (
                 birthday: formatDate(editData?.birthday),
                 identityIssueDate: formatDate(editData?.identityIssueDate),
                 certificateExpiryDate: formatDate(editData?.certificateExpiryDate),
-                departmentIds: editData?.rlsStaffDepartments?.[0]?.department?.id
-                    || editData?.departments?.[0]?.id || "",
-                roomIds: editData?.rlsStaffRooms?.[0]?.room?.id
-                    || editData?.rooms?.[0]?.id || "",
-                workType: editData?.currentWorkType || editData?.workType,
-                contractType: editData?.currentContractType || editData?.contractType || editData?.lastContractType,
+                // departmentIds: editData?.rlsStaffDepartments?.[0]?.department?.id
+                //     || editData?.departments?.[0]?.id || "",
+                // roomIds: editData?.rlsStaffRooms?.[0]?.room?.id
+                //     || editData?.rooms?.[0]?.id || "",
+                managedRoomId: editData?.managedRoom?.id,
+                managedDepartmentId: editData?.managedDepartment?.id,
+                workingAreas: editData?.rlsStaffDepartments?.map(it => ({
+                    departmentId: it.department?.id ?? "",
+                    roomId: editData?.rlsStaffRooms?.filter(ite => ite.room.department?.id === it.department?.id)?.map(item => item?.room?.id)
+                })) ?? [{ departmentId: '', roomId: [] }],
+                workType: editData?.currentWorkType || editData?.workType || null,
+                contractType: editData?.currentContractType ?? "",
             });
         } else {
             reset(STAFF_FORM_DEFAULT_VALUES);
@@ -64,12 +71,8 @@ export const useStaffForm = (
         // Chuẩn hóa format gửi lên API (bọc array cho IDs)
         const payload = {
             ...cleanedData,
-            departmentIds: Array.isArray(cleanedData.departmentIds)
-                ? cleanedData.departmentIds
-                : [cleanedData.departmentIds],
-            roomIds: Array.isArray(cleanedData.roomIds)
-                ? cleanedData.roomIds
-                : [cleanedData.roomIds],
+            departmentIds: data.workingAreas?.map(it => it.departmentId), roomIds: data.workingAreas?.map(it => it.roomId).flat(Infinity),
+            workType: data.workType || null,
         };
 
         try {
@@ -78,7 +81,7 @@ export const useStaffForm = (
             } else {
                 await createStaff(payload as any);
             }
-            onClose();
+            onClose?.();
             reset(STAFF_FORM_DEFAULT_VALUES);
         } catch (error) {
             console.error("Staff Form Error:", error);

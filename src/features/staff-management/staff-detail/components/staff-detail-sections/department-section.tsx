@@ -11,9 +11,10 @@ import { useTranslation } from "react-i18next";
 import { STAFF_SECTION_KEYS } from "../../constants/data";
 import { SectionHeader } from "./section-header";
 import { useUpdateStaff } from "@/query-options/staff";
+import { WorkingAreaSection } from "../contract-and-salary-sections/working-area-section";
 
 export const DepartmentSection = () => {
-    const { control, watch, trigger, getValues } = useFormContext();
+    const { control, watch, trigger, getValues, formState: { errors } } = useFormContext();
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
 
     // Mutation để cập nhật dữ liệu
@@ -32,8 +33,9 @@ export const DepartmentSection = () => {
 
     // Danh sách các fields thuộc section này để validate và lấy data
     const sectionFields: any[] = [
-        "departmentIds",
-        "roomIds",
+        "workingAreas",
+        "managedDepartmentId",
+        "managedRoomId",
         "workType",
         "jobTitle",
         "position",
@@ -57,7 +59,10 @@ export const DepartmentSection = () => {
                 // 3. Gọi API cập nhật
                 await updateStaff({
                     id: values.id,
-                    data: { ...payload, departmentIds: [payload?.departmentIds], roomIds: [payload?.roomIds] }
+                    data: {
+                        ...payload, departmentIds: payload.workingAreas?.map((it: any) => it.departmentId), roomIds: payload.workingAreas?.map((it: any) => it.roomId).flat(Infinity),
+                        workType: payload.workType || null,
+                    }
                 });
 
                 // 4. Thoát mode chỉnh sửa nếu thành công
@@ -82,7 +87,7 @@ export const DepartmentSection = () => {
                 {/* Khoa quản lý */}
                 <FormSelect
                     control={control}
-                    name="departmentIds"
+                    name="managedDepartmentId"
                     label={t('staffForm.fields.departmentIds.label')}
                     selectionMode="single"
                     isRequired
@@ -94,7 +99,7 @@ export const DepartmentSection = () => {
                 {/* Phòng quản lý */}
                 <FormSelect
                     control={control}
-                    name="roomIds"
+                    name="managedRoomId"
                     label={t('staffForm.fields.roomIds.label')}
                     selectionMode="single"
                     isRequired
@@ -102,7 +107,10 @@ export const DepartmentSection = () => {
                     variant={variant}
                     options={roomOptions?.map(it => ({ key: it.value, label: it.label }))}
                 />
-
+                {/* Khoa phòng làm việc */}
+                <div className="col-span-2">
+                    <WorkingAreaSection isView={isView} variant={variant} />
+                </div>
                 {/* Loại hình công việc */}
                 <FormSelect
                     control={control}

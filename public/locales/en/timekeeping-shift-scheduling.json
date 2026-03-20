@@ -69,7 +69,7 @@
       "overtime_hours": "OVERTIME",
       "comp_hours": "COMP HOURS"
     },
-    "summary": "Showing {{staff}} employees • {{shifts}} shift records"
+    "summary": "Showing {{staff}} employees"
   },
 
   "shift_details": {

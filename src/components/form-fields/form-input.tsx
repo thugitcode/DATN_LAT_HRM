@@ -5,6 +5,8 @@ import type { FieldValues } from 'react-hook-form';
 import type { BaseFieldProps } from './types';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   type?: 'text' | 'time' | 'date';
@@ -23,6 +25,7 @@ export function FormInput<T extends FieldValues>({
   endContent,
   ...props
 }: Props<T>) {
+  const { t } = useTranslation(NAMESPACES.COMMON);
   return (
     <Controller
       name={name}
@@ -33,7 +36,7 @@ export function FormInput<T extends FieldValues>({
           type={type}
           label={label}
           name={name}
-          placeholder={placeholder}
+          placeholder={placeholder || t("input.placeholder")}
           labelPlacement="outside-top"
           isRequired={isRequired}
           isDisabled={disabled}

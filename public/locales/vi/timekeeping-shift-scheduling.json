@@ -68,7 +68,7 @@
       "overtime_hours": "TĂNG CA",
       "comp_hours": "GIỜ BÙ"
     },
-    "summary": "Hiển thị {{staff}} nhân viên • {{shifts}} bản ghi ca làm việc"
+    "summary": "Hiển thị {{staff}} nhân viên"
   },
 
   "shift_details": {

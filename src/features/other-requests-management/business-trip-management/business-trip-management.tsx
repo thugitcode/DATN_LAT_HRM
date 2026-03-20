@@ -3,11 +3,13 @@ import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 
+import { icons } from '@/lib/icons';
 import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 import { useColumnVisibility } from '@/hooks/use-column-visibility';
 import { useDepartmentName } from '@/hooks/use-department-name';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { ActionButton } from '@/components/action-button';
 import { ActionsPage } from '@/components/actions-page';
 import { ColumnVisibilityPopover } from '@/components/column-visibility-popover';
 import DataTable from '@/components/data-table/data-table';
@@ -25,10 +27,12 @@ const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-300px)]' } as const;
 
 export const BusinessTripManagement = () => {
   const { t } = useTranslation(NAMESPACES.OTHER_REQUESTS_MANGAGEMENT);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
+
   const { columns } = useBusinessTripColumns();
   const printRef = useRef<HTMLDivElement>(null);
 
-  const { filters } = useQueryFilter<OtherRequestsManagementParams>();
+  const { filters, clearFilters } = useQueryFilter<OtherRequestsManagementParams>();
 
   const { departmentIds, roomIds, month, search, status, type, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
@@ -79,7 +83,14 @@ export const BusinessTripManagement = () => {
         <TitlePage title={t('businessTripManagement.title')} />
 
         <div className="flex items-center gap-2">
-          <ActionsPage onPrint={handlePrint} onExport={handleExport} hiddenLayoutSwitcher />
+          {/* <ActionsPage onPrint={handlePrint} onExport={handleExport} hiddenLayoutSwitcher /> */}
+          <ActionButton
+            tooltip={tc('actions.reload')}
+            ariaLabel={tc('actions.reload')}
+            onPress={clearFilters}
+          >
+            {icons.reload}
+          </ActionButton>
           <ColumnVisibilityPopover
             columns={columns}
             visibleColumns={visibleColumns}

@@ -1,7 +1,7 @@
 import type { TFunction } from "i18next";
 import z from "zod";
 
-const normalizeString = (v: unknown) => (v === null || v === undefined ? "" : v);
+export const normalizeString = (v: unknown) => (v === null || v === undefined ? "" : v);
 
 // optional string
 const optionalString = () =>
