@@ -2,11 +2,14 @@
 import { FormCheckbox } from '@/components/form-fields/form-checkbox';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
 import type { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 export const PersonalIncomeTaxSection: FC = () => {
+    const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { control, watch, formState: { isSubmitting } } = useFormContext();
     const { isView } = useControlMode()
     const variant = isView ? "underlined" : "flat"
@@ -17,7 +20,7 @@ export const PersonalIncomeTaxSection: FC = () => {
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-1">
                 {icons.bill}
-                <h3 className="text-[15px] font-bold text-[#11181C]">Thuế TNCN</h3>
+                <h3 className="text-[15px] font-bold text-[#11181C]">{t('salary_benefits.sections.tax')}</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-6 mt-2">
@@ -26,15 +29,15 @@ export const PersonalIncomeTaxSection: FC = () => {
                     <FormCheckbox
                         control={control}
                         name="salary.hasFamilyDeduction"
-                        label="Giảm trừ gia cảnh"
+                        label={t('salary_benefits.family_deduction')}
                         disabled={isSubmitting || isView}
                     />
 
                     <FormNumberInput
                         control={control}
                         name="salary.dependentsCount"
-                        label="Số người phụ thuộc"
-                        placeholder="Nhập số người"
+                        label={t('salary_benefits.dependents_count')}
+                        placeholder={t('salary_benefits.placeholders.enter_count')}
                         disabled={isSubmitting || isView || !hasFamilyDeduction}
                         isRequired={hasFamilyDeduction}
                         variant={variant}
@@ -48,15 +51,15 @@ export const PersonalIncomeTaxSection: FC = () => {
                     <FormCheckbox
                         control={control}
                         name="salary.hasPersonalIncomeTax"
-                        label="Thuế TNCN"
+                        label={t('salary_benefits.sections.tax')}
                         disabled={isSubmitting || isView}
                     />
 
                     <FormNumberInput
                         control={control}
                         name="salary.personalIncomeTaxRate"
-                        label="Tỷ lệ (%)"
-                        placeholder="Nhập tỷ lệ"
+                        label={t('salary_benefits.tax_rate')}
+                        placeholder={t('salary_benefits.placeholders.enter_rate')}
                         endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
                         disabled={isSubmitting || isView || !hasPersonalIncomeTax}
                         variant={variant}

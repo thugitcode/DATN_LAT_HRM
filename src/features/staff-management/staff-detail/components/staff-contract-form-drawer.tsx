@@ -28,6 +28,7 @@ import { LeaveBenefitsSection } from './contract-and-salary-sections/leave-benef
 import { PersonalIncomeTaxSection } from './contract-and-salary-sections/personal-income-tax-section';
 import { SalaryInfoSection } from './contract-and-salary-sections/salary-info-section';
 import { SalaryStructureSection } from './contract-and-salary-sections/salary-structure-section';
+import { BtnSave } from '@/components/btn-save';
 
 // import các query hooks khác giữ nguyên...
 
@@ -321,14 +322,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                 </div>
                 <div className="absolute bottom-0 bg-white p-4 w-full left-0 flex justify-end gap-2 z-10">
                   <BtnCancel isDisabled={isSubmitting} onPress={onClose} />
-                  <Button
-                    type="submit"
-                    color="primary"
-                    // onClick={onSubmit}
-                    isLoading={isSubmitting}
-                  >
-                    Lưu lại
-                  </Button>
+                  <BtnSave isLoading={isSubmitting} />
                 </div>
               </Form>
             </FormProvider>

@@ -1,14 +1,14 @@
-import { useEffect } from "react";
-import { useForm, type FieldValues, type Resolver } from "react-hook-form";
+import { NAMESPACES } from "@/i18n/constants";
+import { useCreateStaff, useStaffDetail, useUpdateStaff } from "@/query-options/staff";
+import type { Staff } from "@/types/staff.type";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
+import { useEffect } from "react";
+import { useForm, type FieldValues, type Resolver } from "react-hook-form";
+import { useTranslation } from "react-i18next";
+import { useControlMode } from "../../salary-and-benefits/hooks/use-control-mode-handle";
 import { staffSchema, type StaffFormValues } from "../../staff-list-management/schemas/staff.schema";
 import { STAFF_FORM_DEFAULT_VALUES } from "../constants/data";
-import { useCreateStaff, useUpdateStaff } from "@/query-options/staff";
-import { useTranslation } from "react-i18next";
-import { NAMESPACES } from "@/i18n/constants";
-import { useControlMode } from "../../salary-and-benefits/hooks/use-control-mode-handle";
-import type { Staff } from "@/types/staff.type";
 
 export const useStaffForm = (
     isOpen: boolean,
@@ -24,40 +24,41 @@ export const useStaffForm = (
         mode: "onChange"
     });
     const { isCreate, data: typeSubmit } = useControlMode()
-
-    const { handleSubmit, reset, getValues } = form;
+    const { data: staffDetail } = useStaffDetail(editData?.id ?? "")
+    const { handleSubmit, reset, getValues, formState: { errors } } = form;
+    console.log(errors, 2222);
 
     // Logic Reset Form khi đóng/mở hoặc chuyển mode Edit
     useEffect(() => {
         if (!isOpen) return;
 
-        if (editData) {
+        if (staffDetail?.data) {
             const formatDate = (date?: string) => date ? dayjs(date).format("YYYY-MM-DD") : "";
 
             reset({
                 ...STAFF_FORM_DEFAULT_VALUES,
-                ...editData,
-                healthInsuranceNumber: editData?.healthInsuranceNumber ?? "",
-                birthday: formatDate(editData?.birthday),
-                identityIssueDate: formatDate(editData?.identityIssueDate),
-                certificateExpiryDate: formatDate(editData?.certificateExpiryDate),
-                // departmentIds: editData?.rlsStaffDepartments?.[0]?.department?.id
-                //     || editData?.departments?.[0]?.id || "",
-                // roomIds: editData?.rlsStaffRooms?.[0]?.room?.id
-                //     || editData?.rooms?.[0]?.id || "",
-                managedRoomId: editData?.managedRoom?.id,
-                managedDepartmentId: editData?.managedDepartment?.id,
-                workingAreas: editData?.rlsStaffDepartments?.map(it => ({
+                ...staffDetail?.data,
+                healthInsuranceNumber: staffDetail?.data?.healthInsuranceNumber ?? "",
+                birthday: formatDate(staffDetail?.data?.birthday),
+                identityIssueDate: formatDate(staffDetail?.data?.identityIssueDate),
+                certificateExpiryDate: formatDate(staffDetail?.data?.certificateExpiryDate),
+                // departmentIds: staffDetail?.data?.rlsStaffDepartments?.[0]?.department?.id
+                //     || staffDetail?.data?.departments?.[0]?.id || "",
+                // roomIds: staffDetail?.data?.rlsStaffRooms?.[0]?.room?.id
+                //     || staffDetail?.data?.rooms?.[0]?.id || "",
+                managedRoomId: staffDetail?.data?.managedRoom?.id,
+                managedDepartmentId: staffDetail?.data?.managedDepartment?.id,
+                workingAreas: staffDetail?.data?.rlsStaffDepartments?.map(it => ({
                     departmentId: it.department?.id ?? "",
-                    roomId: editData?.rlsStaffRooms?.filter(ite => ite.room.department?.id === it.department?.id)?.map(item => item?.room?.id)
+                    roomId: staffDetail?.data?.rlsStaffRooms?.filter(ite => ite.room.department?.id === it.department?.id)?.map(item => item?.room?.id)
                 })) ?? [{ departmentId: '', roomId: [] }],
-                workType: editData?.currentWorkType || editData?.workType || null,
-                contractType: editData?.currentContractType ?? "",
+                workType: staffDetail?.data?.currentWorkType || staffDetail?.data?.workType || null,
+                contractType: staffDetail?.data?.currentContractType ?? "",
             });
         } else {
             reset(STAFF_FORM_DEFAULT_VALUES);
         }
-    }, [isOpen, editData, reset]);
+    }, [isOpen, staffDetail?.data, reset]);
 
     const onSubmit = async (data: StaffFormValues) => {
         if (!isCreate && typeSubmit !== "ALL") return
@@ -76,8 +77,8 @@ export const useStaffForm = (
         };
 
         try {
-            if (editData?.id) {
-                await updateStaff({ id: editData?.id, data: payload as any });
+            if (staffDetail?.data?.id) {
+                await updateStaff({ id: staffDetail?.data?.id, data: payload as any });
             } else {
                 await createStaff(payload as any);
             }
@@ -92,7 +93,7 @@ export const useStaffForm = (
         form,
         handleSubmit,
         onSubmit: handleSubmit(onSubmit),
-        isEdit: !!editData?.id,
+        isEdit: !!staffDetail?.data?.id,
         reset: reset
     };
 };

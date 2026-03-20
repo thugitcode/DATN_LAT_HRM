@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { addToast } from '@heroui/react';
 import {
     fetchStaffContractsByStaffId,
@@ -33,21 +34,22 @@ export const useContractDetail = (contractId: string) => {
 };
 
 export const useCreateContract = (staffId: string) => {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: any) => createContract(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: STAFF_CONTRACT_QUERY_KEY.byStaff(staffId) });
             addToast({
-                title: 'Thêm mới thành công',
-                description: 'Hợp đồng mới đã được tạo',
+                title: t('toast.success.create'),
+                description: t('toast.description.contract_created'),
                 color: 'success',
             });
         },
         onError: (error: Error) => {
             addToast({
-                title: 'Thêm mới thất bại',
-                description: error.message || 'Có lỗi xảy ra khi thêm mới',
+                title: t('toast.error.create'),
+                description: error.message || t('toast.description.error_create'),
                 color: 'danger',
             });
         },
@@ -55,51 +57,76 @@ export const useCreateContract = (staffId: string) => {
 };
 
 export const useApproveContract = (staffId: string) => {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (contractId: string) => approveContract(contractId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: STAFF_CONTRACT_QUERY_KEY.byStaff(staffId) });
             addToast({
-                title: 'Duyệt thành công',
-                description: 'Hợp đồng đã được duyệt',
+                title: t('toast.success.approve'),
+                description: t('toast.description.contract_approved'),
                 color: 'success',
+            });
+        },
+        onError: (error: Error) => {
+            addToast({
+                title: t('toast.error.approve'),
+                description: error.message || t('toast.description.error_generic'),
+                color: 'danger',
             });
         },
     });
 };
 
 export const useSignContract = (staffId: string) => {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (contractId: string) => signContract(contractId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: STAFF_CONTRACT_QUERY_KEY.byStaff(staffId) });
             addToast({
-                title: 'Ký thành công',
-                description: 'Hợp đồng đã được ký',
+                title: t('toast.success.sign'),
+                description: t('toast.description.contract_signed'),
                 color: 'success',
+            });
+        },
+        onError: (error: Error) => {
+            addToast({
+                title: t('toast.error.sign'),
+                description: error.message || t('toast.description.error_generic'),
+                color: 'danger',
             });
         },
     });
 };
 
 export const useDeleteContract = (staffId: string) => {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (contractId: string) => deleteContract(contractId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: STAFF_CONTRACT_QUERY_KEY.byStaff(staffId) });
             addToast({
-                title: 'Xóa thành công',
-                description: 'Hợp đồng đã được xóa',
+                title: t('toast.success.delete'),
+                description: t('toast.description.contract_deleted'),
                 color: 'success',
+            });
+        },
+        onError: (error: Error) => {
+            addToast({
+                title: t('toast.error.delete'),
+                description: error.message || t('toast.description.error_generic'),
+                color: 'danger',
             });
         },
     });
 };
 
 export const useUpdateContract = (staffId: string) => {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: any }) => updateContract(id, data),
@@ -107,15 +134,15 @@ export const useUpdateContract = (staffId: string) => {
             queryClient.invalidateQueries({ queryKey: STAFF_CONTRACT_QUERY_KEY.byStaff(staffId) });
             queryClient.invalidateQueries({ queryKey: STAFF_CONTRACT_QUERY_KEY.detail(id) });
             addToast({
-                title: 'Cập nhật thành công',
-                description: 'Hợp đồng đã được cập nhật',
+                title: t('toast.success.update'),
+                description: t('toast.description.contract_updated'),
                 color: 'success',
             });
         },
         onError: (error: Error) => {
             addToast({
-                title: 'Cập nhật thất bại',
-                description: error.message || 'Có lỗi xảy ra khi cập nhật',
+                title: t('toast.error.update'),
+                description: error.message || t('toast.description.error_update'),
                 color: 'danger',
             });
         },

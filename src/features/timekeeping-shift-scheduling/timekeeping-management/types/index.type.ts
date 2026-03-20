@@ -1,5 +1,5 @@
 import type { DailyAttendance, IStaff } from '@/types/shift-details.type';
-import type { ShiftTypeEnum, Staff } from '@/types/shift-management.type';
+import type { ShiftTypeEnum } from '@/types/shift-management.type';
 
 import type { Summary } from './timekeeping-management.type';
 
@@ -70,6 +70,7 @@ export type ShiftCode = `${AttendanceStatus}` | 'OFF';
 export interface DayCell {
   day: number;
   weekday: number;
+  dayOfWeek: number;
   shift: ShiftCode;
   workScheduleDetailId?: string;
 }
@@ -96,7 +97,7 @@ export interface ShiftRun {
   shift: ShiftCode;
   startIndex: number;
   span: number;
-  workScheduleDetailId?: string;
+  workScheduleDetailId?: string[] | string;
 }
 
 export type HourlyPayrollDay = {

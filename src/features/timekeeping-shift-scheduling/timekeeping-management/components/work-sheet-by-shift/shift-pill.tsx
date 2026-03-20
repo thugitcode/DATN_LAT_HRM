@@ -21,14 +21,13 @@ interface ShiftPillProps {
 export const ShiftPill: FC<ShiftPillProps> = memo(
   ({ shift, span, hoveredOffset, workScheduleDetailId }) => {
     const pillRef = useRef<HTMLDivElement>(null);
-
     const open = useDrawer((state) => state.onOpen);
 
-    const onClick = () => {
+    const onClick = (index: number) => {
       open(
         DrawerType.TIME_SHEET_DETAIL,
 
-        workScheduleDetailId,
+        workScheduleDetailId?.[index],
       );
     };
 
@@ -56,7 +55,6 @@ export const ShiftPill: FC<ShiftPillProps> = memo(
             height: 36,
             backgroundColor: STATUS_COLOR_MAP[shift] ?? '#94a3b8',
           }}
-          onClick={onClick}
         >
           {hoveredOffset !== null && (
             <div
@@ -74,6 +72,7 @@ export const ShiftPill: FC<ShiftPillProps> = memo(
                 key={i}
                 className="flex items-center justify-center shrink-0"
                 style={{ width: CELL_W, height: 36 }}
+                onClick={() => onClick(i)}
               >
                 {shift}
               </span>

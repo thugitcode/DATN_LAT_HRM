@@ -8,6 +8,7 @@ import dayjs from '@/lib/dayjs';
 import { PERSIST_WHITELIST } from './constants';
 import { idbPersister } from './idb-persister';
 import { logger } from './logger';
+import type { TFunction } from 'i18next';
 
 export const DISABLE_AUTH = true;
 
@@ -487,9 +488,7 @@ export const convertFileInfo = (data: IResponseFileUpload[]) => {
 };
 
 export async function downloadFromSignedUrl(url: string, filename: string) {
-  console.log(55555666, url);
   const res = await fetch(url);
-  console.log(res, 55555, url);
 
   if (!res.ok) {
     throw new Error('Download failed');
@@ -507,3 +506,22 @@ export async function downloadFromSignedUrl(url: string, filename: string) {
   a.remove();
   window.URL.revokeObjectURL(blobUrl);
 }
+
+export const getErrorMessage = (
+  code?: string,
+  t?: TFunction
+): string => {
+  if (!code) return "";
+  const key = `errors.${code}`;
+
+  // nếu có i18n
+  if (t) {
+    const translated = t(key as any);
+
+    // fallback nếu không tồn tại key
+    if (translated !== key) return translated;
+  }
+
+  // fallback default
+  return code;
+};

@@ -4,6 +4,7 @@ import {
 } from '@heroui/react'; // hoặc từ thư viện bạn dùng
 import { IconCirclePlusFilled, IconTrash as TrashIcon } from '@tabler/icons-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 
 import { FormSelect } from '@/components/form-fields/form-select';
@@ -13,6 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import type { FC } from 'react';
 
 export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bordered" | "faded" | "underlined" }> = ({ isView = false, variant = "flat" }) => {
+    const { t } = useTranslation(['staff-management', 'common']);
     const { control, watch, formState: { isSubmitting }, resetField } = useFormContext();
 
     const { fields, append, remove } = useFieldArray({
@@ -64,7 +66,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                 <FormSelect
                                     control={control}
                                     name={`workingAreas.${index}.departmentId`}
-                                    label="Khoa làm việc"
+                                    label={t('working_area.department')}
                                     isRequired
                                     options={filteredDeptOptions}
                                     disabled={isSubmitting || isView}
@@ -80,7 +82,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                     selectionMode='multiple'
                                     control={control}
                                     name={`workingAreas.${index}.roomId`}
-                                    label="Phòng làm việc"
+                                    label={t('working_area.room')}
                                     options={filteredRoomOptions}
                                     disabled={isSubmitting || !currentDeptId || isView}
                                     variant={variant}
@@ -105,7 +107,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
 
                 {fields.length === 0 && (
                     <p className="text-sm text-danger text-center py-4">
-                        Vui lòng thêm ít nhất một khu vực làm việc
+                        {t('working_area.min_required')}
                     </p>
                 )}
             </div>
@@ -118,7 +120,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                     onPress={() => append({ departmentId: '', roomId: [] })}
                     isDisabled={isSubmitting}
                 >
-                    Thêm mới
+                    {t('button.addNew', { ns: 'common' })}
                 </Button>
             </div>}
         </div >

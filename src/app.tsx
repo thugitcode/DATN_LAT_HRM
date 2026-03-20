@@ -1,18 +1,15 @@
+import { addToast, HeroUIProvider, ToastProvider } from '@heroui/react';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
-import { addToast, HeroUIProvider, ToastProvider } from '@heroui/react';
-import { useKeycloak } from '@react-keycloak/web';
 
-import { MainConfirmModal } from './components/confirm-modal/main-confirm-modal';
-import { MainDrawer } from './components/drawers/main-drawer';
-import ModalViewFile from './components/modal-view-file';
 import { PersistProvider } from './components/providers/persist-provider';
 import { routeTree } from './routeTree.gen';
-import type { AuthContext } from './types/auth.type';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
+      console.log(error, 4444333);
+
       addToast({
         title: 'Có lỗi xảy ra',
         description: error.message,
