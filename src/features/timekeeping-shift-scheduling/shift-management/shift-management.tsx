@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
+import { ShiftManagementPrint } from '@/templates/prints/shift-management/shift-management-print';
 import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 
@@ -22,7 +23,6 @@ import { ShiftManagementGrid } from './components/grid-layout/shift-management-g
 import { ShiftImportReviewModal } from './components/shift-import-review-modal';
 import { ShiftManagementFilter } from './components/shift-management-filter';
 import { ShiftManagementListview } from './components/shift-management-listview';
-import { ShiftManagementPrint } from './components/shift-management-print';
 import { getShiftCaLegend } from './constants/data';
 import { useShiftExport } from './hooks/use-shift-export';
 import type { ParseShiftResult } from './hooks/use-shift-import';

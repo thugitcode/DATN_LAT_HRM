@@ -76,7 +76,7 @@ export const PrintBusinessTrip = forwardRef<HTMLDivElement, PrintBusinessTripPro
           companyName={companyName}
           unitName={unitName}
           title={t('businessTripManagement.title')}
-          subtitle={departmentName || `${t('print.subtitle_month')} ${monthLabel}`}
+          subtitle={departmentName}
         />
 
         <table
