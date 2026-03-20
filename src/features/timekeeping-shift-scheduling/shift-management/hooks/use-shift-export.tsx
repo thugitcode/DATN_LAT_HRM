@@ -22,7 +22,6 @@ const DAY_SHORT: Record<number, string> = {
   6: 'T7',
 };
 
-// ✅ Gọi i18n.t tại thời điểm export (không phải module load time)
 const tx = (key: string, options?: object) =>
   i18n.t(`timekeeping-shift-scheduling:${key}`, options);
 
