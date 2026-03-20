@@ -48,11 +48,11 @@ export const useStaffForm = (
                 managedRoomId: editData?.managedRoom?.id,
                 managedDepartmentId: editData?.managedDepartment?.id,
                 workingAreas: editData?.rlsStaffDepartments?.map(it => ({
-                    departmentId: it.department?.id,
+                    departmentId: it.department?.id ?? "",
                     roomId: editData?.rlsStaffRooms?.filter(ite => ite.room.department?.id === it.department?.id)?.map(item => item?.room?.id)
                 })) ?? [{ departmentId: '', roomId: [] }],
-                workType: editData?.currentWorkType || editData?.workType,
-                contractType: editData?.currentContractType,
+                workType: editData?.currentWorkType || editData?.workType || null,
+                contractType: editData?.currentContractType ?? "",
             });
         } else {
             reset(STAFF_FORM_DEFAULT_VALUES);
@@ -71,7 +71,8 @@ export const useStaffForm = (
         // Chuẩn hóa format gửi lên API (bọc array cho IDs)
         const payload = {
             ...cleanedData,
-            departmentIds: data.workingAreas?.map(it => it.departmentId), roomIds: data.workingAreas?.map(it => it.roomId).flat(Infinity)
+            departmentIds: data.workingAreas?.map(it => it.departmentId), roomIds: data.workingAreas?.map(it => it.roomId).flat(Infinity),
+            workType: data.workType || null,
         };
 
         try {

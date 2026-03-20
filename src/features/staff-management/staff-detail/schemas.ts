@@ -3,7 +3,7 @@ import { salaryInnerSchema } from '../salary-and-benefits/schemas';
 
 export const staffContractSchema = z.object({
     contractType: z.string().min(1, 'Vui lòng chọn loại hợp đồng'),
-    workType: z.string().min(1, 'Vui lòng chọn loại hình làm việc'),
+    workType: z.string().min(1, 'Vui lòng chọn loại hình làm việc').nullable(),
     jobTitle: z.string().min(1, 'Vui lòng chọn chức danh'),
     position: z.string().min(1, 'Vui lòng chọn cấp bậc'),
     workingTime: z.string().min(1, 'Vui lòng nhập thời gian làm việc').refine(
