@@ -35,6 +35,7 @@ export const SalaryHistory = () => {
     () => staffList?.data?.find((s) => s.id === resolvedActiveId) ?? null,
     [staffList?.data, resolvedActiveId],
   );
+
   return (
     <PageContainer className="space-y-3 px-0" variant="fixed">
       <TitlePage title={t('salary-history.title')} />
