@@ -208,5 +208,6 @@
     "current_month": "Current month",
     "year": "Year {{year}}",
     "month_prefix": "M"
-  }
+  },
+  "locale": "en"
 }

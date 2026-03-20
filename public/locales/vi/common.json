@@ -208,5 +208,6 @@
     "current_month": "Tháng hiện tại",
     "year": "Năm {{year}}",
     "month_prefix": "T"
-  }
+  },
+  "locale": "vi"
 }

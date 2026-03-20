@@ -74,3 +74,10 @@ export type {
   PaginationParams,
   FormSelectOptions,
 };
+
+export interface IResponseFileUpload {
+  key: string;
+  size?: number;
+  originalName?: string;
+  mimetype?: string;
+}

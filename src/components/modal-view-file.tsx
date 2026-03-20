@@ -3,19 +3,17 @@
 import { useState } from 'react';
 import {
   Button,
-  ButtonGroup,
   Image,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Spinner,
 } from '@heroui/react';
 
 import { useViewFile } from '@/hooks/common/use-view-file';
 import { DocumentType } from '@/lib/constants';
-import { convertMimeToExtension } from '@/lib/utils';
+import { convertMimeToExtension, downloadFromSignedUrl } from '@/lib/utils';
 
 export default function ModalViewFile() {
   const { open, file, onClose } = useViewFile((state) => state);
@@ -96,11 +94,11 @@ export default function ModalViewFile() {
                   <p className="text-foreground/70 text-center">
                     File không hỗ trợ xem trực tuyến, vui lòng <span
                       className="text-primary cursor-pointer hover:underline"
-                      onClick={() => {
+                      onClick={async () => {
                         setLoading(true);
-                        // downloadFromSignedUrl(file?.url ?? '', file?.name ?? 'tep_dinh_kem').finally(() =>
-                        //   setLoading(false)
-                        // );
+                        await downloadFromSignedUrl(file?.url ?? '', file?.name ?? 'tep_dinh_kem').finally(() =>
+                          setLoading(false)
+                        );
                       }}
                     >
                       tài về máy
@@ -129,9 +127,9 @@ export default function ModalViewFile() {
                 radius="lg"
                 onPress={() => {
                   setLoading(true);
-                  // downloadFromSignedUrl(file?.url ?? '', file?.name ?? 'tep_dinh_kem').finally(() =>
-                  //   setLoading(false)
-                  // );
+                  downloadFromSignedUrl(file?.url ?? '', file?.name ?? 'tep_dinh_kem').finally(() =>
+                    setLoading(false)
+                  );
                 }}
                 isLoading={loading}
               >

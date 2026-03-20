@@ -29,11 +29,11 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
   const { data: response, isLoading } = useStaffDetail(id);
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { setMode } = useControlMode();
-  const { handleSubmit, reset, form, onSubmit } = useStaffForm(true, response?.data, () => {});
+  const { form, onSubmit } = useStaffForm(true, response?.data, () => { });
   const updateStaffMutation = useUpdateStaff();
   const staff = response?.data;
   const [isEditingAll, setIsEditingAll] = useState(false);
-  const { staffTabs, activeKey, onSelectionChange, activeTab } = useStaffDetailTabs();
+  const { activeKey, onSelectionChange } = useStaffDetailTabs();
 
   if (isLoading) {
     return (
@@ -66,6 +66,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
           aria-label={t('staffDetail.tabs.info')}
           selectedKey={activeKey}
           onSelectionChange={(key) => onSelectionChange(key as TAB_KEYS)}
+          classNames={{ cursor: "bg-blue-500 h-[2px]", tabContent: "text-gray-500 group-data-[selected=true]:text-primary!", }}
         >
           <Tab key={TAB_KEYS.INFO} title={t('staffDetail.tabs.info')}>
             <FormProvider {...form}>

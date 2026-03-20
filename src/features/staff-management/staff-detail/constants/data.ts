@@ -1,4 +1,5 @@
 export const STAFF_FORM_DEFAULT_VALUES = {
+    avatar: "",
     code: "",
     name: "",
     birthday: "",

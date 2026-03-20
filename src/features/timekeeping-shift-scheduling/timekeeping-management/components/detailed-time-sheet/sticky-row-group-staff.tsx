@@ -4,10 +4,11 @@ import { IconCaretRightFilled } from "@tabler/icons-react"
 import type { FlatRow } from "../../types/index.type"
 import { STAFF_POSITION } from "@/features/timekeeping-shift-scheduling/shift-management/constants/data"
 import type { StaffPosition } from "@/types/global.type"
+import { StaffAvatar } from "@/features/timekeeping-shift-scheduling/components/staff-avatar"
 
 export const StickyRowGroupStaff = ({ toggleGroup, row }: { toggleGroup: (id: string) => void, row: FlatRow }) => {
     if (row.type !== "group") return null
-    
+
     return (
         <div
             className="flex w-full items-center gap-3 cursor-pointer px-4 py-2 bg-[#E4E4E7] hover:bg-accent transition-colors"
@@ -31,7 +32,7 @@ export const StickyRowGroupStaff = ({ toggleGroup, row }: { toggleGroup: (id: st
 
             <div className="flex items-center gap-3 pl-4 w-85">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                    {getInitials(row.staff.name)}
+                    <StaffAvatar avatarUrl={row.staff.avatar ?? ""} name={row.staff.name} />
                 </div>
                 <div className="flex flex-col gap-0.5">
                     <div className="text-sm font-medium text-foreground">

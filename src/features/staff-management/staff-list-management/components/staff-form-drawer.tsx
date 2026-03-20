@@ -21,6 +21,7 @@ import { QualificationSection } from "../../staff-detail/components/staff-detail
 import { useStaffForm } from "../../staff-detail/hooks/use-staff-form";
 import { ControlMode, useControlMode } from "../../salary-and-benefits/hooks/use-control-mode-handle";
 import { useEffect } from "react";
+import { LoadingWrapper } from "@/components/loading-wrapper";
 
 interface StaffFormDrawerProps {
     isOpen: boolean;
@@ -53,48 +54,48 @@ export const StaffFormDrawer = ({ isOpen, onClose, editData }: StaffFormDrawerPr
         >
             <DrawerContent>
                 {(handleClose) => (
-                    <>
-                        <DrawerHeader className="flex flex-col gap-1">
-                            <h2 className="text-xl font-bold">
-                                {isEdit ? t("staffForm.editTitle") : t("staffForm.addTitle")}
-                                {/* Thêm editTitle/addTitle vào JSON nếu cần */}
-                            </h2>
-                        </DrawerHeader>
-                        <DrawerBody className="overflow-y-auto cursor-default">
-                            <FormProvider {...form}>
-                                <Form
-                                    id="staff-form"
-                                    onSubmit={() => onSubmit()}
-                                    className="p-6 grid grid-cols-12 gap-3.75"
+                    <LoadingWrapper isLoading={form.formState.isSubmitting}>
+                        <>
+                            <DrawerHeader className="flex flex-col gap-1">
+                                <h2 className="text-xl font-bold">
+                                    {isEdit ? t("staffForm.editTitle") : t("staffForm.addTitle")}
+                                    {/* Thêm editTitle/addTitle vào JSON nếu cần */}
+                                </h2>
+                            </DrawerHeader>
+                            <DrawerBody className="overflow-y-auto cursor-default">
+                                <FormProvider {...form}>
+                                    <Form
+                                        id="staff-form"
+                                        onSubmit={() => onSubmit()}
+                                        className="p-6 grid grid-cols-12 gap-3.75"
+                                    >
+                                        <AvatarSection />
+                                        <div className="col-span-12 lg:col-span-7 space-y-6">
+                                            <PersonnelInfoSection />
+                                            <DepartmentSection />
+                                            <AdditionalInfoSection />
+                                        </div>
+                                        <div className="col-span-12 lg:col-span-5 space-y-6">
+                                            <ContactSection />
+                                            <QualificationSection />
+                                        </div>
+                                    </Form>
+                                </FormProvider>
+                            </DrawerBody>
+                            <DrawerFooter>
+                                <BtnCancel onPress={handleClose} />
+                                <Button
+                                    color="primary"
+                                    type="submit"
+                                    form="staff-form"
+                                    // isLoading={isPending}
+                                    className="font-medium rounded-xl"
                                 >
-                                    <AvatarSection />
-
-                                    <div className="col-span-12 lg:col-span-7 space-y-6">
-                                        <PersonnelInfoSection />
-                                        <DepartmentSection />
-                                        <AdditionalInfoSection />
-                                    </div>
-
-                                    <div className="col-span-12 lg:col-span-5 space-y-6">
-                                        <ContactSection />
-                                        <QualificationSection />
-                                    </div>
-                                </Form>
-                            </FormProvider>
-                        </DrawerBody>
-                        <DrawerFooter>
-                            <BtnCancel onPress={handleClose} />
-                            <Button
-                                color="primary"
-                                type="submit"
-                                form="staff-form"
-                                // isLoading={isPending}
-                                className="font-medium rounded-xl"
-                            >
-                                {tc("button.save")}
-                            </Button>
-                        </DrawerFooter>
-                    </>
+                                    {tc("button.save")}
+                                </Button>
+                            </DrawerFooter>
+                        </>
+                    </LoadingWrapper>
                 )}
             </DrawerContent>
         </Drawer>
