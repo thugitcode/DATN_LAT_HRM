@@ -4,8 +4,10 @@ import type { DrawerProps } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
 import { FormKpiMutate } from '@/features/payroll-management/components/form-kpi-mutate';
+import { FormOtherIncomeMutate } from '@/features/payroll-management/components/form-other-income-mutate';
 import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
 import { TimekeepingDetails } from '@/features/payroll-management/components/timekeeping-details';
+import PayrollDetailsDrawer from '@/features/payroll-management/payroll-calculation/components/payroll-details-drawer';
 import { ProfileDetailsDrawer } from '@/features/staff-management/profile-staff/components/profile-details-drawer';
 import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling/explanation-management/components/explanation-detail-drawer';
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
@@ -78,7 +80,7 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
       },
     },
     [DrawerType.CREATE_KPI]: {
-      title: t('drawer.timekeepingDetails'),
+      title: t('drawer.enter_kpi'),
       component: <FormKpiMutate />,
       drawerProps: {
         placement: 'right',
@@ -89,6 +91,24 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
     [DrawerType.REVENUE_DETAILS]: {
       title: t('drawer.revenueDetails'),
       component: <EnterRevenueDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.PAYROLL_DETAILS]: {
+      title: t('drawer.revenueDetails'),
+      component: <PayrollDetailsDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.CREATE_OTHER_INCOME]: {
+      title: t('drawer.additionalArisingAmounts'),
+      component: <FormOtherIncomeMutate />,
       drawerProps: {
         placement: 'right',
         size: '2xl',

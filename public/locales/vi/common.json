@@ -55,7 +55,8 @@
     "profile_staff_detail": "Chi tiết hồ sơ nhân viên",
     "timekeepingDetails": "Chi tiết chấm công",
     "enter_kpi": "Nhập KPI",
-    "revenueDetails": "Nhập doanh số"
+    "revenueDetails": "Nhập doanh số",
+    "additionalArisingAmounts": "Thêm khoản phát sinh"
   },
 
   "button": {
@@ -65,7 +66,8 @@
     "save": "Lưu",
     "confirm": "Xác nhận",
     "addNew": "Thêm mới",
-    "exit": "Thoát"
+    "exit": "Thoát",
+    "moreIncome": "Thêm thu nhập"
   },
 
   "weekdays": {
@@ -172,26 +174,39 @@
       "INTERNSHIP": "Nhân viên học việc",
       "EXPERT_COOPERATION": "Chuyên gia hợp tác"
     },
-    "qualification": {
-      "intermediate": "Trung cấp",
-      "college": "Cao đẳng",
-      "bachelor": "Cử nhân",
-      "master": "Thạc sĩ",
-      "doctor": "Bác sĩ",
-      "phd": "Tiến sĩ",
-      "specialist": "BS Chuyên khoa",
-      "other": "Khác"
+    "qualifications": {
+      "INTERMEDIATE": "Trung cấp",
+      "COLLEGE": "Cao đẳng",
+      "BACHELOR": "Cử nhân",
+      "DOCTOR": "Bác sĩ",
+      "MASTER": "Thạc sĩ",
+      "PHD": "Tiến sĩ",
+      "SPECIALIST_DOCTOR": "Bác sĩ Chuyên khoa",
+      "OTHER": "Khác"
     },
     "academicTitles": {
-      "doctor": "Bác sĩ",
-      "master": "Thạc sĩ",
-      "phd": "Tiến sĩ",
-      "spec1": "BS Chuyên khoa I",
-      "spec2": "BS Chuyên khoa II"
+      "DOCTOR": "Bác sĩ",
+      "MASTER": "Thạc sĩ",
+      "PHD": "Tiến sĩ",
+      "SPECIALIST_I": "Bác sĩ Chuyên khoa I",
+      "SPECIALIST_II": "Bác sĩ Chuyên khoa II",
+      "RESIDENT_PHYSICIAN": "Bác sĩ Nội trú",
+      "PROFESSOR": "Giáo sư",
+      "ASSOCIATE_PROFESSOR": "Phó Giáo sư",
+      "PEOPLES_PHYSICIAN": "Thầy thuốc Nhân dân",
+      "EMINENT_PHYSICIAN": "Thầy thuốc Ưu tú",
+      "BACHELOR": "Cử nhân",
+      "ENGINEER": "Kỹ sư"
     }
   },
   "staff": "Nhân viên",
   "input": {
     "placeholder": "Nhập"
+  },
+  "picker": {
+    "placeholder": "Chọn tháng/năm",
+    "current_month": "Tháng hiện tại",
+    "year": "Năm {{year}}",
+    "month_prefix": "T"
   }
 }

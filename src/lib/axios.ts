@@ -13,6 +13,7 @@ export const apiTokens: {
 
 export const hrmInstance = axios.create({
   baseURL: window.GATEWAY + 'hrm/api',
+  // baseURL: window.GATEWAY + 'api',
   timeout: 15000,
 });
 
@@ -23,8 +24,8 @@ hrmInstance.interceptors.request.use((config) => {
     config.headers['Content-Type'] = 'application/json';
   }
   if (jwt) {
-    const xTenantId = jwtDecode(jwt).partner_code;
-
+    // const xTenantId = jwtDecode(jwt).partner_code;
+    const xTenantId = 'noiquoctuan5';
     config.headers['x-tenant-id'] = xTenantId;
 
     config.headers.Authorization = `Bearer ${jwt}`;

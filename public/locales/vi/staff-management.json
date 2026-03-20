@@ -63,6 +63,48 @@
     },
     "certificateExpiryDate": {
       "past": "Ngày hết hạn chứng chỉ phải trong tương lai"
+    },
+    "contract": {
+      "contractType": {
+        "required": "Vui lòng chọn loại hợp đồng"
+      },
+      "workType": {
+        "required": "Vui lòng chọn loại hình làm việc"
+      },
+      "jobTitle": {
+        "required": "Vui lòng chọn chức danh"
+      },
+      "position": {
+        "required": "Vui lòng chọn cấp bậc"
+      },
+      "workingTime": {
+        "required": "Vui lòng nhập thời gian làm việc",
+        "invalid": "Thời gian làm việc phải là số dương"
+      },
+      "duration": {
+        "required": "Vui lòng nhập thời hạn",
+        "invalid": "Thời hạn phải là số dương"
+      },
+      "startDate": {
+        "required": "Vui lòng chọn ngày bắt đầu"
+      },
+      "endDate": {
+        "required": "Vui lòng chọn ngày kết thúc",
+        "afterStart": "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+      },
+      "directManager": {
+        "required": "Vui lòng chọn ít nhất một quản lý trực tiếp"
+      },
+      "shiftType": {
+        "required": "Vui lòng chọn loại hình làm việc theo ca"
+      },
+      "workingDays": {
+        "required": "Vui lòng chọn ít nhất một ngày làm việc"
+      },
+      "workingAreas": {
+        "min": "Phải có ít nhất một khu vực làm việc",
+        "departmentRequired": "Vui lòng chọn khoa làm việc"
+      }
     }
   },
   "staffForm": {
@@ -274,22 +316,29 @@
       "FULL_TIME": "Toàn thời gian",
       "PART_TIME": "Bán thời gian"
     },
-    "qualification": {
-      "intermediate": "Trung cấp",
-      "college": "Cao đẳng",
-      "bachelor": "Cử nhân",
-      "master": "Thạc sĩ",
-      "doctor": "Bác sĩ",
-      "phd": "Tiến sĩ",
-      "specialist": "BS Chuyên khoa",
-      "other": "Khác"
+    "qualifications": {
+      "INTERMEDIATE": "Trung cấp",
+      "COLLEGE": "Cao đẳng",
+      "BACHELOR": "Cử nhân",
+      "DOCTOR": "Bác sĩ",
+      "MASTER": "Thạc sĩ",
+      "PHD": "Tiến sĩ",
+      "SPECIALIST_DOCTOR": "Bác sĩ Chuyên khoa",
+      "OTHER": "Khác"
     },
     "academicTitles": {
-      "doctor": "Bác sĩ",
-      "master": "Thạc sĩ",
-      "phd": "Tiến sĩ",
-      "spec1": "BS Chuyên khoa I",
-      "spec2": "BS Chuyên khoa II"
+      "DOCTOR": "Bác sĩ",
+      "MASTER": "Thạc sĩ",
+      "PHD": "Tiến sĩ",
+      "SPECIALIST_I": "Bác sĩ Chuyên khoa I",
+      "SPECIALIST_II": "Bác sĩ Chuyên khoa II",
+      "RESIDENT_PHYSICIAN": "Bác sĩ Nội trú",
+      "PROFESSOR": "Giáo sư",
+      "ASSOCIATE_PROFESSOR": "Phó Giáo sư",
+      "PEOPLES_PHYSICIAN": "Thầy thuốc Nhân dân",
+      "EMINENT_PHYSICIAN": "Thầy thuốc Ưu tú",
+      "BACHELOR": "Cử nhân",
+      "ENGINEER": "Kỹ sư"
     }
   },
   "staff_table": {
@@ -345,6 +394,44 @@
       "salary": "Lương và phúc lợi",
       "attendance": "Quản lý chấm công",
       "documents": "Hồ sơ nhân viên"
+    }
+  },
+  "contract_info": {
+    "title": "Thông tin hợp đồng",
+    "contract_type": "Loại hợp đồng",
+    "work_type": "Loại hình",
+    "job_title": "Chức danh",
+    "position": "Cấp bậc",
+    "duration": "Thời hạn hợp đồng",
+    "contract_number": "Số hợp đồng",
+    "start_date": "Ngày bắt đầu",
+    "end_date": "Ngày kết thúc",
+    "direct_manager": "Quản lý trực tiếp",
+    "shift_type": "Loại hình làm việc theo ca",
+    "working_shift": "Ca làm việc",
+    "working_time": "Thời gian làm việc",
+    "working_days": "Ngày làm việc",
+    "placeholders": {
+      "enter": "Nhập",
+      "search_shift": "Tìm theo mã ca hoặc tên ca"
+    },
+    "duration_units": {
+      "YEAR": "Năm",
+      "MONTH": "Tháng"
+    },
+    "working_time_units": {
+      "DAY": "Ngày",
+      "WEEK": "Tuần",
+      "MONTH": "Tháng"
+    },
+    "days": {
+      "2": "Thứ 2",
+      "3": "Thứ 3",
+      "4": "Thứ 4",
+      "5": "Thứ 5",
+      "6": "Thứ 6",
+      "7": "Thứ 7",
+      "0": "Chủ nhật"
     }
   },
   "shift_type": {

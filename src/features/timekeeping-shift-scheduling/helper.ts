@@ -329,7 +329,8 @@ export const buildFlatRows = ({
     const staffCode = shift.staff?.code;
     const isExpanded = expandedGroups.has(staffCode);
 
-    const allDays = fillMissingDaysWithDayjs(shift.days, fromDate, toDate);
+    // const allDays = fillMissingDaysWithDayjs(shift.days, fromDate, toDate);
+    const allDays = shift.days;
 
     rows.push({
       type: 'group',

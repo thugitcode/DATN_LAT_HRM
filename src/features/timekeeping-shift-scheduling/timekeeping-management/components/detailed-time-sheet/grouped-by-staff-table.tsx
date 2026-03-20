@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +12,7 @@ import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { buildFlatRows, getTotalDaysInMonth } from '@/features/timekeeping-shift-scheduling/helper';
 
 import { useColumnsDetailTimeSheet } from '../../hooks/use-columns-detail-time-sheet';
-import { useDetailsTimeSheetList } from '../../hooks/use-detailed-time-sheet';
+import { useDetailsTimeSheetInfiniteList } from '../../hooks/use-detailed-time-sheet';
 import type { FlatRow } from '../../types/index.type';
 import { StickyRowGroupStaff } from './sticky-row-group-staff';
 
@@ -39,96 +39,113 @@ export function GroupedTable() {
   }, [filters.month]);
 
   const ROW_HEIGHT = 52;
-  const TABLE_HEIGHT = 540;
+  const TABLE_HEIGHT = 550;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [stickyGroup, setStickyGroup] = useState<FlatRow | null>(null);
 
-  const { data, isLoading } = useDetailsTimeSheetList({
-    page: filters.page ?? 1,
-    limit: 100,
+  const [loaderRef, setLoaderRef] = useState<HTMLDivElement | null>(null);
+
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useDetailsTimeSheetInfiniteList({
+    limit: 20,
     fromDate: startDate,
     toDate: endDate,
     search: filters.search,
     departmentId: filters.departmentId,
     roomId: filters.roomId,
-    getAll: true,
   });
 
+  useEffect(() => {
+    if (!loaderRef) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(loaderRef);
+    return () => observer.disconnect();
+  }, [loaderRef, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
   const flatRows = useMemo(() => {
+    const allStaffs = data?.pages.flatMap((page) => page.data) || [];
+    const firstPageMeta = data?.pages[0]?.metadata as any;
+
     return buildFlatRows({
-      data: data?.data,
+      data: allStaffs,
       expandedGroups,
-      fromDate: data?.metadata?.fromDate as string,
-      toDate: data?.metadata?.toDate as string,
+      fromDate: (firstPageMeta?.fromDate as string) || startDate,
+      toDate: (firstPageMeta?.toDate as string) || endDate,
     });
-  }, [expandedGroups, data?.data, data?.metadata?.fromDate, data?.metadata?.toDate]);
+  }, [expandedGroups, data?.pages, startDate, endDate]);
 
   // Build an index: for each flat-row index, which group does it belong to?
-  const groupIndexMap = useMemo(() => {
-    const map: FlatRow[] = [];
-    let currentGroup: FlatRow | null = null;
-    for (const row of flatRows) {
-      if (row.type === 'group') {
-        currentGroup = {
-          type: 'group',
-          key: `group-${row.staff.code}`,
-          staff: row.staff,
-          index: row.index,
-          isExpanded: row.isExpanded,
-        };
-      }
-      map.push(currentGroup!);
-    }
-    return map;
-  }, [flatRows, expandedGroups]);
+  // const groupIndexMap = useMemo(() => {
+  //   const map: FlatRow[] = [];
+  //   let currentGroup: FlatRow | null = null;
+  //   for (const row of flatRows) {
+  //     if (row.type === 'group') {
+  //       currentGroup = {
+  //         type: 'group',
+  //         key: `group-${row.staff.code}`,
+  //         staff: row.staff,
+  //         index: row.index,
+  //         isExpanded: row.isExpanded,
+  //       };
+  //     }
+  //     map.push(currentGroup!);
+  //   }
+  //   return map;
+  // }, [flatRows, expandedGroups]);
   // Attach a scroll listener to the virtualized scroll container
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
+  // useEffect(() => {
+  //   const wrapper = wrapperRef.current;
+  //   if (!wrapper) return;
 
-    // Find the actual scrollable element in the HeroUI Table
-    let actualScroller: HTMLElement | null = null;
+  //   // Find the actual scrollable element in the HeroUI Table
+  //   let actualScroller: HTMLElement | null = null;
 
-    // Try multiple selectors to find the scroll container
-    const candidates = [
-      wrapper.querySelector('[role="table"]') as HTMLElement | null,
-      wrapper.querySelector('[style*="overflow"]') as HTMLElement | null,
-      wrapper.querySelector('div[class*="overflow"]') as HTMLElement | null,
-    ];
+  //   // Try multiple selectors to find the scroll container
+  //   const candidates = [
+  //     wrapper.querySelector('[role="table"]') as HTMLElement | null,
+  //     wrapper.querySelector('[style*="overflow"]') as HTMLElement | null,
+  //     wrapper.querySelector('div[class*="overflow"]') as HTMLElement | null,
+  //   ];
 
-    // Find the first element with scrollTop property (indicating it's scrollable)
-    for (const candidate of candidates) {
-      if (candidate && candidate.scrollHeight > candidate.clientHeight) {
-        actualScroller = candidate;
-        break;
-      }
-    }
+  //   // Find the first element with scrollTop property (indicating it's scrollable)
+  //   for (const candidate of candidates) {
+  //     if (candidate && candidate.scrollHeight > candidate.clientHeight) {
+  //       actualScroller = candidate;
+  //       break;
+  //     }
+  //   }
 
-    if (!actualScroller) {
-      return;
-    }
+  //   if (!actualScroller) {
+  //     return;
+  //   }
 
-    function handleScroll() {
-      const scrollTop = actualScroller!.scrollTop;
-      const topRowIndex = Math.floor(scrollTop / ROW_HEIGHT);
-      const clampedIndex = Math.max(0, Math.min(topRowIndex, groupIndexMap.length - 1));
+  //   function handleScroll() {
+  //     const scrollTop = actualScroller!.scrollTop;
+  //     const topRowIndex = Math.floor(scrollTop / ROW_HEIGHT);
+  //     const clampedIndex = Math.max(0, Math.min(topRowIndex, groupIndexMap.length - 1));
 
-      // Find which group header is currently being scrolled past
-      let currentGroup: FlatRow | null = null;
-      // for (let i = clampedIndex; i >= 0; i--) {
-      //   const row = flatRows[i]
-      //   if (row && row.type === "group") {
-      currentGroup = groupIndexMap[clampedIndex] ?? null;
-      //     break
-      //   }
-      // }
+  //     // Find which group header is currently being scrolled past
+  //     let currentGroup: FlatRow | null = null;
+  //     // for (let i = clampedIndex; i >= 0; i--) {
+  //     //   const row = flatRows[i]
+  //     //   if (row && row.type === "group") {
+  //     currentGroup = groupIndexMap[clampedIndex] ?? null;
+  //     //     break
+  //     //   }
+  //     // }
 
-      setStickyGroup(currentGroup);
-    }
+  //     setStickyGroup(currentGroup);
+  //   }
 
-    actualScroller.addEventListener('scroll', handleScroll, { passive: true });
-    return () => actualScroller.removeEventListener('scroll', handleScroll);
-  }, [groupIndexMap, flatRows]);
+  //   actualScroller.addEventListener('scroll', handleScroll, { passive: true });
+  //   return () => actualScroller.removeEventListener('scroll', handleScroll);
+  // }, [groupIndexMap, flatRows]);
 
   const toggleGroup = useCallback((staffId: string) => {
     setExpandedGroups((prev) => {
@@ -139,11 +156,14 @@ export function GroupedTable() {
     });
   }, []);
 
-  const totalStaff = data?.data?.length ?? 0;
-  const monthStr = typeof data?.metadata?.month === 'string' ? data?.metadata?.month : '';
+  // const allStaffData = data?.pages.flatMap((page) => page.data) || [];
+
+  const totalStaff = data?.pages?.[0]?.pagination?.total ?? 0;
+  const firstPageMeta = data?.pages[0]?.metadata as any;
+  const monthStr = typeof firstPageMeta?.month === 'string' ? firstPageMeta?.month : '';
   const totalShifts = monthStr
     ? getTotalDaysInMonth(Number(monthStr.split('-')[0]), Number(monthStr.split('-')[1])) *
-      totalStaff
+    totalStaff
     : 0;
 
   const renderShiftCell = useCallback(
@@ -274,7 +294,7 @@ export function GroupedTable() {
     <div className="w-full overflow-hidden rounded-xl bg-card shadow-sm bg-white p-4">
       <div className="overflow-x-auto relative" ref={wrapperRef}>
         {/* Sticky group header overlay */}
-        {stickyGroup && (
+        {/* {stickyGroup && (
           <div
             className="pointer-events-auto absolute right-0 left-0 z-20 flex items-center gap-1 from-group-header to-group-header/80 ps-4 w-[calc(100%-31px)] max-xl:w-[calc(100%-15px)]"
             style={{ top: 59, height: ROW_HEIGHT }}
@@ -285,11 +305,18 @@ export function GroupedTable() {
               key={stickyGroup.key}
             />
           </div>
-        )}
+        )} */}
         <Table
-          // isStriped
+          isStriped
           isVirtualized
           isHeaderSticky
+          bottomContent={
+            hasNextPage ? (
+              <div className="flex w-full justify-center pt-4 pb-4" ref={setLoaderRef}>
+                <Spinner color="primary" />
+              </div>
+            ) : null
+          }
           maxTableHeight={TABLE_HEIGHT}
           rowHeight={ROW_HEIGHT}
           radius="none"
@@ -340,7 +367,7 @@ export function GroupedTable() {
                     <TableCell
                       className={cn(
                         alignClass,
-                        row.type === 'shift' && 'border-b border-[#11111126]',
+                        // row.type === 'shift' && 'border-b border-[#11111126]',
                       )}
                       colSpan={row.type === 'shift' ? 1 : columns.length}
                     >

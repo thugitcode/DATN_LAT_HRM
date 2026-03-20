@@ -3,7 +3,7 @@ export const API_ENDPOINTS = {
     WORK_SCHEDULE: '/work-schedule',
     WORK_SCHEDULE_RANGE: '/work-schedule/range',
     STAFF: '/staff',
-    STAFF_PROFILE: '/staff-profile',
+    STAFF_PROFILE: '/staff-document',
     STAFF_REVENUE: '/staff-revenue',
 
     ROOM: '/room',
@@ -30,6 +30,8 @@ export const API_ENDPOINTS = {
     PAYROLL_MANAGEMENT: {
       PAYROLL_FEEDBACK: '/payroll/feedback',
       KPI: '/staff-kpi',
+      OTHER_INCOME: '/other-income',
+      SALARY_STAFF_HISTORY: '/payroll/staff',
     },
 
     LEAVE_REQUEST: '/leave-request',

@@ -61,6 +61,20 @@ export enum StaffQualificationEnum {
   SPECIALIST_DOCTOR = 'SPECIALIST_DOCTOR', // Bác sĩ chuyên khoa
   OTHER = 'OTHER', // Khác
 }
+export enum AcademicTitleEnum {
+  DOCTOR = 'DOCTOR',
+  MASTER = 'MASTER',
+  PHD = 'PHD',
+  SPECIALIST_I = 'SPECIALIST_I',
+  SPECIALIST_II = 'SPECIALIST_II',
+  RESIDENT_PHYSICIAN = 'RESIDENT_PHYSICIAN',
+  PROFESSOR = 'PROFESSOR',
+  ASSOCIATE_PROFESSOR = 'ASSOCIATE_PROFESSOR',
+  PEOPLES_PHYSICIAN = 'PEOPLES_PHYSICIAN',
+  EMINENT_PHYSICIAN = 'EMINENT_PHYSICIAN',
+  BACHELOR = 'BACHELOR',
+  ENGINEER = 'ENGINEER',
+}
 
 export enum ContractTypeEnum {
   FULL_TIME = 'FULL_TIME', // Nhân viên chính thức
@@ -89,6 +103,12 @@ export enum ContractStatusEnum {
 
 export enum DurationUnitEnum {
   YEAR = 'YEAR',
+  MONTH = 'MONTH',
+}
+
+export enum WorkingTimeUnitEnum {
+  DAY = 'DAY',
+  WEEK = 'WEEK',
   MONTH = 'MONTH',
 }
 
@@ -153,7 +173,7 @@ export interface StaffContract {
   duration: number;
   durationUnit: DurationUnitEnum;
   workingTime: number;
-  workingTimeUnit: DurationUnitEnum;
+  workingTimeUnit: WorkingTimeUnitEnum;
   jobTitle: StaffJobTitleEnum;
   position: StaffPositionEnum;
   staff?: Staff;
@@ -163,6 +183,10 @@ export interface StaffContract {
   shiftType?: ShiftTypeEnum;
   fixedShiftId?: string;
   workingDays?: number[];
+  rooms?: { id: string; name: string; departmentId?: string }[];
+  departments?: { id: string; name: string }[];
+  managedRoom?: { id: string; name: string };
+  managedDepartment?: { id: string; name: string };
   status: ContractStatusEnum;
   approvedAt?: string;
   approvedBy?: string;
@@ -184,8 +208,41 @@ export interface StaffParams {
   contractType?: ContractTypeEnum;
   getAll?: boolean;
 }
+interface Department {
+  id: string;
+  name: string;
+  code: string;
+  englishName?: string;
+  externalId?: string;
+  hospitalId?: string;
+  mohCode?: string;
+  type?: string;
+  status?: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  note?: string | null;
+}
 
+// Interface cho Room (Phòng)
+interface Room {
+  id: string;
+  department: Department;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  // Các trường sau không có trong JSON mẫu nhưng thường đi kèm với Room
+  code?: string;
+  name?: string;
+}
+
+interface StaffRoom {
+  id: string;
+  room: Room;
+}
 export interface Staff {
+  managedRoom: Room;
+  managedDepartment: Department;
   id: string;
   code: string;
   name: string;
@@ -207,11 +264,8 @@ export interface Staff {
   rooms?: { id: string; name: string }[];
 
   // Detail API returns nested relation format
-  rlsStaffDepartments?: { id: string; department: { id: string; code?: string; name: string } }[];
-  rlsStaffRooms?: {
-    id: string;
-    room: { id: string; code?: string; name: string; department?: { id: string; name: string } };
-  }[];
+  rlsStaffDepartments?: { id: string; department: Department }[];
+  rlsStaffRooms?: StaffRoom[];
 
   // Detail fields
   identity?: string;

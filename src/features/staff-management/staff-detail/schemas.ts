@@ -1,12 +1,18 @@
-// src/schemas/staffContractSchema.ts
 import { z } from 'zod';
 import { salaryInnerSchema } from '../salary-and-benefits/schemas';
 
 export const staffContractSchema = z.object({
     contractType: z.string().min(1, 'Vui lòng chọn loại hợp đồng'),
-    workType: z.string().min(1, 'Vui lòng chọn loại hình làm việc'),
+    workType: z.string().min(1, 'Vui lòng chọn loại hình làm việc').nullable(),
     jobTitle: z.string().min(1, 'Vui lòng chọn chức danh'),
     position: z.string().min(1, 'Vui lòng chọn cấp bậc'),
+    workingTime: z.string().min(1, 'Vui lòng nhập thời gian làm việc').refine(
+        (val) => !isNaN(Number(val)) && Number(val) > 0,
+        'Thời gian làm việc phải là số dương'
+    ),
+    workingTimeUnit: z.enum(['DAY', 'WEEK', 'MONTH']),
+    managedRoomId: z.string().optional(),
+    managedDepartmentId: z.string().optional(),
     duration: z.string().min(1, 'Vui lòng nhập thời hạn').refine(
         (val) => !isNaN(Number(val)) && Number(val) > 0,
         'Thời hạn phải là số dương'
@@ -24,8 +30,8 @@ export const staffContractSchema = z.object({
     workingAreas: z
         .array(
             z.object({
-                departmentId: z.string().min(1, 'Vui lòng chọn khoa làm việc'),
-                roomId: z.string().optional(), // phòng có thể optional
+                departmentId: z.string().min(1, "Vui lòng chọn khoa làm việc"),
+                roomId: z.array(z.string()).optional(), // phòng có thể optional
             })
         )
         .min(1, 'Phải có ít nhất một khu vực làm việc')

@@ -1,6 +1,10 @@
 import type { RequestsParams } from '@/types/global.type';
 import { hrmInstance } from '@/lib/axios';
-import type { Kpi, KpiMutatePayload } from '@/features/payroll-management/types/kpi.type';
+import type {
+  Kpi,
+  KpiMutatePayload,
+  KpiUpdate,
+} from '@/features/payroll-management/types/kpi.type';
 
 import { BaseApiService } from '../base-api.service';
 import { API_ENDPOINTS } from '../constants/endpoints';
@@ -22,9 +26,10 @@ class KpiService extends BaseApiService<Kpi, unknown, unknown, RequestsParams> {
     return super.create(data);
   }
 
-  async update(id: string, data: KpiMutatePayload) {
-    return super.update(id, data);
+  async update(id: string | number, payload: KpiMutatePayload) {
+    return super.update(id, payload);
   }
+
   async delete(id: string) {
     return super.delete(id);
   }

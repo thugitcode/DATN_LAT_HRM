@@ -33,7 +33,7 @@ export function FormTimePicker<T extends FieldValues>({
         const hasError = !!fieldState.error;
 
         return (
-          <div className="flex flex-col gap-1 justify-between">
+          <div className="flex flex-col gap-1.5 justify-between">
             {label && <FormLabel label={label} isRequired={isRequired} isError={!!fieldState.error} />}
 
             <TimePicker
@@ -46,7 +46,7 @@ export function FormTimePicker<T extends FieldValues>({
               disabled={disabled}
               classInput={classInput}
               showIcon={showIcon}
-              //   isInvalid={hasError}
+            //   isInvalid={hasError}
             />
 
             {fieldState.error && <FormErrorText errorMessage={fieldState.error.message} />}

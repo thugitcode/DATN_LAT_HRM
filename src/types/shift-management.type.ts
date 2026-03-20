@@ -48,7 +48,7 @@ export interface Staff {
   email: string;
   avatar: string;
   jobTitle: string;
-  position: string;
+  position: StaffPosition;
   currentWorkType: string | null;
   contractExpiryDate: string | null;
   status: string;
@@ -95,6 +95,12 @@ export interface DaySchedule {
   shifts: Shift[];
 }
 
+export interface INewStaffSchedule {
+  data: {
+    staff: StaffWorkSchedule;
+    schedules: DaySchedule[];
+  }[];
+}
 export interface StaffSchedule {
   staff: StaffWorkSchedule;
   schedules: DaySchedule[];

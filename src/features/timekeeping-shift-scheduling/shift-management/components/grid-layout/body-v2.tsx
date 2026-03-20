@@ -1,4 +1,4 @@
-import { useMemo, useState, type FC } from 'react';
+import { useEffect, useMemo, useState, type FC } from 'react';
 
 import type { Shift, StaffSchedule } from '@/types';
 import { icons } from '@/lib/icons';
@@ -16,14 +16,18 @@ const getShiftsForDay = (schedules: StaffSchedule['schedules'], dateStr?: string
 
 export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({
   data,
-  isDetailsEmployee = false,
+  fromDetailsEmployee = false,
 }) => {
   const { month, year } = useYearMonth();
-  
+
   const [expandedIds, setExpandedIds] = useState<Set<string>>(
     () => new Set(data?.map((d) => d.staff.id) ?? []),
   );
-
+  useEffect(() => {
+    if (fromDetailsEmployee && data?.length) {
+      setExpandedIds(new Set([data?.[0]?.staff?.id ?? ""]))
+    }
+  }, [fromDetailsEmployee, data])
   const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
 
   const dateStrs = useMemo(() => days.map((d) => d.date), [days]);
@@ -56,7 +60,7 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({
 
         return (
           <tr key={staff.id} className={cn(isEven && 'bg-[#F4F4F5]')}>
-            {!isDetailsEmployee && (
+            {!fromDetailsEmployee && (
               <td
                 className={cn(
                   'sticky left-0 z-20 border-b border-[#F4F4F5] align-top pt-3',

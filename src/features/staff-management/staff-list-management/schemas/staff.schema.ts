@@ -29,13 +29,13 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
     z.object({
 
         // --- Ảnh ---
-        avatar: z
-            .any()
-            .optional()
-            .refine(
-                (file) => !file || file.size <= 15 * 1024 * 1024,
-                t("errors.avatar.maxSize"),
-            ),
+        // avatar: z
+        //     .any()
+        //     .optional()
+        //     .refine(
+        //         (file) => !file || file.size <= 15 * 1024 * 1024,
+        //         t("errors.avatar.maxSize"),
+        //     ),
 
         // --- Thông tin nhân sự ---
         code: z.string().optional(),
@@ -113,11 +113,24 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
         ),
 
         // --- Khoa phòng ---
-        departmentIds: requiredString(t("errors.departmentIds.required")),
-        // roomIds: z.string().optional().default(""),
-        roomIds: requiredString(t("errors.roomIds.required")),
-
-        workType: optionalString(),
+        // departmentIds: requiredString(t("errors.departmentIds.required")),
+        // // roomIds: z.string().optional().default(""),
+        // roomIds: requiredString(t("errors.roomIds.required")),
+        workingAreas: z
+            .array(
+                z.object({
+                    departmentId: z.preprocess(normalizeString, z.string().min(1, "Vui lòng chọn khoa làm việc")),
+                    roomId: z.array(z.string()).optional(), // phòng có thể optional
+                })
+            )
+            .min(1, 'Phải có ít nhất một khu vực làm việc')
+            .refine(
+                (areas) => areas.every((area) => area.departmentId), // đảm bảo departmentId không rỗng
+                { message: 'Khoa làm việc không được để trống' }
+            ),
+        managedDepartmentId: optionalString(),
+        managedRoomId: optionalString(),
+        workType: optionalString().nullable(),
 
         jobTitle: requiredString(t("errors.jobTitle.required")),
         position: requiredString(t("errors.position.required")),

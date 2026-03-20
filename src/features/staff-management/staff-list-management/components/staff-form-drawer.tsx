@@ -64,7 +64,7 @@ export const StaffFormDrawer = ({ isOpen, onClose, editData }: StaffFormDrawerPr
                             <FormProvider {...form}>
                                 <Form
                                     id="staff-form"
-                                    onSubmit={()=>onSubmit()}
+                                    onSubmit={() => onSubmit()}
                                     className="p-6 grid grid-cols-12 gap-3.75"
                                 >
                                     <AvatarSection />

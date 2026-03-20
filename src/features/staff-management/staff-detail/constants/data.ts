@@ -34,6 +34,7 @@ export const STAFF_FORM_DEFAULT_VALUES = {
     certificateIssuePlace: "",
     certificateExpiryDate: "",
     note: "",
+    workingAreas: [{ departmentId: "", roomId: [] }],
 };
 
 export const STAFF_SECTION_KEYS = {

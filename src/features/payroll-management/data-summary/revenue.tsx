@@ -14,6 +14,10 @@ import { TitlePage } from '@/components/title-page';
 
 import { useRevenueDataColumns } from '../colums/use-revenue-columns';
 import { useRevenueList } from '../hooks/use-revenue-management';
+import { BtnCreateKpi } from '../components/btn-create-kpi';
+import { DrawerType } from '@/store/useDrawer';
+import { PayrollManagementFilters } from '../components/payroll-management-filters';
+import { statusRevenueOptions } from '../constants/constants';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-380px)]' } as const;
 
@@ -44,24 +48,24 @@ export const RevenueData = () => {
   });
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 px-0">
       <div className="flex items-center justify-between">
         <TitlePage title={t('data_summary.tabs.revenue')} />
 
-        <ul className="flex items-center gap-2">
-          <li>
-            <ActionButton
-              tooltip={tc('actions.reload')}
-              ariaLabel={tc('actions.reload')}
-              onPress={clearFilters}
-            >
-              {icons.reload}
-            </ActionButton>
-          </li>
-        </ul>
+        <div className="flex items-center gap-3">
+          <ActionButton
+            tooltip={tc('actions.reload')}
+            ariaLabel={tc('actions.reload')}
+            onPress={clearFilters}
+          >
+            {icons.reload}
+          </ActionButton>
+
+          <BtnCreateKpi drawerType={DrawerType.REVENUE_DETAILS} />
+        </div>
       </div>
 
-      <PageFilter />
+      <PayrollManagementFilters statusOptions={statusRevenueOptions} />
 
       <DataTable
         dataSource={data?.data ?? []}

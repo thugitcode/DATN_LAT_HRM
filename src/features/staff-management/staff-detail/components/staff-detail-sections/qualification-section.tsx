@@ -10,6 +10,7 @@ import { FormArea } from "@/components/form-fields/form-area";
 import { ControlMode, useControlMode } from "@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle";
 import { STAFF_SECTION_KEYS } from "../../constants/data";
 import { useUpdateStaff } from "@/query-options/staff";
+import { AcademicTitleEnum, StaffQualificationEnum } from "@/types/staff.type";
 
 export const QualificationSection = () => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
@@ -80,9 +81,9 @@ export const QualificationSection = () => {
                         isRequired
                         disabled={!isEditingQual}
                         variant={variantQual}
-                        options={['intermediate', 'college', 'bachelor', 'master', 'doctor', 'phd', 'specialist', 'other'].map(k => ({
-                            key: k.toUpperCase(),
-                            label: t(`options.qualification.${k}` as any)
+                        options={Object.values(StaffQualificationEnum).map((val) => ({
+                            label: t(`options.qualifications.${val}`),
+                            key: val
                         }))}
                     />
                     <FormInput
@@ -100,9 +101,9 @@ export const QualificationSection = () => {
                         selectionMode="multiple"
                         disabled={!isEditingQual}
                         variant={variantQual}
-                        options={['doctor', 'master', 'phd', 'spec1', 'spec2'].map(k => ({
-                            key: k.toUpperCase(),
-                            label: t(`options.academicTitles.${k}` as any)
+                        options={Object.values(AcademicTitleEnum).map((val) => ({
+                            label: t(`options.academicTitles.${val}`),
+                            key: val
                         }))}
                     />
                     <FormInput

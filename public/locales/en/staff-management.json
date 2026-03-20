@@ -270,22 +270,29 @@
       "INTERNSHIP": "Intern",
       "EXPERT_COOPERATION": "Cooperating Expert"
     },
-    "qualification": {
-      "intermediate": "Intermediate",
-      "college": "College",
-      "bachelor": "Bachelor",
-      "master": "Master",
-      "doctor": "Doctor",
-      "phd": "PhD",
-      "specialist": "Specialist Doctor",
-      "other": "Other"
+    "qualifications": {
+      "INTERMEDIATE": "Intermediate",
+      "COLLEGE": "College",
+      "BACHELOR": "Bachelor",
+      "DOCTOR": "MD",
+      "MASTER": "MSc",
+      "PHD": "PhD",
+      "SPECIALIST_DOCTOR": "Specialist Doctor",
+      "OTHER": "Other"
     },
     "academicTitles": {
-      "doctor": "MD",
-      "master": "MSc",
-      "phd": "PhD",
-      "spec1": "Specialist I",
-      "spec2": "Specialist II"
+      "DOCTOR": "MD",
+      "MASTER": "MSc",
+      "PHD": "PhD",
+      "SPECIALIST_I": "Spec. I",
+      "SPECIALIST_II": "Spec. II",
+      "RESIDENT_PHYSICIAN": "Resident Physician",
+      "PROFESSOR": "Prof.",
+      "ASSOCIATE_PROFESSOR": "Assoc. Prof.",
+      "PEOPLES_PHYSICIAN": "People's Physician",
+      "EMINENT_PHYSICIAN": "Eminent Physician",
+      "BACHELOR": "Bachelor",
+      "ENGINEER": "Engineer"
     }
   },
   "staff_table": {
@@ -341,6 +348,44 @@
       "salary": "Salary & Benefits",
       "attendance": "Attendance",
       "documents": "Documents"
+    }
+  },
+  "contract_info": {
+    "title": "Contract Information",
+    "contract_type": "Contract Type",
+    "work_type": "Work Type",
+    "job_title": "Job Title",
+    "position": "Position Level",
+    "duration": "Contract Duration",
+    "contract_number": "Contract Number",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "direct_manager": "Direct Manager",
+    "shift_type": "Shift Type",
+    "working_shift": "Working Shift",
+    "working_time": "Working Time",
+    "working_days": "Working Days",
+    "placeholders": {
+      "enter": "Enter",
+      "search_shift": "Search by shift code or name"
+    },
+    "duration_units": {
+      "YEAR": "Year",
+      "MONTH": "Month"
+    },
+    "working_time_units": {
+      "DAY": "Day",
+      "WEEK": "Week",
+      "MONTH": "Month"
+    },
+    "days": {
+      "2": "Monday",
+      "3": "Tuesday",
+      "4": "Wednesday",
+      "5": "Thursday",
+      "6": "Friday",
+      "7": "Saturday",
+      "0": "Sunday"
     }
   },
   "shift_type": {
