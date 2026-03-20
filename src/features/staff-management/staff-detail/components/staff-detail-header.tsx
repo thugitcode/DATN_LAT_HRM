@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { Button, Chip, Avatar } from '@heroui/react';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import type { Staff } from '@/types/staff.type';
 import { useStaffList } from '@/query-options/staff';
+import { useOpenSignedFile } from '@/hooks/use-open-signed-file';
 
 interface StaffDetailHeaderProps {
     staff: Staff;
@@ -17,12 +18,17 @@ interface StaffDetailHeaderProps {
 
 export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
     const navigate = useNavigate();
-
+    const { getSignedUrlAndOpen } = useOpenSignedFile()
     const { data: listResponse } = useStaffList({
         getAll: true,
         contractType: staff.currentContractType as any
     });
-
+    const [avatarSrc, setAvatarSrc] = useState("")
+    useEffect(() => {
+        staff.avatar && getSignedUrlAndOpen(staff.avatar, false).then((src) => {
+            if (src) setAvatarSrc(src);
+        });
+    }, [staff.avatar])
     const handleBack = () => {
         const map: Record<string, string> = {
             'FULL_TIME': 'official-staff',
@@ -74,7 +80,7 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
 
                 <div className="flex items-center gap-3">
                     <Avatar
-                        src={staff.avatar || `https://ui-avatars.com/api/?name=${staff.name}&background=random`}
+                        src={avatarSrc || `https://ui-avatars.com/api/?name=${staff.name}&background=random`}
                         className="w-12 h-12"
                     />
                     <div>

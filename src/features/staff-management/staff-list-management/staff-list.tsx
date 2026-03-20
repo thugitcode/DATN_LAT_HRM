@@ -1,29 +1,27 @@
-import { useRef, useState } from 'react';
-import { useNavigate, useSearch } from '@tanstack/react-router';
 import { NAMESPACES } from '@/i18n/constants';
 import { useImportStaff, useStaffList } from '@/query-options/staff';
-import { addToast, Button, Chip, Input, Select, SelectItem, useDisclosure } from '@heroui/react';
-import { IconSearch } from '@tabler/icons-react';
+import { addToast, Button, Chip, useDisclosure } from '@heroui/react';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import dayjs from 'dayjs';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 import * as XLSX from 'xlsx';
 
-import { LayoutSwitcherEnum } from '@/types/global.type';
-import type { ContractTypeEnum, Staff } from '@/types/staff.type';
-import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
-import { useRoomOptions } from '@/hooks/select-options/use-room-options';
 import { ActionsPage } from '@/components/actions-page';
 import { LayoutRenderer } from '@/features/timekeeping-shift-scheduling/components/layout-renderer';
-import { ShiftManagementPrint } from '@/features/timekeeping-shift-scheduling/shift-management/components/shift-management-print';
+import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
+import { useRoomOptions } from '@/hooks/select-options/use-room-options';
+import { LayoutSwitcherEnum } from '@/types/global.type';
+import type { ContractTypeEnum, Staff } from '@/types/staff.type';
 
+import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
 import { StaffFilters } from './components/staff-filter';
 import { StaffFormDrawer } from './components/staff-form-drawer';
 import { StaffGrid } from './components/staff-grid';
 import { StaffListPrint } from './components/staff-list-print';
 import { StaffTable } from './components/staff-table';
-import { exportStaffTemplate, useStaffExport } from './hooks/use-staff-export';
-import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
+import { useStaffExport } from './hooks/use-staff-export';
 
 const POSITION_OPTIONS = [
   { key: 'STAFF', label: 'Nhân viên' },
@@ -89,7 +87,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const workingCount = (response?.metadata?.WORKING as number) || 0;
   const resignedCount = (response?.metadata?.RESIGNED as number) || 0;
   const { exportStaff, onExportStaffTemplate } = useStaffExport(staffData);
-  const {setMode} = useControlMode()
+  const { setMode } = useControlMode()
   const handleViewDetail = (id: string) => {
     setMode(ControlMode.edit)
     navigate({

@@ -12,12 +12,12 @@ export const Header = () => {
         <div className="flex items-center justify-between">
             <h1 className="text-2xl font-medium">Hồ sơ nhân viên</h1>
             <div className="flex gap-3.75">
-                <Button isIconOnly>
+                {/* <Button isIconOnly>
                     <icons.documentDownload />
                 </Button>
                 <Button isIconOnly>
                     <icons.documentUpload />
-                </Button>
+                </Button> */}
                 <HR />
                 <Button color="primary" onPress={() => onOpen(DrawerType.PROFILE_STAFF_DETAIL, { staffId: id })}>
                     Thêm mới tài liệu

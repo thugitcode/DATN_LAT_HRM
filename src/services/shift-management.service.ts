@@ -1,20 +1,18 @@
 import { DEFAULT_PAGINATION } from '@/query-options/constants';
 
-import type { ApiResponse, IApiResponseShiftDivision } from '@/types';
 import type {
-  CreateStaffSchedule,
-  INewStaffSchedule,
-  StaffSchedule,
-  UpdateShift,
-  UpdateShiftData,
-} from '@/types/shift-management.type';
-import type { StaffParams } from '@/types/staff.type';
-import { hrmInstance } from '@/lib/axios';
-import type {
-  AttendanceDay,
-  StaffAttendanceRecord,
+  StaffAttendanceRecord
 } from '@/features/staff-management/time-attendance-management/types';
 import type { WorkScheduleDetail } from '@/features/timekeeping-shift-scheduling/shift-management/types/type';
+import { hrmInstance } from '@/lib/axios';
+import type { ApiResponse } from '@/types';
+import type {
+  CreateStaffSchedule,
+  StaffSchedule,
+  UpdateShift,
+  UpdateShiftData
+} from '@/types/shift-management.type';
+import type { StaffParams } from '@/types/staff.type';
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';

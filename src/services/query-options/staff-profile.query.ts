@@ -13,7 +13,7 @@ export const staffProfileKeys = {
 } as const;
 
 export const staffProfileQueryOptions = {
-  list: (params?: PaginationParams) =>
+  list: (params?: PaginationParams & { id: string }) =>
     queryOptions({
       queryKey: staffProfileKeys.list(params),
       queryFn: () => staffProfileService.getAll(params),

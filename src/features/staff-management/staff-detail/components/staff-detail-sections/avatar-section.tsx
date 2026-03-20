@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 export const AvatarSection = () => {
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
-  const { control, formState } = useFormContext();
+  const { control, formState, getValues } = useFormContext();
   const [url, setUrl] = useState<string>("")
   const {
     field: { onChange, value },
@@ -23,6 +23,7 @@ export const AvatarSection = () => {
       const uploadRes = await uploadService.upload(file);
 
       const previewPath = uploadRes.data.filePath;
+
       // setUrl(uploadRes.data.url)
       const previewUrl = URL.createObjectURL(file)
       setUrl(previewUrl)

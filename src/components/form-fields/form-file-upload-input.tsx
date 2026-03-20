@@ -9,8 +9,8 @@ interface FileUploadInputProps {
   accept?: string
   maxSize?: number
   multiple?: boolean
-  onFilesSelect: (files: File[]) => void
-  selectedFiles?: File[]
+  onFilesSelect: (files: any[]) => void
+  selectedFiles?: any[]
   disabled?: boolean
   error?: string
 }
@@ -145,14 +145,15 @@ export function FileUploadInput({
                     {getFileIcon(file.name)}
                     <div className="min-w-0">
                       <p className="text-sm truncate hover:text-blue-600 hover:underline hover:cursor-pointer" onClick={() => {
+                        const fileUrl = (file as any).url || (file instanceof Blob ? URL.createObjectURL(file) : "");
                         onOpen({
                           name: file?.name,
-                          url: URL.createObjectURL(file) ?? "",
+                          url: fileUrl,
                           type: file.type,
                         })
                       }}>{file.name}</p>
                       <p className="text-xs text-default-500">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                        {file.size ? (file.size / 1024 / 1024).toFixed(2) : "0.00"} MB
                       </p>
                     </div>
                   </div>
