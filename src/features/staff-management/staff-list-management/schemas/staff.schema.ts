@@ -130,7 +130,7 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
             ),
         managedDepartmentId: optionalString(),
         managedRoomId: optionalString(),
-        workType: optionalString(),
+        workType: optionalString().nullable(),
 
         jobTitle: requiredString(t("errors.jobTitle.required")),
         position: requiredString(t("errors.position.required")),

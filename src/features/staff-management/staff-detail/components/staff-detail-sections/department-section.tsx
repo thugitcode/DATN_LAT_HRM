@@ -59,7 +59,10 @@ export const DepartmentSection = () => {
                 // 3. Gọi API cập nhật
                 await updateStaff({
                     id: values.id,
-                    data: { ...payload, departmentIds: payload.workingAreas?.map((it: any) => it.departmentId), roomIds: payload.workingAreas?.map((it: any) => it.roomId).flat(Infinity) }
+                    data: {
+                        ...payload, departmentIds: payload.workingAreas?.map((it: any) => it.departmentId), roomIds: payload.workingAreas?.map((it: any) => it.roomId).flat(Infinity),
+                        workType: payload.workType || null,
+                    }
                 });
 
                 // 4. Thoát mode chỉnh sửa nếu thành công
