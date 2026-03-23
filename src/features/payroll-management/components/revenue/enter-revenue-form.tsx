@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 
 export const EnterRevenueForm: FC = () => {
     const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
-    const { control, setValue, formState: { isSubmitting } } = useFormContext();
+    const { control, setValue } = useFormContext();
 
     // Watch giá trị để tính toán tỉ lệ đạt tự động
     const target = useWatch({ control, name: 'targetAmount' });
