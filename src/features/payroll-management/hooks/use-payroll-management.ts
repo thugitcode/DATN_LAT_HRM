@@ -143,3 +143,28 @@ export function useUpdateOtherIncome() {
     },
   });
 }
+
+export function useDeleteOtherIncomeManagement() {
+  const queryClient = useQueryClient();
+  const closedDrawer = useDrawer((state) => state.onClose);
+
+  return useMutation({
+    mutationFn: (id: string) => otherIncomeService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: otherIncomeKeys.lists() });
+
+      addToast({
+        description: 'Xóa khoản phát sinh thành công.',
+        color: 'success',
+      });
+      closedDrawer();
+    },
+    onError: (error: unknown) => {
+      const { message } = normalizeAxiosError(error);
+      addToast({
+        description: message,
+        color: 'danger',
+      });
+    },
+  });
+}

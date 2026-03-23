@@ -25,7 +25,7 @@ export const SectionHeader = ({ icon: Icon, title, onSave, sectionKey }: { icon:
                 <BtnCancel
                     onPress={() => setMode(ControlMode.view, null)}
                 />
-                <BtnSave onPress={onSave} />
+                <BtnSave type="button" onPress={onSave} />
             </div>
             }
         </div>

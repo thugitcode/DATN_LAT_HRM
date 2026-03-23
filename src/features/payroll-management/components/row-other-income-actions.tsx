@@ -5,25 +5,25 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NAMESPACES } from '@/i18n/constants';
 import { ConfirmModal } from '@/components/confirm-modal/confirm-modal';
-import { useDeleteRevenueManagement } from '../../hooks/use-revenue-management';
 
 import { icons } from '@/lib/icons';
-import type { RevenueDataListType } from '../../types/revenue.type';
+import type { OtherIncome } from '../types/other-income.type';
+import { useDeleteOtherIncomeManagement } from '../hooks/use-payroll-management';
 
-interface RowRevenueActionsProps {
-  dataRow?: RevenueDataListType;
+interface RowOtherIncomeActionsProps {
+  dataRow?: OtherIncome;
 }
 
-export const RowRevenueActions: FC<RowRevenueActionsProps> = ({ dataRow }) => {
+export const RowOtherIncomeActions: FC<RowOtherIncomeActionsProps> = ({ dataRow }) => {
   const { onOpen } = useDrawer((state) => state);
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
-  const { mutate: deleteRevenue, isPending, isLoading } = useDeleteRevenueManagement() as any;
+  const { mutate: deleteOtherIncome, isPending, isLoading } = useDeleteOtherIncomeManagement() as any;
   const isDeleting = isPending || isLoading;
 
   const handleDelete = () => {
     if (dataRow?.id) {
-      deleteRevenue(dataRow.id, {
+      deleteOtherIncome(dataRow.id, {
         onSuccess: () => setIsConfirmOpen(false),
       });
     }
@@ -35,7 +35,7 @@ export const RowRevenueActions: FC<RowRevenueActionsProps> = ({ dataRow }) => {
         <Button
           // color="primary"
           variant="light"
-          onPress={() => onOpen(DrawerType.REVENUE_DETAILS, dataRow)}
+          onPress={() => onOpen(DrawerType.CREATE_OTHER_INCOME, dataRow)}
           isIconOnly
         >
           <icons.edit className='size-5' />
@@ -58,9 +58,9 @@ export const RowRevenueActions: FC<RowRevenueActionsProps> = ({ dataRow }) => {
         reason=""
         onReasonChange={() => { }}
         config={{
-          title: t('revenue.delete_confirm.title', 'Xóa doanh thu'),
-          description: t('revenue.delete_confirm.description', 'Bạn có chắc chắn muốn xóa doanh thu này không? Hành động này không thể hoàn tác.'),
-          confirmLabel: t('revenue.delete_confirm.confirm', 'Xóa'),
+          title: t('allowance.delete_confirm.title', 'Xóa khoản thu nhập'),
+          description: t('allowance.delete_confirm.description', 'Bạn có chắc chắn muốn xóa khoản thu nhập này không? Hành động này không thể hoàn tác.'),
+          confirmLabel: t('allowance.delete_confirm.confirm', 'Xóa'),
           confirmColor: 'danger',
           requireReason: false,
         }}

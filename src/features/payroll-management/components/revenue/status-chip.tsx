@@ -1,12 +1,12 @@
 import { NAMESPACES } from "@/i18n/constants";
 import { icons } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { Status } from "@/types/global.type";
 import { Chip } from "@heroui/react";
 import { useTranslation } from "react-i18next";
+import { RevenueStatus } from "../../types/revenue.type";
 
-export const StatusChip = ({ status }: { status: Status }) => {
-    const isApproved = status === Status.APPROVED
+export const StatusChip = ({ status }: { status: RevenueStatus }) => {
+    const isApproved = status === RevenueStatus.CONFIRMED
     const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT)
 
     return (
@@ -22,7 +22,7 @@ export const StatusChip = ({ status }: { status: Status }) => {
                 isApproved ? (
                     <icons.tickCircle width={17} height={17} />
                 ) : (
-                   <span className="text-[#F5A524]!">{icons.peinding}</span>
+                    <span className="text-[#F5A524]!">{icons.peinding}</span>
                 )
             }
         >

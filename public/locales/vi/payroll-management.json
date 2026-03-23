@@ -106,6 +106,18 @@
       "description": "Lý do/Mô tả",
       "attachment": "File đính kèm",
       "account_info": "Thông tin khoản"
+    },
+    "allowance_type": {
+      "ALLOWANCE": "Phụ cấp / Cộng",
+      "DEDUCTION": "Khấu trừ / Trừ"
+    },
+    "allowance": {
+      "delete_confirm": {
+        "title": "Xóa khoản thu nhập",
+        "description": "Bạn có chắc chắn muốn xóa khoản thu nhập này không? Dữ liệu liên quan đến bảng lương của nhân viên có thể bị ảnh hưởng.",
+        "confirm": "Xóa",
+        "cancel": "Hủy"
+      }
     }
   },
 

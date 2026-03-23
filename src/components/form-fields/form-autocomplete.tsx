@@ -1,4 +1,4 @@
-import { Autocomplete, AutocompleteItem } from '@heroui/react';
+import { Autocomplete, AutocompleteItem, Input } from '@heroui/react';
 import { Controller } from 'react-hook-form';
 import type { FieldValues } from 'react-hook-form';
 
@@ -11,7 +11,7 @@ type Option = { key: string; label: string };
 type Props<T extends FieldValues> = BaseFieldProps<T> & {
   options: Option[];
   placeholder?: string;
-
+  readOnly?: boolean;
   onSelect?: (key: string) => void;
 };
 
@@ -23,34 +23,50 @@ export function FormAutocomplete<T extends FieldValues>({
   isRequired,
   disabled,
   placeholder,
+  readOnly,
   onSelect,
 }: Props<T>) {
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field, fieldState }) => (
-        <div className="flex flex-col gap-2">
-          <FormLabel label={label} isRequired={isRequired} isError={!!fieldState.error} />
+      render={({ field, fieldState }) => {
+        const selectedLabel = options.find((opt) => opt.key === field.value)?.label ?? '';
 
-          <Autocomplete
-            selectedKey={field.value}
-            isDisabled={disabled}
-            placeholder={placeholder ?? 'Chọn'}
-            onSelectionChange={(key) => {
-              const value = key ?? '';
-              field.onChange(value);
-              if (value) onSelect?.(String(value));
-            }}
-          >
-            {options.map((opt) => (
-              <AutocompleteItem key={opt.key}>{opt.label}</AutocompleteItem>
-            ))}
-          </Autocomplete>
+        return (
+          <div className="flex flex-col gap-2">
+            <FormLabel label={label} isRequired={isRequired} isError={!!fieldState.error} />
 
-          {fieldState.error && <FormErrorText errorMessage={fieldState.error.message} />}
-        </div>
-      )}
+            {readOnly ? (
+              <Input
+                value={selectedLabel}
+                isReadOnly
+                labelPlacement="outside-top"
+                classNames={{
+                  inputWrapper: 'bg-[#F4F4F5] cursor-default',
+                }}
+              />
+            ) : (
+              <Autocomplete
+                selectedKey={field.value}
+                isDisabled={disabled}
+                placeholder={placeholder ?? 'Chọn'}
+                onSelectionChange={(key) => {
+                  const value = key ?? '';
+                  field.onChange(value);
+                  if (value) onSelect?.(String(value));
+                }}
+              >
+                {options.map((opt) => (
+                  <AutocompleteItem key={opt.key}>{opt.label}</AutocompleteItem>
+                ))}
+              </Autocomplete>
+            )}
+
+            {fieldState.error && <FormErrorText errorMessage={fieldState.error.message} />}
+          </div>
+        );
+      }}
     />
   );
 }

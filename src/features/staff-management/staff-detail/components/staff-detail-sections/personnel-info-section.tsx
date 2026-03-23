@@ -15,7 +15,7 @@ export const PersonnelInfoSection = () => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { data, setMode, isCreate, mode } = useControlMode(); // Giả sử setControlMode để thoát chế độ edit
     const { mutateAsync: updateStaff, isPending: isUpdating } = useUpdateStaff();
-    
+
     // Logic xác định mode
     const isEditing = data === STAFF_SECTION_KEYS.PERSONNEL || data === "ALL";
     const isView = !isEditing;

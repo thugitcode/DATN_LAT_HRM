@@ -108,6 +108,18 @@
       "description": "Reason / Description",
       "attachment": "Attachment",
       "account_info": "Account info"
+    },
+    "allowance_type": {
+      "ALLOWANCE": "Allowance / Addition",
+      "DEDUCTION": "Deduction / Subtraction"
+    },
+    "allowance": {
+      "delete_confirm": {
+        "title": "Delete allowance",
+        "description": "Are you sure you want to delete this allowance? Related payroll data may be affected.",
+        "confirm": "Delete now",
+        "cancel": "Cancel"
+      }
     }
   },
 
