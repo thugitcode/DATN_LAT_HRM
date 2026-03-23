@@ -73,7 +73,7 @@
       "department": "Department/Work Room",
       "additional": "Additional Information",
       "contact": "Contact Information",
-      "personalContact": "Personal Contact",
+      "personalContact": "Key information",
       "emergencyContact": "Emergency Contact",
       "qualification": "Professional Qualifications",
       "notes": "Notes"
@@ -462,6 +462,34 @@
       "enter_rate": "Enter rate",
       "enter_basic": "Enter basic salary",
       "enter_insurance": "Enter insurance salary"
+    }
+  },
+  "actions": {
+    "reset_faceid": "Reset FaceID",
+    "send_email": "Send email"
+  },
+  "document": {
+    "add_new": "Add New Document"
+  },
+  "profileDetails": {
+    "labels": {
+      "documentName": "Document Name",
+      "createdAt": "Created At",
+      "createdByName": "Created By",
+      "note": "Note",
+      "attachments": "Attachments"
+    },
+    "placeholders": {
+      "documentName": "Enter document name...",
+      "note": "Enter additional notes..."
+    },
+    "buttons": {
+      "addOther": "+ Add other document",
+      "save": "Save profile"
+    },
+    "messages": {
+      "selectInfo": "Please select document information to upload",
+      "updateError": "An error occurred during the update process"
     }
   }
 }

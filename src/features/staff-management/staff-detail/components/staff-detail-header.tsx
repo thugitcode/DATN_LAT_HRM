@@ -11,6 +11,9 @@ import {
 import type { Staff } from '@/types/staff.type';
 import { useStaffList } from '@/query-options/staff';
 import { useOpenSignedFile } from '@/hooks/use-open-signed-file';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
+import { renderStatusChip } from '../../staff-list-management/hooks/use-staff-columns';
 
 interface StaffDetailHeaderProps {
     staff: Staff;
@@ -18,6 +21,8 @@ interface StaffDetailHeaderProps {
 
 export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
     const navigate = useNavigate();
+    const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
+    const { t: tc } = useTranslation(NAMESPACES.COMMON)
     const { getSignedUrlAndOpen } = useOpenSignedFile()
     const { data: listResponse } = useStaffList({
         getAll: true,
@@ -86,9 +91,7 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
                     <div>
                         <div className="flex items-center gap-2">
                             <h1 className="text-xl font-bold text-[#11181C]">{staff.name}</h1>
-                            <Chip size="sm" color="success" variant="flat" classNames={{ content: 'text-[#17C964] font-semibold text-[10px]' }} className="h-5 bg-[#E8FAF0]">
-                                {staff.status === 'WORKING' ? 'Đang làm việc' : 'Nghỉ'}
-                            </Chip>
+                            {renderStatusChip(staff.status as any, tc)}
                         </div>
                         <p className="text-sm text-[#71717A] mt-0.5">{staff.code}</p>
                     </div>
@@ -108,7 +111,7 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
                         <IconChevronLeft size={18} className={hasPrev ? "text-[#11181C]" : "text-[#D4D4D8]"} />
                     </Button>
                     <span className="text-sm font-medium text-[#11181C] min-w-[100px] text-center">
-                        {displayIndex} / {totalStaff} nhân viên
+                        {displayIndex} / {totalStaff} {tc("staff")}
                     </span>
                     <Button
                         isIconOnly
@@ -127,7 +130,7 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
                     className="bg-white border-[#E4E4E7] text-[#11181C] font-semibold h-10 rounded-xl shadow-sm px-4"
                     startContent={<IconScan size={18} className="text-[#006FEE]" />}
                 >
-                    Cài đặt lại FaceID
+                    {t('actions.reset_faceid')}
                 </Button>
 
                 <Button
@@ -135,7 +138,7 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
                     className="h-10 px-4 font-semibold rounded-xl shadow-sm bg-[#006FEE]"
                     startContent={<IconMail size={18} />}
                 >
-                    Gửi email
+                    {t('actions.send_email')}
                 </Button>
             </div>
         </div>

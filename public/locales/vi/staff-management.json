@@ -115,7 +115,7 @@
       "department": "Khoa/phòng làm việc",
       "additional": "Thông tin bổ sung",
       "contact": "Thông tin liên hệ",
-      "personalContact": "Thông tin cá nhân",
+      "personalContact": "Thông tin chính",
       "emergencyContact": "Thông tin liên hệ khẩn cấp",
       "qualification": "Bằng cấp chuyên môn",
       "notes": "Ghi chú"
@@ -508,6 +508,34 @@
       "enter_rate": "Nhập tỷ lệ",
       "enter_basic": "Nhập lương cơ bản",
       "enter_insurance": "Nhập lương đóng BHXH"
+    }
+  },
+  "actions": {
+    "reset_faceid": "Cài đặt lại FaceID",
+    "send_email": "Gửi email"
+  },
+  "document": {
+    "add_new": "Thêm mới tài liệu"
+  },
+  "profileDetails": {
+    "labels": {
+      "documentName": "Tên giấy tờ",
+      "createdAt": "Ngày thêm mới",
+      "createdByName": "Người thêm mới",
+      "note": "Ghi chú",
+      "attachments": "Tệp đính kèm"
+    },
+    "placeholders": {
+      "documentName": "Nhập tên loại giấy tờ...",
+      "note": "Nhập ghi chú thêm..."
+    },
+    "buttons": {
+      "addOther": "+ Thêm giấy tờ khác",
+      "save": "Lưu hồ sơ"
+    },
+    "messages": {
+      "selectInfo": "Vui lòng chọn thông tin tài liệu cần tải lên",
+      "updateError": "Có lỗi xảy ra trong quá trình cập nhật"
     }
   }
 }

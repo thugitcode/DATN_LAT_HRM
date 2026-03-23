@@ -1,4 +1,6 @@
+import { NAMESPACES } from '@/i18n/constants';
 import { Accordion, AccordionItem } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 export interface Item {
   id: string;
@@ -11,12 +13,13 @@ interface DepartmentRoomInfoProps {
 }
 
 const RoomList = ({ rooms }: { rooms: Item[] }) => {
+  const { t } = useTranslation(NAMESPACES.COMMON)
   if (!rooms.length) return null;
 
   if (rooms.length === 1) {
     return (
       <p className="text-xs text-[#A1A1AA] whitespace-nowrap leading-4.5">
-        Phòng: {rooms?.[0]?.name}
+        {t("actions.room")}: {rooms?.[0]?.name}
       </p>
     );
   }

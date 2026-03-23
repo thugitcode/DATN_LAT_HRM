@@ -1,4 +1,3 @@
-import { useCallback, useState, type FC } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import {
   addToast,
@@ -12,16 +11,19 @@ import {
   Textarea,
 } from '@heroui/react';
 import { IconAlertTriangle, IconCheck, IconX } from '@tabler/icons-react';
+import { useCallback, useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { icons } from '@/lib/icons';
 import { useUpdateAttendanceExplanation } from '@/hooks/use-attendance-explanation';
+import { icons } from '@/lib/icons';
 
+import { BtnCancel } from '@/components/btn-cancel';
+import { RequestStatusEnum } from '@/types/attendance-explanation.type';
 import {
   useApproveAccountability,
   useRejectAccountability,
 } from '../hooks/use-approve-accountability';
-import { AttendanceExplanationStatus, type AttendanceExplanation } from '../types';
+import { type AttendanceExplanation } from '../types';
 
 type ConfirmAction = 'approve' | 'reject';
 
@@ -61,31 +63,52 @@ const useConfirmConfig = (): Record<ConfirmAction, ConfirmConfig> => {
 
 const MAX_REASON_LENGTH = 500;
 
-const StatusChip: FC<{ status: 'APPROVED' | 'REJECTED' }> = ({ status }) => {
-  const { t } = useTranslation(NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING);
+export const StatusChip: FC<{
+  status:
+  | RequestStatusEnum.APPROVED
+  | RequestStatusEnum.HR_REJECTED
+  | RequestStatusEnum.PENDING
+  | RequestStatusEnum.MANAGER_REJECTED;
+}> = ({ status }) => {
+  const { t } = useTranslation(NAMESPACES.EXPLANATION_MANAGEMENT);
 
-  const isApproved = status === 'APPROVED';
+  const statusConfig = {
+    [RequestStatusEnum.APPROVED]: {
+      color: 'success' as const,
+      icon: <icons.tickCircle width={17} height={17} />,
+      label: t('request_status.APPROVED'),
+    },
+    [RequestStatusEnum.MANAGER_REJECTED]: {
+      color: 'danger' as const,
+      icon: <icons.closeSquare className="rounded-full" width={17} height={17} />,
+      label: t('request_status.MANAGER_REJECTED'),
+    },
+    [RequestStatusEnum.HR_REJECTED]: {
+      color: 'danger' as const,
+      icon: <icons.closeSquare className="rounded-full" width={17} height={17} />,
+      label: t('request_status.HR_REJECTED'),
+    },
+    [RequestStatusEnum.PENDING]: {
+      color: 'warning' as const,
+      icon: <icons.refreshCircle className="rounded-full" width={17} height={17} />,
+      label: t('request_status.PENDING'),
+    },
+  };
+
+  const config = statusConfig[status];
 
   return (
     <Chip
       size="md"
       variant="flat"
-      color={isApproved ? 'success' : 'danger'}
+      color={config.color}
       classNames={{
         base: 'h-8 w-[116px] px-2',
         content: 'text-sm font-medium flex-1 text-center',
       }}
-      startContent={
-        isApproved ? (
-          <icons.tickCircle width={17} height={17} />
-        ) : (
-          <icons.closeSquare className="rounded-full" width={17} height={17} />
-        )
-      }
+      startContent={config.icon}
     >
-      {isApproved
-        ? t('explanation_management.summary.approved')
-        : t('explanation_management.summary.rejected')}
+      {config.label}
     </Chip>
   );
 };
@@ -205,9 +228,7 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="flat" isDisabled={isLoading} onPress={onClose}>
-            Hủy
-          </Button>
+          <BtnCancel isDisabled={isLoading} onPress={onClose} />
           <Button
             color={config.confirmColor}
             isLoading={isLoading}
@@ -259,7 +280,7 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
       update(
         {
           id: dataRow?.id,
-          status: AttendanceExplanationStatus.APPROVED,
+          status: RequestStatusEnum.APPROVED,
         },
         {
           onSuccess: () =>
@@ -276,7 +297,7 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
       update(
         {
           id: dataRow?.id,
-          status: AttendanceExplanationStatus.REJECTED,
+          status: RequestStatusEnum.HR_REJECTED,
           reason: reason,
         },
         {
@@ -308,7 +329,7 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
   const renderContent = () => {
     const { status } = dataRow ?? {};
 
-    if (status === 'PENDING' || status === 'PENDING_HR') {
+    if (status === RequestStatusEnum.MANAGER_APPROVED) {
       return (
         <ActionButtons
           onApprove={() => handleOpenConfirm('approve')}
@@ -319,7 +340,7 @@ export const RowActions: FC<Readonly<RowActionsProps>> = ({ dataRow }) => {
       );
     }
 
-    if (status === 'APPROVED' || status === 'REJECTED') {
+    if (status === RequestStatusEnum.APPROVED || status === RequestStatusEnum.HR_REJECTED || status === RequestStatusEnum.PENDING || status === RequestStatusEnum.MANAGER_REJECTED) {
       return <StatusChip status={status} />;
     }
 

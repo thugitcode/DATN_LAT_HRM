@@ -1,0 +1,37 @@
+{
+  "explanation_modal": {
+    "reject_title": "Từ chối giải trình",
+    "reject_reason_label": "Lý do từ chối",
+    "reject_reason_placeholder": "Nhập lý do từ chối giải trình...",
+    "cancel": "Hủy",
+    "confirm_reject": "Xác nhận từ chối"
+  },
+  "explanation_detail": {
+    "data_not_found": "Không tìm thấy dữ liệu.",
+    "close": "Đóng",
+    "approve_success": "Duyệt giải trình thành công",
+    "reject_success": "Từ chối giải trình thành công",
+    "staff_code": "Mã nhân viên",
+    "shift": "Ca làm việc",
+    "check_in": "Giờ vào",
+    "check_out": "Giờ ra",
+    "total_working_hours": "Tổng giờ làm",
+    "reason": "Lý do giải trình",
+    "no_reason": "Không có lý do",
+    "attachments": "File đính kèm",
+    "manager": "Quản lý trực tiếp",
+    "manager_confirmation": "Xác nhận của quản lý trực tiếp",
+    "manager_confirmation_placeholder": "Nhập xác nhận của quản lý trực tiếp (nếu có)...",
+    "hr_confirmation": "Xác nhận của bộ phận nhân sự",
+    "hr_confirmation_placeholder": "Nhập xác nhận của bộ phận nhân sự (nếu có)...",
+    "reject": "Từ chối",
+    "confirm": "Xác nhận"
+  },
+  "request_status": {
+    "PENDING": "Chờ QLTT duyệt",
+    "MANAGER_APPROVED": "Chờ HR duyệt",
+    "MANAGER_REJECTED": "QLTT từ chối",
+    "APPROVED": "Đã duyệt",
+    "HR_REJECTED": "Từ chối"
+  }
+}

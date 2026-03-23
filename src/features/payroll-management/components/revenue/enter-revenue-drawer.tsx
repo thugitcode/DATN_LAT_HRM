@@ -152,7 +152,6 @@ export const EnterRevenueDrawer = () => {
   };
 
   const onSubmit = (values: RevenueFormValues) => {
-    console.log('Submit values:', values);
     if (!dataRow) {
       createRevenue({
         ...values,

@@ -1,5 +1,6 @@
 import type { StaffPositionEnum } from '@/types/staff.type';
 import type { Item } from '../timekeeping-management/components/work-sheet-by-shift/department-room-info';
+import type { RequestStatusEnum } from '@/types/attendance-explanation.type';
 
 export enum AttendanceExplanationStatus {
   PENDING = 'PENDING',
@@ -86,7 +87,7 @@ export interface AttendanceExplanation {
   hrApprovedAt?: string;
 
   // Status
-  status: AttendanceExplanationStatus;
+  status: RequestStatusEnum;
   rejectedById?: string;
   rejectedByName?: string;
   rejectedReason?: string;

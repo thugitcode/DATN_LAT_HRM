@@ -10,6 +10,8 @@ import { ConfirmModal } from "@/components/confirm-modal/confirm-modal";
 import { CONFIRM_CONFIG } from "@/components/confirm-modal/confirm.config";
 import { useDeleteStaffProfile } from "../../salary-and-benefits/hooks/use-staff-profile";
 import { convertMimeToExtension, downloadFromSignedUrl } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import { NAMESPACES } from "@/i18n/constants";
 
 interface FileCardProps {
   id: string;
@@ -49,7 +51,7 @@ export default function FileCard({
   const { id: staffId } = useParams({ strict: false })
   const formattedDate = createdAt ? dayjs(createdAt).format("HH:mm DD/MM/YYYY") : "";
   const { onOpen } = useDrawer()
-
+  const { t } = useTranslation(NAMESPACES.COMMON)
   // Delete confirmation modal state
   const [pendingDelete, setPendingDelete] = useState(false);
   const { mutate: deleteProfile, isPending: isDeleting } = useDeleteStaffProfile();
@@ -97,7 +99,7 @@ export default function FileCard({
               startContent={<icons.startContent />}
               className="flex-1 bg-[#021B3A] text-white text-base rounded-lg h-8"
             >
-              Tải xuống
+              {t("button.download")}
             </Button>
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
@@ -113,13 +115,13 @@ export default function FileCard({
               <DropdownMenu aria-label="User Actions" variant="flat">
                 <DropdownItem key="delete" onPress={() => setPendingDelete(true)}>
                   <div className="flex justify-between w-full">
-                    <div>Xóa</div>
+                    <div>{t("button.delete")}</div>
                     <div><icons.trash /></div>
                   </div>
                 </DropdownItem>
                 <DropdownItem key="edit" onPress={() => onOpen(DrawerType.PROFILE_STAFF_DETAIL, { staffId: staffId, id: id })}>
                   <div className="flex justify-between w-full">
-                    <div>Chỉnh sửa</div>
+                    <div>{t("button.edit")}</div>
                     <div><icons.edit /></div>
                   </div>
                 </DropdownItem>

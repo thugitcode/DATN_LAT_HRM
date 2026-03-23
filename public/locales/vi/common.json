@@ -67,7 +67,10 @@
     "confirm": "Xác nhận",
     "addNew": "Thêm mới",
     "exit": "Thoát",
-    "moreIncome": "Thêm thu nhập"
+    "moreIncome": "Thêm thu nhập",
+    "edit": "Chỉnh sửa",
+    "delete": "Xóa",
+    "download": "Tải xuống"
   },
 
   "weekdays": {
@@ -345,5 +348,16 @@
       "error_import": "Có lỗi xảy ra khi tải lên dữ liệu",
       "error_generic": "Có lỗi xảy ra, vui lòng thử lại"
     }
+  },
+  "explanation_types": {
+    "LATE": "Đi muộn",
+    "EARLY_LEAVE": "Về sớm",
+    "MISSING_CHECK_IN": "Quên Check-in",
+    "MISSING_CHECK_OUT": "Quên Check-out",
+    "ABSENT": "Vắng mặt",
+    "MISSING_HOURS": "Thiếu giờ làm",
+    "BUSINESS_TRIP": "Đi công tác",
+    "SICK": "Nghỉ ốm",
+    "OTHER": "Lý do khác"
   }
 }

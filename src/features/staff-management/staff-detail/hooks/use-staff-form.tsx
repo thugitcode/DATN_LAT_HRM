@@ -25,8 +25,7 @@ export const useStaffForm = (
     });
     const { isCreate, data: typeSubmit } = useControlMode()
     const { data: staffDetail } = useStaffDetail(editData?.id ?? "")
-    const { handleSubmit, reset, getValues, formState: { errors } } = form;
-    console.log(errors, 2222);
+    const { handleSubmit, reset } = form;
 
     // Logic Reset Form khi đóng/mở hoặc chuyển mode Edit
     useEffect(() => {

@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import type { TFunction } from 'i18next';
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
@@ -26,44 +27,8 @@ type SummaryKey = keyof Pick<
   'totalRequests' | 'approved' | 'rejected' | 'pending'
 >;
 
-const SUMMARY_BADGES: Array<{
-  key: SummaryKey;
-  icon: React.ReactNode;
-  label: string;
-  color: string;
-  bgColor: string;
-}> = [
-  {
-    key: 'totalRequests',
-    icon: icons.questionCircle,
-    label: 'Tổng yêu cầu',
-    color: '#006FEE',
-    bgColor: '#E6F1FE',
-  },
-  {
-    key: 'approved',
-    icon: <icons.tickCircle />,
-    label: 'Đã xác nhận',
-    color: '#17C964',
-    bgColor: '#E8FAF0',
-  },
-  {
-    key: 'rejected',
-    icon: <icons.closeSquare />,
-    label: 'Từ chối',
-    color: '#F31260',
-    bgColor: '#FEE7EF',
-  },
-  {
-    key: 'pending',
-    icon: <icons.refreshCircle />,
-    label: 'Chờ xác nhận',
-    color: '#F5A524',
-    bgColor: '#FEF4E6',
-  },
-];
 
-const getSummaryBadges = (t: ReturnType<typeof useTranslation>['t']) => [
+const getSummaryBadges = (t: TFunction<typeof NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING>) => [
   {
     key: 'totalRequests' as SummaryKey,
     icon: icons.questionCircle,
@@ -149,8 +114,8 @@ export const ExplanationSummary: FC<Readonly<ExplanationSummaryProps>> = ({
           {paddedTypes.map((type, index) =>
             type ? (
               <ExplanationTypeRow
-                key={type.label}
-                label={type.label}
+                key={type.type}
+                explanationType={type.type!}
                 count={type.count}
                 maxCount={maxCount}
               />

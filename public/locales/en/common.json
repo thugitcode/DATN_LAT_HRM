@@ -67,7 +67,10 @@
     "confirm": "Confirm",
     "addNew": "Add new",
     "exit": "Exit",
-    "moreIncome": "More income"
+    "moreIncome": "More income",
+    "edit": "Edit",
+    "delete": "Delete",
+    "download": "Download"
   },
 
   "weekdays": {
@@ -346,5 +349,16 @@
       "error_import": "An error occurred while uploading data",
       "error_generic": "An error occurred, please try again"
     }
+  },
+  "explanation_types": {
+    "LATE": "Late Arrival",
+    "EARLY_LEAVE": "Early Departure",
+    "MISSING_CHECK_IN": "Missing Check-in",
+    "MISSING_CHECK_OUT": "Missing Check-out",
+    "ABSENT": "Absent",
+    "MISSING_HOURS": "Insufficient Hours",
+    "BUSINESS_TRIP": "Business Trip",
+    "SICK": "Sick Leave",
+    "OTHER": "Other Reason"
   }
 }

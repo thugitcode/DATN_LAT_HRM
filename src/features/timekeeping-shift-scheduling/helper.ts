@@ -187,7 +187,6 @@ export function groupByStaff(data: WorkSheetByShiftType[]): Map<string, WorkShee
 }
 
 export function mapToRow(item: WorkSheetByShiftType, days: ReturnType<typeof getDaysInMonth>) {
-  debugger
   return {
     employee: {
       id: item.staff.id,

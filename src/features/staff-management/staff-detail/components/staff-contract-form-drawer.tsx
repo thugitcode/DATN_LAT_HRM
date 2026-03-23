@@ -1,36 +1,23 @@
 // staff-contract-form-drawer.tsx
 import type { FC } from 'react';
-import { useEffect } from 'react';
-// import các section component sẽ tạo sau
 import {
-  useContractDetail,
-  useCreateContract,
-  useUpdateContract,
-} from '@/query-options/staff-contract';
-import {
-  Button,
   Drawer,
   DrawerBody,
   DrawerContent,
-  DrawerHeader
+  DrawerHeader,
 } from '@heroui/react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormProvider, useForm } from 'react-hook-form';
+import { Form, FormProvider } from 'react-hook-form';
 
 import { BtnCancel } from '@/components/btn-cancel';
+import { BtnSave } from '@/components/btn-save';
 
-import { useQueryClient } from '@tanstack/react-query';
-import { useStaffDetailTabs } from '../hooks/use-staff-detail-tabs';
-import { staffContractSchema, type StaffContractFormValues } from '../schemas';
+import { useContractForm } from '../hooks/use-contract-form';
 import { ContractInfoSection } from './contract-and-salary-sections/contract-info-section';
 import { InsuranceAndUnionSection } from './contract-and-salary-sections/insurance-and-union-section';
 import { LeaveBenefitsSection } from './contract-and-salary-sections/leave-benefits-section';
 import { PersonalIncomeTaxSection } from './contract-and-salary-sections/personal-income-tax-section';
 import { SalaryInfoSection } from './contract-and-salary-sections/salary-info-section';
 import { SalaryStructureSection } from './contract-and-salary-sections/salary-structure-section';
-import { BtnSave } from '@/components/btn-save';
-
-// import các query hooks khác giữ nguyên...
 
 interface StaffContractFormDrawerProps {
   isOpen: boolean;
@@ -45,240 +32,8 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
   staffId,
   contractId,
 }) => {
-  const isEditMode = !!contractId;
-  const { data: contractRes, isLoading: isDetailLoading } = useContractDetail(contractId || '');
-  const contract = contractRes?.data;
-  const { activeKey } = useStaffDetailTabs()
-
-  const createMutation = useCreateContract(staffId);
-  const updateMutation = useUpdateContract(staffId);
-  const queryClient = useQueryClient();
-
-  const methods = useForm<StaffContractFormValues>({
-    resolver: zodResolver(staffContractSchema),
-    defaultValues: {
-      contractType: '',
-      workType: '',
-      jobTitle: '',
-      position: '',
-      workingTime: '',
-      workingTimeUnit: 'MONTH',
-      duration: '',
-      durationUnit: 'YEAR',
-      contractNumber: '',
-      startDate: '',
-      endDate: '',
-      roomId: '',
-      directManagerIds: [],
-      shiftType: '',
-      fixedShiftId: '',
-      workingDays: [1, 2, 3, 4, 5],
-      workingAreas: [{ departmentId: '', roomId: [] }],
-      salary: {
-        hasHealthInsurance: false,
-        healthInsuranceRate: '',
-        hasSocialInsurance: false,
-        socialInsuranceRate: '',
-        hasUnemploymentInsurance: false,
-        unemploymentInsuranceRate: '',
-        hasUnionFee: false,
-        unionFee: '',
-        hasHealthCareInsurance: false,
-        healthCareInsuranceCompany: '',
-        healthCareInsuranceBenefit: '',
-        healthCareInsuranceRate: '',
-        basicSalary: '',
-        insuranceSalary: '',
-        responsibilityAllowance: '',
-        positionAllowance: '',
-        hazardAllowance: '',
-        mealAllowance: '',
-        mealAllowanceUnit: 'DAY' as const,
-        fuelAllowance: '',
-        phoneAllowance: '',
-        businessTripAllowance: '',
-        otherAllowance: '',
-
-        leaveQuotaIds: [],
-
-        hasFamilyDeduction: false,
-        dependentsCount: '',
-        hasPersonalIncomeTax: true,
-        personalIncomeTaxRate: '',
-      },
-      // thêm default cho các field khác sau
-    },
-    mode: 'onChange',
-  });
-
-  const {
-    handleSubmit,
-    reset,
-    formState: { isSubmitting, errors },
-  } = methods;
-
-  // Reset form khi mở drawer (create mode)
-  useEffect(() => {
-    if (!isOpen) return;
-
-    if (!isEditMode) {
-      reset({
-        contractType: '',
-        workType: '',
-        jobTitle: '',
-        position: '',
-        workingTime: '',
-        workingTimeUnit: 'MONTH',
-        duration: '',
-        durationUnit: 'YEAR',
-        contractNumber: '',
-        startDate: '',
-        endDate: '',
-        roomId: '',
-        directManagerIds: [],
-        shiftType: '',
-        fixedShiftId: '',
-        workingDays: [1, 2, 3, 4, 5],
-        workingAreas: [{ departmentId: '', roomId: [] }],
-        salary: {
-          hasHealthInsurance: false,
-          healthInsuranceRate: '',
-          hasSocialInsurance: false,
-          socialInsuranceRate: '',
-          hasUnemploymentInsurance: false,
-          unemploymentInsuranceRate: '',
-          hasUnionFee: false,
-          unionFee: '',
-          hasHealthCareInsurance: false,
-          healthCareInsuranceCompany: '',
-          healthCareInsuranceBenefit: '',
-          healthCareInsuranceRate: '',
-          basicSalary: '',
-          insuranceSalary: '',
-          responsibilityAllowance: '',
-          positionAllowance: '',
-          hazardAllowance: '',
-          mealAllowance: '',
-          mealAllowanceUnit: 'DAY' as const,
-          fuelAllowance: '',
-          phoneAllowance: '',
-          businessTripAllowance: '',
-          otherAllowance: '',
-
-          hasPersonalIncomeTax: true,
-        },
-      });
-    }
-  }, [isOpen, isEditMode, reset]);
-
-  // Fill data khi edit
-  useEffect(() => {
-    if (!contract) return;
-
-    const salaryData = contract.salary;
-
-    reset({
-      // ── Thông tin hợp đồng ───────────────────────────────────────
-      contractType: contract.contractType || '',
-      workType: contract.workType || '',
-      jobTitle: contract.jobTitle || '',
-      position: contract.position || '',
-      duration: contract.duration?.toString() || '',
-      durationUnit: contract.durationUnit || 'YEAR',
-      workingTime: contract.workingTime?.toString() || '',
-      workingTimeUnit: contract.workingTimeUnit || 'MONTH',
-      contractNumber: contract.contractNumber || '',
-      startDate: contract.startDate || '',
-      endDate: contract.endDate || '',
-      roomId: contract.room?.id || '',
-      directManagerIds: contract.directManagerIds || [],
-      shiftType: contract.shiftType || '',
-      fixedShiftId: contract.fixedShiftId || '',
-      workingDays: contract.workingDays || [1, 2, 3, 4, 5],
-
-      // ── Khu vực làm việc (workingAreas) ───────────────────────────
-      managedRoomId: contract?.managedRoom?.id,
-      managedDepartmentId: contract?.managedDepartment?.id,
-      workingAreas: contract?.departments?.map(it => ({
-        departmentId: it?.id || '',
-        roomId: contract?.rooms
-          ?.filter(ite => ite.departmentId === it?.id)
-          ?.map(item => item?.id)
-          .filter(Boolean) as string[]
-      })) ?? [{ departmentId: '', roomId: [] }],
-
-      // ── Salary object ─────────────────────────────────────────────
-      salary: {
-        // Bảo hiểm & công đoàn
-        hasHealthInsurance: salaryData?.hasHealthInsurance || false,
-        healthInsuranceRate: salaryData?.healthInsuranceRate?.toString() || '',
-        hasSocialInsurance: salaryData?.hasSocialInsurance || false,
-        socialInsuranceRate: salaryData?.socialInsuranceRate?.toString() || '',
-        hasUnemploymentInsurance: salaryData?.hasUnemploymentInsurance || false,
-        unemploymentInsuranceRate: salaryData?.unemploymentInsuranceRate?.toString() || '',
-        hasUnionFee: salaryData?.hasUnionFee || false,
-        unionFee: salaryData?.unionFee?.toString() || '',
-
-        // Bảo hiểm sức khỏe
-        hasHealthCareInsurance: salaryData?.hasHealthCareInsurance || false,
-        healthCareInsuranceCompany: salaryData?.healthCareInsuranceCompany || '',
-        healthCareInsuranceBenefit: salaryData?.healthCareInsuranceBenefit?.toString() || '',
-        healthCareInsuranceRate: salaryData?.healthCareInsuranceRate?.toString() || '',
-
-        // Nghỉ phép & phúc lợi
-        leaveQuotaIds: salaryData?.leaveQuotaIds || [],
-
-        // Thuế TNCN
-        hasFamilyDeduction: salaryData?.hasFamilyDeduction || false,
-        dependentsCount: salaryData?.dependentsCount?.toString() || '',
-        hasPersonalIncomeTax: salaryData?.hasPersonalIncomeTax ?? true,
-        personalIncomeTaxRate: salaryData?.personalIncomeTaxRate?.toString() || '',
-
-        // Cấu trúc lương
-        basicSalary: salaryData?.basicSalary?.toString() || '',
-        insuranceSalary: salaryData?.insuranceSalary?.toString() || '',
-        responsibilityAllowance: salaryData?.responsibilityAllowance?.toString() || '',
-        positionAllowance: salaryData?.positionAllowance?.toString() || '',
-        hazardAllowance: salaryData?.hazardAllowance?.toString() || '',
-        mealAllowance: salaryData?.mealAllowance?.toString() || '',
-        mealAllowanceUnit: salaryData?.mealAllowanceUnit || 'DAY',
-        fuelAllowance: salaryData?.fuelAllowance?.toString() || '',
-        phoneAllowance: salaryData?.phoneAllowance?.toString() || '',
-        businessTripAllowance: salaryData?.businessTripAllowance?.toString() || '',
-        otherAllowance: salaryData?.otherAllowance?.toString() || '',
-
-        // Thông tin lương
-        salaryType: salaryData?.salaryType || 'NET',
-        netSalary: salaryData?.netSalary?.toString() || '',
-        grossSalary: salaryData?.grossSalary?.toString() || '',
-      },
-    });
-  }, [contract, reset]);
-
-  const onSubmit = handleSubmit(async (data) => {
-    // chuyển đổi dữ liệu phù hợp với API payload
-    const payload = {
-      staffId,
-      ...data,
-      duration: Number(data.duration),
-      departmentIds: data.workingAreas?.map(it => it.departmentId),
-      roomIds: data.workingAreas?.map(it => it.roomId).flat(Infinity),
-      workType: data.workType || null,
-      // ... map các field khác
-    };
-
-    if (isEditMode && contractId) {
-      await updateMutation.mutateAsync({ id: contractId, data: payload });
-    } else {
-      await createMutation.mutateAsync(payload, {
-        onSuccess() {
-          //  activeKey === TAB_KEYS.SALARY && 
-          queryClient.invalidateQueries({ queryKey: ["salary-details", staffId] })
-        },
-      });
-    }
-    onClose();
-  });
+  const { methods, isEditMode, isDetailLoading, isSubmitting, onSubmit } =
+    useContractForm({ isOpen, onClose, staffId, contractId });
 
   return (
     <Drawer
@@ -287,10 +42,11 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
       size="full"
       placement="right"
       classNames={{ base: 'bg-[#FAFAFA]' }}
+      style={{ width: '97vw', maxWidth: '97vw' }}
     >
       <DrawerContent>
         <DrawerHeader className="...">
-          <h2 className="text-xl font-bold text-[#11181C]">
+          <h2 className="text-3xl font-bold text-[#11181C]">
             {isEditMode ? 'Chỉnh sửa hợp đồng' : 'Thêm mới hợp đồng'}
           </h2>
         </DrawerHeader>
@@ -310,11 +66,9 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                 <div className="flex flex-col gap-6">
                   <ContractInfoSection />
                   <InsuranceAndUnionSection />
-                  {/* Sau này thêm: WorkingAreaSection, InsuranceSection, ... */}
                 </div>
 
                 <div className="flex flex-col gap-6">
-                  {/* Các section bên phải sẽ thêm sau */}
                   <SalaryStructureSection />
                   <SalaryInfoSection />
                   <LeaveBenefitsSection />
