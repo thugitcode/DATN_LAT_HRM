@@ -117,9 +117,8 @@ export const EnterRevenueDrawer = () => {
   };
 
   const handleSelectByName = (id: string) => {
-    const emp = staffByCodeOptions.find((e) => e.id === id);
+    const emp = staffOptions.find((e) => e.key === id);
 
-    console.log('emp___________=', emp);
 
     if (!emp) return;
 
@@ -127,7 +126,8 @@ export const EnterRevenueDrawer = () => {
   };
 
   const applyStaffOptions = (emp: (typeof staffOptions)[number]) => {
-    setValue('staffCode', emp.key, { shouldValidate: true });
+    setValue('staffId', emp.key, { shouldValidate: true });
+    setValue('staffCode', emp.code, { shouldValidate: true });
 
     const departments = toNameKeyOptions(emp?.departments);
     const rooms = toNameKeyOptions(emp?.rooms);
