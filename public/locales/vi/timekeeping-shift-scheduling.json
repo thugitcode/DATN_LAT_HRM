@@ -211,5 +211,13 @@
       "reject_reason_placeholder": "Nhập lý do từ chối...",
       "max_chars": "Tối đa {{max}} ký tự"
     }
+  },
+
+  "attendance": {
+    "period_name": "Tháng {{month}}/{{year}}",
+    "approve_title": "Duyệt bảng công",
+    "approve_desc": "Xác nhận duyệt bảng công {{name}}?",
+    "approve_btn": "Duyệt bảng công",
+    "navigate_payroll_btn": "Chuyển tính lương"
   }
 }

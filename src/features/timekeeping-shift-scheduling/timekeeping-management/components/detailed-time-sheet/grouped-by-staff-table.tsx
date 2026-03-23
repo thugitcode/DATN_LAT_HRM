@@ -2,7 +2,15 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
-import { Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/react';
+import {
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from '@heroui/react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
@@ -39,20 +47,21 @@ export function GroupedTable() {
   }, [filters.month]);
 
   const ROW_HEIGHT = 52;
-  const TABLE_HEIGHT = 550;
+  const TABLE_HEIGHT = 540;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [stickyGroup, setStickyGroup] = useState<FlatRow | null>(null);
 
   const [loaderRef, setLoaderRef] = useState<HTMLDivElement | null>(null);
 
-  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useDetailsTimeSheetInfiniteList({
-    limit: 20,
-    fromDate: startDate,
-    toDate: endDate,
-    search: filters.search,
-    departmentId: filters.departmentId,
-    roomId: filters.roomId,
-  });
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    useDetailsTimeSheetInfiniteList({
+      limit: 20,
+      fromDate: startDate,
+      toDate: endDate,
+      search: filters.search,
+      departmentId: filters.departmentId,
+      roomId: filters.roomId,
+    });
 
   useEffect(() => {
     if (!loaderRef) return;
@@ -62,7 +71,7 @@ export function GroupedTable() {
           fetchNextPage();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
     observer.observe(loaderRef);
     return () => observer.disconnect();
@@ -163,7 +172,7 @@ export function GroupedTable() {
   const monthStr = typeof firstPageMeta?.month === 'string' ? firstPageMeta?.month : '';
   const totalShifts = monthStr
     ? getTotalDaysInMonth(Number(monthStr.split('-')[0]), Number(monthStr.split('-')[1])) *
-    totalStaff
+      totalStaff
     : 0;
 
   const renderShiftCell = useCallback(

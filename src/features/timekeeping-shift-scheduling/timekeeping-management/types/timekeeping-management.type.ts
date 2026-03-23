@@ -121,3 +121,10 @@ export interface DailyHourEntry {
   hours: number;
   status?: HoursStatusEnum;
 }
+
+export type ApprovePayload = {
+  name: string;
+  fromDate: string;
+  toDate: string;
+  standardWorkingDays: number;
+};

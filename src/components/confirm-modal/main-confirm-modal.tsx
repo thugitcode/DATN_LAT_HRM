@@ -17,6 +17,8 @@ export const MainConfirmModal = () => {
     close();
   };
 
+  console.log('isOpen__________________________________', isOpen);
+
   return (
     <ConfirmModal
       isOpen={isOpen}

@@ -20,6 +20,7 @@ import { TAB_CONTENT_MAP } from './components/tab-content-map';
 import { getTabLegendMap } from './components/tab-legend-map';
 import { TimekeepingManagementLegend } from './components/timekeeping-management-legend';
 import { TimekeepingManagementPrint } from './components/timekeeping-management-print';
+import { ApproveAttendanceButton } from './components/work-sheet-by-shift/approve-attendance-button';
 import { useTimekeepingExport } from './hooks/use-timekeeping-export';
 import { useTimekeepingPrint } from './hooks/use-timekeeping-print';
 import { useTimekeepingTabData } from './hooks/use-timekeeping-tab-data';
@@ -63,6 +64,7 @@ export const TimekeepingManagement = () => {
               hiddenLayoutSwitcher={activeKey === TAB_KEYS.DETAILED_TIME_SHEET}
               onExport={onExport}
               onPrint={onPrint}
+              actions={<ApproveAttendanceButton />}
             />
           </div>
 
