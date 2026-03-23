@@ -11,6 +11,7 @@ import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 
 import { usePayrollFeedbackColumns } from '../colums/use-payroll-feedback-columns';
+import { usePayrollFeedbackList } from '../hooks/use-payroll-management';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-400px)]' } as const;
 
@@ -22,7 +23,16 @@ export const PayslipFeedback = () => {
   const { departmentId, month, roomId, search, status, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
 
-  const data = {};
+  const { data, isLoading } = usePayrollFeedbackList({
+    fromDate: startDate,
+    toDate: endDate,
+    month,
+    search,
+    status,
+    page,
+    limit,
+    getAll: true,
+  });
 
   const { paginationConfig } = usePaginationConfig({
     page,
@@ -33,7 +43,7 @@ export const PayslipFeedback = () => {
 
   return (
     <PageContainer className="space-y-3">
-      <TitlePage title={t('payrollCalculation.title')} />
+      <TitlePage title={t('payslipFeedback.title')} />
 
       <PageFilter />
 

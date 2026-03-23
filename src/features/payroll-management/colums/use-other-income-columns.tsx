@@ -1,8 +1,12 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
+import { formatVND } from '@/lib/helpers';
 import type { ColumnDef } from '@/components/data-table/data-table';
+import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
+import { KPI_SOURCE_LABEL } from '../constants/kpi';
+import { OTHER_INCOME_TYPE_LABEL } from '../constants/other-income';
 import type { OtherIncome } from '../types/other-income.type';
 
 export const useOtherIncomeColumns = () => {
@@ -20,52 +24,46 @@ export const useOtherIncomeColumns = () => {
       key: 'department',
       title: t('columns.department'),
       width: 140,
-      // render: (_, record) => {
-      //   return (
-      //     <div className="w-50">
-      //       <DepartmentRoomInfo departments={record.departments} rooms={record.rooms} />
-      //     </div>
-      //   );
-      // },
+      render: (_, record) => (
+        <div className="w-50">
+          <DepartmentRoomInfo departments={record.departments} rooms={record.rooms} />
+        </div>
+      ),
     },
     {
       key: 'staffCode',
       title: t('columns.staff_code'),
-      // render: (_, record) => record.staff.code,
+      render: (_, record) => record.staff?.code || '-',
     },
     {
       key: 'staffName',
       title: t('columns.staff_name'),
-      // render: (_, record) => (
-      //   <div className="">
-      //     <p className="text-sm font-medium text-gray-800">{record.staff.name}</p>
-      //   </div>
-      // ),
+      render: (_, record) => record.staff?.name || '-',
     },
     {
       key: 'type',
       title: t('columns.type'),
-      // render: (_, record) => record.type,
+      render: (_, record) => OTHER_INCOME_TYPE_LABEL?.[record.type] || '-',
     },
     {
       key: 'description',
       title: t('columns.description'),
-      // render: (_, record) => record.description,
+      render: (_, record) => record.description || '-',
     },
     {
       key: 'source',
       title: t('columns.source'),
-      // render: (_, record) => record.source,
+      render: (_, record) => KPI_SOURCE_LABEL?.[record.source],
     },
     {
       key: 'amount',
       title: t('columns.amount'),
-      // render: (_, record) => record.amount,
+      render: (_, record) => formatVND(record.amount),
     },
     {
       key: 'inputBy',
       title: t('columns.input_by'),
-      // render: (_, record) => record.inputBy,
+      render: (_, record) => record.entryPerson?.name || '-',
     },
     {
       key: 'actions',
