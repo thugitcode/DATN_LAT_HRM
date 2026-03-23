@@ -51,13 +51,14 @@ export const StaffFormDrawer = ({ isOpen, onClose, editData }: StaffFormDrawerPr
                 footer: "border-t bg-white border-[#E4E4E7] p-4 gap-3",
             }}
             isDismissable={false}
+            style={{ width: '97vw', maxWidth: '97vw' }}
         >
             <DrawerContent>
                 {(handleClose) => (
                     <LoadingWrapper isLoading={form.formState.isSubmitting}>
                         <>
                             <DrawerHeader className="flex flex-col gap-1">
-                                <h2 className="text-xl font-bold">
+                                <h2 className="text-3xl font-bold">
                                     {isEdit ? t("staffForm.editTitle") : t("staffForm.addTitle")}
                                     {/* Thêm editTitle/addTitle vào JSON nếu cần */}
                                 </h2>
@@ -67,7 +68,7 @@ export const StaffFormDrawer = ({ isOpen, onClose, editData }: StaffFormDrawerPr
                                     <Form
                                         id="staff-form"
                                         onSubmit={() => onSubmit()}
-                                        className="p-6 grid grid-cols-12 gap-3.75"
+                                        className="p-6 grid grid-cols-12 gap-3.75 overflow-auto h-[calc(100vh-143px)]"
                                     >
                                         <AvatarSection />
                                         <div className="col-span-12 lg:col-span-7 space-y-6">

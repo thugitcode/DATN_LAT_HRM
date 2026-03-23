@@ -87,11 +87,11 @@ export const salaryInnerSchema = z
             });
         }
 
-        // Nếu muốn validate thêm (ví dụ phải là số, > 0, <= 100 cho %)
+        // Nếu muốn validate thêm (ví dụ phải là số, > 0, < 100 cho %)
         // Bạn có thể mở rộng ở đây, ví dụ:
         if (data.hasHealthInsurance && data.healthInsuranceRate) {
             const rate = Number(data.healthInsuranceRate.replace(/[^0-9.]/g, ''));
-            if (isNaN(rate) || rate <= 0 || rate > 100) {
+            if (isNaN(rate) || rate < 0 || rate > 100) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: 'Tỷ lệ phải là số từ 0 đến 100',
@@ -116,7 +116,7 @@ export const salaryInnerSchema = z
                 });
             } else {
                 const benefit = Number(data.healthCareInsuranceBenefit.replace(/[^0-9]/g, ''));
-                if (isNaN(benefit) || benefit <= 0) {
+                if (isNaN(benefit) || benefit < 0) {
                     ctx.addIssue({
                         code: z.ZodIssueCode.custom,
                         message: 'Mức hưởng phải là số dương',
@@ -133,7 +133,7 @@ export const salaryInnerSchema = z
                 });
             } else {
                 const rate = Number(data.healthCareInsuranceRate.replace(/[^0-9.]/g, ''));
-                if (isNaN(rate) || rate <= 0 || rate > 100) {
+                if (isNaN(rate) || rate < 0 || rate > 100) {
                     ctx.addIssue({
                         code: z.ZodIssueCode.custom,
                         message: 'Mức đóng phải là số từ 0 đến 100',
@@ -145,7 +145,7 @@ export const salaryInnerSchema = z
 
         if (data.basicSalary) {
             const val = Number(data.basicSalary.replace(/[^\d]/g, ''));
-            if (isNaN(val) || val <= 0) {
+            if (isNaN(val) || val < 0) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: 'Lương cơ bản phải là số dương',
@@ -174,7 +174,7 @@ export const salaryInnerSchema = z
         // Validate số dương nếu có giá trị
         // if (data.netSalary) {
         //     const val = Number(data.netSalary.replace(/[^\d]/g, ''));
-        //     if (isNaN(val) || val <= 0) {
+        //     if (isNaN(val) || val < 0) {
         //         ctx.addIssue({
         //             code: z.ZodIssueCode.custom,
         //             message: 'Lương net phải là số dương',
@@ -185,7 +185,7 @@ export const salaryInnerSchema = z
 
         // if (data.grossSalary) {
         //     const val = Number(data.grossSalary.replace(/[^\d]/g, ''));
-        //     if (isNaN(val) || val <= 0) {
+        //     if (isNaN(val) || val < 0) {
         //         ctx.addIssue({
         //             code: z.ZodIssueCode.custom,
         //             message: 'Lương gross phải là số dương',

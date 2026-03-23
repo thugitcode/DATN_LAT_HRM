@@ -1,23 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormArea } from '@/components/form-fields/form-area';
+import { FormDatePicker } from '@/components/form-fields/form-date-picker';
 import { FileUploadInput } from '@/components/form-fields/form-file-upload-input';
 import { FormInput } from '@/components/form-fields/form-input';
+import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
-import { useDrawer } from '@/store/useDrawer';
-import { addToast, Button, Form } from '@heroui/react';
-import dayjs from 'dayjs';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { useCreateStaffProfile, useStaffProfileDetail, useUpdateStaffProfile } from '../../salary-and-benefits/hooks/use-staff-profile';
-import { documentSchema, type DocumentFormValues } from '../schemas/profile-details.schema';
-import type { IStaffDocument } from '@/types/staff-profile.type';
+import { staffProfileKeys } from '@/services/query-options/staff-profile.query';
 import { uploadService } from '@/services/upload.service';
-import { FormDatePicker } from '@/components/form-fields/form-date-picker';
-import z from 'zod';
+import { useDrawer } from '@/store/useDrawer';
+import type { IStaffDocument } from '@/types/staff-profile.type';
+import { addToast, Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { staffProfileKeys } from '@/services/query-options/staff-profile.query';
+import dayjs from 'dayjs';
 import { useEffect } from 'react';
-import { formatDate } from '@/lib/utils';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import z from 'zod';
+import { useCreateStaffProfile, useStaffProfileDetail, useUpdateStaffProfile } from '../../salary-and-benefits/hooks/use-staff-profile';
+import { documentSchema, type DocumentFormValues } from '../schemas/profile-details.schema';
 
 type FormValues = {
   documents: DocumentFormValues[];
@@ -28,6 +29,8 @@ const TODAY = dayjs().format("YYYY-MM-DD");
 export const ProfileDetailsDrawer = () => {
   const closedDrawer = useDrawer((state) => state.onClose);
   const queryClient = useQueryClient();
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
+  const { t: tCommon } = useTranslation(NAMESPACES.COMMON);
 
   const { mutateAsync: createProfile } = useCreateStaffProfile();
   const { mutateAsync: updateProfile } = useUpdateStaffProfile();
@@ -159,11 +162,11 @@ export const ProfileDetailsDrawer = () => {
         reset();
         closedDrawer();
       } else {
-        addToast({ title: 'Vui lòng chọn thông tin tài liệu cần tải lên', color: 'danger' });
+        addToast({ title: t('profileDetails.messages.selectInfo'), color: 'danger' });
       }
     } catch (error) {
       console.error("Submit error:", error);
-      addToast({ title: 'Có lỗi xảy ra trong quá trình cập nhật', color: 'danger' });
+      addToast({ title: t('profileDetails.messages.updateError'), color: 'danger' });
     }
   };
   const handleFilesSelect = (index: number, files: File[]) => {
@@ -202,8 +205,8 @@ export const ProfileDetailsDrawer = () => {
             <FormInput
               control={control}
               name={`documents.${index}.documentName`} // Fix key to match schema
-              label="Tên giấy tờ"
-              placeholder="Nhập tên loại giấy tờ..."
+              label={t('profileDetails.labels.documentName')}
+              placeholder={t('profileDetails.placeholders.documentName')}
               isRequired
             />
 
@@ -212,13 +215,13 @@ export const ProfileDetailsDrawer = () => {
               <FormDatePicker
                 control={control}
                 name={`documents.${index}.createdAt`}
-                label="Ngày thêm mới"
+                label={t('profileDetails.labels.createdAt')}
                 disabled
               />
               <FormInput
                 control={control}
                 name={`documents.${index}.createdByName`}
-                label="Người thêm mới"
+                label={t('profileDetails.labels.createdByName')}
                 disabled
               />
             </div>
@@ -227,15 +230,15 @@ export const ProfileDetailsDrawer = () => {
             <FormArea
               control={control}
               name={`documents.${index}.note`}
-              label="Ghi chú"
-              placeholder="Nhập ghi chú thêm..."
+              label={t('profileDetails.labels.note')}
+              placeholder={t('profileDetails.placeholders.note')}
               maxRows={4}
             />
 
             {/* File Upload Section */}
             <div className="w-full flex flex-col gap-2">
               <label className="text-sm font-medium text-[#52525B]">
-                Tệp đính kèm <span className="text-danger">*</span>
+                {t('profileDetails.labels.attachments')} <span className="text-danger">*</span>
               </label>
 
               <Controller
@@ -269,7 +272,7 @@ export const ProfileDetailsDrawer = () => {
             })
           }
         >
-          + Thêm giấy tờ khác
+          {t('profileDetails.buttons.addOther')}
         </Button>}
       </div>
 
@@ -280,7 +283,7 @@ export const ProfileDetailsDrawer = () => {
           onPress={closedDrawer}
           className="border-[#006FEE] border bg-white text-[#006FEE]"
         >
-          Hủy
+          {tCommon("button.cancel")}
         </Button>
         <Button
           type="submit"
@@ -288,7 +291,7 @@ export const ProfileDetailsDrawer = () => {
           isLoading={isSubmitting}
           className="px-8"
         >
-          Lưu hồ sơ
+          {t('profileDetails.buttons.save')}
         </Button>
       </div>
     </Form>

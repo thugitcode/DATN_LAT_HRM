@@ -50,6 +50,7 @@ export const InsuranceAndUnionSection: FC = () => {
             disabled={isSubmitting || isView || !hasHealthInsurance}
             variant={variant}
             allowNegative={false}
+            max={100}
           />
         </div>
 
@@ -72,6 +73,7 @@ export const InsuranceAndUnionSection: FC = () => {
             disabled={isSubmitting || isView || !hasSocialInsurance}
             allowNegative={false}
             variant={variant}
+            max={100}
           />
         </div>
 
@@ -94,6 +96,7 @@ export const InsuranceAndUnionSection: FC = () => {
             disabled={isSubmitting || isView || !hasUnemploymentInsurance}
             allowNegative={false}
             variant={variant}
+            max={100}
           />
         </div>
 
@@ -161,7 +164,7 @@ export const InsuranceAndUnionSection: FC = () => {
             disabled={isSubmitting || !hasHealthCareInsurance}
             allowNegative={false}
             isRequired={hasHealthCareInsurance}
-          // Gợi ý: decimalScale={2}, fixedDecimalScale nếu muốn 2 chữ số thập phân
+            max={100}
           />
         </div>
       </div>

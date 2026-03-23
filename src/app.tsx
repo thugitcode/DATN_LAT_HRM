@@ -8,8 +8,6 @@ import { routeTree } from './routeTree.gen';
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error) => {
-      console.log(error, 4444333);
-
       addToast({
         title: 'Có lỗi xảy ra',
         description: error.message,

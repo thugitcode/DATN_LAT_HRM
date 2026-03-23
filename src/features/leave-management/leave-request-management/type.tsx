@@ -1,3 +1,4 @@
+import type { RequestStatusEnum } from '@/types/attendance-explanation.type';
 import type { Status } from '@/types/global.type';
 import type { StaffPositionEnum } from '@/types/staff.type';
 
@@ -34,7 +35,7 @@ export interface LeaveRequest {
   attachments: unknown[];
   replacementStaffId: string;
   replacementStaffName: string;
-  status: Status;
+  status: RequestStatusEnum;
   approvedById: string | null;
   approvedByName: string | null;
   approvedAt: string | null;
