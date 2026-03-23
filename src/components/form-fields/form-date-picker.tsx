@@ -48,9 +48,10 @@ export function FormDatePicker<T extends FieldValues>({
               group-data-[invalid=true]:!bg-[#F4F4F5]
             `,
             label: cn(
-              'text-base font-normal leading-4 text-[#52525B] mb-1',
+              'text-base font-normal leading-4 text-[#52525B]',
               fieldState.error ? 'text-[#F31260]' : 'text-[#52525B]',
             ),
+            base: "gap-2"
           }}
           {...props}
         />

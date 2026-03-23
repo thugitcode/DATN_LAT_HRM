@@ -3,6 +3,8 @@ import { Controller, type Control, type FieldValues, type Path } from 'react-hoo
 import { NumericFormat, type NumericFormatProps } from 'react-number-format';
 
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 type FormNumberInputProps<T extends FieldValues> = {
   name: Path<T>;
@@ -17,6 +19,7 @@ export function FormNumberInput<T extends FieldValues>({
   error,
   ...props
 }: FormNumberInputProps<T>) {
+  const { t } = useTranslation(NAMESPACES.COMMON)
   return (
     <Controller
       name={name}
@@ -38,6 +41,7 @@ export function FormNumberInput<T extends FieldValues>({
 
             return true;
           }}
+          placeholder={props.placeholder ?? t("input.placeholder")}
           labelPlacement="outside-top"
           thousandSeparator="."
           decimalSeparator=","

@@ -1,10 +1,11 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
-import { formatVND } from '@/lib/helpers';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
+import { formatVND } from '@/lib/helpers';
 
+import { RowOtherIncomeActions } from '../components/row-other-income-actions';
 import { KPI_SOURCE_LABEL } from '../constants/kpi';
 import { OTHER_INCOME_TYPE_LABEL } from '../constants/other-income';
 import type { OtherIncome } from '../types/other-income.type';
@@ -67,9 +68,10 @@ export const useOtherIncomeColumns = () => {
     },
     {
       key: 'actions',
-      title: t('columns.actions'),
-      width: 120,
+      title: t('revenue.columns.actions'),
+      width: 100,
       align: 'center',
+      render: (_, record) => <RowOtherIncomeActions dataRow={record} />,
     },
   ];
 

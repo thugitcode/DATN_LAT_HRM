@@ -64,7 +64,7 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
         nationality: optionalString(),
         address: optionalString(),
 
-        identityIssueDate: optionalString().refine(
+        identityIssueDate: optionalString().nullable().refine(
             (val) => !val || new Date(val) <= new Date(),
             t("errors.identityIssueDate.future"),
         ),

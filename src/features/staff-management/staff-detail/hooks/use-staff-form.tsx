@@ -39,7 +39,7 @@ export const useStaffForm = (
                 ...staffDetail?.data,
                 healthInsuranceNumber: staffDetail?.data?.healthInsuranceNumber ?? "",
                 birthday: formatDate(staffDetail?.data?.birthday),
-                identityIssueDate: formatDate(staffDetail?.data?.identityIssueDate),
+                identityIssueDate: staffDetail?.data?.identityIssueDate ? formatDate(staffDetail?.data?.identityIssueDate) : null,
                 certificateExpiryDate: formatDate(staffDetail?.data?.certificateExpiryDate),
                 // departmentIds: staffDetail?.data?.rlsStaffDepartments?.[0]?.department?.id
                 //     || staffDetail?.data?.departments?.[0]?.id || "",

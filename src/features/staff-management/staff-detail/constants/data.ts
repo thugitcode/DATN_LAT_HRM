@@ -5,7 +5,7 @@ export const STAFF_FORM_DEFAULT_VALUES = {
     birthday: "",
     gender: "MALE",
     identity: "",
-    identityIssueDate: "",
+    identityIssueDate: null,
     identityIssuePlace: "",
     nationality: "Việt Nam",
     address: "",
