@@ -31,10 +31,9 @@ export const SalaryHistory = () => {
 
   const resolvedActiveId = activeStaffId ?? staffList?.data?.[0]?.id ?? null;
 
-  const activeStaff = useMemo(
-    () => staffList?.data?.find((s) => s.id === resolvedActiveId) ?? null,
-    [staffList?.data, resolvedActiveId],
-  );
+  const activeStaff = useMemo(() => {
+    return staffList?.data?.find((s) => s.id === resolvedActiveId) ?? null;
+  }, [staffList, resolvedActiveId]);
 
   return (
     <PageContainer className="space-y-3 px-0" variant="fixed">
@@ -44,7 +43,7 @@ export const SalaryHistory = () => {
         <StaffList
           staffList={staffList?.data ?? []}
           isLoading={isLoading}
-          activeStaffId={activeStaffId}
+          activeStaffId={resolvedActiveId}
           onSelect={setActiveStaffId}
         />
         <StaffSalaryHistory staff={activeStaff} />

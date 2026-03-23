@@ -1,4 +1,3 @@
-import React from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
@@ -61,7 +60,7 @@ export const OtherIncome = () => {
         </div>
       </div>
 
-      <PayrollManagementFilters statusOptions={statusKpiOptions} />
+      <PayrollManagementFilters />
 
       <DataTable
         dataSource={data?.data ?? []}

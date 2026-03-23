@@ -1,6 +1,6 @@
-import { addToast, HeroUIProvider, ToastProvider } from '@heroui/react';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { addToast, HeroUIProvider, ToastProvider } from '@heroui/react';
 
 import { PersistProvider } from './components/providers/persist-provider';
 import { routeTree } from './routeTree.gen';

@@ -23,5 +23,5 @@ export const statusRevenueOptions: Options[] = [
   {
     label: 'Chờ xác nhận',
     key: Status.PENDING,
-  }
+  },
 ];

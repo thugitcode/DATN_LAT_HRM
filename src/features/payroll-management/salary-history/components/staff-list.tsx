@@ -34,6 +34,8 @@ export const StaffList = ({
 
   const staffPosition = useMemo(() => getStaffPosition(t), [t]);
 
+  console.log('activeStaffId_______________', activeStaffId);
+
   const handleSelect = useCallback(
     (s: Staff) => {
       onSelect(s.id);

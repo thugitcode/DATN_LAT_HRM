@@ -72,3 +72,33 @@ export interface RequestsParams {
 
   [key: string]: unknown;
 }
+
+export interface DepartmentList {
+  id: string;
+  name: string;
+}
+export interface RoomList {
+  id: string;
+  name: string;
+}
+
+export interface StaffList {
+  id: string;
+  name: string;
+  code: string;
+}
+
+export interface EntryPersonList {
+  id: string;
+  name: string;
+}
+
+export interface AllowanceList {
+  id: string;
+  name: string;
+}
+
+export interface AttachmentList {
+  // chưa có dữ liệu nên để linh hoạt
+  [key: string]: unknown;
+}
