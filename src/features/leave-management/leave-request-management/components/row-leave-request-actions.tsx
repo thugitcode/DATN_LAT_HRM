@@ -108,7 +108,7 @@ export const RowLeaveRequestActions: FC<{ dataRow?: LeaveRequest }> = ({ dataRow
       (reason) => handleConfirmAction(reason, 'approve'),
     );
   };
-
+  //
   const handleRejectClick = () => {
     open(
       {

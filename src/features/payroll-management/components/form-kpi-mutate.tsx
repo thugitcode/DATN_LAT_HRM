@@ -246,7 +246,6 @@ export const FormKpiMutate = () => {
                   isRequired
                   placeholder={tc('input.placeholder')}
                   min={0}
-                  max={100}
                   disabled={isPending}
                 />
 

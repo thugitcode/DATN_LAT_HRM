@@ -210,5 +210,13 @@
       "reject_reason_placeholder": "Enter rejection reason...",
       "max_chars": "Maximum {{max}} characters"
     }
+  },
+
+  "attendance": {
+    "period_name": "Month {{month}}/{{year}}",
+    "approve_title": "Approve Timesheet",
+    "approve_desc": "Confirm approval of timesheet {{name}}?",
+    "approve_btn": "Approve Timesheet",
+    "navigate_payroll_btn": "Go to Payroll"
   }
 }

@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
-import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { useDrawer } from '@/store/useDrawer';
 import { useTranslation } from 'react-i18next';
 
 import type { ShiftManagementParams } from '@/types';
@@ -15,7 +14,7 @@ import { useShiftManagementList } from '@/features/timekeeping-shift-scheduling/
 
 import { usePayrollCalculationColumns } from '../colums/use-payroll-calculation-columns';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-400px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-280px)]' } as const;
 
 export const PayrollCalculation = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -24,9 +23,11 @@ export const PayrollCalculation = () => {
   const { filters } = useQueryFilter<ShiftManagementParams>();
   const { departmentId, month, roomId, search, status, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
+
   // useEffect(() => {
   //   onOpen(DrawerType.PAYROLL_DETAILS,)
   // }, [])
+
   const { data, isLoading } = useShiftManagementList({
     page: filters.page ?? 1,
     limit: filters.limit ?? 10,
@@ -49,7 +50,7 @@ export const PayrollCalculation = () => {
       <div className="flex items-center justify-between">
         <TitlePage title={t('payrollCalculation.title')} />
 
-        <div>Action</div>
+        {/* <div>Action</div> */}
       </div>
 
       <PageFilter />

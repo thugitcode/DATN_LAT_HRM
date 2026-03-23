@@ -687,8 +687,6 @@ function DetailedTimeSheetPrintTable({ data }: { data: DetailsTimeSheetRecord[] 
   );
 }
 
-// ─── Props & title map ────────────────────────────────────────────────────────
-
 type TimekeepingPrintData =
   | { tab: TAB_KEYS.WORKSHEET_BY_SHIFT; data: WorkSheetByShiftType[] }
   | { tab: TAB_KEYS.HOURLY_PAYROLL; data: AttendanceByHoursResponse[] }
@@ -707,8 +705,6 @@ const TAB_TITLE: Record<TAB_KEYS, string> = {
   [TAB_KEYS.HOURLY_PAYROLL]: 'BẢNG CÔNG GIỜ',
   [TAB_KEYS.DETAILED_TIME_SHEET]: 'BẢNG CHẤM CÔNG CHI TIẾT',
 };
-
-// ─── Main component ───────────────────────────────────────────────────────────
 
 export const TimekeepingManagementPrint = forwardRef<
   HTMLDivElement,
