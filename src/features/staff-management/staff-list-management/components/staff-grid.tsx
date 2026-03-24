@@ -58,6 +58,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
 }) => {
   const totalPages = Math.ceil((total || 1) / limit);
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
   const currentLocale = i18n.language.startsWith('vi') ? 'vi-VN' : 'en-US';
   if (loading) {
     return (
@@ -72,7 +73,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
       <div className="flex-1 overflow-y-auto pb-4">
         {data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-[#71717A] text-sm">
-            Không có dữ liệu
+            {tc('table.empty')}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -131,7 +132,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
                     {staff.workType && (
                       <div className="flex flex-1 items-center gap-1.5 line-clamp-1">
                         <IconClock className="stroke-1 size-3" />
-                        {staff.workType ? t(`options.work_type.${staff.workType}` as any) : '—'}
+                        {staff.workType ? t(`staff_table.work_type.${(staff.workType)}` as any) : '—'}
                       </div>
                     )}
                   </div>

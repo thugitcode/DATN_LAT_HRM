@@ -13,6 +13,8 @@ import { TitlePage } from '@/components/title-page';
 import { useShiftManagementList } from '@/features/timekeeping-shift-scheduling/shift-management/hooks/use-shift-management';
 
 import { usePayrollCalculationColumns } from '../colums/use-payroll-calculation-columns';
+import { usePayrollCalculationList } from '../hooks/use-payroll-calculation';
+import dayjs from 'dayjs';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-280px)]' } as const;
 
@@ -25,17 +27,17 @@ export const PayrollCalculation = () => {
   const { startDate, endDate } = useMonthDateRange(month);
 
   // useEffect(() => {
-  //   onOpen(DrawerType.PAYROLL_DETAILS,)
+  //   onOpen(DrawerType.PAYROLL_CACULATION_DETAILS,)
   // }, [])
 
-  const { data, isLoading } = useShiftManagementList({
+  const { data, isLoading, isError } = usePayrollCalculationList({
     page: filters.page ?? 1,
     limit: filters.limit ?? 10,
-    startDate,
-    endDate,
     search: filters.search,
+    month: month ?? dayjs().format("YYYY-MM"),
     departmentId: filters.departmentId,
     roomId: filters.roomId,
+    view: "result"
   });
 
   const { paginationConfig } = usePaginationConfig({
@@ -56,7 +58,7 @@ export const PayrollCalculation = () => {
       <PageFilter />
 
       <DataTable
-        dataSource={data?.data ?? []}
+        dataSource={data?.data?.data ?? []}
         columns={columns}
         selectionMode="single"
         loading={isLoading}

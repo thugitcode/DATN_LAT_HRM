@@ -34,6 +34,7 @@ export const createOtherIncomeMutateSchema = () =>
     month: z.string().optional(),
     source: z.nativeEnum(KpiSourceEnum).default(KpiSourceEnum.WEB),
     status: z.nativeEnum(Status).default(Status.PENDING),
+    attachments: z.array(z.any()).optional(),
   });
 
 export type OtherIncomeMutateFormValues = z.infer<ReturnType<typeof createOtherIncomeMutateSchema>>;

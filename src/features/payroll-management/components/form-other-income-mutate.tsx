@@ -22,7 +22,9 @@ import { useRoomOptions } from '@/hooks/options/use-room-options';
 import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { Status } from '@/types/global.type';
 
+import { FormFileUploadInput } from '@/components/form-fields/form-file-upload-input';
 import { allowanceQueryOptions } from '@/services/query-options/allowance.query';
+import { uploadService } from '@/services/upload.service';
 import { AllowanceType } from '@/types/allowance.type';
 import { useQuery } from '@tanstack/react-query';
 import { OTHER_INCOME_TYPE_OPTIONS } from '../constants/other-income';
@@ -85,6 +87,7 @@ export const FormOtherIncomeMutate = () => {
       entryPersonId: '',
       source: KpiSourceEnum.WEB,
       status: Status.PENDING,
+      attachments: []
     },
     mode: 'onSubmit',
   });
@@ -117,6 +120,17 @@ export const FormOtherIncomeMutate = () => {
       description: dataDetail.description || '',
       entryPersonId: dataDetail.entryPerson?.id || '',
       source: dataDetail.source || KpiSourceEnum.WEB,
+      attachments: dataDetail.attachments?.map((item) => ({
+        name: item.fileName,
+        size: item.fileSize,
+        type: item.fileType,
+        url: item.fileUrl,
+        fileUrl: item.fileUrl,
+        filePath: item.filePath,
+        fileName: item.fileName,
+        fileType: item.fileType,
+        fileSize: item.fileSize,
+      })) || [],
     });
 
     hasAutofilled.current = true;
@@ -164,7 +178,23 @@ export const FormOtherIncomeMutate = () => {
     return roomOptions.filter((room) => selectedStaff.rooms?.some((r) => r.id === room.key));
   }, [selectedStaff, roomOptions]);
 
-  const onSubmit = (values: OtherIncomeMutateFormValues) => {
+  const onSubmit = async (values: OtherIncomeMutateFormValues) => {
+
+    const fileToUpload = values?.attachments?.[0];
+
+    const uploadRes = await uploadService.upload(fileToUpload);
+    let attachments: { fileUrl: string; filePath: string; fileName: string; fileType: string; fileSize: number; }[] = [];
+    if (uploadRes.statusCode === 200) {
+      const fileData = uploadRes.data;
+      attachments = [{
+        fileUrl: fileData.url,
+        filePath: fileData.filePath,
+        fileName: fileData.fileName,
+        fileType: fileData.fileType,
+        fileSize: fileData.fileSize,
+      }];
+    }
+
     const payload: OtherIncomePayload = {
       staffId: values.staffId,
       month: dayjs().format('YYYY-MM'),
@@ -175,9 +205,10 @@ export const FormOtherIncomeMutate = () => {
       entryPersonId: values.entryPersonId,
       date: values.date,
       allowanceId: values.allowanceId,
+      attachments: attachments ?? [],
     };
 
-    console.log('payload_________________', payload);
+    console.log(values, 'payload_________________', payload);
 
     if (!dataDetail) {
       mutateCreate(payload);
@@ -306,13 +337,14 @@ export const FormOtherIncomeMutate = () => {
                 </div>
 
                 {/* File đính kèm — full width (UI only, không có trong payload) */}
-                {/* <div className="col-span-2">
-                  <FormFileUpload
+                <div className="col-span-2">
+                  <FormFileUploadInput
+                    control={control}
+                    name={`attachments`}
                     label={t('otherIncome.form.attachment')}
-                    accept=".xlsx,.csv"
-                    maxSizeMB={10}
+                    multiple={false}
                   />
-                </div> */}
+                </div>
               </div>
             </WrapperBoxForm>
           </div>

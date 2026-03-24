@@ -99,7 +99,7 @@ export const QualificationSection = () => {
                         name="academicTitles"
                         label={t('staffForm.fields.academicTitles.label')}
                         selectionMode="multiple"
-                        disabled={!isEditingQual}
+                        readOnly={!isEditingQual}
                         variant={variantQual}
                         options={Object.values(AcademicTitleEnum).map((val) => ({
                             label: t(`options.academicTitles.${val}`),

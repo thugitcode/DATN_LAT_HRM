@@ -132,6 +132,7 @@
       },
       "workType": {
         "label": "Work Type",
+        "placeholder": "Select work type",
         "options": {
           "fullTime": "Full-time",
           "partTime": "Part-time"

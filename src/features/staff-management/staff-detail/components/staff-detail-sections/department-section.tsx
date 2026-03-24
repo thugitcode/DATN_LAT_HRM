@@ -5,30 +5,31 @@ import { useDepartmentOptions } from "@/hooks/select-options/use-department-opti
 import { useRoomOptions } from "@/hooks/select-options/use-room-options";
 import { NAMESPACES } from "@/i18n/constants";
 import { icons } from "@/lib/icons";
+import { useUpdateStaff } from "@/query-options/staff";
 import { ContractTypeEnum, StaffJobTitleEnum, StaffPositionEnum, WorkingTypeTypeEnum } from "@/types/staff.type";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { STAFF_SECTION_KEYS } from "../../constants/data";
-import { SectionHeader } from "./section-header";
-import { useUpdateStaff } from "@/query-options/staff";
 import { WorkingAreaSection } from "../contract-and-salary-sections/working-area-section";
+import { SectionHeader } from "./section-header";
 
 export const DepartmentSection = () => {
-    const { control, watch, trigger, getValues, formState: { errors } } = useFormContext();
+    const { control, watch, trigger, getValues } = useFormContext();
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
 
     // Mutation để cập nhật dữ liệu
-    const { mutateAsync: updateStaff, isPending: isUpdating } = useUpdateStaff();
+    const { mutateAsync: updateStaff } = useUpdateStaff();
 
     // Logic mode
     const { data, setMode, isCreate } = useControlMode();
+
     const isEditing = data === STAFF_SECTION_KEYS.DEPARTMENT || data === "ALL";
     const isView = !isEditing;
     const variant = isView ? "underlined" : "flat";
 
     // Logic lấy options
     const { options: departmentOptions } = useDepartmentOptions();
-    const selectedDepts = watch("departmentIds");
+    const selectedDepts = watch("managedDepartmentId");
     const { options: roomOptions } = useRoomOptions(selectedDepts);
 
     // Danh sách các fields thuộc section này để validate và lấy data
@@ -91,7 +92,7 @@ export const DepartmentSection = () => {
                     label={t('staffForm.fields.departmentIds.label')}
                     selectionMode="single"
                     isRequired
-                    disabled={isView}
+                    readOnly={isView}
                     variant={variant}
                     options={departmentOptions?.map(it => ({ key: it.value, label: it.label }))}
                 />
@@ -103,7 +104,7 @@ export const DepartmentSection = () => {
                     label={t('staffForm.fields.roomIds.label')}
                     selectionMode="single"
                     isRequired
-                    disabled={isView}
+                    readOnly={isView}
                     variant={variant}
                     options={roomOptions?.map(it => ({ key: it.value, label: it.label }))}
                 />
@@ -116,7 +117,8 @@ export const DepartmentSection = () => {
                     control={control}
                     name="workType"
                     label={t('staffForm.fields.workType.label')}
-                    disabled={!isCreate}
+                    placeholder={t('staffForm.fields.workType.placeholder')}
+                    readOnly={!isCreate || isView}
                     variant={variant}
                     options={Object.values(WorkingTypeTypeEnum).map((val) => ({
                         label: t(`options.workType.${val}`),
@@ -130,7 +132,7 @@ export const DepartmentSection = () => {
                     name="jobTitle"
                     label={t('staffForm.fields.jobTitle.label')}
                     isRequired
-                    disabled={isView}
+                    readOnly={isView}
                     variant={variant}
                     options={Object.values(StaffJobTitleEnum).map((val) => ({
                         label: t(`options.job_title.${val}`),
@@ -144,7 +146,7 @@ export const DepartmentSection = () => {
                     name="position"
                     label={t('staffForm.fields.position.label')}
                     isRequired
-                    disabled={isView}
+                    readOnly={isView}
                     variant={variant}
                     options={Object.values(StaffPositionEnum).map((val) => ({
                         label: t(`options.staff_position.${val}`),
@@ -158,7 +160,7 @@ export const DepartmentSection = () => {
                     name="contractType"
                     label={t('staffForm.fields.contractType.label')}
                     isRequired
-                    disabled={!isCreate}
+                    readOnly={!isCreate || isView}
                     variant={variant}
                     options={Object.values(ContractTypeEnum).map((val) => ({
                         label: t(`options.contractType.${val}`),
