@@ -55,7 +55,13 @@ export function ApproveAttendanceButton() {
   const cycleStartDate = configData?.data?.attendanceCycleStartDate ?? 1;
 
   const [year, month] = useMonthYear(filters.month);
-  const payload = useAttendancePeriod(month, year, cycleStartDate);
+  // const payload = useAttendancePeriod(month, year, cycleStartDate);
+
+  const payload = useMemo(() => {
+    return {
+      month: dayjs(filters.month ?? undefined).format('YYYY-MM'),
+    };
+  }, [filters.month]);
 
   const createPeriod = useCallback(
     () =>
@@ -72,14 +78,14 @@ export function ApproveAttendanceButton() {
     open(
       {
         title: t('attendance.approve_title'),
-        description: t('attendance.approve_desc', { name: payload.name }),
+        description: t('attendance.approve_desc', { name: `Tháng ${month}/${year}` }),
         confirmLabel: tc('button.confirm'),
         confirmColor: 'primary',
         requireReason: false,
       },
       createPeriod,
     );
-  }, [open, t, payload.name, tc, createPeriod]);
+  }, [open, t, month, year, tc, createPeriod]);
 
   const handleNavigatePayroll = useCallback(() => {
     navigate({ to: '/admin/payroll-management/payroll-calculation' });

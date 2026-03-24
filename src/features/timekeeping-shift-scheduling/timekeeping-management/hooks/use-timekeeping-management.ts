@@ -6,6 +6,7 @@ import {
   timekeepingManagementQueryOptions,
 } from '@/services/query-options/timekeeping-management.query';
 import { timekeepingManagementService } from '@/services/timekeeping-management.service';
+import { addToast } from '@heroui/react';
 
 import type { ShiftManagementParams } from '@/types/shift-management.type';
 
@@ -58,6 +59,11 @@ export function useCraetePeriodsMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: timekeepingManagementKeys.all,
+      });
+
+      addToast({
+        description: 'Duyệt bảng công thành công.',
+        color: 'success',
       });
     },
 

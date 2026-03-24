@@ -12,7 +12,7 @@ class PayrollPerriodsService extends BaseApiService<
   RequestsParams
 > {
   constructor() {
-    super(hrmInstance, API_ENDPOINTS.HRM.PAYROLL_MANAGEMENT.PAYROLL_PERIODS);
+    super(hrmInstance, API_ENDPOINTS.HRM.PAYROLL_MANAGEMENT.PAYROLL_BY_MONTH);
   }
 
   async getAll(params?: RequestsParams) {

@@ -33,6 +33,7 @@ export const API_ENDPOINTS = {
       OTHER_INCOME: '/other-income',
       SALARY_STAFF_HISTORY: '/payroll/staff',
       PAYROLL_PERIODS: '/payroll/periods',
+      PAYROLL_BY_MONTH: '/payroll/by-month',
     },
 
     LEAVE_REQUEST: '/leave-request',
