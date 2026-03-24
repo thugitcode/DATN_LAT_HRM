@@ -45,6 +45,7 @@ import { Route as PrivateAdminDashboardPayrollManagementDataSummaryRouteRouteImp
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/index'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/index'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/index'
+import { Route as PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRouteImport } from './routes/_private/admin/_dashboard/staff-management/official-employee/index'
 import { Route as PrivateAdminDashboardPayrollManagementDataSummaryIndexRouteImport } from './routes/_private/admin/_dashboard/payroll-management/data-summary/index'
 import { Route as PrivateAdminDashboardStaffManagementDetailIdRouteImport } from './routes/_private/admin/_dashboard/staff-management/detail/$id'
 import { Route as PrivateAdminDashboardPayrollManagementDataSummarySummaryFinalizeIndexRouteImport } from './routes/_private/admin/_dashboard/payroll-management/data-summary/summary-finalize/index'
@@ -274,6 +275,12 @@ const PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexR
       getParentRoute: () => PrivateAdminDashboardRoute,
     } as any,
   )
+const PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute =
+  PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRouteImport.update({
+    id: '/staff-management/official-employee/',
+    path: '/staff-management/official-employee/',
+    getParentRoute: () => PrivateAdminDashboardRoute,
+  } as any)
 const PrivateAdminDashboardPayrollManagementDataSummaryIndexRoute =
   PrivateAdminDashboardPayrollManagementDataSummaryIndexRouteImport.update({
     id: '/',
@@ -364,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/admin/timekeeping-shift-scheduling/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   '/admin/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
   '/admin/payroll-management/data-summary/': typeof PrivateAdminDashboardPayrollManagementDataSummaryIndexRoute
+  '/admin/staff-management/official-employee/': typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute
   '/admin/timekeeping-shift-scheduling/explanation-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/shift-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/timekeeping-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
@@ -404,6 +412,7 @@ export interface FileRoutesByTo {
   '/admin/timekeeping-shift-scheduling': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   '/admin/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
   '/admin/payroll-management/data-summary': typeof PrivateAdminDashboardPayrollManagementDataSummaryIndexRoute
+  '/admin/staff-management/official-employee': typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute
   '/admin/timekeeping-shift-scheduling/explanation-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/shift-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/timekeeping-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
@@ -449,6 +458,7 @@ export interface FileRoutesById {
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   '/_private/admin/_dashboard/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
   '/_private/admin/_dashboard/payroll-management/data-summary/': typeof PrivateAdminDashboardPayrollManagementDataSummaryIndexRoute
+  '/_private/admin/_dashboard/staff-management/official-employee/': typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
@@ -493,6 +503,7 @@ export interface FileRouteTypes {
     | '/admin/timekeeping-shift-scheduling/'
     | '/admin/staff-management/detail/$id'
     | '/admin/payroll-management/data-summary/'
+    | '/admin/staff-management/official-employee/'
     | '/admin/timekeeping-shift-scheduling/explanation-management/'
     | '/admin/timekeeping-shift-scheduling/shift-management/'
     | '/admin/timekeeping-shift-scheduling/timekeeping-management/'
@@ -533,6 +544,7 @@ export interface FileRouteTypes {
     | '/admin/timekeeping-shift-scheduling'
     | '/admin/staff-management/detail/$id'
     | '/admin/payroll-management/data-summary'
+    | '/admin/staff-management/official-employee'
     | '/admin/timekeeping-shift-scheduling/explanation-management'
     | '/admin/timekeeping-shift-scheduling/shift-management'
     | '/admin/timekeeping-shift-scheduling/timekeeping-management'
@@ -577,6 +589,7 @@ export interface FileRouteTypes {
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/'
     | '/_private/admin/_dashboard/staff-management/detail/$id'
     | '/_private/admin/_dashboard/payroll-management/data-summary/'
+    | '/_private/admin/_dashboard/staff-management/official-employee/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/timekeeping-management/'
@@ -842,6 +855,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
+    '/_private/admin/_dashboard/staff-management/official-employee/': {
+      id: '/_private/admin/_dashboard/staff-management/official-employee/'
+      path: '/staff-management/official-employee'
+      fullPath: '/admin/staff-management/official-employee/'
+      preLoaderRoute: typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRouteImport
+      parentRoute: typeof PrivateAdminDashboardRoute
+    }
     '/_private/admin/_dashboard/payroll-management/data-summary/': {
       id: '/_private/admin/_dashboard/payroll-management/data-summary/'
       path: '/'
@@ -967,6 +987,7 @@ interface PrivateAdminDashboardRouteChildren {
   PrivateAdminDashboardStaffManagementIndexRoute: typeof PrivateAdminDashboardStaffManagementIndexRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   PrivateAdminDashboardStaffManagementDetailIdRoute: typeof PrivateAdminDashboardStaffManagementDetailIdRoute
+  PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute: typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingManagementIndexRoute
@@ -1013,6 +1034,8 @@ const PrivateAdminDashboardRouteChildren: PrivateAdminDashboardRouteChildren = {
     PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute,
   PrivateAdminDashboardStaffManagementDetailIdRoute:
     PrivateAdminDashboardStaffManagementDetailIdRoute,
+  PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute:
+    PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute,
   PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute:
     PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute,
   PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute:

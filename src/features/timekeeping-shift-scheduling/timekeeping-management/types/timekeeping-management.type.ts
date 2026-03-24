@@ -123,8 +123,9 @@ export interface DailyHourEntry {
 }
 
 export type ApprovePayload = {
-  name: string;
-  fromDate: string;
-  toDate: string;
-  standardWorkingDays: number;
+  // name: string;
+  // fromDate: string;
+  // toDate: string;
+  // standardWorkingDays: number;
+  month: string;
 };
