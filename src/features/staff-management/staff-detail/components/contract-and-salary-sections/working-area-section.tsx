@@ -12,6 +12,7 @@ import { departmentQueryOptions } from '@/services/query-options/department.quer
 import { roomQueryOptions } from '@/services/query-options/room.query';
 import { useQuery } from '@tanstack/react-query';
 import type { FC } from 'react';
+import { cn } from '@/lib/utils';
 
 export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bordered" | "faded" | "underlined" }> = ({ isView = false, variant = "flat" }) => {
     const { t } = useTranslation(['staff-management', 'common']);
@@ -69,7 +70,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                     label={t('working_area.department')}
                                     isRequired
                                     options={filteredDeptOptions}
-                                    disabled={isSubmitting || isView}
+                                    readOnly={isSubmitting || isView}
                                     variant={variant}
                                     onSelect={() => {
                                         resetField(`workingAreas.${index}.roomId`)
@@ -77,14 +78,14 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                 />
                             </div>
 
-                            <div className='w-1/2'>
+                            <div className={cn('flex-1', fields.length !== 1 ? 'max-w-[40%]' : 'max-w-[48%]')}>
                                 <FormSelect
                                     selectionMode='multiple'
                                     control={control}
                                     name={`workingAreas.${index}.roomId`}
                                     label={t('working_area.room')}
                                     options={filteredRoomOptions}
-                                    disabled={isSubmitting || !currentDeptId || isView}
+                                    readOnly={isSubmitting || !currentDeptId || isView}
                                     variant={variant}
                                 />
                             </div>
@@ -95,7 +96,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                 variant="light"
                                 // color="danger"
                                 size="sm"
-                                className="top-6"
+                                className="top-6 w-fit"
                                 onPress={() => remove(index)}
                                 isDisabled={isSubmitting || (fields.length === 1 && index === 0)}
                             >

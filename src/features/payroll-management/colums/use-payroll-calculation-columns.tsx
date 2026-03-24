@@ -1,13 +1,19 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
-import type { StaffSchedule } from '@/types';
 import type { ColumnDef } from '@/components/data-table/data-table';
+import { Button, Chip } from '@heroui/react';
+import { useNavigate } from '@tanstack/react-router';
+import type { StaffPayroll } from '../types/payroll-caculation.type';
+import { formatCurrency } from '@/lib/utils';
+import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 export const usePayrollCalculationColumns = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
+  const navigate = useNavigate()
 
-  const columns: ColumnDef<StaffSchedule>[] = [
+  const columns: ColumnDef<StaffPayroll>[] = [
     {
       key: 'stt',
       title: t('payrollCalculation.columns.stt'),
@@ -16,115 +22,110 @@ export const usePayrollCalculationColumns = () => {
       render: (_, __, index) => index + 1,
     },
     {
-      key: 'department',
+      key: 'departmentName', // Map từ departmentName
       title: t('payrollCalculation.columns.department'),
       width: 140,
-      // render: (_, record) => record.department,
+      render: (_, record) => <DepartmentRoomInfo departments={record.departments} rooms={record.rooms} />,
     },
     {
-      key: 'staffCode',
+      key: 'staffCode', // Giữ nguyên staffCode
       title: t('payrollCalculation.columns.staff_code'),
       width: 140,
-      // render: (_, record) => record.staffCode,
+      render: (_, record) => record.staffCode,
     },
     {
-      key: 'staffName',
+      key: 'staffName', // Giữ nguyên staffName
       title: t('payrollCalculation.columns.staff_name'),
       width: 160,
-      // render: (_, record) => record.staffName,
+      render: (_, record) => record.staffName,
     },
     {
-      key: 'jobTitle',
+      key: 'position', // Map từ position thay cho jobTitle
       title: t('payrollCalculation.columns.job_title'),
       width: 140,
-      // render: (_, record) => record.jobTitle,
+      render: (_, record) => tc(`options.staff_position.${record.position}` as any),
     },
     {
-      key: 'salaryTemplate',
+      key: 'confirmationStatus', // Map từ confirmationStatus thay cho salaryTemplate
       title: t('payrollCalculation.columns.salary_template'),
       width: 160,
-      // render: (_, record) => record.salaryTemplate,
+      render: (_, record) => record.confirmationStatus,
     },
     {
-      key: 'baseSalary',
+      key: 'basicSalary', // Map từ basicSalary
       title: t('payrollCalculation.columns.base_salary'),
       width: 130,
-      // render: (_, record) => record.baseSalary.toLocaleString('vi-VN'),
+      align: 'end',
+      render: (_, record) => record.basicSalary?.toLocaleString('vi-VN'),
     },
     {
-      key: 'totalGross',
+      key: 'totalGross', // Dùng netPay để hiển thị (hoặc tính toán nếu cần totalGross)
       title: t('payrollCalculation.columns.total_gross'),
       width: 130,
-      // render: (_, record) => record.totalGross.toLocaleString('vi-VN'),
+      align: 'end',
+      render: (_, record) => formatCurrency(record.totalGross),
     },
     {
-      key: 'totalPaidWorkingDays',
+      key: 'actualWorkDays', // Map từ actualWorkDays
       title: t('payrollCalculation.columns.total_paid_working_days'),
       width: 180,
       align: 'center',
-      // render: (_, record) => record.totalPaidWorkingDays,
+      render: (_, record) => record.actualWorkDays,
     },
     {
-      key: 'totalOvertimeHours',
+      key: 'overtimeHours', // Map từ overtimeHours
       title: t('payrollCalculation.columns.total_overtime_hours'),
       width: 200,
       align: 'center',
-      // render: (_, record) => record.totalOvertimeHours,
+      render: (_, record) => record.overtimeHours,
     },
     {
-      key: 'kpiCompletion',
-      title: t('payrollCalculation.columns.kpi_completion'),
-      width: 150,
-      align: 'center',
-      // render: (_, record) => `${record.kpiCompletion}%`,
-    },
-    {
-      key: 'allowance',
+      key: 'allowanceAmount', // Map từ allowanceAmount
       title: t('payrollCalculation.columns.allowance'),
       width: 120,
-      align: 'right',
-      // render: (_, record) => record.allowance.toLocaleString('vi-VN'),
+      align: 'end',
+      render: (_, record) => <span className='text-success'>+{record.allowanceAmount?.toLocaleString('vi-VN')}</span>,
     },
     {
-      key: 'bonus',
+      key: 'overtimeAmount', // Tạm map vào bonus nếu API không có trường bonus riêng
       title: t('payrollCalculation.columns.bonus'),
       width: 120,
-      align: 'right',
-      // render: (_, record) => record.bonus.toLocaleString('vi-VN'),
+      align: 'end',
+      render: (_, record) => <span className='text-primary'>+{record.overtimeAmount?.toLocaleString('vi-VN')}</span>,
     },
     {
-      key: 'deduction',
+      key: 'deductionAmount', // Map từ deductionAmount
       title: t('payrollCalculation.columns.deduction'),
       width: 120,
-      align: 'right',
-      // render: (_, record) => record.deduction.toLocaleString('vi-VN'),
+      align: 'end',
+      render: (_, record) => <span className='text-danger'>-{record.deductionAmount?.toLocaleString('vi-VN')}</span>,
     },
     {
-      key: 'netSalary',
+      key: 'netPay', // Map từ netPay
       title: t('payrollCalculation.columns.net_salary'),
       width: 140,
-      align: 'right',
-      // render: (_, record) => record.netSalary.toLocaleString('vi-VN'),
-    },
-    {
-      key: 'note',
-      title: t('payrollCalculation.columns.note'),
-      width: 160,
-      // render: (_, record) => record.note ?? '--',
+      align: 'end',
+      render: (_, record) => <span>{formatCurrency(record.netPay)}</span>,
     },
     {
       key: 'status',
       title: t('payrollCalculation.columns.status'),
-      width: 130,
+      width: 140,
       align: 'center',
-      // render: (_, record) => record.status,
+      render: (_, record) => <Chip color={record.confirmationStatus === 'APPROVED' ? 'success' : 'default'}>{record.confirmationStatus}</Chip>,
     },
     {
       key: 'action',
       title: t('payrollCalculation.columns.action'),
       width: 100,
       align: 'center',
-      render: () => null, // gắn action button tại đây
+      render: (_, record) => <Button
+        color="primary"
+        variant="bordered"
+        onPress={() => navigate({ to: `/admin/payroll-management/payroll-calculation/${record.payrollResultId}`, search: { staffId: record.staffId } })}
+      >
+        {t('attendance_data.viewDetail')}
+      </Button>,
     },
   ];
 

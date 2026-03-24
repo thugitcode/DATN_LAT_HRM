@@ -25,6 +25,7 @@ export interface OtherIncomePayload {
   entryPersonId: string;
   date: string;
   allowanceId: string;
+  attachments: { fileUrl: string; filePath: string; fileName: string; fileType: string; fileSize: number; }[];
 }
 
 export type OtherUpdate = {

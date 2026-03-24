@@ -9,6 +9,7 @@ import { PERSIST_WHITELIST } from './constants';
 import { idbPersister } from './idb-persister';
 import { logger } from './logger';
 import type { TFunction } from 'i18next';
+import type { SalaryData } from '@/features/payroll-management/types/payroll-caculation.type';
 
 export const DISABLE_AUTH = true;
 
@@ -525,3 +526,35 @@ export const getErrorMessage = (
   // fallback default
   return code;
 };
+
+export const formatCurrency = (
+  value: number,
+  currency: string = 'VND',
+  options?: Intl.NumberFormatOptions
+) => {
+  const locale = i18n.language || 'vi-VN';
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    ...options,
+  }).format(value);
+};
+
+export function calculateEmployerContributions(data: SalaryData) {
+  const base = data.insuranceBaseSalary;
+  return {
+    socialInsurance: Math.round(base * 0.175), // 17.5%
+    healthInsurance: Math.round(base * 0.03), // 3%
+    unemploymentInsurance: Math.round(base * 0.01), // 1%
+    unionFee: Math.round(base * 0.02), // 2%
+    get total() {
+      return (
+        this.socialInsurance +
+        this.healthInsurance +
+        this.unemploymentInsurance +
+        this.unionFee
+      );
+    },
+  };
+}

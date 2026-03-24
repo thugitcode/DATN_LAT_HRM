@@ -38,22 +38,22 @@ export const useBusinessTripColumns = () => {
     },
     {
       key: 'requestType',
-      title: t('columns.overtimeType'),
+      title: t('columns.businessTripType'),
       minWidth: 160,
       render: (_, row) => <span>{RequestAttendanceTypeLabel?.[row?.requestType] || '-'}</span>,
     },
-    {
-      key: 'fromDate',
-      title: t('columns.overtimeDate'),
-      minWidth: 140,
-      render: (_, row) => <span>{row.fromDate ? toDDMMYYYY(row.fromDate) : '-'}</span>,
-    },
-    {
-      key: 'toDate',
-      title: t('columns.trainingDate'),
-      minWidth: 140,
-      render: (_, row) => <span>{row.toDate ? toDDMMYYYY(row.toDate) : '-'}</span>,
-    },
+    // {
+    //   key: 'fromDate',
+    //   title: t('columns.overtimeDate'),
+    //   minWidth: 140,
+    //   render: (_, row) => <span>{row.fromDate ? toDDMMYYYY(row.fromDate) : '-'}</span>,
+    // },
+    // {
+    //   key: 'toDate',
+    //   title: t('columns.trainingDate'),
+    //   minWidth: 140,
+    //   render: (_, row) => <span>{row.toDate ? toDDMMYYYY(row.toDate) : '-'}</span>,
+    // },
     {
       key: 'startTime',
       title: t('columns.startTime'),
@@ -74,7 +74,7 @@ export const useBusinessTripColumns = () => {
     },
     {
       key: 'location',
-      title: t('columns.trainingLocation'),
+      title: t('columns.businessTripLocation'),
       minWidth: 180,
       render: (_, row) => <span>{row.location || '-'}</span>,
     },

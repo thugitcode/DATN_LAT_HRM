@@ -17,7 +17,7 @@ import { PayrollManagementFilters } from '../components/payroll-management-filte
 import { statusRevenueOptions } from '../constants/constants';
 import { useRevenueList } from '../hooks/use-revenue-management';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-380px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-340px)]' } as const;
 
 export const RevenueData = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);

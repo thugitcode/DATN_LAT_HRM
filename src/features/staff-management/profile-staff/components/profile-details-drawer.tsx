@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormArea } from '@/components/form-fields/form-area';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
-import { FileUploadInput } from '@/components/form-fields/form-file-upload-input';
+import { FormFileUploadInput } from '@/components/form-fields/form-file-upload-input';
 import { FormInput } from '@/components/form-fields/form-input';
 import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import z from 'zod';
 import { useCreateStaffProfile, useStaffProfileDetail, useUpdateStaffProfile } from '../../salary-and-benefits/hooks/use-staff-profile';
@@ -236,24 +236,14 @@ export const ProfileDetailsDrawer = () => {
             />
 
             {/* File Upload Section */}
-            <div className="w-full flex flex-col gap-2">
-              <label className="text-sm font-medium text-[#52525B]">
-                {t('profileDetails.labels.attachments')} <span className="text-danger">*</span>
-              </label>
-
-              <Controller
-                control={control}
-                name={`documents.${index}.files`}
-                render={({ field: fileField, fieldState }) => (
-                  <FileUploadInput
-                    multiple={false}
-                    selectedFiles={fileField.value || []}
-                    onFilesSelect={(files) => files ? handleFilesSelect(index, files) : handleFilesSelect(index, [])}
-                    error={fieldState.error?.message}
-                  />
-                )}
-              />
-            </div>
+            <FormFileUploadInput
+              control={control}
+              name={`documents.${index}.files`}
+              label={t('profileDetails.labels.attachments')}
+              isRequired
+              multiple={false}
+              onFilesSelect={(files) => handleFilesSelect(index, files || [])}
+            />
           </div>
         ))}
 

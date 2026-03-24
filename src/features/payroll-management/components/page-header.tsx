@@ -1,0 +1,88 @@
+import { StaffAvatar } from "@/features/timekeeping-shift-scheduling/components/staff-avatar";
+import { useAttendanceTable } from "@/features/timekeeping-shift-scheduling/timekeeping-management/hooks/use-timekeeping-management";
+import type { StaffTimeKeeping } from "@/features/timekeeping-shift-scheduling/timekeeping-management/types/timekeeping-management.type";
+import { NAMESPACES } from "@/i18n/constants";
+import { useDrawer } from "@/store/useDrawer";
+import { Button, Chip } from "@heroui/react";
+import { IconArrowLeft, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+
+export const PageHeader = ({ currentStaff, setCurrentStaff, handleBack }: { currentStaff: StaffTimeKeeping | undefined, setCurrentStaff: (staff: StaffTimeKeeping) => void, handleBack?: () => void }) => {
+    const { t } = useTranslation(NAMESPACES.COMMON);
+    const { data: staffId } = useDrawer();
+    const { data: listStaff, isLoading: loadingList } = useAttendanceTable({ getAll: true });
+    // Khởi tạo staff hiện tại
+    useEffect(() => {
+        const staff = listStaff?.data?.find((ite) => ite.staff.id === staffId)?.staff;
+        staff && setCurrentStaff(staff);
+    }, [listStaff?.data]);
+    const currentIndex = useMemo(
+        () => listStaff?.data?.findIndex((it) => it.staff.id === currentStaff?.id) ?? 0,
+        [listStaff, currentStaff],
+    );
+    const handleNext = () => {
+        const nextStaff = listStaff?.data?.[currentIndex + 1]?.staff;
+        if (nextStaff) {
+            setCurrentStaff(nextStaff);
+        }
+    };
+
+    const handlePrev = () => {
+        const prevStaff = listStaff?.data?.[currentIndex - 1]?.staff;
+        if (prevStaff) {
+            setCurrentStaff(prevStaff);
+        }
+    };
+    return (<div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+                {handleBack && <Button className="rounded-full" isIconOnly onPress={handleBack}>
+                    <IconArrowLeft color="#52525B" />
+                </Button>}
+                <StaffAvatar avatarUrl={currentStaff?.avatar} name={currentStaff?.name} />
+                <div>
+                    <div className="flex items-center gap-2">
+                        <h1 className="text-xl font-bold text-[#11181C]">{currentStaff?.name}</h1>
+                        <Chip
+                            size="sm"
+                            color={currentStaff?.status === 'WORKING' ? 'success' : 'danger'}
+                            variant="flat"
+                            className="h-5"
+                        >
+                            {currentStaff?.status === 'WORKING' ? t('status.working') : t('status.off')}
+                        </Chip>
+                    </div>
+                    <p className="text-sm text-[#71717A] mt-0.5">{currentStaff?.code}</p>
+                </div>
+            </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+            <div className="flex gap-2">
+                <Button
+                    isIconOnly
+                    className="bg-white"
+                    radius="full"
+                    onPress={handlePrev}
+                    isDisabled={currentIndex === 0}
+                >
+                    <IconChevronLeft size={20} />
+                </Button>
+
+                <Button
+                    isIconOnly
+                    className="bg-white"
+                    radius="full"
+                    onPress={handleNext}
+                    isDisabled={currentIndex === (listStaff?.data?.length ?? 0) - 1}
+                >
+                    <IconChevronRight size={20} />
+                </Button>
+            </div>
+            <span className="text-sm font-medium">
+                {currentIndex + 1} / {listStaff?.pagination?.total || 0} {t('staff')}
+            </span>
+        </div>
+    </div>)
+}

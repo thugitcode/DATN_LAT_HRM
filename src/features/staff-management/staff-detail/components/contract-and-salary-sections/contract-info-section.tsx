@@ -28,7 +28,7 @@ export const ContractInfoSection: FC = () => {
   const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
   const { options: departmentOptions } = useDepartmentOptions();
-  const selectedDepts = watch("departmentIds");
+  const selectedDepts = watch("managedDepartmentId");
   const { options: roomOptions } = useRoomOptions(selectedDepts);
 
   const { data: managersRes } = useStaffList({
