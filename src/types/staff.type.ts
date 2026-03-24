@@ -254,7 +254,7 @@ export interface Staff {
   jobTitle?: StaffJobTitleEnum;
   position?: StaffPosition;
   currentWorkType?: string;
-  workType?: string;
+  workType?: WorkingTypeTypeEnum;
   contractExpiryDate?: string;
   endDate?: string;
   status?: Status;

@@ -7,7 +7,8 @@ import { routeTree } from './routeTree.gen';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
-    onError: (error) => {
+    onError: (error, query) => {
+      if (query.meta?.silentError) return;
       addToast({
         title: 'Có lỗi xảy ra',
         description: error.message,
@@ -24,22 +25,23 @@ const queryClient = new QueryClient({
       refetchOnMount: true,
       refetchOnReconnect: true,
 
-      retry: (failureCount, error) => {
-        if (error instanceof Error) {
-          const message = error.message.toLowerCase();
-          if (
-            message.includes('unauthorized') ||
-            message.includes('forbidden') ||
-            message.includes('not found') ||
-            message.includes('không có quyền') ||
-            message.includes('đăng nhập')
-          ) {
-            return false;
-          }
-        }
+      // Đéo cần cái này
+      // retry: (failureCount, error) => {
+      //   if (error instanceof Error) {
+      //     const message = error.message.toLowerCase();
+      //     if (
+      //       message.includes('unauthorized') ||
+      //       message.includes('forbidden') ||
+      //       message.includes('not found') ||
+      //       message.includes('không có quyền') ||
+      //       message.includes('đăng nhập')
+      //     ) {
+      //       return false;
+      //     }
+      //   }
 
-        return failureCount < 3;
-      },
+      //   return failureCount < 3;
+      // },
 
       retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
 

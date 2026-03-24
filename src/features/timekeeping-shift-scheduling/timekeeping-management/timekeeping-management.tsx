@@ -1,18 +1,8 @@
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  Tab,
-  Tabs,
-  useDisclosure,
-} from '@heroui/react';
-import { IconSparkles } from '@tabler/icons-react';
+import { Tab, Tabs } from '@heroui/react';
 
 import { ActionsPage } from '@/components/actions-page';
 import { TitlePage } from '@/components/title-page';
+import { usePayrollPeridStatus } from '@/features/payroll-management/hooks/use-payroll-management';
 
 import { PageFilter } from '../components/page-filter';
 import { useCurrentLayout } from '../hooks/use-current-layout';
@@ -35,7 +25,6 @@ export const TimekeepingManagement = () => {
   const tabData = useTimekeepingTabData(activeKey);
   const tabLegendMap = getTabLegendMap(t);
 
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { onExport } = useTimekeepingExport(activeKey, tabData);
   const { onPrint, printState, printRef, year, month, departmentName } = useTimekeepingPrint(
     activeKey,
@@ -78,48 +67,6 @@ export const TimekeepingManagement = () => {
         showStatus={activeKey !== TAB_KEYS.HOURLY_PAYROLL}
         legendItems={tabLegendMap[activeKey]}
       />
-
-      <Modal
-        isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        placement="center"
-        backdrop="blur"
-        size="md"
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col items-center gap-2">
-                <div className="bg-primary/10 text-primary p-3 rounded-full">
-                  <IconSparkles size={28} />
-                </div>
-                <h2 className="text-xl font-bold text-center">
-                  {t('timekeeping_management.coming_soon.title')}
-                </h2>
-              </ModalHeader>
-
-              <ModalBody>
-                <p className="text-center text-default-600">
-                  Chúng tôi đang nỗ lực để hoàn thành tính năng này.
-                  <br />
-                  Vui lòng chờ bản cập nhật sắp tới!
-                </p>
-              </ModalBody>
-
-              <ModalFooter className="flex justify-center">
-                <Button
-                  color="primary"
-                  variant="flat"
-                  className="px-6 font-semibold"
-                  onPress={onClose}
-                >
-                  Đã hiểu
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
 
       <div className="hidden">
         <TimekeepingManagementPrint

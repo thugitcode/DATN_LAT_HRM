@@ -1,10 +1,10 @@
+import { useMemo } from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
 import { ContractTypeEnum } from '@/types/staff.type';
 import { StaffList } from '@/features/staff-management/staff-list-management/staff-list';
-import { useMemo } from 'react';
 
 export const Route = createFileRoute('/_private/admin/_dashboard/staff-management/$type')({
   component: StaffManagementRoute,

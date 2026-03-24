@@ -88,6 +88,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const resignedCount = (response?.metadata?.RESIGNED as number) || 0;
   const { exportStaff, onExportStaffTemplate } = useStaffExport(staffData);
   const { setMode } = useControlMode();
+
   const handleViewDetail = (id: string) => {
     setMode(ControlMode.edit);
     navigate({

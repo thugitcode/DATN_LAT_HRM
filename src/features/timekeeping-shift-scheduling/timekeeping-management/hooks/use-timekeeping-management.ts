@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { payrollPerriodsService } from '@/services/payroll-management/payroll-periods.service';
 import { configurationQueryOptions } from '@/services/query-options/configuration.query';
+import { payrollPeriodsKeys } from '@/services/query-options/payroll-management/payroll-periods.query';
 import {
   timekeepingManagementKeys,
   timekeepingManagementQueryOptions,
@@ -51,24 +52,20 @@ export function useUpdateAttendanceMutation() {
   });
 }
 
-export function useCraetePeriodsMutation() {
+export function useCraetePeriodsMutation(month: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (payload: ApprovePayload) => payrollPerriodsService.create(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: timekeepingManagementKeys.all,
+        queryKey: payrollPeriodsKeys.status(month),
       });
 
       addToast({
         description: 'Duyệt bảng công thành công.',
         color: 'success',
       });
-    },
-
-    onError: (error) => {
-      console.error('Update failed', error);
     },
   });
 }

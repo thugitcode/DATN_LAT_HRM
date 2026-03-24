@@ -45,7 +45,7 @@ export const FilterSelect: React.FC<FilterSelectProps> = ({
       onSelectionChange={handleSelectionChange}
       className={className}
       classNames={{
-        trigger: 'bg-white border-none shadow-none !rounded-[12px] px-3 h-10 min-h-10',
+        trigger: 'bg-white border-none shadow-none !rounded-[12px] px-3 h-9 min-h-9',
         value: 'text-black',
         label: 'text-black',
         popoverContent: 'bg-white rounded-[12px]',

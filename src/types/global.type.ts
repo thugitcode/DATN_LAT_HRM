@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import type { LinkProps } from '@tanstack/react-router';
 
+import type { ContractTypeEnum, StaffPositionEnum } from './staff.type';
+
 export type GlobalSearchParams = {
   jwt?: string | null;
 };
@@ -69,6 +71,12 @@ export interface RequestsParams {
   getAll?: boolean;
   fromDate?: string;
   toDate?: string;
+
+  jobTitle?: string;
+  positions?: StaffPositionEnum[];
+  departmentIds?: string[];
+  roomIds?: string[];
+  contractType?: ContractTypeEnum;
 
   [key: string]: unknown;
 }

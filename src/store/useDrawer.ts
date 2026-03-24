@@ -10,6 +10,7 @@ export enum DrawerType {
   CREATE_KPI = 'CREATE_KPI',
   REVENUE_DETAILS = 'REVENUE_DETAILS',
   CREATE_OTHER_INCOME = 'CREATE_OTHER_INCOME',
+  STAFF_MUTATE = 'STAFF_MUTATE',
 }
 
 interface DrawerState {

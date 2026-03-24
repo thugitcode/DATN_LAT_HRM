@@ -1,60 +1,93 @@
-import React from 'react';
+import { type FC, type ReactNode } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { Button, Chip } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
-import { DataTable, type ColumnDef } from '@/components/data-table/data-table';
+import { LayoutSwitcherEnum } from '@/types/global.type';
+import { cn } from '@/lib/utils';
+import { ActionsPage } from '@/components/actions-page';
 import { PageContainer } from '@/components/page-container';
-import type { PaginationConfig } from '@/components/table/types';
 import { TitlePage } from '@/components/title-page';
-import { OtherRequestManagementFilters } from '@/features/other-requests-management/components/other-request-management-filter';
+import { useCurrentLayout } from '@/features/timekeeping-shift-scheduling/hooks/use-current-layout';
 
-export interface StaffManagementPageProps<TData extends object> {
+import { StaffManagementFilters } from './staff-management-fitlers';
+
+export interface StaffManagementPageProps {
   title: string;
-  columns: ColumnDef<TData>[];
-  data: TData[];
-  isLoading: boolean;
-  pagination: PaginationConfig;
   onExport: () => void;
   onPrint: () => void;
-  visibleColumns: Set<string>;
-  onApplyColumns: (visibleKeys: Set<string>, saveAsDefault: boolean) => void;
-  printContent: React.ReactNode;
+  printContent: ReactNode;
+  listLayout: ReactNode;
+  gribLayout: ReactNode;
+
+  workingCount: number;
+  resignedCount: number;
 }
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-300px)]' } as const;
-
-export const StaffManagementPage = <TData extends object>({
-  columns,
-  data,
-  isLoading,
-  onApplyColumns,
+export const StaffManagementPage: FC<StaffManagementPageProps> = ({
   onExport,
   onPrint,
-  pagination,
   printContent,
   title,
-  visibleColumns,
-}: StaffManagementPageProps<TData>) => {
-  return (
-    <PageContainer className="space-y-3.75">
-      <div className="flex items-center justify-between">
-        <TitlePage title={title} />
-        <div className="flex items-center gap-2">
-          {/* <ActionsPage onPrint={onPrint} onExport={onExport} hiddenLayoutSwitcher /> */}
+  listLayout,
+  gribLayout,
+  resignedCount,
+  workingCount,
+}) => {
+  const currentLayout = useCurrentLayout();
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
 
-          <div>Action page</div>
+  const open = useDrawer((state) => state.onOpen);
+
+  return (
+    <PageContainer className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <TitlePage title={title} />
+          <div className="flex items-center gap-2">
+            <Chip
+              size="md"
+              variant="bordered"
+              classNames={{ content: '!leading-5 text-sm', base: 'py-1 px-2' }}
+              startContent={
+                <span className="w-1.5 h-1.5 rounded-full p-1 bg-[#17C964] mr-1"></span>
+              }
+            >
+              {t('options.staff_status.WORKING')}: {workingCount}
+            </Chip>
+            <Chip
+              size="md"
+              variant="bordered"
+              classNames={{ content: '!leading-5 text-sm', base: 'py-1 px-2' }}
+              startContent={<span className="w-1.5 h-1.5 rounded-full bg-[#71717A] mr-1"></span>}
+            >
+              {t('off')}: {resignedCount}
+            </Chip>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <ActionsPage
+            onPrint={onPrint}
+            onExport={onExport}
+            // onImport={() => fileInputRef.current?.click()}
+            actions={
+              <div className="flex gap-3">
+                <Button color="primary" onPress={() => open(DrawerType.CREATE_KPI)}>
+                  {t('button.add_staff')}
+                </Button>
+              </div>
+            }
+          />
         </div>
       </div>
 
-      <div>Staff</div>
+      <StaffManagementFilters />
 
-      <DataTable
-        dataSource={data}
-        columns={columns}
-        selectionMode="single"
-        loading={isLoading}
-        classNames={TABLE_CLASS_NAMES}
-        visibleColumns={visibleColumns}
-        pagination={pagination}
-      />
+      <div className={cn(currentLayout === LayoutSwitcherEnum.LIST && '')}>
+        {currentLayout === LayoutSwitcherEnum.LIST ? listLayout : gribLayout}
+      </div>
 
       <div className="hidden">{printContent}</div>
     </PageContainer>
