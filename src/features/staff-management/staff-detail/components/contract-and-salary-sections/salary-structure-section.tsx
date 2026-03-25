@@ -1,22 +1,24 @@
 // sections/SalaryStructureSection.tsx
-import type { FC } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { IconCurrencyDollar, IconMoneybag } from '@tabler/icons-react';
+import { FormLabel } from '@/components/form-fields/form-label';
+import { FormNumberInput } from '@/components/form-fields/form-number-input';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { NAMESPACES } from '@/i18n/constants';
+import { icons } from '@/lib/icons';
 import {
-    Dropdown,
-    DropdownTrigger,
-    DropdownMenu,
-    DropdownItem,
     Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
 } from '@heroui/react';
 import { IconChevronDown } from '@tabler/icons-react';
-import { FormNumberInput } from '@/components/form-fields/form-number-input';
-import { FormLabel } from '@/components/form-fields/form-label';
-import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
-import { icons } from '@/lib/icons';
+import type { FC } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 
 export const SalaryStructureSection: FC = () => {
+    const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { control, setValue, formState: { isSubmitting, errors }, getValues } = useFormContext();
     const { isView } = useControlMode()
     const variant = isView ? "underlined" : "flat"
@@ -26,7 +28,7 @@ export const SalaryStructureSection: FC = () => {
         <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
             <div className="flex items-center gap-2 mb-2">
                 {icons.moneyBag}
-                <h3 className="text-[15px] font-bold text-[#11181C]">Cấu trúc lương</h3>
+                <h3 className="text-[15px] font-bold text-[#11181C]">{t('salary_benefits.sections.salary_structure')}</h3>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -34,24 +36,26 @@ export const SalaryStructureSection: FC = () => {
                 <FormNumberInput
                     control={control}
                     name="salary.basicSalary"
-                    label="Lương cơ bản"
-                    placeholder="Nhập lương cơ bản"
+                    label={t('salary_benefits.basic_salary')}
+                    placeholder={t('salary_benefits.placeholders.enter_basic')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     isRequired
                     disabled={isSubmitting || isView}
                     variant={variant}
                     allowNegative={false}
+                    decimalScale={0}
                 />
 
                 {/* Lương đóng BHXH - optional */}
                 <FormNumberInput
                     control={control}
                     name="salary.insuranceSalary"
-                    label="Lương đóng BHXH"
-                    placeholder="Nhập lương đóng BHXH"
+                    label={t('salary_benefits.insurance_salary')}
+                    placeholder={t('salary_benefits.placeholders.enter_insurance')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
                     allowNegative={false}
+                    decimalScale={0}
                     variant={variant}
                 />
 
@@ -59,11 +63,12 @@ export const SalaryStructureSection: FC = () => {
                 <FormNumberInput
                     control={control}
                     name="salary.responsibilityAllowance"
-                    label="Phụ cấp trách nhiệm"
-                    placeholder="Nhập"
+                    label={t('salary_benefits.responsibility_allowance')}
+                    placeholder={t('salary_benefits.placeholders.enter')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
                     allowNegative={false}
+                    decimalScale={0}
                     variant={variant}
                 />
 
@@ -71,11 +76,12 @@ export const SalaryStructureSection: FC = () => {
                 <FormNumberInput
                     control={control}
                     name="salary.positionAllowance"
-                    label="Phụ cấp chức vụ"
-                    placeholder="Nhập"
+                    label={t('salary_benefits.position_allowance')}
+                    placeholder={t('salary_benefits.placeholders.enter')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
                     allowNegative={false}
+                    decimalScale={0}
                     variant={variant}
                 />
 
@@ -83,27 +89,28 @@ export const SalaryStructureSection: FC = () => {
                 <FormNumberInput
                     control={control}
                     name="salary.hazardAllowance"
-                    label="Phụ cấp độc hại, nguy hiểm"
-                    placeholder="Nhập"
+                    label={t('salary_benefits.hazard_allowance')}
+                    placeholder={t('salary_benefits.placeholders.enter')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
                     allowNegative={false}
+                    decimalScale={0}
                     variant={variant}
                 />
 
                 {/* Phụ cấp ăn ca - có dropdown đơn vị */}
                 <div className="flex flex-col gap-2">
-                    <FormLabel label={"Phụ cấp ăn ca"} isRequired={true} isError={errors?.salary?.hasOwnProperty('mealAllowance')} />
+                    <FormLabel label={t('salary_benefits.meal_allowance')} isError={errors?.salary?.hasOwnProperty('mealAllowance')} />
 
                     <div className="relative">
                         <FormNumberInput
                             control={control}
                             name="salary.mealAllowance"
-                            placeholder="Nhập"
-                            isRequired
+                            placeholder={t('salary_benefits.placeholders.enter')}
+                            decimalScale={0}
                             variant={variant}
                             endContent={
-                                isView ? <span className='text-[#a1a1aa] text-sm'>{mealAllowanceUnit === 'DAY' ? 'Ngày' : 'Tháng'}</span> : <div className="flex items-center gap-2">
+                                isView ? <span className='text-[#a1a1aa] text-sm'>{mealAllowanceUnit === 'DAY' ? t('salary_benefits.units.day') : t('salary_benefits.units.month')}</span> : <div className="flex items-center gap-2">
                                     <span className="text-[#a1a1aa] text-sm">VNĐ</span>
                                     <Dropdown>
                                         <DropdownTrigger>
@@ -114,7 +121,7 @@ export const SalaryStructureSection: FC = () => {
                                                 endContent={<IconChevronDown size={14} />}
                                                 isDisabled={isSubmitting}
                                             >
-                                                {mealAllowanceUnit === 'DAY' ? 'Ngày' : 'Tháng'}
+                                                {mealAllowanceUnit === 'DAY' ? t('salary_benefits.units.day') : t('salary_benefits.units.month')}
                                             </Button>
                                         </DropdownTrigger>
                                         <DropdownMenu
@@ -126,8 +133,8 @@ export const SalaryStructureSection: FC = () => {
                                                 setValue('salary.mealAllowanceUnit', unit);
                                             }}
                                         >
-                                            <DropdownItem key="DAY">Ngày</DropdownItem>
-                                            <DropdownItem key="MONTH">Tháng</DropdownItem>
+                                            <DropdownItem key="DAY">{t('salary_benefits.units.day')}</DropdownItem>
+                                            <DropdownItem key="MONTH">{t('salary_benefits.units.month')}</DropdownItem>
                                         </DropdownMenu>
                                     </Dropdown>
                                 </div>
@@ -142,11 +149,12 @@ export const SalaryStructureSection: FC = () => {
                 <FormNumberInput
                     control={control}
                     name="salary.fuelAllowance"
-                    label="Phụ cấp xăng xe"
-                    placeholder="Nhập"
+                    label={t('salary_benefits.fuel_allowance')}
+                    placeholder={t('salary_benefits.placeholders.enter')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
                     allowNegative={false}
+                    decimalScale={0}
                     variant={variant}
                 />
 
@@ -154,11 +162,12 @@ export const SalaryStructureSection: FC = () => {
                 <FormNumberInput
                     control={control}
                     name="salary.phoneAllowance"
-                    label="Phụ cấp điện thoại"
-                    placeholder="Nhập"
+                    label={t('salary_benefits.phone_allowance')}
+                    placeholder={t('salary_benefits.placeholders.enter')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
                     allowNegative={false}
+                    decimalScale={0}
                     variant={variant}
                 />
 
@@ -166,11 +175,12 @@ export const SalaryStructureSection: FC = () => {
                 <FormNumberInput
                     control={control}
                     name="salary.businessTripAllowance"
-                    label="Phụ cấp công tác"
-                    placeholder="Nhập"
+                    label={t('salary_benefits.business_trip_allowance')}
+                    placeholder={t('salary_benefits.placeholders.enter')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
                     allowNegative={false}
+                    decimalScale={0}
                     variant={variant}
                 />
 
@@ -178,11 +188,12 @@ export const SalaryStructureSection: FC = () => {
                 <FormNumberInput
                     control={control}
                     name="salary.otherAllowance"
-                    label="Phụ cấp khác"
-                    placeholder="Nhập"
+                    label={t('salary_benefits.other_allowance')}
+                    placeholder={t('salary_benefits.placeholders.enter')}
                     endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>}
                     disabled={isSubmitting || isView}
                     allowNegative={false}
+                    decimalScale={0}
                     variant={variant}
                 />
             </div>

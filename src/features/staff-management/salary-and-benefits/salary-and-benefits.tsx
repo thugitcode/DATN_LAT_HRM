@@ -17,11 +17,14 @@ import { useParams } from "@tanstack/react-router"
 import { calculateSalary, mapApiToFormValues } from "./helpers"
 import StaffContractEmptyState from "../staff-detail/components/staff-contract-empty-state"
 import { LoadingWrapper } from "@/components/loading-wrapper"
+import { BtnSave } from "@/components/btn-save"
+import { NAMESPACES } from "@/i18n/constants"
+import { useTranslation } from "react-i18next"
 
 export const SalaryAndBenefits = () => {
     const { id } = useParams({ strict: false })
     const { mode, setMode } = useControlMode()
-
+    const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
     const { mutate, isPending, isError } = usePatchDetailsStaffSalary();
     const { data, isLoading, refetch } = useSalaryDetailsQuery(id)
 
@@ -90,74 +93,79 @@ export const SalaryAndBenefits = () => {
         setValue("salary.netSalary", result?.netSalary?.toString());
     }, [salaryInputs]);
 
-    const onSubmit = handleSubmit(async (data) => {
-        // Gọi API update ở đây
+    const onSubmit = handleSubmit(async (formData) => {
         if (!id) return addToast({
-            description: 'Không tìm thấy id nhân viên',
+            description: t('salary_benefits.staff_not_found'),
             color: 'warning',
         });
+
         mutate(
-            { id: id, payload: data },
+            { id, payload: formData },
             {
                 onSuccess: () => {
                     addToast({
-                        description: 'Cập nhật thông tin lương và phúc lợi thành công!',
+                        description: t('salary_benefits.update_success'),
                         color: 'success',
                     });
-                    refetch()
-
+                    setMode(ControlMode.view); // Tự động về mode view sau khi lưu
+                    refetch();
                 },
                 onError: (error) => {
-                    console.error('Có lỗi xảy ra:', error);
+                    console.error('Error updating salary:', error);
                     addToast({
-                        description: 'Có lỗi xảy ra, vui lòng thử lại!',
+                        description: t('salary_benefits.update_error'),
                         color: 'danger',
                     });
                 },
             }
         );
-
-    })
+    });
 
     if (isLoading) {
-        return <div className="h-[50vh] flex items-center justify-center">
-            <LoadingWrapper isLoading={isLoading} ><div></div></LoadingWrapper>
-        </div>
+        return (
+            <div className="h-[50vh] flex items-center justify-center">
+                <LoadingWrapper isLoading={isLoading}><div></div></LoadingWrapper>
+            </div>
+        )
     }
+
     if (!data?.data && id) {
-        return (<StaffContractEmptyState staffId={id} />)
+        return <StaffContractEmptyState staffId={id} />
     }
     return (
         <FormProvider {...methods}>
-            <Form
-                onSubmit={() => onSubmit()}
-                className="flex flex-col gap-4"
-            >
-                <div className="flex justify-between">
-                    <TitlePage title="Lương và phúc lợi" />
-                    {mode === ControlMode.view ? <Button variant="bordered" color="primary" startContent={<icons.edit stroke="#006FEE" width="20px" height={"20px"} color="primary" />} onPress={() => setMode(ControlMode.edit)}>Chỉnh sửa</Button> : <div className="flex gap-2">
-                        <BtnCancel isDisabled={isSubmitting} onPress={() => setMode(ControlMode.view)} />
+            <Form onSubmit={() => onSubmit()} className="flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                    <TitlePage title={t('salary_benefits.title')} />
+
+                    {mode === ControlMode.view ? (
                         <Button
-                            type="submit"
+                            variant="bordered"
                             color="primary"
-                        // onClick={onSubmit}
-                        // isLoading={isSubmitting}
+                            startContent={<icons.edit width="20px" height="20px" stroke="#006FEE" />}
+                            onPress={() => setMode(ControlMode.edit)}
                         >
-                            Lưu lại
+                            {t('salary_benefits.edit')}
                         </Button>
-                    </div>}
+                    ) : (
+                        <div className="flex gap-2">
+                            <BtnCancel
+                                isDisabled={isPending}
+                                onPress={() => setMode(ControlMode.view)}
+                            />
+                            <BtnSave isLoading={isPending} />
+                        </div>
+                    )}
                 </div>
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full"
-                >
+
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
                     <div className="flex flex-col gap-6 pb-18">
                         <SalaryInfoSection />
                         <SalaryStructureSection />
                         <PersonalIncomeTaxSection />
-                        {/* Sau này thêm: WorkingAreaSection, InsuranceSection, ... */}
                     </div>
 
                     <div className="flex flex-col gap-6">
-                        {/* Các section bên phải sẽ thêm sau */}
                         <InsuranceAndUnionSection />
                         <LeaveBenefitsSection />
                     </div>

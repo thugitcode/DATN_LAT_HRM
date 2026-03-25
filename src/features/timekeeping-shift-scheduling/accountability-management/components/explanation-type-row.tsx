@@ -1,14 +1,17 @@
 import type { FC } from 'react';
+import type { AttendanceExplanationType } from '@/types/attendance-explanation.type';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 export const ExplanationTypeRow: FC<
-  Readonly<{ label: string; count: number; maxCount: number }>
-> = ({ label, count, maxCount }) => {
+  Readonly<{ count: number; maxCount: number, explanationType: AttendanceExplanationType }>
+> = ({ count, maxCount, explanationType }) => {
   const percentage = maxCount > 0 ? Math.min((count / maxCount) * 100, 100) : 0;
-
+  const { t } = useTranslation(NAMESPACES.COMMON)
   return (
     <div className="flex items-center gap-2 min-w-0 w-full">
-      <span className="text-sm text-[#11181C] truncate flex-1 min-w-0" title={label}>
-        {label}
+      <span className="text-sm text-[#11181C] truncate flex-1 min-w-0" title={t(`explanation_types.${explanationType}`)}>
+        {t(`explanation_types.${explanationType}`)}
       </span>
       <div className="relative h-2 w-16 rounded-full bg-[#E4E4E7] shrink-0">
         <div

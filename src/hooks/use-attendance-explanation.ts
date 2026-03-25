@@ -86,7 +86,7 @@ export const useUpdateAttendanceExplanation = () => {
 
   return useMutation({
     mutationFn: async ({ id, ...body }: Partial<AttendanceExplanation>) => {
-      const res = await hrmInstance.post<ApiResponse<boolean>>(
+      const res = await hrmInstance.patch<ApiResponse<boolean>>(
         `/attendance-explanation/${id}`,
         { ...body },
       );

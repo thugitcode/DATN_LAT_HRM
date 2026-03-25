@@ -1,10 +1,10 @@
 import type { TFunction } from "i18next";
 import z from "zod";
 
-const normalizeString = (v: unknown) => (v === null || v === undefined ? "" : v);
+export const normalizeString = (v: unknown) => (v === null || v === undefined ? "" : String(v));
 
 // required string
-const requiredString = (message: string) =>
+export const requiredString = (message: string) =>
     z.preprocess(normalizeString, z.string().min(1, message));
 
 // optional string
@@ -29,13 +29,7 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
     z.object({
 
         // --- Ảnh ---
-        // avatar: z
-        //     .any()
-        //     .optional()
-        //     .refine(
-        //         (file) => !file || file.size <= 15 * 1024 * 1024,
-        //         t("errors.avatar.maxSize"),
-        //     ),
+        avatar: optionalString(),
 
         // --- Thông tin nhân sự ---
         code: z.string().optional(),
@@ -70,7 +64,7 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
         nationality: optionalString(),
         address: optionalString(),
 
-        identityIssueDate: optionalString().refine(
+        identityIssueDate: optionalString().nullable().refine(
             (val) => !val || new Date(val) <= new Date(),
             t("errors.identityIssueDate.future"),
         ),
@@ -96,7 +90,8 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
 
         emergencyContactAddress: optionalString(),
         emergencyContactRelationship: optionalString(),
-
+        managedRoomId: requiredString('Vui lòng chọn phòng quản lý'),
+        managedDepartmentId: requiredString('Vui lòng chọn khoa quản lý'),
         // --- Bằng cấp ---
         qualification: requiredString(t("errors.qualification.required")),
 
@@ -128,8 +123,6 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
                 (areas) => areas.every((area) => area.departmentId), // đảm bảo departmentId không rỗng
                 { message: 'Khoa làm việc không được để trống' }
             ),
-        managedDepartmentId: optionalString(),
-        managedRoomId: optionalString(),
         workType: optionalString().nullable(),
 
         jobTitle: requiredString(t("errors.jobTitle.required")),

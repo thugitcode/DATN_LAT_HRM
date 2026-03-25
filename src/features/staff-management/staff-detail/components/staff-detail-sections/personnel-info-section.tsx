@@ -15,7 +15,7 @@ export const PersonnelInfoSection = () => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { data, setMode, isCreate, mode } = useControlMode(); // Giả sử setControlMode để thoát chế độ edit
     const { mutateAsync: updateStaff, isPending: isUpdating } = useUpdateStaff();
-    
+
     // Logic xác định mode
     const isEditing = data === STAFF_SECTION_KEYS.PERSONNEL || data === "ALL";
     const isView = !isEditing;
@@ -50,15 +50,36 @@ export const PersonnelInfoSection = () => {
         <div className="bg-white p-5 rounded-2xl border border-[#E4E4E7] shadow-sm">
             <SectionHeader icon={icons.circleUser} title={t('staffForm.sections.personnel')} sectionKey={STAFF_SECTION_KEYS.PERSONNEL} onSave={handleSave} />
             <div className="grid grid-cols-2 gap-4">
-                <FormInput control={control} name="code" label={t('staffForm.fields.code.label')} placeholder={t('staffForm.fields.code.placeholder')} readOnly={!isCreate} variant={variant} />
-                <FormInput control={control} name="name" label={t('staffForm.fields.name.label')} placeholder={t('staffForm.fields.name.placeholder')} isRequired readOnly={isView} variant={variant} />
-                <FormDatePicker control={control} name="birthday" label={t('staffForm.fields.birthday.label')} isRequired isReadOnly={isView} variant={variant} />
+                <FormInput
+                    control={control}
+                    name="code"
+                    label={t('staffForm.fields.code.label')}
+                    placeholder={t('staffForm.fields.code.placeholder')}
+                    readOnly={!isCreate}
+                    variant={variant}
+                />
+                <FormInput
+                    control={control}
+                    name="name"
+                    label={t('staffForm.fields.name.label')}
+                    placeholder={t('staffForm.fields.name.placeholder')}
+                    isRequired
+                    readOnly={isView}
+                    variant={variant}
+                />
+                <FormDatePicker
+                    control={control}
+                    name="birthday"
+                    label={t('staffForm.fields.birthday.label')}
+                    isRequired
+                    isReadOnly={isView}
+                    variant={variant} />
                 <FormSelect
                     control={control}
                     name="gender"
                     label={t('staffForm.fields.gender.label')}
                     isRequired
-                    disabled={isView}
+                    readOnly={isView}
                     variant={variant}
                     options={[
                         { key: "MALE", label: t('staffForm.fields.gender.options.male') },
@@ -66,19 +87,46 @@ export const PersonnelInfoSection = () => {
                         { key: "OTHER", label: t('staffForm.fields.gender.options.other') }
                     ]}
                 />
-                <FormInput control={control} name="identity" label={t('staffForm.fields.identity.label')} placeholder={t('staffForm.fields.identity.placeholder')} readOnly={isView} variant={variant} />
-                <FormDatePicker control={control} name="identityIssueDate" label={t('staffForm.fields.identityIssueDate.label')} isReadOnly={isView} variant={variant} />
-                <FormInput control={control} name="identityIssuePlace" label={t('staffForm.fields.identityIssuePlace.label')} placeholder={t('staffForm.fields.identityIssuePlace.placeholder')} readOnly={isView} variant={variant} />
+                <FormInput
+                    control={control}
+                    name="identity"
+                    label={t('staffForm.fields.identity.label')}
+                    placeholder={t('staffForm.fields.identity.placeholder')}
+                    readOnly={isView}
+                    variant={variant}
+                />
+                <FormDatePicker
+                    control={control}
+                    name="identityIssueDate"
+                    label={t('staffForm.fields.identityIssueDate.label')}
+                    isReadOnly={isView}
+                    variant={variant}
+                />
+                <FormInput
+                    control={control}
+                    name="identityIssuePlace"
+                    label={t('staffForm.fields.identityIssuePlace.label')}
+                    placeholder={t('staffForm.fields.identityIssuePlace.placeholder')}
+                    readOnly={isView}
+                    variant={variant}
+                />
                 <FormSelect
                     control={control}
                     name="nationality"
                     label={t('staffForm.fields.nationality.label')}
-                    disabled={isView}
+                    readOnly={isView}
                     variant={variant}
                     options={[{ key: "VN", label: t('staffForm.fields.nationality.options.vietnam') }, { key: "OTHER", label: t('staffForm.fields.nationality.options.other') }]}
                 />
                 <div className="col-span-2">
-                    <FormInput control={control} name="address" label={t('staffForm.fields.address.label')} placeholder={t('staffForm.fields.address.placeholder')} readOnly={isView} variant={variant} />
+                    <FormInput
+                        control={control}
+                        name="address"
+                        label={t('staffForm.fields.address.label')}
+                        placeholder={t('staffForm.fields.address.placeholder')}
+                        readOnly={isView}
+                        variant={variant}
+                    />
                 </div>
             </div>
         </div>

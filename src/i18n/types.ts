@@ -10,6 +10,7 @@ import type staffManagement from '@public/locales/vi/staff-management.json';
 // import type recruitmentManagement from '@public/locales/en/recruitment-management.json';
 // import type managementReport from '@public/locales/en/management-report.json';
 import type timekeepingShiftScheduling from '@public/locales/vi/timekeeping-shift-scheduling.json';
+import type explanationManagement from '@public/locales/vi/explanation-management.json';
 
 import type { NAMESPACES } from './constants';
 
@@ -25,6 +26,7 @@ type I18nResources = {
   // [NAMESPACES.MANAGEMENT_REPORT]: typeof managementReport;
   [NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING]: typeof timekeepingShiftScheduling;
   [NAMESPACES.OTHER_REQUESTS_MANGAGEMENT]: typeof otherRequestsManagement;
+  [NAMESPACES.EXPLANATION_MANAGEMENT]: typeof explanationManagement;
 };
 
 declare module 'i18next' {

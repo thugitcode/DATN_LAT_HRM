@@ -39,7 +39,7 @@ export const GridScheduleRow: FC<GridScheduleRowProps> = ({
       {runs.map((run) => {
         const isPill = PILL_SHIFTS.has(run.shift) && run.span >= 2;
         const { startIndex: di, span, shift } = run;
-        const isCN = schedule[di]?.day === 0;
+        const isCN = schedule[di]?.dayOfWeek === 0;
         const isColHovered = hoveredDay !== null && hoveredDay >= di && hoveredDay < di + span;
         const hoveredOffset = isColHovered && hoveredDay !== null ? hoveredDay - di : null;
 

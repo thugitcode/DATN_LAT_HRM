@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FormArea } from '@/components/form-fields/form-area';
-import { FileUploadInput } from '@/components/form-fields/form-file-upload-input';
-import { FormInput } from '@/components/form-fields/form-input';
-import { icons } from '@/lib/icons';
-import { useDrawer } from '@/store/useDrawer';
-import { addToast, Button, Form } from '@heroui/react';
-import dayjs from 'dayjs';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { useCreateStaffProfile, useStaffProfileDetail } from '../../salary-and-benefits/hooks/use-staff-profile';
-import { documentSchema, type DocumentFormValues } from '../schemas/profile-details.schema';
-import { uploadService } from '@/services/upload.service';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
-import z from 'zod';
+import { FormFileUploadInput } from '@/components/form-fields/form-file-upload-input';
+import { FormInput } from '@/components/form-fields/form-input';
+import { NAMESPACES } from '@/i18n/constants';
+import { icons } from '@/lib/icons';
+import { staffProfileKeys } from '@/services/query-options/staff-profile.query';
+import { uploadService } from '@/services/upload.service';
+import { useDrawer } from '@/store/useDrawer';
+import type { IStaffDocument } from '@/types/staff-profile.type';
+import { addToast, Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { staffProfileKeys } from '@/services/query-options/staff-profile.query';
+import dayjs from 'dayjs';
 import { useEffect } from 'react';
-import { formatDate } from '@/lib/utils';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+import z from 'zod';
+import { useCreateStaffProfile, useStaffProfileDetail, useUpdateStaffProfile } from '../../salary-and-benefits/hooks/use-staff-profile';
+import { documentSchema, type DocumentFormValues } from '../schemas/profile-details.schema';
 
 type FormValues = {
   documents: DocumentFormValues[];
@@ -27,25 +29,29 @@ const TODAY = dayjs().format("YYYY-MM-DD");
 export const ProfileDetailsDrawer = () => {
   const closedDrawer = useDrawer((state) => state.onClose);
   const queryClient = useQueryClient();
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
+  const { t: tCommon } = useTranslation(NAMESPACES.COMMON);
 
-  const { mutateAsync: createProfile } = useCreateStaffProfile(); // Sử dụng mutateAsync để dễ handle try/catch
+  const { mutateAsync: createProfile } = useCreateStaffProfile();
+  const { mutateAsync: updateProfile } = useUpdateStaffProfile();
 
   const staffId = useDrawer((state) => (state?.data as { staffId: string })?.staffId);
   const id = useDrawer((state) => (state?.data as { id: string })?.id);
   const { data: details } = useStaffProfileDetail(id)
-  
+
   const {
     control,
     handleSubmit,
     formState: { isSubmitting, errors },
     reset,
-    setValue
+    setValue,
+    getValues
   } = useForm<FormValues>({
     resolver: zodResolver(z.object({ documents: z.array(documentSchema) })),
     defaultValues: {
       documents: [
         {
-          name: "",
+          documentName: "",
           note: "",
           staffId: staffId,
           createdByName: "Admin",
@@ -62,11 +68,23 @@ export const ProfileDetailsDrawer = () => {
       reset({
         documents: [
           {
-            name: profile.name || "",
+            documentName: profile.documentName || "",
             note: profile.note || "",
-            staffId: profile.staffId || staffId,
-            createdByName: profile.createdByName || "Admin",
-            files: null,
+            staffId: staffId,
+            createdByName: "Admin",
+            files: profile.fileName ? [
+              {
+                name: profile.fileName,
+                size: profile.fileSize,
+                type: profile.fileType,
+                url: profile.fileUrl,
+              }
+            ] : null,
+            fileName: profile.fileName,
+            fileUrl: profile.fileUrl,
+            filePath: profile.filePath,
+            fileSize: profile.fileSize,
+            fileType: profile.fileType,
             createdAt: dayjs(profile.createdAt).format("YYYY-MM-DD") || TODAY
           },
         ],
@@ -82,51 +100,82 @@ export const ProfileDetailsDrawer = () => {
   const onSubmit = async (values: FormValues) => {
     try {
       // Duyệt qua từng bộ tài liệu trong form (fields của useFieldArray)
-      const requests = values.documents.map(async (doc) => {
-        // 1. Kiểm tra và Upload file trước
-        if (!doc.files || doc.files.length === 0) return;
+      const uploadPromises = values.documents.map(async (doc) => {
+        // Nếu đã có fileUrl và không có file mới (hoặc file cũ là object metadata), return fileData cũ
+        if (doc.fileUrl && (!doc.files || doc.files.length === 0 || !(doc.files[0] instanceof File))) {
+          return {
+            documentName: doc.documentName,
+            fileUrl: doc.fileUrl,
+            fileName: doc.fileName ?? undefined,
+            fileType: doc.fileType ?? undefined,
+            fileSize: doc.fileSize ?? undefined,
+            filePath: doc.filePath ?? undefined,
+            note: doc.note ?? undefined,
+            staffId: staffId,
+            createdByName: "Admin",
+            createdAt: doc.createdAt
+          };
+        }
 
-        const fileToUpload = doc.files;
-        const uploadRes = await uploadService.uploadMultiple(fileToUpload);
+        // 1. Kiểm tra và Upload file trước
+        if (!doc.files || doc.files.length === 0 || !(doc.files[0] instanceof File)) return null;
+
+        const fileToUpload = doc.files[0];
+
+        const uploadRes = await uploadService.upload(fileToUpload);
 
         if (uploadRes.statusCode === 200) {
           const fileData = uploadRes.data;
-          const payload = {
-            name: doc.name || fileData?.[0]?.fileName,
-            note: doc.note || "",
-            thumbnail: fileData?.[0]?.url,
-            createdByName: doc.createdByName || "Admin",
-            staffId: staffId,
-            documentIds: fileData?.map(it => it.filePath)
+          return {
+            documentName: doc.documentName,
+            fileUrl: fileData.url,
+            filePath: fileData.filePath,
+            fileName: fileData.fileName,
+            fileType: fileData.fileType,
+            fileSize: fileData.fileSize,
+            note: doc?.note ?? ""
           };
-
-          return createProfile(payload);
         }
+        return null;
       });
 
-      // Đợi tất cả các request hoàn thành
-      await Promise.all(requests);
-      queryClient.invalidateQueries({ queryKey: staffProfileKeys.lists() });
-      addToast({
-        title: 'Thêm mới tài liệu thành công',
-        description: 'Thông tin hồ sơ nhân viên đã được cập nhật',
-        color: 'success',
-      });
-      // addToast({ title: 'Cập nhật tất cả tài liệu thành công', color: 'success' });
-      reset();
-      closedDrawer();
+      // Đợi tất cả các file upload hoàn thành
+      const uploadedDocs = await Promise.all(uploadPromises);
+
+      // Lọc ra các document đã upload thành công (bỏ các document null)
+      const validDocuments = uploadedDocs.filter((doc): doc is NonNullable<typeof doc> => doc !== null);
+
+      if (validDocuments.length > 0) {
+        // Gọi API tạo mới document
+        details?.data?.id ?
+          await updateProfile({
+            id: details.data.id,
+            data: validDocuments[0] as Partial<IStaffDocument>
+          }) :
+          await createProfile({
+            staffId,
+            documents: validDocuments as any,
+          });
+
+        queryClient.invalidateQueries({ queryKey: staffProfileKeys.lists() });
+
+        reset();
+        closedDrawer();
+      } else {
+        addToast({ title: t('profileDetails.messages.selectInfo'), color: 'danger' });
+      }
     } catch (error) {
       console.error("Submit error:", error);
-      addToast({ title: 'Có lỗi xảy ra trong quá trình cập nhật', color: 'danger' });
+      addToast({ title: t('profileDetails.messages.updateError'), color: 'danger' });
     }
   };
   const handleFilesSelect = (index: number, files: File[]) => {
-    if (files.length > 0) {
-      setValue(`documents.${index}.files`, files, {
-        shouldValidate: true,
-        shouldDirty: true
-      });
-    }
+    // if (files.length > 0) {
+    setValue(`documents.${index}.files`, files, {
+      shouldValidate: true,
+      shouldDirty: true
+    });
+    // }
   };
   return (
     <Form
@@ -155,9 +204,9 @@ export const ProfileDetailsDrawer = () => {
             {/* Document Name */}
             <FormInput
               control={control}
-              name={`documents.${index}.name`} // Đổi key thành name
-              label="Tên giấy tờ"
-              placeholder="Nhập tên loại giấy tờ..."
+              name={`documents.${index}.documentName`} // Fix key to match schema
+              label={t('profileDetails.labels.documentName')}
+              placeholder={t('profileDetails.placeholders.documentName')}
               isRequired
             />
 
@@ -166,13 +215,13 @@ export const ProfileDetailsDrawer = () => {
               <FormDatePicker
                 control={control}
                 name={`documents.${index}.createdAt`}
-                label="Ngày thêm mới"
+                label={t('profileDetails.labels.createdAt')}
                 disabled
               />
               <FormInput
                 control={control}
                 name={`documents.${index}.createdByName`}
-                label="Người thêm mới"
+                label={t('profileDetails.labels.createdByName')}
                 disabled
               />
             </div>
@@ -181,39 +230,30 @@ export const ProfileDetailsDrawer = () => {
             <FormArea
               control={control}
               name={`documents.${index}.note`}
-              label="Ghi chú"
-              placeholder="Nhập ghi chú thêm..."
+              label={t('profileDetails.labels.note')}
+              placeholder={t('profileDetails.placeholders.note')}
               maxRows={4}
             />
 
             {/* File Upload Section */}
-            <div className="w-full flex flex-col gap-2">
-              <label className="text-sm font-medium text-[#52525B]">
-                Tệp đính kèm <span className="text-danger">*</span>
-              </label>
-
-              <Controller
-                control={control}
-                name={`documents.${index}.files`}
-                render={({ field: fileField, fieldState }) => (
-                  <FileUploadInput
-                    selectedFiles={fileField.value || []}
-                    onFilesSelect={(files) => handleFilesSelect(index, files)}
-                    error={fieldState.error?.message}
-                  />
-                )}
-              />
-            </div>
+            <FormFileUploadInput
+              control={control}
+              name={`documents.${index}.files`}
+              label={t('profileDetails.labels.attachments')}
+              isRequired
+              multiple={false}
+              onFilesSelect={(files) => handleFilesSelect(index, files || [])}
+            />
           </div>
         ))}
 
-        <Button
+        {!details?.data?.id && <Button
           type="button"
           variant="bordered"
           className="w-full border-2 border-primary-200 text-primary min-h-10"
           onPress={() =>
             append({
-              name: "",
+              documentName: "",
               note: "",
               staffId: staffId,
               createdByName: "Admin",
@@ -222,8 +262,8 @@ export const ProfileDetailsDrawer = () => {
             })
           }
         >
-          + Thêm giấy tờ khác
-        </Button>
+          {t('profileDetails.buttons.addOther')}
+        </Button>}
       </div>
 
       {/* Footer cố định */}
@@ -233,7 +273,7 @@ export const ProfileDetailsDrawer = () => {
           onPress={closedDrawer}
           className="border-[#006FEE] border bg-white text-[#006FEE]"
         >
-          Hủy
+          {tCommon("button.cancel")}
         </Button>
         <Button
           type="submit"
@@ -241,7 +281,7 @@ export const ProfileDetailsDrawer = () => {
           isLoading={isSubmitting}
           className="px-8"
         >
-          Lưu hồ sơ
+          {t('profileDetails.buttons.save')}
         </Button>
       </div>
     </Form>

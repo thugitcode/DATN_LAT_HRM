@@ -1,7 +1,6 @@
-import { STATUS_CODE } from '@/lib/constants';
 import { convertFileInfo } from '@/lib/utils';
-import { getSignedUrlQueryOptions } from '@/query-options/upload-file.option';
 import { useQueryClient } from '@tanstack/react-query';
+import { uploadQueryOptions } from '@/services/query-options/upload.query';
 import { useViewFile } from './common/use-view-file';
 
 const convertFileType = (type: string) => {
@@ -17,18 +16,17 @@ const convertFileType = (type: string) => {
 export const useOpenSignedFile = () => {
     const queryClient = useQueryClient();
     const { onOpen } = useViewFile((state) => state)
-
     const getSignedUrlAndOpen = async (
-        fileUrl: string,
+        filePath: string,
         openFile?: boolean
     ): Promise<string | undefined> => {
-        const file = convertFileInfo([{ key: fileUrl }])[0]
+        const file = convertFileInfo([{ key: filePath }])[0]
         if (!file) return
         try {
             const res = await queryClient.fetchQuery(
-                getSignedUrlQueryOptions(file?.FILE_URL)
+                uploadQueryOptions.signedUrl(file.FILE_URL, 3600)
             );
-            if (res?.status?.toString()?.startsWith(STATUS_CODE.SUCCESS)) {
+            if (res) {
                 const signedUrl = res.data ?? '';
 
                 openFile && onOpen({

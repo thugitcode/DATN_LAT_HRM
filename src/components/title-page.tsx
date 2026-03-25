@@ -9,7 +9,7 @@ interface TitlePageProps {
 
 export const TitlePage: FC<Readonly<TitlePageProps>> = ({ title, className }) => {
   return (
-    <h2 className={cn('text-[30px] font-semibold leading-9 tracking-normal', className)}>
+    <h2 className={cn('text-[24px] font-semibold leading-9 tracking-normal', className)}>
       {title}
     </h2>
   );

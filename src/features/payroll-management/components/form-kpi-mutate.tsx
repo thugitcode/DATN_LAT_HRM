@@ -204,35 +204,35 @@ export const FormKpiMutate = () => {
                   control={control}
                   name="staffCode"
                   label={t('kpi.form.staff_code')}
-                  isRequired
+                  isRequired={!dataDetail}
                   options={staffByCodeOptions}
                   onSelect={handleSelectByCode}
-                  disabled={isPending || !!dataDetail}
+                  readOnly={isPending || !!dataDetail}
                 />
                 <FormAutocomplete
                   control={control}
                   name="name"
                   label={t('kpi.form.staff_name')}
-                  isRequired
+                  isRequired={!dataDetail}
                   options={staffOptions}
                   onSelect={handleSelectByName}
-                  disabled={isPending || !!dataDetail}
+                  readOnly={isPending || !!dataDetail}
                 />
                 <FormSelect
                   control={control}
                   name="departmentId"
                   label={t('kpi.form.department')}
-                  isRequired
+                  isRequired={!dataDetail}
                   options={filteredDepartmentOptions}
-                  disabled={isPending || !!dataDetail}
+                  readOnly={isPending || !!dataDetail}
                 />
                 <FormSelect
                   control={control}
                   name="roomId"
                   label={t('kpi.form.room')}
-                  isRequired
+                  isRequired={!dataDetail}
                   options={filteredRoomOptions}
-                  disabled={isPending || !!dataDetail}
+                  readOnly={isPending || !!dataDetail}
                 />
               </div>
             </WrapperBoxForm>
@@ -246,7 +246,6 @@ export const FormKpiMutate = () => {
                   isRequired
                   placeholder={tc('input.placeholder')}
                   min={0}
-                  max={100}
                   disabled={isPending}
                 />
 

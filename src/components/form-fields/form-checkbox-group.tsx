@@ -1,18 +1,17 @@
 // components/form/FormCheckboxGroup.tsx
 import type { FC } from 'react';
-import { useController, type Control } from 'react-hook-form';
 import { Checkbox } from '@heroui/react';
+import { useController, type Control } from 'react-hook-form';
 
-interface Option {
-  value: string;
-  label: string;
-}
+import type { Options } from '@/types/global.type';
+import { cn } from '@/lib/utils';
 
 interface FormCheckboxGroupProps {
   control: Control<any>;
   name: string;
-  options: Option[];
+  options: Options[];
   disabled?: boolean;
+  className?: string;
 }
 
 export const FormCheckboxGroup: FC<FormCheckboxGroupProps> = ({
@@ -20,6 +19,7 @@ export const FormCheckboxGroup: FC<FormCheckboxGroupProps> = ({
   name,
   options,
   disabled,
+  className,
 }) => {
   const { field } = useController({ control, name });
 
@@ -28,18 +28,18 @@ export const FormCheckboxGroup: FC<FormCheckboxGroupProps> = ({
     if (checked) {
       if (!current.includes(value)) current.push(value);
     } else {
-      current = current.filter(v => v !== value);
+      current = current.filter((v) => v !== value);
     }
     field.onChange(current);
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {options.map(opt => (
+    <div className={cn('flex flex-col gap-4', className)}>
+      {options.map((opt) => (
         <Checkbox
-          key={opt.value}
-          isSelected={Array.isArray(field.value) && field.value.includes(opt.value)}
-          onValueChange={checked => handleChange(opt.value, checked)}
+          key={opt.key}
+          isSelected={Array.isArray(field.value) && field.value.includes(opt.key)}
+          onValueChange={(checked) => handleChange(opt.key, checked)}
           isDisabled={disabled}
           classNames={{ label: 'text-[14px] text-[#3F3F46]' }}
         >

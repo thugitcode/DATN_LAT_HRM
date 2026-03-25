@@ -98,18 +98,20 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                       style={{ tableLayout: 'fixed' }}
                     >
                       <tbody>
-                        {row.shifts.map((shiftEntry) => (
-                          <tr key={shiftEntry.shift.id} style={{ height: ROW_H }}>
-                            <GridScheduleRow
-                              schedule={shiftEntry.schedule}
-                              runs={shiftEntry.runs}
-                              isHovered={isRowHovered}
-                              hoveredDay={hoveredDay}
-                              onDayEnter={setHoveredDay}
-                              onDayLeave={handleDayLeave}
-                            />
-                          </tr>
-                        ))}
+                        {row.shifts.map((shiftEntry) => {
+                          return (
+                            <tr key={shiftEntry.shift.id} style={{ height: ROW_H }}>
+                              <GridScheduleRow
+                                schedule={shiftEntry.schedule}
+                                runs={shiftEntry.runs}
+                                isHovered={isRowHovered}
+                                hoveredDay={hoveredDay}
+                                onDayEnter={setHoveredDay}
+                                onDayLeave={handleDayLeave}
+                              />
+                            </tr>
+                          )
+                        })}
                       </tbody>
                     </table>
                   </td>

@@ -22,3 +22,22 @@ export interface IStaffProfile {
   documentIds: string[]
 }
 
+export interface IStaffDocument {
+  documentName: string,
+  fileUrl: string,
+  filePath: string,
+  fileName: string,
+  fileType: string,
+  fileSize: number
+  note?: string,
+  updatedAt?: string,
+  createdAt: string,
+  deletedAt: string | null,
+  id: string,
+  thumbnail?: string,
+  uploadedBy?: string,
+  createdByName?: string,
+}
+export interface IPayloadStaffDocument {
+  "documents": IStaffDocument[]
+}

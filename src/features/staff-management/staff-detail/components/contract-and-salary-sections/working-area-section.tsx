@@ -4,6 +4,7 @@ import {
 } from '@heroui/react'; // hoặc từ thư viện bạn dùng
 import { IconCirclePlusFilled, IconTrash as TrashIcon } from '@tabler/icons-react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 
 import { FormSelect } from '@/components/form-fields/form-select';
@@ -11,8 +12,10 @@ import { departmentQueryOptions } from '@/services/query-options/department.quer
 import { roomQueryOptions } from '@/services/query-options/room.query';
 import { useQuery } from '@tanstack/react-query';
 import type { FC } from 'react';
+import { cn } from '@/lib/utils';
 
 export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bordered" | "faded" | "underlined" }> = ({ isView = false, variant = "flat" }) => {
+    const { t } = useTranslation(['staff-management', 'common']);
     const { control, watch, formState: { isSubmitting }, resetField } = useFormContext();
 
     const { fields, append, remove } = useFieldArray({
@@ -64,10 +67,10 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                 <FormSelect
                                     control={control}
                                     name={`workingAreas.${index}.departmentId`}
-                                    label="Khoa làm việc"
+                                    label={t('working_area.department')}
                                     isRequired
                                     options={filteredDeptOptions}
-                                    disabled={isSubmitting || isView}
+                                    readOnly={isSubmitting || isView}
                                     variant={variant}
                                     onSelect={() => {
                                         resetField(`workingAreas.${index}.roomId`)
@@ -75,14 +78,14 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                 />
                             </div>
 
-                            <div className='w-1/2'>
+                            <div className={cn('flex-1', fields.length !== 1 ? 'max-w-[40%]' : 'max-w-[48%]')}>
                                 <FormSelect
                                     selectionMode='multiple'
                                     control={control}
                                     name={`workingAreas.${index}.roomId`}
-                                    label="Phòng làm việc"
+                                    label={t('working_area.room')}
                                     options={filteredRoomOptions}
-                                    disabled={isSubmitting || !currentDeptId || isView}
+                                    readOnly={isSubmitting || !currentDeptId || isView}
                                     variant={variant}
                                 />
                             </div>
@@ -93,7 +96,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                 variant="light"
                                 // color="danger"
                                 size="sm"
-                                className="top-6"
+                                className="top-6 w-fit"
                                 onPress={() => remove(index)}
                                 isDisabled={isSubmitting || (fields.length === 1 && index === 0)}
                             >
@@ -105,7 +108,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
 
                 {fields.length === 0 && (
                     <p className="text-sm text-danger text-center py-4">
-                        Vui lòng thêm ít nhất một khu vực làm việc
+                        {t('working_area.min_required')}
                     </p>
                 )}
             </div>
@@ -118,7 +121,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                     onPress={() => append({ departmentId: '', roomId: [] })}
                     isDisabled={isSubmitting}
                 >
-                    Thêm mới
+                    {t('button.addNew', { ns: 'common' })}
                 </Button>
             </div>}
         </div >

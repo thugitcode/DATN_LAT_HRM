@@ -31,14 +31,14 @@ export const RowRevenueActions: FC<RowRevenueActionsProps> = ({ dataRow }) => {
 
   return (
     <>
-      <div className='flex gap-2'>
+      <div className='flex'>
         <Button
           // color="primary"
           variant="light"
           onPress={() => onOpen(DrawerType.REVENUE_DETAILS, dataRow)}
           isIconOnly
         >
-          <icons.edit className='size-5'/>
+          <icons.edit className='size-5' />
         </Button>
         <Button
           // color="primary"
@@ -46,7 +46,7 @@ export const RowRevenueActions: FC<RowRevenueActionsProps> = ({ dataRow }) => {
           onPress={() => setIsConfirmOpen(true)}
           isIconOnly
         >
-          <icons.trash className='size-5'/>
+          <icons.trash className='size-5' />
         </Button>
       </div>
 
@@ -56,7 +56,7 @@ export const RowRevenueActions: FC<RowRevenueActionsProps> = ({ dataRow }) => {
         onConfirm={handleDelete}
         isLoading={isDeleting}
         reason=""
-        onReasonChange={() => {}}
+        onReasonChange={() => { }}
         config={{
           title: t('revenue.delete_confirm.title', 'Xóa doanh thu'),
           description: t('revenue.delete_confirm.description', 'Bạn có chắc chắn muốn xóa doanh thu này không? Hành động này không thể hoàn tác.'),

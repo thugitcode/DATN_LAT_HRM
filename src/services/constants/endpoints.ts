@@ -32,10 +32,14 @@ export const API_ENDPOINTS = {
       KPI: '/staff-kpi',
       OTHER_INCOME: '/other-income',
       SALARY_STAFF_HISTORY: '/payroll/staff',
+      PAYROLL_PERIODS: '/payroll/periods',
+      PAYROLL_BY_MONTH: '/payroll/by-month',
     },
 
     LEAVE_REQUEST: '/leave-request',
     UPLOAD: '/upload',
+
+    CONFIGURATION: '/configuration',
   },
 
   OTHER_SERVICE: {

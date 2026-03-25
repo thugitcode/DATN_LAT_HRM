@@ -1,10 +1,13 @@
+import { useQuery } from '@tanstack/react-query';
 import { NAMESPACES } from '@/i18n/constants';
-import { Button, Chip, Switch } from '@heroui/react';
+import { uploadQueryOptions } from '@/services/query-options/upload.query';
+import { Avatar, Button, Chip, Switch } from '@heroui/react';
 import { IconMail, IconPencil, IconPhone } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
 import type { Staff } from '@/types/staff.type';
 import type { ColumnDef } from '@/components/data-table/data-table';
+import GetSignedUrl from '@/components/get-signed-url';
 
 export const renderStatusChip = (status: string | undefined, t: any) => {
   // Định nghĩa style dựa trên key i18n
@@ -49,6 +52,8 @@ export const renderStatusChip = (status: string | undefined, t: any) => {
 
 export const useStaffColumns = () => {
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
+
   const columns: ColumnDef<Staff>[] = [
     {
       key: 'name',
@@ -56,13 +61,19 @@ export const useStaffColumns = () => {
       render: (_, record) => (
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0">
-            <img
-              src={
-                record.avatar || `https://ui-avatars.com/api/?name=${record.name}&background=random`
-              }
-              alt="Avatar"
-              className="w-full h-full object-cover"
-            />
+            <GetSignedUrl url={record.avatar || ''}>
+              {(signedUrl) => {
+                return (
+                  <Avatar
+                    src={
+                      signedUrl ||
+                      `https://ui-avatars.com/api/?name=${record.name || 'Staff'}&background=random`
+                    }
+                    className="w-full h-full object-cover"
+                  />
+                );
+              }}
+            </GetSignedUrl>
           </div>
           <div>
             <div className="font-semibold text-sm text-[#11181C] flex items-center gap-2">
@@ -83,7 +94,9 @@ export const useStaffColumns = () => {
       render: (_, record) => (
         <span className="text-sm text-[#11181C]">
           {record?.birthday
-            ? new Date(record.birthday).toLocaleDateString(t('locale') === 'en' ? 'en-US' : 'vi-VN')
+            ? new Date(record.birthday).toLocaleDateString(
+                tc('locale') === 'en' ? 'en-US' : 'vi-VN',
+              )
             : ''}
         </span>
       ),
@@ -115,7 +128,9 @@ export const useStaffColumns = () => {
       key: 'jobTitle',
       title: t('staff_table.columns.job_title'),
       render: (_, record) => (
-        <span className="text-sm text-[#11181C]">{t(`options.job_title.${record.jobTitle}` as any)}</span>
+        <span className="text-sm text-[#11181C]">
+          {t(`options.job_title.${record.jobTitle}` as any)}
+        </span>
       ),
     },
     {
@@ -153,7 +168,7 @@ export const useStaffColumns = () => {
       render: (_, record) => (
         <span className="text-sm text-[#11181C]">
           {record?.endDate
-            ? new Date(record.endDate).toLocaleDateString(t('locale') === 'en' ? 'en-US' : 'vi-VN')
+            ? new Date(record.endDate).toLocaleDateString(tc('locale') === 'en' ? 'en-US' : 'vi-VN')
             : ''}
         </span>
       ),

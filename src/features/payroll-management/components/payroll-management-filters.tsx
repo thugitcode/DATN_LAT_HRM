@@ -80,12 +80,14 @@ export const PayrollManagementFilters: FC<PayrollManagementFiltersProps> = ({
         placeholder={t('actions.room')}
       />
 
-      <FilterSelect
-        options={statusOptions}
-        value={filters.status as string}
-        onChange={handleStatusChange}
-        placeholder={t('actions.status')}
-      />
+      {!!statusOptions && !!statusOptions.length && (
+        <FilterSelect
+          options={statusOptions}
+          value={filters.status as string}
+          onChange={handleStatusChange}
+          placeholder={t('actions.status')}
+        />
+      )}
     </div>
   );
 };

@@ -2,12 +2,14 @@
 import i18n from '@/i18n';
 import clsx, { type ClassValue } from 'clsx';
 
-import type { FormFieldProps } from '@/types';
+import type { FormFieldProps, IResponseFileUpload } from '@/types';
 import dayjs from '@/lib/dayjs';
 
 import { PERSIST_WHITELIST } from './constants';
 import { idbPersister } from './idb-persister';
 import { logger } from './logger';
+import type { TFunction } from 'i18next';
+import type { SalaryData } from '@/features/payroll-management/types/payroll-caculation.type';
 
 export const DISABLE_AUTH = true;
 
@@ -93,21 +95,21 @@ export function getDaysSinceUpdate(updatedAt: string): number {
 export function getFormFieldProps({ formProps }: FormFieldProps) {
   return formProps
     ? {
-        value: formProps.state.value,
-        checked: formProps.state.value,
-        onBlur: formProps.handleBlur,
-        error: formProps.state.meta.errors
-          .map((error: unknown) => {
-            if (typeof error === 'string') return error;
-            if (error && typeof error === 'object') {
-              const err = error as { message?: unknown };
-              if (typeof err.message === 'string') return err.message;
-            }
-            return 'Vui long kiểm tra lại';
-          })
-          .filter(Boolean)
-          .join(', '),
-      }
+      value: formProps.state.value,
+      checked: formProps.state.value,
+      onBlur: formProps.handleBlur,
+      error: formProps.state.meta.errors
+        .map((error: unknown) => {
+          if (typeof error === 'string') return error;
+          if (error && typeof error === 'object') {
+            const err = error as { message?: unknown };
+            if (typeof err.message === 'string') return err.message;
+          }
+          return 'Vui long kiểm tra lại';
+        })
+        .filter(Boolean)
+        .join(', '),
+    }
     : {};
 }
 
@@ -450,3 +452,109 @@ export const toDDMMYYYY = (date: string): string => {
   if (!date) return '-';
   return dayjs(date).format('DD/MM/YYYY');
 };
+
+
+export const convertFileInfo = (data: IResponseFileUpload[]) => {
+  function getFileInfo(path: string) {
+    // lấy phần tên file sau dấu "/" cuối cùng
+    const filePart = path.split('/').pop() || '';
+
+    // tách extension
+    const lastDot = filePart.lastIndexOf('.');
+    const extension = lastDot !== -1 ? filePart.slice(lastDot + 1) : '';
+    const nameWithoutExt = lastDot !== -1 ? filePart.slice(0, lastDot) : filePart;
+
+    // regex timestamp dạng YYYYMMDD_HHMMSS_
+    const timestampPattern = /^\d{8}_\d{6}_/;
+
+    let filename = nameWithoutExt;
+
+    if (timestampPattern.test(nameWithoutExt)) {
+      filename = nameWithoutExt.replace(timestampPattern, '');
+    }
+
+    return {
+      filename,
+      fileType: extension,
+    };
+  }
+  return data.map((item) => {
+    return {
+      FILE_URL: item.key,
+      FILE_NAME: item?.originalName ?? getFileInfo(item.key).filename,
+      FILE_TYPE: convertMimeToExtension(item?.mimetype ?? '') ?? getFileInfo(item.key).fileType,
+      FILE_SIZE: item?.size ?? 0,
+    };
+  });
+};
+
+export async function downloadFromSignedUrl(url: string, filename: string) {
+  const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error('Download failed');
+  }
+
+  const blob = await res.blob();
+  const blobUrl = window.URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = blobUrl;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+
+  a.remove();
+  window.URL.revokeObjectURL(blobUrl);
+}
+
+export const getErrorMessage = (
+  code?: string,
+  t?: TFunction
+): string => {
+  if (!code) return "";
+  const key = `errors.${code}`;
+
+  // nếu có i18n
+  if (t) {
+    const translated = t(key as any);
+
+    // fallback nếu không tồn tại key
+    if (translated !== key) return translated;
+  }
+
+  // fallback default
+  return code;
+};
+
+export const formatCurrency = (
+  value: number,
+  currency: string = 'VND',
+  options?: Intl.NumberFormatOptions
+) => {
+  const locale = i18n.language || 'vi-VN';
+
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+    ...options,
+  }).format(value);
+};
+
+export function calculateEmployerContributions(data: SalaryData) {
+  const base = data.insuranceBaseSalary;
+  return {
+    socialInsurance: Math.round(base * 0.175), // 17.5%
+    healthInsurance: Math.round(base * 0.03), // 3%
+    unemploymentInsurance: Math.round(base * 0.01), // 1%
+    unionFee: Math.round(base * 0.02), // 2%
+    get total() {
+      return (
+        this.socialInsurance +
+        this.healthInsurance +
+        this.unemploymentInsurance +
+        this.unionFee
+      );
+    },
+  };
+}

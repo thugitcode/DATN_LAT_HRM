@@ -22,6 +22,9 @@ import dayjs from 'dayjs';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
+import type { RequestsParams } from '@/types/global.type';
+import { usePeriodStatus } from '@/hooks/use-period-status';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { FormArea } from '@/components/form-fields/form-area';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { displayTime } from '@/features/timekeeping-shift-scheduling/helper';
@@ -52,6 +55,12 @@ export const ShiftDetailsDrawer = () => {
 
   const { data, isLoading, refetch } = useAttendanceDetail(workScheduleDetailId);
   const { mutate: updateAttendance } = useUpdateAttendanceMutation();
+
+  const { filters } = useQueryFilter<RequestsParams>();
+
+  const monthQuery = dayjs(filters.month ?? undefined).format('YYYY-MM');
+
+  const { isLocked, isDraff, isPublished, isLock } = usePeriodStatus(monthQuery);
 
   const detailData = data?.data;
 
@@ -217,9 +226,12 @@ export const ShiftDetailsDrawer = () => {
           >
             {tc('button.cancel')}
           </Button>
-          <Button type="submit" color="primary" isLoading={isSubmitting}>
-            {tc('button.update')}
-          </Button>
+
+          {!isLocked && (
+            <Button type="submit" color="primary" isLoading={isSubmitting}>
+              {tc('button.update')}
+            </Button>
+          )}
         </div>
       </Form>
     </LoadingWrapper>

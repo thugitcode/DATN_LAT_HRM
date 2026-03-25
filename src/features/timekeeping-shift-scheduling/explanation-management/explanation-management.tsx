@@ -10,7 +10,7 @@ import {
   Textarea,
 } from '@heroui/react';
 
-import { AttendanceExplanationStatus, type AttendanceExplanationFilters } from '@/types/attendance-explanation.type';
+import { AttendanceExplanationStatus, RequestStatusEnum, type AttendanceExplanationFilters } from '@/types/attendance-explanation.type';
 import { normalizeAxiosError } from '@/lib/axios';
 import { useCommonTable } from '@/hooks/common/use-common-table';
 import {
@@ -26,6 +26,8 @@ import { TitlePage } from '@/components/title-page';
 import { ExplanationFilter } from './components/explanation-filter';
 import { ExplanationSummaryCard } from './components/explanation-summary';
 import { ExplanationTable } from './components/explanation-table';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 const RejectModal = ({
   rejectId,
@@ -36,6 +38,7 @@ const RejectModal = ({
   onClose: () => void;
   onSuccess: (id: string) => void;
 }) => {
+  const { t } = useTranslation(NAMESPACES.EXPLANATION_MANAGEMENT);
   const [rejectReason, setRejectReason] = useState('');
   const { mutateAsync: rejectMutate, isPending: isRejecting } = useRejectAttendanceExplanation();
   const { mutateAsync: update, isPending: isUpdate } = useUpdateAttendanceExplanation();
@@ -52,7 +55,7 @@ const RejectModal = ({
       // await rejectMutate({ id: rejectId, reason: rejectReason.trim() });
       await update({
         id: rejectId,
-        status: AttendanceExplanationStatus.REJECTED,
+        status: RequestStatusEnum.HR_REJECTED,
         reason: rejectReason.trim()
       }, {
         onSuccess() {
@@ -71,11 +74,11 @@ const RejectModal = ({
       <ModalContent>
         {(onCloseModal) => (
           <>
-            <ModalHeader className="flex flex-col gap-1">Từ chối giải trình</ModalHeader>
+            <ModalHeader className="flex flex-col gap-1">{t('explanation_modal.reject_title')}</ModalHeader>
             <ModalBody>
               <Textarea
-                label="Lý do từ chối"
-                placeholder="Nhập lý do từ chối giải trình..."
+                label={t('explanation_modal.reject_reason_label')}
+                placeholder={t('explanation_modal.reject_reason_placeholder')}
                 value={rejectReason}
                 onValueChange={setRejectReason}
                 isRequired
@@ -89,7 +92,7 @@ const RejectModal = ({
                 onPress={onCloseModal}
                 isDisabled={isRejecting}
               >
-                Hủy
+                {t('explanation_modal.cancel')}
               </Button>
               <Button
                 color="primary"
@@ -97,7 +100,7 @@ const RejectModal = ({
                 isLoading={isRejecting}
                 isDisabled={!rejectReason.trim()}
               >
-                Xác nhận từ chối
+                {t('explanation_modal.confirm_reject')}
               </Button>
             </ModalFooter>
           </>
@@ -165,7 +168,7 @@ export const ExplanationManagement = () => {
       // await approveMutate({ id });
       await update({
         id: id,
-        status: AttendanceExplanationStatus.APPROVED,
+        status: RequestStatusEnum.APPROVED,
       }, {
         onSuccess() {
           addToast({ description: "Duyệt giải trình thành công", color: "success" })

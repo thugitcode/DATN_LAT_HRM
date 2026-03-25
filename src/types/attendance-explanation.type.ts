@@ -7,6 +7,14 @@ export enum AttendanceExplanationStatus {
   REJECTED = 'REJECTED',
 }
 
+export enum RequestStatusEnum {
+  PENDING = 'PENDING', // vừa tạo
+  MANAGER_APPROVED = 'MANAGER_APPROVED', // quản lý đã duyệt, chờ HR
+  MANAGER_REJECTED = 'MANAGER_REJECTED', // quản lý từ chối
+  APPROVED = 'APPROVED', // HR đã duyệt (hoặc auto nếu không cần HR)
+  HR_REJECTED = 'HR_REJECTED', // HR từ chối
+}
+
 export enum AttendanceExplanationType {
   LATE = 'LATE',
   EARLY_LEAVE = 'EARLY_LEAVE',
@@ -78,7 +86,7 @@ export interface AttendanceExplanation {
   hrApprovedAt?: string;
 
   // Status
-  status: AttendanceExplanationStatus;
+  status: RequestStatusEnum;
   rejectedById?: string;
   rejectedByName?: string;
   rejectedReason?: string;

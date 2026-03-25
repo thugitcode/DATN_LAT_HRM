@@ -26,6 +26,7 @@ export const NAMESPACES = {
   MANAGEMENT_REPORT: 'management-report',
   TIMEKEEPING_SHIFT_SCHEDULING: 'timekeeping-shift-scheduling',
   OTHER_REQUESTS_MANGAGEMENT: 'other-requests-management',
+  EXPLANATION_MANAGEMENT: 'explanation-management',
 } as const;
 
 export type Namespace = (typeof NAMESPACES)[keyof typeof NAMESPACES];

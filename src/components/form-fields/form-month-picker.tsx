@@ -14,6 +14,7 @@ import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { IconCalendarMonth, IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { NAMESPACES } from "@/i18n/constants";
+import { FormLabel } from "./form-label";
 
 interface Props {
     name: string;
@@ -21,9 +22,11 @@ interface Props {
     label?: string;
     className?: string;
     placeholder?: string;
+    disabled?: boolean;
+    isRequired?: boolean;
 }
 
-export const FormMonthYearPicker = ({ name, control, label, className, placeholder }: Props) => {
+export const FormMonthYearPicker = ({ name, control, label, className, placeholder, disabled, isRequired }: Props) => {
     const { t } = useTranslation(NAMESPACES.COMMON);
     const { field, fieldState } = useController({ name, control });
     const [isOpen, setIsOpen] = useState(false);
@@ -47,22 +50,18 @@ export const FormMonthYearPicker = ({ name, control, label, className, placehold
     };
 
     return (
-        <div className={cn("flex flex-col gap-2", className)}>
+        <div className={cn("flex flex-col", className)}>
             {/* Label đồng bộ UI FormInput */}
             {label && (
-                <label
-                    className={cn(
-                        'text-base font-normal leading-4 transition-colors',
-                        isInvalid ? 'text-[#F31260]' : 'text-[#52525B]'
-                    )}
-                >
-                    {label}
-                </label>
+                <span className="pb-2 leading-4">
+                    <FormLabel label={label} isRequired={isRequired} isError={isInvalid} />
+                </span>
             )}
 
             <Popover isOpen={isOpen} onOpenChange={setIsOpen} placement="bottom-start">
                 <PopoverTrigger>
                     <Button
+                        isDisabled={disabled}
                         variant="flat"
                         disableAnimation // Bỏ hiệu ứng scale/zoom khi click
                         className={cn(
@@ -142,7 +141,7 @@ export const FormMonthYearPicker = ({ name, control, label, className, placehold
 
             {/* Error Message đồng bộ UI FormInput */}
             {isInvalid && (
-                <span className="text-tiny text-[#F31260] px-1">
+                <span className="text-tiny text-[#F31260] px-1 pt-1">
                     {fieldState.error?.message}
                 </span>
             )}

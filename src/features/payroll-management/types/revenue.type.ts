@@ -1,7 +1,10 @@
 import type { Department } from "@/types/deparment.type";
-import type { Status } from "@/types/global.type";
 import type { Room } from "@/types/room.type";
 
+export enum RevenueStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+}
 export interface RevenueDataListType {
   id: string;
   staff: {
@@ -19,6 +22,6 @@ export interface RevenueDataListType {
   actualAmount: number;
   achievementRate: number;
   source: string;
-  status: Status.APPROVED | Status.PENDING;
+  status: RevenueStatus;
   createdAt: string;
 }

@@ -1,42 +1,16 @@
-import type { FC } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useConfirmStore } from '@/store/useConfirmStore';
-import { Button, Chip } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { IconX } from '@tabler/icons-react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Status } from '@/types/global.type';
-import { icons } from '@/lib/icons';
 
+import { StatusChip } from '@/features/timekeeping-shift-scheduling/accountability-management/components/row-actions';
+import { RequestStatusEnum } from '@/types/attendance-explanation.type';
 import { useApproveLeaveRequest, useRejectLeaveRequest } from '../hooks/use-leave-request';
 import type { LeaveRequest } from '../type';
 
-const StatusChip: FC<{ status: 'APPROVED' | 'REJECTED' }> = ({ status }) => {
-  const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);
-
-  const isApproved = status === 'APPROVED';
-
-  return (
-    <Chip
-      size="md"
-      variant="flat"
-      color={isApproved ? 'success' : 'danger'}
-      classNames={{
-        base: 'h-8 w-[116px] px-2',
-        content: 'text-sm font-medium flex-1 text-center',
-      }}
-      startContent={
-        isApproved ? (
-          <icons.tickCircle width={17} height={17} />
-        ) : (
-          <icons.closeSquare className="rounded-full" width={17} height={17} />
-        )
-      }
-    >
-      {isApproved ? t('leave_request.actions.approved') : t('leave_request.actions.rejected')}
-    </Chip>
-  );
-};
 
 interface ActionButtonsProps {
   onApprove: () => void;
@@ -134,7 +108,7 @@ export const RowLeaveRequestActions: FC<{ dataRow?: LeaveRequest }> = ({ dataRow
       (reason) => handleConfirmAction(reason, 'approve'),
     );
   };
-
+  //
   const handleRejectClick = () => {
     open(
       {
@@ -148,18 +122,18 @@ export const RowLeaveRequestActions: FC<{ dataRow?: LeaveRequest }> = ({ dataRow
     );
   };
 
-  if (status === Status.APPROVED || status === Status.REJECTED) {
+  if (status === RequestStatusEnum.APPROVED || status === RequestStatusEnum.HR_REJECTED || status === RequestStatusEnum.PENDING || status === RequestStatusEnum.MANAGER_REJECTED) {
     return <StatusChip status={status} />;
   }
 
   return (
     <>
-      <ActionButtons
+      {status === RequestStatusEnum.MANAGER_APPROVED ? <ActionButtons
         onApprove={handleApproveClick}
         onReject={handleRejectClick}
         isApproving={isApproving}
         isRejecting={isRejecting}
-      />
+      /> : <></>}
     </>
   );
 };

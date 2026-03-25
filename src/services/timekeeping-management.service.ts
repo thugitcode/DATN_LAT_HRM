@@ -5,6 +5,7 @@ import type { CreateStaffSchedule } from '@/types/shift-management.type';
 import type { StaffParams } from '@/types/staff.type';
 import { hrmInstance } from '@/lib/axios';
 import type { ShiftDetails } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/type';
+import type { shiftDetailsFormValues } from '@/features/timekeeping-shift-scheduling/timekeeping-management/schemas/shift-details.schema';
 import type {
   AttendanceByHoursResponse,
   WorkSheetByShiftType,
@@ -12,7 +13,6 @@ import type {
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
-import type { shiftDetailsFormValues } from '@/features/timekeeping-shift-scheduling/timekeeping-management/schemas/shift-details.schema';
 
 class TimekeepingManagementService extends BaseApiService<
   WorkSheetByShiftType,
@@ -55,7 +55,10 @@ class TimekeepingManagementService extends BaseApiService<
       return res.data;
     });
   }
-  async updateAttendance(id: string, body: shiftDetailsFormValues & { id: string }): Promise<ApiResponse<ShiftDetails>> {
+  async updateAttendance(
+    id: string,
+    body: shiftDetailsFormValues & { id: string },
+  ): Promise<ApiResponse<ShiftDetails>> {
     return this.request(async () => {
       const { id: _, ...newBody } = body;
       const res = await this.instance.patch(`${this.url()}/detail/${id}/attendance`, newBody);

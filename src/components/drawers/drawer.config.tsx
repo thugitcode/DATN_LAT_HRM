@@ -3,11 +3,13 @@ import { DrawerType } from '@/store/useDrawer';
 import type { DrawerProps } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
+import { DetailPayslipFeedback } from '@/features/payroll-management/components/detail-payslip-feedback';
 import { FormKpiMutate } from '@/features/payroll-management/components/form-kpi-mutate';
 import { FormOtherIncomeMutate } from '@/features/payroll-management/components/form-other-income-mutate';
 import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
 import { TimekeepingDetails } from '@/features/payroll-management/components/timekeeping-details';
-import PayrollDetailsDrawer from '@/features/payroll-management/payroll-calculation/components/payroll-details-drawer';
+import { FormAddNewPayPeriodsMutate } from '@/features/payroll-management/manage-pay-periods/components/form-add-new-pay-periods-mutate';
+import { FormStaffMutate } from '@/features/staff-management/core/components/form-staff-mutate';
 import { ProfileDetailsDrawer } from '@/features/staff-management/profile-staff/components/profile-details-drawer';
 import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling/explanation-management/components/explanation-detail-drawer';
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
@@ -97,15 +99,6 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
         classNames: { body: 'p-0 bg-[#F4F4F5]' },
       },
     },
-    [DrawerType.PAYROLL_DETAILS]: {
-      title: t('drawer.revenueDetails'),
-      component: <PayrollDetailsDrawer />,
-      drawerProps: {
-        placement: 'right',
-        size: '2xl',
-        classNames: { body: 'p-0 bg-[#F4F4F5]' },
-      },
-    },
     [DrawerType.CREATE_OTHER_INCOME]: {
       title: t('drawer.additionalArisingAmounts'),
       component: <FormOtherIncomeMutate />,
@@ -113,6 +106,35 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
         placement: 'right',
         size: '2xl',
         classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.STAFF_MUTATE]: {
+      title: t('drawer.additionalArisingAmounts'),
+      component: <FormStaffMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        style: { width: '97vw', maxWidth: '97vw' },
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+
+    [DrawerType.ADD_NEW_PAYROLL_PERIOD]: {
+      title: 'Thêm mới kỳ lương',
+      component: <FormAddNewPayPeriodsMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.DETAIL_PAYSLIP_FEEDBACK]: {
+      title: '',
+      component: <DetailPayslipFeedback />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]', header: 'p-0!' },
       },
     },
   };

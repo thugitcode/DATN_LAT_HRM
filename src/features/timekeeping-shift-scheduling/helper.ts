@@ -94,27 +94,32 @@ function buildRuns(schedule: DayCell[]): ShiftRun[] {
   let i = 0;
 
   while (i < schedule.length) {
-    const { shift } = schedule[i];
+    const item = schedule[i];
+    if (!item) {
+      i++;
+      continue;
+    }
+    const { shift } = item;
 
     if (!PILL_SHIFTS.has(shift)) {
       runs.push({
         shift,
         startIndex: i,
         span: 1,
-        workScheduleDetailId: schedule[i].workScheduleDetailId,
+        workScheduleDetailId: item.workScheduleDetailId,
       });
       i++;
       continue;
     }
 
     let j = i + 1;
-    while (j < schedule.length && schedule[j].shift === shift) j++;
+    while (j < schedule.length && schedule[j]?.shift === shift) j++;
 
     runs.push({
       shift,
       startIndex: i,
       span: j - i,
-      workScheduleDetailId: schedule[i].workScheduleDetailId,
+      workScheduleDetailId: schedule.slice(i, j).map((it) => it.workScheduleDetailId ?? ''),
     });
 
     i = j;
@@ -197,6 +202,7 @@ export function mapToRow(item: WorkSheetByShiftType, days: ReturnType<typeof get
     shifts: item.shifts.map((shiftEntry) => {
       const schedule: DayCell[] = days.map((d) => ({
         day: d.day,
+        weekday: d.dayOfWeek,
         dayOfWeek: d.dayOfWeek,
         shift: (shiftEntry.days[d.date]?.displayCode ?? AttendanceStatus.DayOff) as ShiftCode,
         workScheduleDetailId: shiftEntry.days[d.date]?.workScheduleDetailId ?? '',

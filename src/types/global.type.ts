@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import type { LinkProps } from '@tanstack/react-router';
 
+import type { ContractTypeEnum, StaffPositionEnum } from './staff.type';
+
 export type GlobalSearchParams = {
   jwt?: string | null;
 };
@@ -65,10 +67,47 @@ export interface RequestsParams {
   position?: StaffPosition;
   search?: string;
   month?: string;
+  year?: string;
   status?: string;
   getAll?: boolean;
   fromDate?: string;
   toDate?: string;
 
+  jobTitle?: string;
+  positions?: StaffPositionEnum[];
+  departmentIds?: string[];
+  roomIds?: string[];
+  contractType?: ContractTypeEnum;
+
+  [key: string]: unknown;
+}
+
+export interface DepartmentList {
+  id: string;
+  name: string;
+}
+export interface RoomList {
+  id: string;
+  name: string;
+}
+
+export interface StaffList {
+  id: string;
+  name: string;
+  code: string;
+}
+
+export interface EntryPersonList {
+  id: string;
+  name: string;
+}
+
+export interface AllowanceList {
+  id: string;
+  name: string;
+}
+
+export interface AttachmentList {
+  // chưa có dữ liệu nên để linh hoạt
   [key: string]: unknown;
 }

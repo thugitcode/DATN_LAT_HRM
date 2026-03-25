@@ -1,19 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { Status } from '@/types/global.type';
-import { useDepartmentOptions } from '@/hooks/options/use-department-options';
-import { useRoomOptions } from '@/hooks/options/use-room-options';
-import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { FormArea } from '@/components/form-fields/form-area';
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
@@ -21,7 +17,16 @@ import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { FormSelect } from '@/components/form-fields/form-select';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { WrapperBoxForm } from '@/components/wrapper-box-form';
+import { useDepartmentOptions } from '@/hooks/options/use-department-options';
+import { useRoomOptions } from '@/hooks/options/use-room-options';
+import { useStaffOptions } from '@/hooks/options/use-staff-options';
+import { Status } from '@/types/global.type';
 
+import { FormFileUploadInput } from '@/components/form-fields/form-file-upload-input';
+import { allowanceQueryOptions } from '@/services/query-options/allowance.query';
+import { uploadService } from '@/services/upload.service';
+import { AllowanceType } from '@/types/allowance.type';
+import { useQuery } from '@tanstack/react-query';
 import { OTHER_INCOME_TYPE_OPTIONS } from '../constants/other-income';
 import {
   useCreateOtherIncome,
@@ -44,14 +49,14 @@ export const FormOtherIncomeMutate = () => {
   const dataRow = useDrawer((state) => state.data) as OtherIncome;
 
   const { data, isLoading } = useOtherIncomeDetail(dataRow?.id);
-  const dataDetail = undefined;
+  const dataDetail = data?.data;
 
   const schema = useMemo(() => createOtherIncomeMutateSchema(), []);
 
   const { options: staffOptions } = useStaffOptions();
   const { options: departmentOptions } = useDepartmentOptions();
   const { options: roomOptions } = useRoomOptions();
-  const allowanceOptions: { key: string; label: string }[] = [];
+
 
   const { mutate: mutateCreate, isPending } = useCreateOtherIncome();
   const { mutate: mutateUpdate, isPending: isPendingUpdate } = useUpdateOtherIncome();
@@ -82,16 +87,54 @@ export const FormOtherIncomeMutate = () => {
       entryPersonId: '',
       source: KpiSourceEnum.WEB,
       status: Status.PENDING,
+      attachments: []
     },
     mode: 'onSubmit',
   });
-
   const { control, handleSubmit, setValue } = methods;
+  const { data: allowanceData } = useQuery(allowanceQueryOptions.list());
+  const allowanceOptions = allowanceData?.data?.map((item) => ({
+    key: item.id,
+    label: item.name,
+    ...item
+  })) ?? [];
 
-  // useEffect(() => {
-  //   if (!dataDetail || hasAutofilled.current) return;
-  //   hasAutofilled.current = true;
-  // }, [dataDetail, staffOptions]);
+  useEffect(() => {
+    if (!dataDetail || staffOptions.length === 0 || hasAutofilled.current) return;
+
+    const emp = staffOptions.find((e) => e.key === dataDetail.staff.id);
+    if (emp) {
+      setSelectedStaff(emp);
+    }
+
+    methods.reset({
+      staffCode: dataDetail.staff?.code || '',
+      name: dataDetail.staff?.id || '',
+      departmentId: dataDetail.departments[0]?.id || '',
+      roomId: dataDetail.rooms[0]?.id || '',
+      staffId: dataDetail.staff?.id || '',
+      type: dataDetail.type || '',
+      allowanceId: dataDetail.allowance?.id || '',
+      amount: dataDetail.amount?.toString() || '',
+      date: dataDetail.date || '',
+      description: dataDetail.description || '',
+      entryPersonId: dataDetail.entryPerson?.id || '',
+      source: dataDetail.source || KpiSourceEnum.WEB,
+      attachments: dataDetail.attachments?.map((item) => ({
+        name: item.fileName,
+        size: item.fileSize,
+        type: item.fileType,
+        url: item.fileUrl,
+        fileUrl: item.fileUrl,
+        filePath: item.filePath,
+        fileName: item.fileName,
+        fileType: item.fileType,
+        fileSize: item.fileSize,
+      })) || [],
+    });
+
+    hasAutofilled.current = true;
+  }, [dataDetail, staffOptions, methods]);
 
   const applyStaffSelection = (emp: (typeof staffOptions)[0]) => {
     setSelectedStaff(emp);
@@ -135,7 +178,23 @@ export const FormOtherIncomeMutate = () => {
     return roomOptions.filter((room) => selectedStaff.rooms?.some((r) => r.id === room.key));
   }, [selectedStaff, roomOptions]);
 
-  const onSubmit = (values: OtherIncomeMutateFormValues) => {
+  const onSubmit = async (values: OtherIncomeMutateFormValues) => {
+
+    const fileToUpload = values?.attachments?.[0];
+
+    const uploadRes = await uploadService.upload(fileToUpload);
+    let attachments: { fileUrl: string; filePath: string; fileName: string; fileType: string; fileSize: number; }[] = [];
+    if (uploadRes.statusCode === 200) {
+      const fileData = uploadRes.data;
+      attachments = [{
+        fileUrl: fileData.url,
+        filePath: fileData.filePath,
+        fileName: fileData.fileName,
+        fileType: fileData.fileType,
+        fileSize: fileData.fileSize,
+      }];
+    }
+
     const payload: OtherIncomePayload = {
       staffId: values.staffId,
       month: dayjs().format('YYYY-MM'),
@@ -146,9 +205,10 @@ export const FormOtherIncomeMutate = () => {
       entryPersonId: values.entryPersonId,
       date: values.date,
       allowanceId: values.allowanceId,
+      attachments: attachments ?? [],
     };
 
-    console.log('payload_________________', payload);
+    console.log(values, 'payload_________________', payload);
 
     if (!dataDetail) {
       mutateCreate(payload);
@@ -156,7 +216,10 @@ export const FormOtherIncomeMutate = () => {
       mutateUpdate({ id: dataDetail.id, payload });
     }
   };
-
+  const typeOptions = Object.values(AllowanceType).map((val) => ({
+    label: t(`otherIncome.allowance_type.${val}`),
+    key: val
+  }))
   const isDisabledStaff = isPending || isPendingUpdate || !!dataDetail;
 
   return (
@@ -174,35 +237,35 @@ export const FormOtherIncomeMutate = () => {
                   control={control}
                   name="staffCode"
                   label={t('otherIncome.form.staff_code')}
-                  isRequired
+                  isRequired={!isDisabledStaff}
                   options={staffByCodeOptions}
                   onSelect={handleSelectByCode}
-                  disabled={isDisabledStaff}
+                  readOnly={isDisabledStaff}
                 />
                 <FormAutocomplete
                   control={control}
                   name="name"
                   label={t('otherIncome.form.staff_name')}
-                  isRequired
+                  isRequired={!isDisabledStaff}
                   options={staffOptions}
                   onSelect={handleSelectByName}
-                  disabled={isDisabledStaff}
+                  readOnly={isDisabledStaff}
                 />
                 <FormSelect
                   control={control}
                   name="departmentId"
                   label={t('otherIncome.form.department')}
-                  isRequired
+                  isRequired={!isDisabledStaff}
                   options={filteredDepartmentOptions}
-                  disabled={isDisabledStaff}
+                  readOnly={isDisabledStaff}
                 />
                 <FormSelect
                   control={control}
                   name="roomId"
                   label={t('otherIncome.form.room')}
-                  isRequired
+                  isRequired={!isDisabledStaff}
                   options={filteredRoomOptions}
-                  disabled={isDisabledStaff}
+                  readOnly={isDisabledStaff}
                 />
               </div>
             </WrapperBoxForm>
@@ -223,14 +286,11 @@ export const FormOtherIncomeMutate = () => {
                   name="allowanceId"
                   label={t('otherIncome.form.allowance')}
                   isRequired
-                  // options={allowanceOptions}
-                  options={[
-                    {
-                      label: 'test',
-                      key: 'haha',
-                    },
-                  ]}
+                  options={allowanceOptions}
                   disabled={isPending || isPendingUpdate}
+                // onSelect={(item) => {
+                //   setValue('type', (allowanceOptions?.find(it => it.id === item) as Allowance & Options)?.type, { shouldValidate: true });
+                // }}
                 />
 
                 <FormNumberInput
@@ -248,6 +308,13 @@ export const FormOtherIncomeMutate = () => {
                   isRequired
                   disabled={isPending || isPendingUpdate}
                 />
+                {/* <FormMonthYearPicker
+                  control={control}
+                  name="date"
+                  label={t('otherIncome.form.date')}
+                  disabled={isPending || isPendingUpdate}
+                  isRequired
+                /> */}
 
                 <div className="col-span-2">
                   <FormAutocomplete
@@ -270,13 +337,14 @@ export const FormOtherIncomeMutate = () => {
                 </div>
 
                 {/* File đính kèm — full width (UI only, không có trong payload) */}
-                {/* <div className="col-span-2">
-                  <FormFileUpload
+                <div className="col-span-2">
+                  <FormFileUploadInput
+                    control={control}
+                    name={`attachments`}
                     label={t('otherIncome.form.attachment')}
-                    accept=".xlsx,.csv"
-                    maxSizeMB={10}
+                    multiple={false}
                   />
-                </div> */}
+                </div>
               </div>
             </WrapperBoxForm>
           </div>

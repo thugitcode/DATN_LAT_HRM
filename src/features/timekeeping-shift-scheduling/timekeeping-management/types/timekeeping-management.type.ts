@@ -121,3 +121,35 @@ export interface DailyHourEntry {
   hours: number;
   status?: HoursStatusEnum;
 }
+
+export type ApprovePayload = {
+  // name: string;
+  // fromDate: string;
+  // toDate: string;
+  // standardWorkingDays: number;
+  month: string;
+};
+
+export enum PeriodStatusEnum {
+  DRAFT = 'DRAFT',
+  LOCK = 'LOCKED',
+  PUBLISHED = 'PUBLISHED',
+}
+
+export interface Period {
+  id: string;
+  name: string;
+  fromDate: string;
+  toDate: string;
+  status: PeriodStatusEnum;
+  standardWorkingDays: number;
+}
+
+export interface PeriodStatusResponsive {
+  period: Period;
+  totalStaff: number;
+  confirmedCount: number;
+  rejectedCount: number;
+  pendingCount: number;
+  canCalculate: boolean;
+}

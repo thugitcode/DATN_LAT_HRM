@@ -25,14 +25,16 @@ export const AttendanceData = () => {
   const { filters, clearFilters } = useQueryFilter<RequestsParams>();
   const { departmentId, month, roomId, search, status, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
+
   const { visibleColumns, handleApplyColumns } = useColumnVisibility({
     columns,
   });
+
   const { data, isLoading } = useAttendanceTable({
     page: page ?? 1,
     limit: limit ?? 10,
-    startDate,
-    endDate,
+    fromDate: startDate,
+    toDate: endDate,
     search: search,
     departmentId: departmentId,
     roomId: roomId,
