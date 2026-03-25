@@ -1,7 +1,10 @@
+import { useMemo } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { exportOvertimeExcel } from '@/templates/excels/other-requests-management/export-overtime-excel';
 import { PrintOvertime } from '@/templates/prints/other-requests-management/print-overtime';
 import { useTranslation } from 'react-i18next';
+
+import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 
 import { RequestManagementPage } from '../core/components/request-management-page';
 import { useRequestExport } from '../core/hooks/use-request-export';
@@ -35,7 +38,6 @@ export const OvertimeManagement = () => {
     visibleColumns,
     handleApplyColumns,
     handlePrint,
-    paginationConfig,
   } = useRequestManagementPage({ columns });
 
   const { data, isLoading } = useOtherRequestpManagement({
@@ -59,6 +61,18 @@ export const OvertimeManagement = () => {
     departmentName,
     exportFn: exportOvertimeExcel,
   });
+
+  const paginationConfig = useMemo(
+    () => ({
+      current: Number(page),
+      showSizeChanger: true,
+      pageSizeOptions: PAGE_SIZE_OPTIONS,
+      total: data?.pagination?.total,
+      pageSize: Number(limit),
+      totalPage: data?.pagination?.totalPage,
+    }),
+    [page, data?.pagination?.total, data?.pagination?.totalPage, limit],
+  );
 
   return (
     <RequestManagementPage

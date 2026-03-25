@@ -1,17 +1,18 @@
+import { useNavigate } from '@tanstack/react-router';
 import { NAMESPACES } from '@/i18n/constants';
+import { Button, Chip } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
-import type { ColumnDef } from '@/components/data-table/data-table';
-import { Button, Chip } from '@heroui/react';
-import { useNavigate } from '@tanstack/react-router';
-import type { StaffPayroll } from '../types/payroll-caculation.type';
 import { formatCurrency } from '@/lib/utils';
+import type { ColumnDef } from '@/components/data-table/data-table';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
+
+import type { StaffPayroll } from '../types/payroll-caculation.type';
 
 export const usePayrollCalculationColumns = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const columns: ColumnDef<StaffPayroll>[] = [
     {
@@ -25,7 +26,9 @@ export const usePayrollCalculationColumns = () => {
       key: 'departmentName', // Map từ departmentName
       title: t('payrollCalculation.columns.department'),
       width: 140,
-      render: (_, record) => <DepartmentRoomInfo departments={record.departments} rooms={record.rooms} />,
+      render: (_, record) => (
+        <DepartmentRoomInfo departments={record.departments} rooms={record.rooms} />
+      ),
     },
     {
       key: 'staffCode', // Giữ nguyên staffCode
@@ -84,21 +87,27 @@ export const usePayrollCalculationColumns = () => {
       title: t('payrollCalculation.columns.allowance'),
       width: 120,
       align: 'end',
-      render: (_, record) => <span className='text-success'>+{record.allowanceAmount?.toLocaleString('vi-VN')}</span>,
+      render: (_, record) => (
+        <span className="text-success">+{record.allowanceAmount?.toLocaleString('vi-VN')}</span>
+      ),
     },
     {
       key: 'overtimeAmount', // Tạm map vào bonus nếu API không có trường bonus riêng
       title: t('payrollCalculation.columns.bonus'),
       width: 120,
       align: 'end',
-      render: (_, record) => <span className='text-primary'>+{record.overtimeAmount?.toLocaleString('vi-VN')}</span>,
+      render: (_, record) => (
+        <span className="text-primary">+{record.overtimeAmount?.toLocaleString('vi-VN')}</span>
+      ),
     },
     {
       key: 'deductionAmount', // Map từ deductionAmount
       title: t('payrollCalculation.columns.deduction'),
       width: 120,
       align: 'end',
-      render: (_, record) => <span className='text-danger'>-{record.deductionAmount?.toLocaleString('vi-VN')}</span>,
+      render: (_, record) => (
+        <span className="text-danger">-{record.deductionAmount?.toLocaleString('vi-VN')}</span>
+      ),
     },
     {
       key: 'netPay', // Map từ netPay
@@ -112,20 +121,31 @@ export const usePayrollCalculationColumns = () => {
       title: t('payrollCalculation.columns.status'),
       width: 140,
       align: 'center',
-      render: (_, record) => <Chip color={record.confirmationStatus === 'APPROVED' ? 'success' : 'default'}>{record.confirmationStatus}</Chip>,
+      render: (_, record) => (
+        <Chip color={record.confirmationStatus === 'APPROVED' ? 'success' : 'default'}>
+          {record.confirmationStatus}
+        </Chip>
+      ),
     },
     {
       key: 'action',
       title: t('payrollCalculation.columns.action'),
       width: 100,
       align: 'center',
-      render: (_, record) => <Button
-        color="primary"
-        variant="bordered"
-        onPress={() => navigate({ to: `/admin/payroll-management/payroll-calculation/${record.payrollResultId}`, search: { staffId: record.staffId } })}
-      >
-        {t('attendance_data.viewDetail')}
-      </Button>,
+      render: (_, record) => (
+        <Button
+          color="primary"
+          variant="bordered"
+          onPress={() =>
+            navigate({
+              to: `/admin/payroll-management/payroll-calculation/${record.payrollResultId}`,
+              search: { staffId: record.staffId },
+            })
+          }
+        >
+          {t('attendance_data.viewDetail')}
+        </Button>
+      ),
     },
   ];
 

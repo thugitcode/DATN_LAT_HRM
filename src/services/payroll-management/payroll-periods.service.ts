@@ -28,6 +28,21 @@ class PayrollPerriodsService extends BaseApiService<
     return super.create(data);
   }
 
+  async lock(data: ApprovePayload) {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url()}/lock`, data);
+
+      return res.data;
+    });
+  }
+  async unlock(data: ApprovePayload) {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url()}/unlock  `, data);
+
+      return res.data;
+    });
+  }
+
   async getStatus(month: string): Promise<ApiResponse<PeriodStatusResponsive>> {
     return this.request(async () => {
       const res = await this.instance.get(`${this.url()}/status?month=${month}`);
