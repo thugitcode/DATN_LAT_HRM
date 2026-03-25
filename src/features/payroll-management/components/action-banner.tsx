@@ -32,9 +32,9 @@ export const ActionBanner = ({ t, onSaveDraft, onTransfer, isTransferring }: Act
     </div>
 
     <div className="flex shrink-0 gap-3">
-      <Button variant="bordered" color="primary" onPress={onSaveDraft}>
+      {/* <Button variant="bordered" color="primary" onPress={onSaveDraft}>
         {t('summary-finalize.actions.save-draft', 'Lưu nháp')}
-      </Button>
+      </Button> */}
 
       <Button color="primary" isLoading={isTransferring} onPress={onTransfer}>
         {t('summary-finalize.actions.transfer', 'Chuyển tính lương')}

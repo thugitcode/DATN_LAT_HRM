@@ -42,6 +42,20 @@ class PayrollPerriodsService extends BaseApiService<
       return res.data;
     });
   }
+  async calculate(data: ApprovePayload) {
+    return this.request(async () => {
+      const res = await this.instance.post(`${this.url()}/calculate  `, data);
+
+      return res.data;
+    });
+  }
+  async saveDraft(data: ApprovePayload) {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url()}/save-draft  `, data);
+
+      return res.data;
+    });
+  }
 
   async getStatus(month: string): Promise<ApiResponse<PeriodStatusResponsive>> {
     return this.request(async () => {
