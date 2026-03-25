@@ -18,7 +18,11 @@ import { icons } from '@/lib/icons';
 import { usePeriodStatus } from '@/hooks/use-period-status';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 
-import { useCraetePeriodsMutation } from '../../hooks/use-timekeeping-management';
+import {
+  useCraetePeriodsMutation,
+  useLockPeriodsMutation,
+  useUnLockPeriodsMutation,
+} from '../../hooks/use-timekeeping-management';
 import { useTimekeepingTranslation } from '../../hooks/use-timekeeping-translation';
 
 function useMonthYear(rawMonth: string | undefined): [number, number] {
@@ -40,19 +44,22 @@ export function ApproveAttendanceButton() {
   const navigate = useNavigate();
   const { filters } = useQueryFilter<ShiftManagementParams>();
 
-  const monthQuery = dayjs(filters.month ?? undefined).format('YYYY-MM');
+  const { month: monthFilter } = filters;
 
-  const { mutate, isPending } = useCraetePeriodsMutation(monthQuery);
+  const monthQuery = dayjs(monthFilter ?? undefined).format('YYYY-MM');
+
+  const { mutate, isPending } = useLockPeriodsMutation(monthQuery);
+  const { mutate: mutateUnlock, isPending: isPendingUnlock } = useUnLockPeriodsMutation(monthQuery);
 
   const { isLocked, isLoading, isDraff, isPublished, isLock } = usePeriodStatus(monthQuery);
 
-  const [year, month] = useMonthYear(filters.month);
+  const [year, month] = useMonthYear(monthFilter);
 
   const payload = useMemo(() => {
     return {
       month: monthQuery,
     };
-  }, [filters.month]);
+  }, [monthQuery]);
 
   const createPeriod = useCallback(
     () =>
@@ -62,7 +69,7 @@ export function ApproveAttendanceButton() {
           onError: (error) => reject(error),
         });
       }),
-    [],
+    [payload, mutate],
   );
 
   const handleApproveBrowse = useCallback(() => {
@@ -78,13 +85,32 @@ export function ApproveAttendanceButton() {
     );
   }, [open, t, month, year, tc]);
 
+  const handleUnlock = useCallback(() => {
+    open(
+      {
+        title: 'Hủy duyệt bảng công',
+        description: `Bạn có chăc chắn muốn hủy duyệt bảng công Tháng ${month}/${year}`,
+        confirmLabel: tc('button.confirm'),
+        confirmColor: 'primary',
+        requireReason: false,
+      },
+      () =>
+        new Promise<void>((resolve, reject) => {
+          mutateUnlock(payload, {
+            onSuccess: () => resolve(),
+            onError: (error) => reject(error),
+          });
+        }),
+    );
+  }, [open, t, month, year, tc, mutateUnlock, payload]);
+
   const handleClickGotoPayroll = useCallback(() => {
-    if (isDraff) {
-      navigate({ to: '/admin/payroll-management/payroll-calculation' });
+    if (isLock) {
+      navigate({ to: '/admin/payroll-management/data-summary/summary-finalize' });
     } else {
       onOpen();
     }
-  }, [isLocked]);
+  }, [isLock]);
 
   if (isLoading) {
     return (
@@ -108,7 +134,13 @@ export function ApproveAttendanceButton() {
     <>
       <div className="flex items-center gap-3">
         {isLock ? (
-          <Button color="danger" variant="bordered" isLoading={isPending} isDisabled={isPending}>
+          <Button
+            color="danger"
+            variant="bordered"
+            isLoading={isPendingUnlock}
+            isDisabled={isPendingUnlock}
+            onPress={handleUnlock}
+          >
             Hủy
           </Button>
         ) : (
@@ -116,13 +148,13 @@ export function ApproveAttendanceButton() {
             onPress={handleApproveBrowse}
             color="primary"
             isLoading={isPending}
-            isDisabled={isPending || isDraff}
+            isDisabled={isPending}
           >
             {t('attendance.approve_btn')}
           </Button>
         )}
 
-        <Button onPress={handleClickGotoPayroll} color="secondary" disabled={isLock}>
+        <Button onPress={handleClickGotoPayroll} color="secondary">
           {t('attendance.navigate_payroll_btn')}
         </Button>
       </div>

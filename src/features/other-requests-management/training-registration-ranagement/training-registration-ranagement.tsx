@@ -1,7 +1,10 @@
+import { useMemo } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { exportTrainingRegistrationExcel } from '@/templates/excels/other-requests-management/export-training-registration-excel';
 import { PrintTrainingRegistration } from '@/templates/prints/other-requests-management/print-training-registration';
 import { useTranslation } from 'react-i18next';
+
+import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 
 import { RequestManagementPage } from '../core/components/request-management-page';
 import { useRequestExport } from '../core/hooks/use-request-export';
@@ -34,7 +37,6 @@ export const TrainingRegistrationRanagement = () => {
     visibleColumns,
     handleApplyColumns,
     handlePrint,
-    paginationConfig,
   } = useRequestManagementPage({ columns });
 
   const { data, isLoading } = useOtherRequestpManagement({
@@ -58,6 +60,18 @@ export const TrainingRegistrationRanagement = () => {
     departmentName,
     exportFn: exportTrainingRegistrationExcel,
   });
+
+  const paginationConfig = useMemo(
+    () => ({
+      current: Number(page),
+      showSizeChanger: true,
+      pageSizeOptions: PAGE_SIZE_OPTIONS,
+      total: data?.pagination?.total,
+      pageSize: Number(limit),
+      totalPage: data?.pagination?.totalPage,
+    }),
+    [page, data?.pagination?.total, data?.pagination?.totalPage, limit],
+  );
 
   return (
     <RequestManagementPage

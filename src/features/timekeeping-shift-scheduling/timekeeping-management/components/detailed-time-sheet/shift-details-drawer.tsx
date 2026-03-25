@@ -227,7 +227,7 @@ export const ShiftDetailsDrawer = () => {
             {tc('button.cancel')}
           </Button>
 
-          {!isLocked && (
+          {!isLock && (
             <Button type="submit" color="primary" isLoading={isSubmitting}>
               {tc('button.update')}
             </Button>
