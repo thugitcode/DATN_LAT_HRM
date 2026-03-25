@@ -8,6 +8,7 @@ import {
   otherIncomeOptions,
 } from '@/services/query-options/payroll-management/other-income.query';
 import { payrollFeedbackOptions } from '@/services/query-options/payroll-management/payroll-feedback.query';
+import { payrollPeriodsOptions } from '@/services/query-options/payroll-management/payroll-periods.query';
 import { useDrawer } from '@/store/useDrawer';
 import { addToast } from '@heroui/react';
 
@@ -34,6 +35,10 @@ export function useOtherIncomeList(params?: RequestsParams) {
 }
 export function useOtherIncomeDetail(id: string) {
   return useQuery(otherIncomeOptions.detail(id));
+}
+
+export function usePayrollPeridStatus(month: string) {
+  return useQuery(payrollPeriodsOptions.status(month));
 }
 
 export function useStaffSalary(id: string) {

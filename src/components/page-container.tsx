@@ -14,7 +14,7 @@ export const PageContainer = forwardRef<HTMLDivElement, Readonly<PageContainerPr
       <div
         ref={ref}
         className={cn(
-          'px-6 pt-6 size-full',
+          'px-6 pt-1.5 size-full',
           {
             'overflow-hidden': variant === 'fixed',
             'overflow-auto': variant === 'scroll',

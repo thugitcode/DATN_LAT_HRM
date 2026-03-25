@@ -1,36 +1,25 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { NAMESPACES } from '@/i18n/constants';
 import { useConfirmStore } from '@/store/useConfirmStore';
-import { Button } from '@heroui/react';
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from '@heroui/react';
 import dayjs from 'dayjs';
-import { useTranslation } from 'react-i18next';
 
 import type { ShiftManagementParams } from '@/types';
+import { icons } from '@/lib/icons';
+import { usePeriodStatus } from '@/hooks/use-period-status';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 
-import { calcStandardWorkingDays, getAttendanceCycleDates } from '../../hooks/use-attendance-cycle';
-import { useConfiguration, useCraetePeriodsMutation } from '../../hooks/use-timekeeping-management';
+import { useCraetePeriodsMutation } from '../../hooks/use-timekeeping-management';
 import { useTimekeepingTranslation } from '../../hooks/use-timekeeping-translation';
-
-type PeriodPayload = {
-  name: string;
-  fromDate: string;
-  toDate: string;
-  standardWorkingDays: number;
-};
-
-function useAttendancePeriod(month: number, year: number, cycleStartDate: number): PeriodPayload {
-  return useMemo(() => {
-    const { fromDate, toDate } = getAttendanceCycleDates(month, year, cycleStartDate);
-    return {
-      name: `Tháng ${month}/${year}`,
-      fromDate: dayjs(fromDate).format('YYYY-MM-DD'),
-      toDate: dayjs(toDate).format('YYYY-MM-DD'),
-      standardWorkingDays: calcStandardWorkingDays(fromDate, toDate),
-    };
-  }, [month, year, cycleStartDate]);
-}
 
 function useMonthYear(rawMonth: string | undefined): [number, number] {
   return useMemo(() => {
@@ -45,33 +34,35 @@ function useMonthYear(rawMonth: string | undefined): [number, number] {
 
 export function ApproveAttendanceButton() {
   const { t, tc } = useTimekeepingTranslation();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const open = useConfirmStore((state) => state.open);
   const navigate = useNavigate();
   const { filters } = useQueryFilter<ShiftManagementParams>();
-  const { mutate, isPending } = useCraetePeriodsMutation();
 
-  const { data: configData } = useConfiguration();
-  const cycleStartDate = configData?.data?.attendanceCycleStartDate ?? 1;
+  const monthQuery = dayjs(filters.month ?? undefined).format('YYYY-MM');
+
+  const { mutate, isPending } = useCraetePeriodsMutation(monthQuery);
+
+  const { isLocked, isLoading, isDraff, isPublished, isLock } = usePeriodStatus(monthQuery);
 
   const [year, month] = useMonthYear(filters.month);
-  // const payload = useAttendancePeriod(month, year, cycleStartDate);
 
   const payload = useMemo(() => {
     return {
-      month: dayjs(filters.month ?? undefined).format('YYYY-MM'),
+      month: monthQuery,
     };
   }, [filters.month]);
 
   const createPeriod = useCallback(
     () =>
-      new Promise<void>((resolve) => {
+      new Promise<void>((resolve, reject) => {
         mutate(payload, {
           onSuccess: () => resolve(),
-          onError: () => resolve(),
+          onError: (error) => reject(error),
         });
       }),
-    [mutate, payload],
+    [],
   );
 
   const handleApproveBrowse = useCallback(() => {
@@ -85,26 +76,76 @@ export function ApproveAttendanceButton() {
       },
       createPeriod,
     );
-  }, [open, t, month, year, tc, createPeriod]);
+  }, [open, t, month, year, tc]);
 
-  const handleNavigatePayroll = useCallback(() => {
-    navigate({ to: '/admin/payroll-management/payroll-calculation' });
-  }, [navigate]);
+  const handleClickGotoPayroll = useCallback(() => {
+    if (isDraff) {
+      navigate({ to: '/admin/payroll-management/payroll-calculation' });
+    } else {
+      onOpen();
+    }
+  }, [isLocked]);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-3">
+        <div className="h-10 w-34.5 rounded-xl bg-default-200 animate-pulse" />
+        <div className="h-10 w-34.5 rounded-xl bg-default-200 animate-pulse" />
+      </div>
+    );
+  }
+
+  if (isPublished) {
+    return (
+      <div className="w-50 h-10 rounded-xl bg-[#17C964] text-white inline-flex items-center justify-center text-sm gap-2">
+        <icons.tickCircle className="text-white [&>path]:fill-white!" />
+        Đã chuyển tính lương
+      </div>
+    );
+  }
 
   return (
-    <div className="flex items-center gap-3">
-      <Button
-        onPress={handleApproveBrowse}
-        color="primary"
-        isLoading={isPending}
-        isDisabled={isPending}
-      >
-        {t('attendance.approve_btn')}
-      </Button>
+    <>
+      <div className="flex items-center gap-3">
+        {isLock ? (
+          <Button color="danger" variant="bordered" isLoading={isPending} isDisabled={isPending}>
+            Hủy
+          </Button>
+        ) : (
+          <Button
+            onPress={handleApproveBrowse}
+            color="primary"
+            isLoading={isPending}
+            isDisabled={isPending || isDraff}
+          >
+            {t('attendance.approve_btn')}
+          </Button>
+        )}
 
-      <Button onPress={handleNavigatePayroll} color="secondary">
-        {t('attendance.navigate_payroll_btn')}
-      </Button>
-    </div>
+        <Button onPress={handleClickGotoPayroll} color="secondary" disabled={isLock}>
+          {t('attendance.navigate_payroll_btn')}
+        </Button>
+      </div>
+
+      <Modal isOpen={isOpen} onClose={onClose} size="sm">
+        <ModalContent>
+          <ModalHeader className="flex gap-2 items-center">⚠️ Chưa duyệt bảng công</ModalHeader>
+          <ModalBody>
+            <p className="text-default-600 text-sm">
+              Tháng{' '}
+              <span className="font-semibold text-foreground">
+                {month}/{year}
+              </span>{' '}
+              chưa duyệt bảng công.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="bordered" onPress={onClose}>
+              Đóng
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

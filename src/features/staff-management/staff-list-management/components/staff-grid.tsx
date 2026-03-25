@@ -15,10 +15,10 @@ import { useTranslation } from 'react-i18next';
 import type { Staff } from '@/types/staff.type';
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 
 import { translateJobTitle } from '../../time-attendance-management/helpers';
 import { renderStatusChip } from '../hooks/use-staff-columns';
-import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 
 const translatePosition = (position: string) => {
   const positions: Record<string, string> = {
@@ -107,7 +107,11 @@ export const StaffGrid: FC<StaffGridProps> = ({
                 {/* Avatar & Name */}
                 <div className="flex flex-col items-center">
                   <div className="w-[60px] h-[60px] rounded-full overflow-hidden shrink-0 border border-gray-100">
-                    <StaffAvatar avatarUrl={staff.avatar} name={staff.name} className='w-full h-full object-cover' />
+                    <StaffAvatar
+                      avatarUrl={staff.avatar}
+                      name={staff.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <h3 className="font-medium leading-6 text-base text-[#11181C] mt-3">
                     {staff.name}

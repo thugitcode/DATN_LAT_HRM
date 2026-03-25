@@ -1,12 +1,12 @@
+import { useQuery } from '@tanstack/react-query';
 import { NAMESPACES } from '@/i18n/constants';
+import { uploadQueryOptions } from '@/services/query-options/upload.query';
 import { Avatar, Button, Chip, Switch } from '@heroui/react';
 import { IconMail, IconPencil, IconPhone } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
 
 import type { Staff } from '@/types/staff.type';
 import type { ColumnDef } from '@/components/data-table/data-table';
-import { uploadQueryOptions } from '@/services/query-options/upload.query';
 import GetSignedUrl from '@/components/get-signed-url';
 
 export const renderStatusChip = (status: string | undefined, t: any) => {
@@ -63,10 +63,15 @@ export const useStaffColumns = () => {
           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0">
             <GetSignedUrl url={record.avatar || ''}>
               {(signedUrl) => {
-                return <Avatar
-                  src={signedUrl || `https://ui-avatars.com/api/?name=${record.name || 'Staff'}&background=random`}
-                  className="w-full h-full object-cover"
-                />
+                return (
+                  <Avatar
+                    src={
+                      signedUrl ||
+                      `https://ui-avatars.com/api/?name=${record.name || 'Staff'}&background=random`
+                    }
+                    className="w-full h-full object-cover"
+                  />
+                );
               }}
             </GetSignedUrl>
           </div>
@@ -89,7 +94,9 @@ export const useStaffColumns = () => {
       render: (_, record) => (
         <span className="text-sm text-[#11181C]">
           {record?.birthday
-            ? new Date(record.birthday).toLocaleDateString(tc('locale') === 'en' ? 'en-US' : 'vi-VN')
+            ? new Date(record.birthday).toLocaleDateString(
+                tc('locale') === 'en' ? 'en-US' : 'vi-VN',
+              )
             : ''}
         </span>
       ),
@@ -121,7 +128,9 @@ export const useStaffColumns = () => {
       key: 'jobTitle',
       title: t('staff_table.columns.job_title'),
       render: (_, record) => (
-        <span className="text-sm text-[#11181C]">{t(`options.job_title.${record.jobTitle}` as any)}</span>
+        <span className="text-sm text-[#11181C]">
+          {t(`options.job_title.${record.jobTitle}` as any)}
+        </span>
       ),
     },
     {
