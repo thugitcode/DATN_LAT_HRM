@@ -67,6 +67,7 @@ export interface RequestsParams {
   position?: StaffPosition;
   search?: string;
   month?: string;
+  year?: string;
   status?: string;
   getAll?: boolean;
   fromDate?: string;
