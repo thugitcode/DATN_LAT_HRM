@@ -9,7 +9,6 @@ import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
 
 import { PayrollManagementFilters } from '../components/payroll-management-filters';
-import { statusKpiOptions } from '../constants/constants';
 import { StaffList } from './components/staff-list';
 import { StaffSalaryHistory } from './components/staff-salary-history';
 
@@ -23,9 +22,13 @@ export const SalaryHistory = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const { filters } = useQueryFilter<RequestsParams>();
 
+  const { departmentId, roomId } = filters;
+
   const { data: staffList, isLoading } = useStaffList({
     getAll: true,
     search: filters.search,
+    departmentIds: departmentId ? [departmentId] : undefined,
+    roomIds: roomId ? [roomId] : undefined,
   });
   const [activeStaffId, setActiveStaffId] = useState<string | null>(null);
 
@@ -38,7 +41,7 @@ export const SalaryHistory = () => {
   return (
     <PageContainer className="space-y-3 px-0" variant="fixed">
       <TitlePage title={t('salary-history.title')} />
-      <PayrollManagementFilters statusOptions={statusKpiOptions} />
+      <PayrollManagementFilters />
       <div className="flex gap-6 h-[calc(100vh-210px)]">
         <StaffList
           staffList={staffList?.data ?? []}

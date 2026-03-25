@@ -7,6 +7,7 @@ export const usePeriodStatus = (month: string) => {
   const periodStatus = data?.data?.period?.status;
 
   const isLocked = isError ? false : periodStatus !== PeriodStatusEnum.DRAFT;
+
   const isDraff = isError ? false : periodStatus === PeriodStatusEnum.DRAFT;
   const isPublished = isError ? false : periodStatus === PeriodStatusEnum.PUBLISHED;
   const isLock = isError ? false : periodStatus === PeriodStatusEnum.LOCK;

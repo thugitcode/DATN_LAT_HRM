@@ -50,7 +50,7 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
       {
         id: '1',
         label: t('sidebar.official_staff'),
-        path: '/admin/staff-management/official-employee',
+        path: '/admin/staff-management/official-staff',
       },
       {
         id: '2',

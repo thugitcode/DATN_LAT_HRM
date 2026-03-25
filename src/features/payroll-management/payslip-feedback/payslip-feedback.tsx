@@ -5,6 +5,7 @@ import type { ShiftManagementParams } from '@/types';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { usePaginationConfig } from '@/hooks/use-pagination-config';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { ActionsPage } from '@/components/actions-page';
 import DataTable from '@/components/data-table/data-table';
 import { PageContainer } from '@/components/page-container';
 import { PageFilter } from '@/components/page-filter';
@@ -13,7 +14,7 @@ import { TitlePage } from '@/components/title-page';
 import { usePayrollFeedbackColumns } from '../colums/use-payroll-feedback-columns';
 import { usePayrollFeedbackList } from '../hooks/use-payroll-management';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-400px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-260px)]' } as const;
 
 export const PayslipFeedback = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -43,15 +44,18 @@ export const PayslipFeedback = () => {
 
   return (
     <PageContainer className="space-y-3">
-      <TitlePage title={t('payslipFeedback.title')} />
+      <div className="flex items-center justify-between">
+        <TitlePage title={t('payslipFeedback.title')} />
+        <ActionsPage hiddenLayoutSwitcher />
+      </div>
 
       <PageFilter />
 
       <DataTable
-        dataSource={[]}
+        dataSource={data?.data ?? []}
         columns={columns}
         selectionMode="single"
-        // loading={isLoading}
+        loading={isLoading}
         classNames={TABLE_CLASS_NAMES}
         pagination={paginationConfig}
       />

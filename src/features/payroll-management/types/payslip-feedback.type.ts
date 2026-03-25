@@ -1,2 +1,141 @@
-export enum PayslipStatus {}
-export interface PayslipFeedback {}
+import type { Status } from '@/types/global.type';
+import type { Staff } from '@/types/staff.type';
+
+export interface AllowanceBreakdown {
+  fuel: number;
+  meal: number;
+  phone: number;
+  hazard: number;
+  position: number;
+  responsibility: number;
+}
+
+export interface InsuranceBreakdown {
+  health_2pct: number;
+  social_8pct: number;
+  unemployment_1pct: number;
+}
+
+export interface CalculationDetails {
+  hourlyRate: number;
+  standardDays: number;
+  overtimeHours: number;
+  actualWorkDays: number;
+  basicSalaryBase: number;
+  totalLateMinutes: number;
+  totalEarlyMinutes: number;
+  allowanceBreakdown: AllowanceBreakdown;
+  insuranceBreakdown: InsuranceBreakdown;
+}
+
+export interface PayrollPeriod {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  id: string;
+  month: string;
+  name: string;
+  fromDate: string;
+  toDate: string;
+  standardWorkingDays: number;
+  status: PayrollPeriodStatus;
+  note: string | null;
+}
+export interface PayrollResult {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  id: string;
+  basicSalary: string;
+  allowanceAmount: string;
+  overtimeAmount: string;
+  bonusAmount: string;
+  deductionAmount: string;
+  insuranceAmount: string;
+  taxAmount: string;
+  netPay: string;
+  calculationDetails: CalculationDetails;
+  isPaid: boolean;
+  paidAt: string | null;
+  payslipStatus: PayslipStatus;
+  payslipChannel: string | null;
+  payslipSentAt: string | null;
+  payrollPeriod: PayrollPeriod;
+}
+
+export enum PayslipStatus {
+  NOT_SENT = 'NOT_SENT',
+  SENT = 'SENT',
+}
+
+export enum PayrollPeriodStatus {
+  PUBLISHED = 'PUBLISHED',
+  DRAFT = 'DRAFT',
+}
+
+export interface StaffPayslipFeedback {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  id: string;
+  externalId: string;
+  avatar: string;
+  code: string;
+  name: string;
+  hospitalId: string | null;
+  birthday: string;
+  phone: string;
+  email: string;
+  password: string;
+  status: 'WORKING' | 'OFF';
+  activeStatus: 'ACTIVE' | 'INACTIVE';
+  academicTitles: string[];
+  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  identity: string;
+  identityIssueDate: string;
+  identityIssuePlace: string;
+  nationality: string;
+  address: string;
+  qualification: string;
+  major: string;
+  certificateNumber: string;
+  certificateIssuePlace: string;
+  certificateExpiryDate: string;
+  jobTitle: string;
+  position: string;
+  role: string;
+  taxCode: string;
+  insuranceNumber: string;
+  healthInsuranceNumber: string;
+  accountNumber: string;
+  beneficiaryName: string;
+  bankName: string;
+  emergencyContact: string;
+  emergencyContactPhone: string;
+  emergencyContactAddress: string;
+  emergencyContactRelationship: string;
+  pinCode: string | null;
+  note: string;
+  contractExpiryDate: string;
+  currentContractType: string;
+  currentWorkType: string;
+  currentShiftType: string;
+  faceIdEnabled: boolean;
+  faceIdResetAt: string | null;
+  permission: unknown;
+  modulePermission: unknown;
+  managementModule: unknown;
+  isSendPasswordEmail: boolean;
+}
+export interface PayslipFeedback {
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  id: string;
+  content: string;
+  responseContent: string | null;
+  status: Status;
+  resolvedAt: string | null;
+  staff: StaffPayslipFeedback;
+  payrollResult: PayrollResult;
+}

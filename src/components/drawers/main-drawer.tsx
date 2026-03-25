@@ -19,6 +19,7 @@ export function MainDrawer() {
     <Drawer
       isOpen={isOpen}
       onClose={onClose}
+      hideCloseButton={!config.title}
       {...config.drawerProps}
       classNames={{
         ...config.classNames,
@@ -29,14 +30,17 @@ export function MainDrawer() {
       <DrawerContent>
         {(onClose) => (
           <>
-            <DrawerHeader
-              className={cn(
-                'flex items-center px-6 py-5 text-[22px] font-bold text-gray-900',
-                config.classNames?.header,
-              )}
-            >
-              {config.title}
-            </DrawerHeader>
+            {config.title && (
+              <DrawerHeader
+                className={cn(
+                  'flex items-center px-6 py-5 text-[22px] font-bold text-gray-900',
+                  config.classNames?.header,
+                )}
+              >
+                {config.title}
+              </DrawerHeader>
+            )}
+
             <DrawerBody className="bg-[#F4F4F5] px-0 py-0">{config.component}</DrawerBody>
           </>
         )}

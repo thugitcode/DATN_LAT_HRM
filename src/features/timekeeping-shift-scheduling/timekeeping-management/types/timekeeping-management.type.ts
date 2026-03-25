@@ -132,7 +132,7 @@ export type ApprovePayload = {
 
 export enum PeriodStatusEnum {
   DRAFT = 'DRAFT',
-  LOCK = 'LOCK',
+  LOCK = 'LOCKED',
   PUBLISHED = 'PUBLISHED',
 }
 

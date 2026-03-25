@@ -77,7 +77,7 @@ export const MonthFilter: React.FC<MonthFilterProps> = ({ value, onChange, class
 
   return (
     <div
-      className={cn('flex items-center gap-2 bg-white rounded-xl px-3 h-10 min-w-61.5', className)}
+      className={cn('flex items-center gap-2 bg-white rounded-xl px-3 h-9 min-w-61.5', className)}
     >
       <Button
         isIconOnly

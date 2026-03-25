@@ -1,5 +1,6 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
+import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
 import type { ShiftManagementParams } from '@/types';
@@ -14,9 +15,8 @@ import { useShiftManagementList } from '@/features/timekeeping-shift-scheduling/
 
 import { usePayrollCalculationColumns } from '../colums/use-payroll-calculation-columns';
 import { usePayrollCalculationList } from '../hooks/use-payroll-calculation';
-import dayjs from 'dayjs';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-280px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-260px)]' } as const;
 
 export const PayrollCalculation = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -34,10 +34,10 @@ export const PayrollCalculation = () => {
     page: filters.page ?? 1,
     limit: filters.limit ?? 10,
     search: filters.search,
-    month: month ?? dayjs().format("YYYY-MM"),
+    month: month ?? dayjs().format('YYYY-MM'),
     departmentId: filters.departmentId,
     roomId: filters.roomId,
-    view: "result"
+    view: 'result',
   });
 
   const { paginationConfig } = usePaginationConfig({
