@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
+import { useConfirmStore } from '@/store/useConfirmStore';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 
@@ -18,8 +19,6 @@ import {
   useSaveDraftMutation,
 } from '../hooks/use-payroll-management';
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
 const COST_DOT_COLORS = {
   gross: '#000000',
   bonus: '#17C964',
@@ -30,8 +29,6 @@ const COST_DOT_COLORS = {
 const formatVND = (amount: number): string => `${amount.toLocaleString('vi-VN')} đ`;
 
 const formatSignedVND = (amount: number): string => `${amount > 0 ? '+' : ''} ${formatVND(amount)}`;
-
-// ─── Skeletons ────────────────────────────────────────────────────────────────
 
 const StatSkeleton = () => (
   <div className="space-y-2 animate-pulse">
@@ -50,12 +47,11 @@ const CostSkeleton = () => (
   </div>
 );
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export const SummaryFinalize = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const { filters } = useQueryFilter<RequestsParams>();
   const month = (filters.month as string) ?? dayjs().format('YYYY-MM');
+  const open = useConfirmStore((state) => state.open);
 
   const { data, isLoading } = usePayrollSummary(month);
   const { mutate: mutateCalculate, isPending: isPendingCalculate } = useCalculateMutation(month);
@@ -65,9 +61,33 @@ export const SummaryFinalize = () => {
     mutateDraft({ month });
   };
 
-  const handleTransfer = () => {
-    mutateCalculate({ month });
-  };
+  const calculate = useCallback(
+    () =>
+      new Promise<void>((resolve, reject) => {
+        mutateCalculate(
+          { month },
+          {
+            onSuccess: () => resolve(),
+            onError: (error) => reject(error),
+          },
+        );
+      }),
+    [month, mutateCalculate],
+  );
+
+  const handleClickTransfer = useCallback(() => {
+    open(
+      {
+        title: 'Xác nhận chốt kỳ lương',
+        description:
+          'Sau khi xác nhận, hệ thống sẽ tính toán và chốt dữ liệu lương kỳ này. Hành động không thể hoàn tác.',
+        confirmLabel: 'Xác nhận',
+        confirmColor: 'primary',
+        requireReason: false,
+      },
+      calculate,
+    );
+  }, [calculate, open]);
 
   return (
     <div className="space-y-6">
@@ -164,7 +184,7 @@ export const SummaryFinalize = () => {
         <ActionBanner
           t={t}
           onSaveDraft={handleSaveDraft}
-          onTransfer={handleTransfer}
+          onTransfer={handleClickTransfer}
           isTransferring={isPendingCalculate}
         />
       </div>

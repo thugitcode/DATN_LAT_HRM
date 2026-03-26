@@ -33,6 +33,8 @@ export const useRemoteWorkColumns = () => {
         key: 'staffName',
         title: t('columns.staffName'),
         minWidth: 180,
+        sticky: 'left',
+
         render: (_, row) => <span>{row.staffName || '-'}</span>,
       },
       {

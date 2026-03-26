@@ -42,6 +42,7 @@ export const useKpiColumns = () => {
     {
       key: 'staffName',
       title: t('columns.staff_name'),
+      sticky: 'left',
       render: (_, record) => (
         <div className="">
           <p className="text-sm font-medium text-gray-800">{record.staff.name}</p>
@@ -85,6 +86,8 @@ export const useKpiColumns = () => {
       title: t('columns.actions'),
       width: 120,
       align: 'center',
+      sticky: 'right',
+
       render: (_, record) => <RowKpiActions dataRow={record} />,
     },
   ];
