@@ -27,10 +27,11 @@ export const shiftManagementQueryOptions = {
       queryFn: () => shiftManagementService.getAllGrid(params),
     }),
 
-  staffDailyAttendance: (params?: StaffParams) =>
+  staffDailyAttendance: (params?: StaffParams & { staffId: string }) =>
     queryOptions({
       queryKey: shiftManagementKeys.staffDailyAttendace(params),
       queryFn: () => shiftManagementService.getStaffDailyAttendance(params),
+      enabled: !!params?.staffId,
     }),
 
   detail: (id: string | number) =>

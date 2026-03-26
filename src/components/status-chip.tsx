@@ -14,7 +14,7 @@ interface StatusConfig {
   i18nKey: string;
 }
 
-const STATUS_CONFIG: Record<Status, StatusConfig> = {
+const STATUS_CONFIG: Record<Status & { CONFIRMED: "CONFIRMED" }, StatusConfig> = {
   APPROVED: {
     color: 'success',
     icon: 'checkedDone',
@@ -32,7 +32,7 @@ const STATUS_CONFIG: Record<Status, StatusConfig> = {
   },
   ACTIVE: {
     color: 'success',
-    icon: 'tickCircle',
+    icon: 'tickCircleV2',
     i18nKey: 'status.active',
   },
   INACTIVE: {
@@ -42,7 +42,7 @@ const STATUS_CONFIG: Record<Status, StatusConfig> = {
   },
   WORKING: {
     color: 'success',
-    icon: 'tickCircle',
+    icon: 'tickCircleV2',
     i18nKey: 'status.working',
   },
   RESIGNED: {
@@ -54,6 +54,11 @@ const STATUS_CONFIG: Record<Status, StatusConfig> = {
     color: 'default',
     icon: 'closeSquare',
     i18nKey: 'status.cancelled',
+  },
+  CONFIRMED: {
+    color: 'success',
+    icon: 'tickCircleV2',
+    i18nKey: 'status.confirmed',
   },
 } as const;
 

@@ -126,7 +126,8 @@
     "rejected": "Từ chối",
     "pending": "Chờ duyệt",
     "working": "Đang làm việc",
-    "off": "Nghỉ"
+    "off": "Nghỉ",
+    "confirmed": "Đã xác nhận"
   },
   "select": "Chọn",
   "table": {

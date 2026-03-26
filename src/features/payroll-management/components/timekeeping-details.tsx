@@ -23,7 +23,6 @@ export const TimekeepingDetails = () => {
   const { startDate, endDate } = useMonthDateRange(filters.month);
   const [currentStaff, setCurrentStaff] = useState<StaffTimeKeeping>();
 
-
   const { data: details, isLoading } = useStaffDailyAttendance({
     page: filters.page ?? 1,
     limit: filters.limit ?? 10,

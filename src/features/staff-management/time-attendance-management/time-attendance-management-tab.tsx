@@ -28,7 +28,7 @@ export const TimeAttendanceManagementTab = () => {
     search: filters.search,
     departmentId: filters.departmentId,
     roomId: filters.roomId,
-    staffId: id,
+    staffId: id as string,
   });
 
   return (

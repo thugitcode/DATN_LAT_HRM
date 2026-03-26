@@ -1,4 +1,5 @@
 import type { Department } from "@/types/deparment.type";
+import type { Status } from "@/types/global.type";
 import type { Room } from "@/types/room.type";
 
 export enum RevenueStatus {
@@ -22,6 +23,6 @@ export interface RevenueDataListType {
   actualAmount: number;
   achievementRate: number;
   source: string;
-  status: RevenueStatus;
+  status: RevenueStatus | Status;
   createdAt: string;
 }
