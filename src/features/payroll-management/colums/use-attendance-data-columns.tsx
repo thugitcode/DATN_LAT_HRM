@@ -67,13 +67,13 @@ export const useAttendanceDataColumns = () => {
       align: 'center',
       render: (_, record) => record.summary.paidLeave,
     },
-    {
-      key: 'unpaidLeave',
-      title: t('columns.unpaid_leave'),
-      width: 150,
-      align: 'center',
-      render: (_, record) => record.summary.unpaidLeave,
-    },
+    // {
+    //   key: 'unpaidLeave',
+    //   title: t('columns.unpaid_leave'),
+    //   width: 150,
+    //   align: 'center',
+    //   render: (_, record) => record.summary.unpaidLeave,
+    // },
     {
       key: 'onDuty',
       title: t('columns.on_duty'),

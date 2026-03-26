@@ -48,6 +48,7 @@ export enum Status {
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
   CANCELLED = 'CANCELLED',
+  CONFIRMED = 'CONFIRMED',
 }
 
 export interface Options {

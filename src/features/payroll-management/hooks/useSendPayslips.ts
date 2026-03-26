@@ -9,7 +9,7 @@ export function useSendPayslips() {
     mutationFn: (payload: SendPayslipPayload) => payrollSendPayslipService.create(payload),
     onSuccess: () => {
       addToast({
-        description: 'Thành công.',
+        description: 'Gửi phiếu lương thành công.',
         color: 'success',
       });
     },
