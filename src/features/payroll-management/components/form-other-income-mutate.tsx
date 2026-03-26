@@ -91,7 +91,7 @@ export const FormOtherIncomeMutate = () => {
     },
     mode: 'onSubmit',
   });
-  const { control, handleSubmit, setValue } = methods;
+  const { control, handleSubmit, setValue, clearErrors } = methods;
   const { data: allowanceData } = useQuery(allowanceQueryOptions.list());
   const allowanceOptions = allowanceData?.data?.map((item) => ({
     key: item.id,
@@ -107,6 +107,11 @@ export const FormOtherIncomeMutate = () => {
       setSelectedStaff(emp);
     }
 
+    hasAutofilled.current = true;
+  }, [staffOptions, methods]);
+
+  useEffect(() => {
+    if (!dataDetail) return
     methods.reset({
       staffCode: dataDetail.staff?.code || '',
       name: dataDetail.staff?.id || '',
@@ -132,9 +137,7 @@ export const FormOtherIncomeMutate = () => {
         fileSize: item.fileSize,
       })) || [],
     });
-
-    hasAutofilled.current = true;
-  }, [dataDetail, staffOptions, methods]);
+  }, [dataDetail, isLoading])
 
   const applyStaffSelection = (emp: (typeof staffOptions)[0]) => {
     setSelectedStaff(emp);
@@ -179,21 +182,25 @@ export const FormOtherIncomeMutate = () => {
   }, [selectedStaff, roomOptions]);
 
   const onSubmit = async (values: OtherIncomeMutateFormValues) => {
+    let attachments: { fileUrl: string; filePath: string; fileName: string; fileType: string; fileSize: number; }[] = [];
 
     const fileToUpload = values?.attachments?.[0];
 
-    const uploadRes = await uploadService.upload(fileToUpload);
-    let attachments: { fileUrl: string; filePath: string; fileName: string; fileType: string; fileSize: number; }[] = [];
-    if (uploadRes.statusCode === 200) {
-      const fileData = uploadRes.data;
-      attachments = [{
-        fileUrl: fileData.url,
-        filePath: fileData.filePath,
-        fileName: fileData.fileName,
-        fileType: fileData.fileType,
-        fileSize: fileData.fileSize,
-      }];
+    if (fileToUpload && !fileToUpload.fileUrl) {
+      const uploadRes = await uploadService.upload(fileToUpload);
+
+      if (uploadRes.statusCode === 200) {
+        const fileData = uploadRes.data;
+        attachments = [{
+          fileUrl: fileData.url,
+          filePath: fileData.filePath,
+          fileName: fileData.fileName,
+          fileType: fileData.fileType,
+          fileSize: fileData.fileSize,
+        }];
+      }
     }
+
 
     const payload: OtherIncomePayload = {
       staffId: values.staffId,
@@ -258,6 +265,7 @@ export const FormOtherIncomeMutate = () => {
                   isRequired={!isDisabledStaff}
                   options={filteredDepartmentOptions}
                   readOnly={isDisabledStaff}
+                  onSelect={() => clearErrors('departmentId')}
                 />
                 <FormSelect
                   control={control}
@@ -266,6 +274,7 @@ export const FormOtherIncomeMutate = () => {
                   isRequired={!isDisabledStaff}
                   options={filteredRoomOptions}
                   readOnly={isDisabledStaff}
+                  onSelect={() => clearErrors('roomId')}
                 />
               </div>
             </WrapperBoxForm>
