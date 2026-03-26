@@ -97,7 +97,6 @@ export const SummaryFinalize = () => {
       </div>
 
       <div className="bg-white rounded-xl space-y-6 p-6">
-        {/* ── Input Summary ── */}
         <SectionCardOtherIncome
           title={t('summary-finalize.input-summary.title', 'Tổng hợp và chốt đầu vào kỳ lương')}
         >
@@ -106,10 +105,10 @@ export const SummaryFinalize = () => {
               Array.from({ length: 4 }).map((_, i) => <StatSkeleton key={i} />)
             ) : (
               <>
-                <StatItem
+                {/* <StatItem
                   label={t('summary-finalize.input-summary.attendance', 'Chấm công')}
                   value={data?.inputs.attendance ?? '-'}
-                />
+                /> */}
                 <StatItem
                   label={t('summary-finalize.input-summary.revenue', 'Doanh số')}
                   value={data?.inputs.revenue != null ? formatVND(data.inputs.revenue) : '-'}
@@ -131,7 +130,6 @@ export const SummaryFinalize = () => {
           </div>
         </SectionCardOtherIncome>
 
-        {/* ── Cost Estimate ── */}
         <SectionCardOtherIncome
           title={t('summary-finalize.cost-estimate.title', 'Ước tính tổng chi phí kỳ lương')}
         >

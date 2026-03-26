@@ -3,11 +3,13 @@ import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { exportPayrollCalculationExcel } from '@/templates/excels/payroll-management/export-payroll-calculation-excel';
 import { PrintPayrollCalculation } from '@/templates/prints/payroll-management/payroll-caculation';
+import { Button } from '@heroui/react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 
 import type { ShiftManagementParams } from '@/types';
+import { icons } from '@/lib/icons';
 import { useDepartmentName } from '@/hooks/use-department-name';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { usePaginationConfig } from '@/hooks/use-pagination-config';
@@ -20,6 +22,7 @@ import { TitlePage } from '@/components/title-page';
 
 import { usePayrollCalculationColumns } from '../colums/use-payroll-calculation-columns';
 import { usePayrollCalculationList } from '../hooks/use-payroll-calculation';
+import { BtnSendBulkPayslips } from './components/btn-send-bulk-payslips';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-260px)]' } as const;
 
@@ -32,13 +35,10 @@ export const PayrollCalculation = () => {
   const { filters } = useQueryFilter<ShiftManagementParams>();
   const { departmentId, month, roomId, search, status, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
+
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
   const { departmentName } = useDepartmentName({ departmentId });
-
-  // useEffect(() => {
-  //   onOpen(DrawerType.PAYROLL_CACULATION_DETAILS,)
-  // }, [])
 
   const { data, isLoading, isError } = usePayrollCalculationList({
     page: filters.page ?? 1,
@@ -71,7 +71,11 @@ export const PayrollCalculation = () => {
       <div className="flex items-center justify-between">
         <TitlePage title={t('payrollCalculation.title')} />
 
-        <ActionsPage onPrint={handlePrint} onExport={handleExport} hiddenLayoutSwitcher />
+        <div className="flex gap-3">
+          <ActionsPage onPrint={handlePrint} onExport={handleExport} hiddenLayoutSwitcher />
+
+          {data?.data?.data?.length && <BtnSendBulkPayslips month={month} />}
+        </div>
       </div>
 
       <PageFilter />
