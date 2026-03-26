@@ -126,7 +126,8 @@
     "rejected": "Rejected",
     "pending": "Pending",
     "working": "Working",
-    "off": "Off"
+    "off": "Off",
+    "confirmed": "Confirmed"
   },
   "select": "Select",
   "table": {

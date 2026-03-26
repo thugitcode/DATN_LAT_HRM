@@ -38,8 +38,6 @@ export const SalaryAndBenefits = () => {
         control,
         handleSubmit,
         reset,
-        formState: { isSubmitting, errors },
-        getValues,
         setValue,
         watch
     } = methods
@@ -121,56 +119,50 @@ export const SalaryAndBenefits = () => {
         );
     });
 
-    if (isLoading) {
-        return (
-            <div className="h-[50vh] flex items-center justify-center">
-                <LoadingWrapper isLoading={isLoading}><div></div></LoadingWrapper>
-            </div>
-        )
-    }
-
     if (!data?.data && id) {
         return <StaffContractEmptyState staffId={id} />
     }
     return (
-        <FormProvider {...methods}>
-            <Form onSubmit={() => onSubmit()} className="flex flex-col gap-4">
-                <div className="flex justify-between items-center">
-                    <TitlePage title={t('salary_benefits.title')} />
+        <LoadingWrapper isLoading={isLoading}>
+            <FormProvider {...methods}>
+                <Form onSubmit={() => onSubmit()} className="flex flex-col gap-4">
+                    <div className="flex justify-between items-center">
+                        <TitlePage title={t('salary_benefits.title')} />
 
-                    {mode === ControlMode.view ? (
-                        <Button
-                            variant="bordered"
-                            color="primary"
-                            startContent={<icons.edit width="20px" height="20px" stroke="#006FEE" />}
-                            onPress={() => setMode(ControlMode.edit)}
-                        >
-                            {t('salary_benefits.edit')}
-                        </Button>
-                    ) : (
-                        <div className="flex gap-2">
-                            <BtnCancel
-                                isDisabled={isPending}
-                                onPress={() => setMode(ControlMode.view)}
-                            />
-                            <BtnSave isLoading={isPending} />
+                        {mode === ControlMode.view ? (
+                            <Button
+                                variant="bordered"
+                                color="primary"
+                                startContent={<icons.edit width="20px" height="20px" stroke="#006FEE" />}
+                                onPress={() => setMode(ControlMode.edit)}
+                            >
+                                {t('salary_benefits.edit')}
+                            </Button>
+                        ) : (
+                            <div className="flex gap-2">
+                                <BtnCancel
+                                    isDisabled={isPending}
+                                    onPress={() => setMode(ControlMode.view)}
+                                />
+                                <BtnSave isLoading={isPending} />
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full overflow-auto h-[calc(100vh-290px)]">
+                        <div className="flex flex-col gap-6 pb-18">
+                            <SalaryInfoSection />
+                            <SalaryStructureSection />
+                            <PersonalIncomeTaxSection />
                         </div>
-                    )}
-                </div>
 
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
-                    <div className="flex flex-col gap-6 pb-18">
-                        <SalaryInfoSection />
-                        <SalaryStructureSection />
-                        <PersonalIncomeTaxSection />
+                        <div className="flex flex-col gap-6">
+                            <InsuranceAndUnionSection />
+                            <LeaveBenefitsSection />
+                        </div>
                     </div>
-
-                    <div className="flex flex-col gap-6">
-                        <InsuranceAndUnionSection />
-                        <LeaveBenefitsSection />
-                    </div>
-                </div>
-            </Form>
-        </FormProvider>
+                </Form>
+            </FormProvider>
+        </LoadingWrapper>
     )
 }

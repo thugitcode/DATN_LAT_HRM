@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 import { useAttendanceTable } from '@/features/timekeeping-shift-scheduling/timekeeping-management/hooks/use-timekeeping-management';
 import type { StaffTimeKeeping } from '@/features/timekeeping-shift-scheduling/timekeeping-management/types/timekeeping-management.type';
+import { useStaffList } from '@/hooks/queries/use-staff-query';
+import { renderStatusChip } from '@/features/staff-management/staff-list-management/hooks/use-staff-columns';
 
 export const PageHeader = ({
   currentStaff,
@@ -22,25 +24,25 @@ export const PageHeader = ({
 }) => {
   const { t } = useTranslation(NAMESPACES.COMMON);
   const { data: staffId } = useDrawer();
-  const { data: listStaff, isLoading: loadingList } = useAttendanceTable({ getAll: true });
+  const { data: listStaff, isLoading: loadingList } = useStaffList({ getAll: true });
   // Khởi tạo staff hiện tại
   useEffect(() => {
-    const staff = listStaff?.data?.find((ite) => ite.staff.id === staffId)?.staff;
+    const staff = listStaff?.data?.find((ite) => ite.id === staffId);
     staff && setCurrentStaff(staff);
   }, [listStaff?.data]);
   const currentIndex = useMemo(
-    () => listStaff?.data?.findIndex((it) => it.staff.id === currentStaff?.id) ?? 0,
+    () => listStaff?.data?.findIndex((it) => it.id === currentStaff?.id) ?? 0,
     [listStaff, currentStaff],
   );
   const handleNext = () => {
-    const nextStaff = listStaff?.data?.[currentIndex + 1]?.staff;
+    const nextStaff = listStaff?.data?.[currentIndex + 1];
     if (nextStaff) {
       setCurrentStaff(nextStaff);
     }
   };
 
   const handlePrev = () => {
-    const prevStaff = listStaff?.data?.[currentIndex - 1]?.staff;
+    const prevStaff = listStaff?.data?.[currentIndex - 1];
     if (prevStaff) {
       setCurrentStaff(prevStaff);
     }
@@ -62,14 +64,7 @@ export const PageHeader = ({
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-bold text-[#11181C]">{currentStaff?.name}</h1>
-              <Chip
-                size="sm"
-                color={currentStaff?.status === 'WORKING' ? 'success' : 'danger'}
-                variant="flat"
-                className="h-5"
-              >
-                {currentStaff?.status === 'WORKING' ? t('status.working') : t('status.off')}
-              </Chip>
+              {renderStatusChip(currentStaff?.status as any, t)}
             </div>
             <p className="text-sm text-[#71717A] mt-0.5">{currentStaff?.code}</p>
           </div>
