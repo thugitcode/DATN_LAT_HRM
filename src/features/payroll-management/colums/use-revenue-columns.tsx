@@ -44,6 +44,7 @@ export const useRevenueDataColumns = () => {
     {
       key: 'staffName',
       title: t('revenue.columns.staff_name'),
+      sticky: 'left',
       width: 180,
       render: (_, record) => record.staff?.name,
       // render: (_, record) => (
@@ -99,6 +100,7 @@ export const useRevenueDataColumns = () => {
       title: t('revenue.columns.actions'),
       width: 100,
       align: 'center',
+      sticky: 'right',
       render: (_, record) => <RowRevenueActions dataRow={record} />,
     },
   ];

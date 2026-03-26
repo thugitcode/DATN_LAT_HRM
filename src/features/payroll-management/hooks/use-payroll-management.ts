@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { kpiService } from '@/services/payroll-management/kpi.service';
 import { otherIncomeService } from '@/services/payroll-management/other-income.service';
 import { payrollPerriodsService } from '@/services/payroll-management/payroll-periods.service';
@@ -195,6 +196,7 @@ export function useDeleteOtherIncomeManagement() {
 
 export function useCalculateMutation(month: string) {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: (payload: ApprovePayload) => payrollPerriodsService.calculate(payload),
@@ -207,9 +209,17 @@ export function useCalculateMutation(month: string) {
         description: 'Chuyển tính lương thành công.',
         color: 'success',
       });
+
+      navigate({
+        to: '/admin/payroll-management/payroll-calculation',
+        search: {
+          month,
+        },
+      });
     },
   });
 }
+
 export function useSaveDraftMutation(month: string) {
   const queryClient = useQueryClient();
 

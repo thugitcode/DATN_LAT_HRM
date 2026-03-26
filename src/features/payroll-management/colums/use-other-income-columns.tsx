@@ -1,9 +1,9 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
+import { formatVND } from '@/lib/helpers';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
-import { formatVND } from '@/lib/helpers';
 
 import { RowOtherIncomeActions } from '../components/row-other-income-actions';
 import { KPI_SOURCE_LABEL } from '../constants/kpi';
@@ -39,6 +39,7 @@ export const useOtherIncomeColumns = () => {
     {
       key: 'staffName',
       title: t('columns.staff_name'),
+      sticky: 'left',
       render: (_, record) => record.staff?.name || '-',
     },
     {
@@ -71,6 +72,8 @@ export const useOtherIncomeColumns = () => {
       title: t('revenue.columns.actions'),
       width: 100,
       align: 'center',
+      sticky: 'right',
+
       render: (_, record) => <RowOtherIncomeActions dataRow={record} />,
     },
   ];

@@ -106,7 +106,10 @@ export function ApproveAttendanceButton() {
 
   const handleClickGotoPayroll = useCallback(() => {
     if (isLock) {
-      navigate({ to: '/admin/payroll-management/data-summary/summary-finalize' });
+      navigate({
+        to: '/admin/payroll-management/data-summary/summary-finalize',
+        search: { month: monthQuery },
+      });
     } else {
       onOpen();
     }
@@ -154,9 +157,11 @@ export function ApproveAttendanceButton() {
           </Button>
         )}
 
-        <Button onPress={handleClickGotoPayroll} color="secondary">
-          {t('attendance.navigate_payroll_btn')}
-        </Button>
+        {isLock && (
+          <Button onPress={handleClickGotoPayroll} color="secondary">
+            {t('attendance.navigate_payroll_btn')}
+          </Button>
+        )}
       </div>
 
       <Modal isOpen={isOpen} onClose={onClose} size="sm">

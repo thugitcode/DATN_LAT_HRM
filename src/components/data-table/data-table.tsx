@@ -24,6 +24,8 @@ export interface ColumnDef<T extends object> {
   align?: 'start' | 'center' | 'end';
   className?: string;
   hideable?: boolean;
+  sticky?: 'left' | 'right';
+
   render?: (value: unknown, record: T, index: number) => ReactNode;
 }
 
@@ -97,6 +99,42 @@ export function DataTable<T extends object>({
 
   const resolvedEmptyContent = emptyContent ?? t('table.empty');
 
+  const getStickyStyle = (col: ColumnDef<T>, allCols: ColumnDef<T>[]) => {
+    if (!col.sticky) return {};
+
+    const toNumber = (w?: number | string) =>
+      typeof w === 'number' ? w : parseInt(w ?? '0', 10) || 0;
+
+    if (col.sticky === 'left') {
+      let offset = 0;
+      for (const c of allCols) {
+        if (c.key === col.key) break;
+        if (c.sticky === 'left') offset += toNumber(c.width);
+      }
+      return {
+        position: 'sticky' as const,
+        left: offset,
+        zIndex: 10,
+      };
+    }
+
+    if (col.sticky === 'right') {
+      let offset = 0;
+      const reversed = [...allCols].reverse();
+      for (const c of reversed) {
+        if (c.key === col.key) break;
+        if (c.sticky === 'right') offset += toNumber(c.width);
+      }
+      return {
+        position: 'sticky' as const,
+        right: offset,
+        zIndex: 10,
+      };
+    }
+
+    return {};
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <Table
@@ -106,9 +144,7 @@ export function DataTable<T extends object>({
         selectedKeys={selectedKeys}
         onSelectionChange={onSelectionChange}
         classNames={{
-          wrapper:
-            classNames?.wrapper ??
-            'shadow-none border border-gray-200 rounded-xl p-0 border-0 rounded-none pt-0',
+          wrapper: `shadow-none border border-gray-200 rounded-xl border-0 pr-0 rounded-none bg-white ${classNames?.wrapper}`,
           th:
             classNames?.th ??
             'bg-[#F4F4F5] text-[#71717A] text-xs font-semibold uppercase py-3 px-4 first:rounded-none last:rounded-none',
@@ -123,8 +159,15 @@ export function DataTable<T extends object>({
             <TableColumn
               key={col.key}
               align={col.align ?? 'start'}
-              className={col.className}
-              style={{ width: col.width, minWidth: col.minWidth }}
+              className={
+                col.sticky === 'right' ? `sticky-right-cell ${col.className ?? ''}` : col.className
+              }
+              style={{
+                width: col.width,
+                minWidth: col.minWidth,
+                ...getStickyStyle(col, visibleColumnDefs),
+                backgroundColor: col.sticky ? '#F4F4F5' : undefined,
+              }}
             >
               {col.title}
             </TableColumn>
@@ -147,7 +190,16 @@ export function DataTable<T extends object>({
               }}
             >
               {visibleColumnDefs.map((col) => (
-                <TableCell key={col.key}>{renderCell(record, col.key)}</TableCell>
+                <TableCell
+                  key={col.key}
+                  className={col.sticky === 'right' ? 'sticky-right-cell ' : undefined}
+                  style={{
+                    ...getStickyStyle(col, visibleColumnDefs),
+                    backgroundColor: col.sticky ? 'white' : undefined,
+                  }}
+                >
+                  {renderCell(record, col.key)}
+                </TableCell>
               ))}
             </TableRow>
           )}

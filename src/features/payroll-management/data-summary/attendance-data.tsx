@@ -15,7 +15,7 @@ import { useAttendanceTable } from '@/features/timekeeping-shift-scheduling/time
 
 import { useAttendanceDataColumns } from '../colums/use-attendance-data-columns';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-340px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-340px)] ' } as const;
 
 export const AttendanceData = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -26,9 +26,9 @@ export const AttendanceData = () => {
   const { departmentId, month, roomId, search, status, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
 
-  const { visibleColumns, handleApplyColumns } = useColumnVisibility({
-    columns,
-  });
+  // const { visibleColumns, handleApplyColumns } = useColumnVisibility({
+  //   columns,
+  // });
 
   const { data, isLoading } = useAttendanceTable({
     page: page ?? 1,
