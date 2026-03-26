@@ -1,3 +1,4 @@
+import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 import { NAMESPACES } from '@/i18n/constants';
 import { uploadService } from '@/services/upload.service';
 import { Avatar, Spinner } from '@heroui/react';
@@ -40,11 +41,7 @@ export const AvatarSection = () => {
   return (
     <div className="col-span-12">
       <div className="relative inline-block group">
-        <Avatar
-          src={url || value} // Hiển thị ảnh từ field value
-          className="w-24 h-24 text-large bg-[#E4E4E7] border-2 border-white shadow-md"
-          fallback={<IconUser size={40} className="text-[#A1A1AA]" />}
-        />
+        <StaffAvatar className="w-24 h-24 text-large bg-[#E4E4E7] border-2 border-white shadow-md" avatarUrl={url || value} name={getValues("name")} />
         {isUploading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center rounded-full bg-black/20">
             <Spinner size="sm" color="white" />

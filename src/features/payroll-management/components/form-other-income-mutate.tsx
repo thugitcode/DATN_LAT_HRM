@@ -212,10 +212,8 @@ export const FormOtherIncomeMutate = () => {
       entryPersonId: values.entryPersonId,
       date: values.date,
       allowanceId: values.allowanceId,
-      attachments: attachments ?? [],
+      attachments: attachments?.length ? attachments : values?.attachments ?? [],
     };
-
-    console.log(values, 'payload_________________', payload);
 
     if (!dataDetail) {
       mutateCreate(payload);

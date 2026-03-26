@@ -8,6 +8,7 @@ import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/time
 
 import { RowPayrollCalculationActions } from '../payroll-calculation/components/row-payroll-calculation-actions';
 import type { StaffPayroll } from '../types/payroll-caculation.type';
+import { StatusChip } from '@/components/status-chip';
 
 export const usePayrollCalculationColumns = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -48,10 +49,10 @@ export const usePayrollCalculationColumns = () => {
       render: (_, record) => tc(`options.staff_position.${record.position}` as any),
     },
     {
-      key: 'confirmationStatus', // Map từ confirmationStatus thay cho salaryTemplate
+      key: 'salaryTemplateName', // Map từ confirmationStatus thay cho salaryTemplate
       title: t('payrollCalculation.columns.salary_template'),
       width: 160,
-      render: (_, record) => record.confirmationStatus,
+      render: (_, record) => record.salaryTemplateName,
     },
     {
       key: 'basicSalary', // Map từ basicSalary
@@ -116,16 +117,23 @@ export const usePayrollCalculationColumns = () => {
       render: (_, record) => <span>{formatCurrency(record.netPay)}</span>,
     },
     {
-      key: 'status',
-      title: t('payrollCalculation.columns.status'),
+      key: 'note', // Map từ netPay
+      title: t('payrollCalculation.columns.note'),
       width: 140,
-      align: 'center',
-      render: (_, record) => (
-        <Chip color={record.confirmationStatus === 'APPROVED' ? 'success' : 'default'}>
-          {record.confirmationStatus}
-        </Chip>
-      ),
+      align: 'end',
+      render: (_, record) => <span>{record.note}</span>,
     },
+
+
+    // {
+    //   key: 'status',
+    //   title: t('payrollCalculation.columns.status'),
+    //   width: 140,
+    //   align: 'center',
+    //   render: (_, record) => (
+    //     <StatusChip status={record.confirmationStatus} />
+    //   ),
+    // },
     {
       key: 'action',
       title: t('payrollCalculation.columns.action'),

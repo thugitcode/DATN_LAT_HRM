@@ -6,45 +6,46 @@ export const mapApiToFormValues = (data: SalaryAndBenefits): SalaryFormValues =>
 
   return {
     salary: {
-      hasHealthInsurance: salary.hasHealthInsurance ?? false,
-      healthInsuranceRate: salary.healthInsuranceRate || '',
-      hasSocialInsurance: salary.hasSocialInsurance ?? false,
-      socialInsuranceRate: salary.socialInsuranceRate || '',
-      hasUnemploymentInsurance: salary.hasUnemploymentInsurance ?? false,
-      unemploymentInsuranceRate: salary.unemploymentInsuranceRate || '',
-      hasUnionFee: salary.hasUnionFee ?? false,
-      unionFee: salary.unionFee || '',
+      hasHealthInsurance: !!salary.hasHealthInsurance,
+      healthInsuranceRate: salary.healthInsuranceRate?.toString() || '',
+      hasSocialInsurance: !!salary.hasSocialInsurance,
+      socialInsuranceRate: salary.socialInsuranceRate?.toString() || '',
+      hasUnemploymentInsurance: !!salary.hasUnemploymentInsurance,
+      unemploymentInsuranceRate: salary.unemploymentInsuranceRate?.toString() || '',
+      hasUnionFee: !!salary.hasUnionFee,
+      unionFee: salary.unionFee?.toString() || '',
 
-      hasHealthCareInsurance: salary.hasHealthCareInsurance ?? false,
+      hasHealthCareInsurance: !!salary.hasHealthCareInsurance,
       healthCareInsuranceCompany: salary.healthCareInsuranceCompany || '',
-      healthCareInsuranceBenefit: salary.healthCareInsuranceBenefit || '',
-      healthCareInsuranceRate: salary.healthCareInsuranceRate || '',
+      healthCareInsuranceBenefit: salary.healthCareInsuranceBenefit?.toString() || '',
+      healthCareInsuranceRate: salary.healthCareInsuranceRate?.toString() || '',
 
-      basicSalary: salary.basicSalary || '',
-      insuranceSalary: salary.insuranceSalary || '',
-      responsibilityAllowance: salary.responsibilityAllowance || '',
-      positionAllowance: salary.positionAllowance || '',
-      hazardAllowance: salary.hazardAllowance || '',
-      mealAllowance: salary.mealAllowance || '',
+      basicSalary: salary.basicSalary?.toString() || '',
+      insuranceSalary: salary.insuranceSalary?.toString() || '',
+      responsibilityAllowance: salary.responsibilityAllowance?.toString() || '',
+      positionAllowance: salary.positionAllowance?.toString() || '',
+      hazardAllowance: salary.hazardAllowance?.toString() || '',
+      mealAllowance: salary.mealAllowance?.toString() || '',
       mealAllowanceUnit: salary.mealAllowanceUnit || 'DAY',
-      fuelAllowance: salary.fuelAllowance || '',
-      phoneAllowance: salary.phoneAllowance || '',
-      businessTripAllowance: salary.businessTripAllowance || '',
-      otherAllowance: salary.otherAllowance || '',
+      fuelAllowance: salary.fuelAllowance?.toString() || '',
+      phoneAllowance: salary.phoneAllowance?.toString() || '',
+      businessTripAllowance: salary.businessTripAllowance?.toString() || '',
+      otherAllowance: salary.otherAllowance?.toString() || '',
 
       leaveQuotaIds: Array.isArray(salary.leaveQuotaIds) ? [...salary.leaveQuotaIds] : [],
 
-      hasFamilyDeduction: salary.hasFamilyDeduction ?? false,
+      hasFamilyDeduction: !!salary.hasFamilyDeduction,
       dependentsCount: salary.dependentsCount?.toString() || '',
       hasPersonalIncomeTax: salary.hasPersonalIncomeTax ?? true,
-      personalIncomeTaxRate: salary.personalIncomeTaxRate || '',
+      personalIncomeTaxRate: salary.personalIncomeTaxRate?.toString() || '',
 
       salaryType: salary.salaryType || 'NET',
-      netSalary: salary.netSalary || '',
-      grossSalary: salary.grossSalary || '',
-    },
-  };
-};
+      netSalary: salary.netSalary?.toString() || '',
+      grossSalary: salary.grossSalary?.toString() || '',
+    }
+  }
+}
+
 
 // Hàm helper parse string số (loại bỏ dấu chấm, phẩy)
 const parseNumber = (val: string | undefined): number => {

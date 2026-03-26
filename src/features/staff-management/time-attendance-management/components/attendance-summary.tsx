@@ -1,5 +1,7 @@
 // components/AttendanceSummary.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 import type { IAttendanceSummary } from '../types';
 
 interface StatItemProps {
@@ -32,42 +34,44 @@ interface AttendanceSummaryProps {
 }
 
 const AttendanceSummary: React.FC<AttendanceSummaryProps> = ({ data }) => {
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
+
   // Fallback nếu data chưa kịp load
-  if (!data) return <div className="p-6 text-gray-400 text-center">Không có dữ liệu</div>;
+  if (!data) return <div className="p-6 text-gray-400 text-center">{t('attendanceSummary.noData')}</div>;
 
   const stats = [
     {
-      label: 'Ngày nghỉ',
+      label: t('attendanceSummary.dayOff'),
       value: data.dayOff,
       change: '0', // Tạm thời để 0 vì API chưa có field so sánh
       changeColor: 'neutral',
     },
     {
-      label: 'Chấm công muộn',
+      label: t('attendanceSummary.lateCount'),
       value: data.lateCount,
       change: '0',
       changeColor: 'neutral',
     },
     {
-      label: 'Về sớm',
+      label: t('attendanceSummary.earlyLeaveCount'),
       value: data.earlyLeaveCount,
       change: '0',
       changeColor: 'neutral',
     },
     {
-      label: 'Quên chấm công',
+      label: t('attendanceSummary.missedCheckIn'),
       value: data.missedCheckIn,
       change: '0',
       changeColor: 'neutral',
     },
     {
-      label: 'Số phép còn lại',
+      label: t('attendanceSummary.remainingLeave'),
       value: data.remainingLeave,
       change: '0',
       changeColor: 'neutral',
     },
     {
-      label: 'Nghỉ không phép',
+      label: t('attendanceSummary.unauthorizedLeave'),
       value: data.unauthorizedLeave,
       change: '0',
       changeColor: 'neutral',

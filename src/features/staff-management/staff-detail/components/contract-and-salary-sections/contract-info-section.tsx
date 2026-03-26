@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { WorkingAreaSection } from './working-area-section';
 import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
 import { useRoomOptions } from '@/hooks/select-options/use-room-options';
+import { taxOptions } from '@/services/query-options/tax/tax.query';
 
 export const ContractInfoSection: FC = () => {
   const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
@@ -30,6 +31,8 @@ export const ContractInfoSection: FC = () => {
   const { options: departmentOptions } = useDepartmentOptions();
   const selectedDepts = watch("managedDepartmentId");
   const { options: roomOptions } = useRoomOptions(selectedDepts);
+  const { data: taxRateRes } = useQuery(taxOptions.getTaxRate());
+  const { data: taxBracketRes } = useQuery(taxOptions.getTaxBracket());
 
   const { data: managersRes } = useStaffList({
     getAll: true,

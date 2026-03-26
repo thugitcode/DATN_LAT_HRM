@@ -492,5 +492,24 @@
       "selectInfo": "Please select document information to upload",
       "updateError": "An error occurred during the update process"
     }
+  },
+  "shiftEntry": {
+    "today": "Today",
+    "approved": "Approved",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "totalHours": "Total hours",
+    "late": "Late arrival",
+    "early": "Early leave"
+  },
+  "attendanceSummary": {
+    "noData": "No data",
+    "dayOff": "Day off",
+    "lateCount": "Late count",
+    "earlyLeaveCount": "Early leave",
+    "missedCheckIn": "Missed check-in",
+    "remainingLeave": "Remaining leave",
+    "unauthorizedLeave": "Unauthorized leave"
   }
 }
+

@@ -538,5 +538,24 @@
       "selectInfo": "Vui lòng chọn thông tin tài liệu cần tải lên",
       "updateError": "Có lỗi xảy ra trong quá trình cập nhật"
     }
+  },
+  "shiftEntry": {
+    "today": "Hôm nay",
+    "approved": "Đã được duyệt",
+    "checkIn": "Chấm công vào",
+    "checkOut": "Chấm công về",
+    "totalHours": "Tổng giờ",
+    "late": "Đi muộn",
+    "early": "Về sớm"
+  },
+  "attendanceSummary": {
+    "noData": "Không có dữ liệu",
+    "dayOff": "Ngày nghỉ",
+    "lateCount": "Chấm công muộn",
+    "earlyLeaveCount": "Về sớm",
+    "missedCheckIn": "Quên chấm công",
+    "remainingLeave": "Số phép còn lại",
+    "unauthorizedLeave": "Nghỉ không phép"
   }
 }
+

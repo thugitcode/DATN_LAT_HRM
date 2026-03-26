@@ -201,6 +201,15 @@
       "EMINENT_PHYSICIAN": "Eminent Physician",
       "BACHELOR": "Bachelor",
       "ENGINEER": "Engineer"
+    },
+    "timeline": {
+      "WORK": "Work",
+      "BREAK": "Break",
+      "OT": "Overtime",
+      "LEAVE": "Leave",
+      "OTHER": "Other",
+      "LATE": "Late",
+      "EARLY": "Early"
     }
   },
   "staff": "Staff",

@@ -2,22 +2,25 @@ import { formatTime } from '@/lib/utils';
 
 import { TIMELINE_COLOR_MAP } from '../helpers';
 import type { TimelineSegment } from '../types';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 interface ShiftTimelineProps {
   timeline: TimelineSegment[];
 }
 
 export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
+  const { t } = useTranslation(NAMESPACES.COMMON)
   return (
     <div className="overflow-x-auto px-6 py-0 h-full">
       <div
         className="relative grid gap-0.5"
         style={{
-          gridTemplateColumns: `repeat(${timeline.length}, minmax(80px, 1fr))`,
+          gridTemplateColumns: `repeat(${timeline?.length ?? 0}, minmax(80px, 1fr))`,
         }}
       >
         {/* Grid lines background */}
-        {timeline.map((slot, i) => (
+        {timeline?.map((slot, i) => (
           <div className="flex justify-between h-2.5 px-2" key={i}>
             <div className="text-xs text-center text-gray-500 py-0">
               {formatTime(slot.startTime)}
@@ -32,7 +35,7 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
         ))}
 
         {/* Timeline blocks */}
-        {timeline.map((slot, i) => (
+        {timeline?.map((slot, i) => (
           <div
             key={i}
             className={`
@@ -54,7 +57,7 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
               color: slot.type === 'BREAK' ? 'black' : 'white',
             }}
           >
-            {slot.label}
+            {t(`options.timeline.${slot.type}`)}
           </div>
         ))}
       </div>
