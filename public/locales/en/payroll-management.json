@@ -76,6 +76,13 @@
       "employerUnemploymentInsurance": "Employer Unemployment Insurance",
       "employerUnionFee": "Employer Union Fee",
       "totalEmployerCost": "Total Employer Cost"
+    },
+    "sendPayslip": {
+      "title": "Send Bulk Payslips",
+      "description": "Are you sure you want to send payslips to all employees?",
+      "confirmLabel": "Confirm",
+      "buttonLabel": "Send",
+      "bulkButtonLabel": "Send Bulk Payslips"
     }
   },
 

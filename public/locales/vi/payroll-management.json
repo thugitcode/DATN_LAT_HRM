@@ -1,3 +1,4 @@
+
 {
   "payrollCalculation": {
     "title": "Bảng công",
@@ -76,6 +77,13 @@
       "employerUnemploymentInsurance": "Bảo hiểm thất nghiệp",
       "employerUnionFee": "Kinh phí công đoàn",
       "totalEmployerCost": "Tổng chi phí NSDLD"
+    },
+    "sendPayslip": {
+      "title": "Gửi phiếu lương hàng loạt",
+      "description": "Bạn có chắc muốn gửi phiếu lương cho tất cả nhân viên không?",
+      "confirmLabel": "Xác nhận",
+      "buttonLabel": "Gửi",
+      "bulkButtonLabel": "Gửi phiếu lương hàng loạt"
     }
   },
 

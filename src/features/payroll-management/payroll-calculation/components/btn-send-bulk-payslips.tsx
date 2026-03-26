@@ -1,7 +1,9 @@
 import { useCallback, useMemo, type FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { useConfirmStore } from '@/store/useConfirmStore';
 import { Button } from '@heroui/react';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 
 import { icons } from '@/lib/icons';
 
@@ -14,6 +16,7 @@ interface BtnSendBulkPayslips {
 
 export const BtnSendBulkPayslips: FC<BtnSendBulkPayslips> = ({ month }) => {
   const { mutate, isPending } = useSendPayslips();
+  const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const open = useConfirmStore((state) => state.open);
   const monthQuery = dayjs(month ?? undefined).format('YYYY-MM');
 
@@ -38,20 +41,20 @@ export const BtnSendBulkPayslips: FC<BtnSendBulkPayslips> = ({ month }) => {
   const handleSendBulk = useCallback(() => {
     open(
       {
-        title: 'Gửi phiếu lương hàng loạt',
-        description: 'Bạn có chắc muốn gửi phiếu lương cho tất cả nhân viên không?',
+        title: t('payrollCalculation.sendPayslip.title'),
+        description: t('payrollCalculation.sendPayslip.description'),
         confirmColor: 'primary',
         requireReason: false,
-        confirmLabel: 'Xác nhận',
+        confirmLabel: t('payrollCalculation.sendPayslip.confirmLabel'),
       },
       send,
     );
-  }, [open, send]);
+  }, [open, send, t]);
 
   return (
     <Button color="primary" className="h-10 px-4" isLoading={isPending} onPress={handleSendBulk}>
       {icons.send}
-      Gửi phiếu lương hàng loạt
+      {t('payrollCalculation.sendPayslip.bulkButtonLabel')}
     </Button>
   );
 };

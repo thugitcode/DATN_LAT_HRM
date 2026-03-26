@@ -1,18 +1,17 @@
-import { useNavigate } from '@tanstack/react-router';
 import { NAMESPACES } from '@/i18n/constants';
-import { Button, Chip } from '@heroui/react';
+import { Chip } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
 import { formatCurrency } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
+import { RowPayrollCalculationActions } from '../payroll-calculation/components/row-payroll-calculation-actions';
 import type { StaffPayroll } from '../types/payroll-caculation.type';
 
 export const usePayrollCalculationColumns = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
-  const navigate = useNavigate();
 
   const columns: ColumnDef<StaffPayroll>[] = [
     {
@@ -133,20 +132,7 @@ export const usePayrollCalculationColumns = () => {
       width: 100,
       sticky: 'right',
       align: 'center',
-      render: (_, record) => (
-        <Button
-          color="primary"
-          variant="bordered"
-          onPress={() =>
-            navigate({
-              to: `/admin/payroll-management/payroll-calculation/${record.payrollResultId}`,
-              search: { staffId: record.staffId },
-            })
-          }
-        >
-          {t('attendance_data.viewDetail')}
-        </Button>
-      ),
+      render: (_, record) => <RowPayrollCalculationActions dataRow={record} />,
     },
   ];
 
