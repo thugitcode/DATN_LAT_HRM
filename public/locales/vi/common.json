@@ -209,7 +209,12 @@
       "LEAVE": "Nghỉ phép",
       "OTHER": "Khác",
       "LATE": "Đi muộn",
-      "EARLY": "Về sớm"
+      "EARLY": "Về sớm",
+      "UNAUTHORIZED_LEAVE": "Nghỉ không phép",
+      "FORGOT_TO_CLOCK_TIME": "Quên chấm công",
+      "WFH": "Làm việc tại nhà",
+      "BUSINESS_TRIP": "Công tác",
+      "VM": "Vắng mặt"
     }
   },
   "staff": "Nhân viên",

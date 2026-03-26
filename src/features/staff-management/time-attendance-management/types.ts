@@ -4,7 +4,7 @@ import type { AttendanceExplanationStatus } from '@/types/attendance-explanation
 export type TimeString = string; // "07:30:00" | "08:10 AM" | "05:30 PM" | ...
 
 // Các loại segment trên timeline
-export type TimelineType = 'WORK' | 'BREAK' | 'OT' | 'LEAVE' | 'OTHER' | 'LATE' | 'EARLY';
+export type TimelineType = 'WORK' | 'BREAK' | 'OT' | 'LEAVE' | 'OTHER' | 'LATE' | 'EARLY' | 'UNAUTHORIZED_LEAVE' | 'FORGOT_TO_CLOCK_TIME' | 'WFH' | 'BUSINESS_TRIP' | 'VM';
 
 export enum ETimelineType {
   WORK = 'WORK',
@@ -14,6 +14,11 @@ export enum ETimelineType {
   OTHER = 'OTHER',
   LATE = 'LATE',
   EARLY = 'EARLY',
+  WFH = 'WFH',
+  VM = 'VM',
+  BUSINESS_TRIP = 'BUSINESS_TRIP',
+  UNAUTHORIZED_LEAVE = 'UNAUTHORIZED_LEAVE',
+  FORGOT_TO_CLOCK_TIME = 'FORGOT_TO_CLOCK_TIME',
 }
 // Màu có thể là hex hoặc tên tailwind, nhưng ở đây dùng hex như dữ liệu
 export type ColorHex = string; // "#4CAF50", "#9CA3AF", "#E91E63", "#3B82F6", ...

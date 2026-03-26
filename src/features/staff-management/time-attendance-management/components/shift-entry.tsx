@@ -7,7 +7,7 @@ import { formatDate } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { NAMESPACES } from '@/i18n/constants';
 
-import type { AttendanceDay, TimelineSegment } from '../types';
+import { ETimelineType, type AttendanceDay, type TimelineSegment } from '../types';
 import { ShiftTimeline } from './shift-timeline';
 
 export function ShiftEntry({
@@ -20,84 +20,213 @@ export function ShiftEntry({
   lateMinutes,
   earlyMinutes,
 }: AttendanceDay) {
-  const convertTimeLine = (): TimelineSegment[] | undefined => {
+  type ConvertTimelineInput = {
+    timeline: TimelineSegment[];
+    lateMinutes: number;
+    earlyMinutes: number;
+    checkInTime?: string | null;
+    checkOutTime?: string | null;
+    t: any;
+  };
+
+  const convertTimeLine = ({
+    timeline,
+    lateMinutes,
+    earlyMinutes,
+    checkInTime,
+    checkOutTime,
+    t,
+  }: ConvertTimelineInput): TimelineSegment[] => {
     const hasLate = lateMinutes > 0;
     const hasEarly = earlyMinutes > 0;
+    const isMissingCheckIn = !checkInTime;
+    const isMissingCheckOut = !checkOutTime;
 
-    if (!hasLate && !hasEarly) return [...timeline];
-    let newTimeline: TimelineSegment[] = [...timeline];
-    const result: TimelineSegment[] = [];
+    // ===== 1. Normalize data (rule business) =====
+    let normalizedTimeline: TimelineSegment[] = [];
 
-    // ===== 1. Update WORK khi đi muộn =====
-    if (hasLate) {
-      const firstWorkIndex = newTimeline.findIndex(item => item.type === 'WORK');
+    // Process LEAVE KL specifically
+    for (const item of timeline) {
+      if (item.type === 'LEAVE') {
+        const hasCheckIn = !!checkInTime;
+        const hasCheckOut = !!checkOutTime;
+        const type = item.label === 'KL' ? ETimelineType.UNAUTHORIZED_LEAVE : ETimelineType.LEAVE;
+        if (hasCheckIn || hasCheckOut) {
+          const parseMins = (str?: string | null) => {
+            if (!str) return null;
+            let hh = 0, mm = 0;
+            const match = str.match(/(\d+):(\d+)/);
+            if (match) {
+              hh = parseInt(match[1] || '0', 10);
+              mm = parseInt(match[2] || '0', 10);
+            }
+            if (str.toLowerCase().includes('pm') && hh < 12) hh += 12;
+            // handle the "12:xx AM" edge case where it means noon
+            if (str.toLowerCase().includes('am') && hh === 12) hh = 12;
+            return hh * 60 + mm;
+          };
 
-      if (firstWorkIndex !== -1) {
-        newTimeline[firstWorkIndex] = {
-          ...newTimeline[firstWorkIndex],
-          startTime: checkInTime ?? "",
-        };
-        result.push({
-          type: 'LATE',
-          label: t('shiftEntry.late'),
-          startTime: "",
-          endTime: checkInTime ?? "",
-          color: '#EF4444',
+          const sMin = parseMins(item.startTime) ?? 0;
+          const eMin = parseMins(item.endTime) ?? 0;
+          const iMin = parseMins(checkInTime);
+          const oMin = parseMins(checkOutTime);
+
+          const baseItem = { ...item, type: type };
+
+          // Gap before Check-in
+          if (iMin !== null && iMin > sMin) {
+            normalizedTimeline.push({ ...baseItem, endTime: checkInTime! });
+          }
+
+          // Work block
+          const wStart = (iMin !== null && iMin > sMin) ? checkInTime! : item.startTime;
+          const wEnd = (oMin !== null && oMin < eMin) ? checkOutTime! : item.endTime;
+
+          normalizedTimeline.push({
+            ...baseItem,
+            type: ETimelineType.WORK,
+            label: 'Làm việc',
+            startTime: wStart,
+            endTime: wEnd,
+            color: '#3874B8',
+          });
+
+          // Gap after Check-out
+          if (oMin !== null && oMin < eMin) {
+            normalizedTimeline.push({ ...baseItem, startTime: checkOutTime! });
+          }
+
+          continue;
+        }
+
+        normalizedTimeline.push({
+          ...item,
+          type: type,
         });
+        continue;
+      }
+      normalizedTimeline.push(item);
+    }
+
+    // Lọc bỏ các khối trùng bắt đầu/kết thúc do chia khối
+    normalizedTimeline = normalizedTimeline.filter(item => item.startTime !== item.endTime);
+
+    // ===== 2. Update WORK segments =====
+    const updatedTimeline = [...normalizedTimeline];
+
+    // đi muộn → sửa WORK đầu
+    if (hasLate && checkInTime) {
+      const idx = updatedTimeline.findIndex((i) => i.type === 'WORK');
+      if (idx !== -1) {
+        updatedTimeline[idx] = {
+          ...updatedTimeline[idx],
+          startTime: checkInTime,
+        } as TimelineSegment;
       }
     }
-    result.push(...newTimeline);
 
-    // ===== 2. Update WORK khi về sớm =====
-    if (hasEarly) {
-      const lastWorkIndex = [...newTimeline]
+    // về sớm → sửa WORK cuối
+    if (hasEarly && checkOutTime) {
+      const reverseIdx = [...updatedTimeline]
         .reverse()
-        .findIndex(item => item.type === 'WORK');
+        .findIndex((i) => i.type === 'WORK');
 
-      if (lastWorkIndex !== -1) {
-        const realIndex = newTimeline.length - 1 - lastWorkIndex;
-
-        newTimeline[realIndex] = {
-          ...newTimeline[realIndex],
-          endTime: checkOutTime ?? "",
-        };
-        result.push({
-          type: 'EARLY',
-          label: t('shiftEntry.early'),
-          startTime: checkOutTime ?? "",
-          endTime: "",
-          color: '#EF4444',
-        });
+      if (reverseIdx !== -1) {
+        const realIdx = updatedTimeline.length - 1 - reverseIdx;
+        updatedTimeline[realIdx] = {
+          ...updatedTimeline[realIdx],
+          endTime: checkOutTime,
+        } as TimelineSegment;
       }
     }
 
+    // Derive actual shift start/end times from normalized timeline
+    const shiftStartTime = updatedTimeline[0]?.startTime ?? '';
+    const shiftEndTime = updatedTimeline[updatedTimeline.length - 1]?.endTime ?? '';
 
-    // // ===== 3. Late ở đầu =====
-    // if (hasLate) {
-    //   result.push({
-    //     type: 'LATE',
-    //     label: t('shiftEntry.late'),
-    //     startTime: "",
-    //     endTime: checkInTime ?? "",
-    //     color: '#EF4444',
-    //   });
-    // }
+    // ===== 3. Build extra segments =====
+    const extraSegments: TimelineSegment[] = [];
 
-    // // ===== 4. Timeline chính =====
-    // result.push(...newTimeline);
+    // quên chấm công
+    const isLeavePN = timeline.some(item => item.type === 'LEAVE' && item.label === 'PN');
+    const isLeaveKL = timeline.some(item => item.type === 'LEAVE' && item.label === 'KL');
+    if ((isMissingCheckIn || isMissingCheckOut) && updatedTimeline.length > 0 && !isLeavePN) {
+      extraSegments.push({
+        type: ETimelineType.FORGOT_TO_CLOCK_TIME,
+        label: t('shiftEntry.forgotClockTime'),
+        startTime: checkInTime ?? shiftStartTime,
+        endTime: checkOutTime ?? shiftEndTime,
+        color: '#F59E0B',
+      });
+    }
 
-    // // ===== 5. Early ở cuối =====
-    // if (hasEarly) {
-    //   result.push({
-    //     type: 'EARLY',
-    //     label: t('shiftEntry.early'),
-    //     startTime: checkOutTime ?? "",
-    //     endTime: "",
-    //     color: '#EF4444',
-    //   });
-    // }
+    // late
+    if (hasLate && checkInTime) {
+      extraSegments.push({
+        type: ETimelineType.LATE,
+        label: t('shiftEntry.late'),
+        startTime: '',
+        endTime: checkInTime,
+        color: '#EF4444',
+      });
+    }
 
-    // ===== 6. Normalize time =====
+    // early
+    if (hasEarly && checkOutTime && !isLeaveKL) {
+      extraSegments.push({
+        type: ETimelineType.EARLY,
+        label: t('shiftEntry.early'),
+        startTime: checkOutTime,
+        endTime: shiftEndTime,  // actual shift end, not empty
+        color: '#EF4444',
+      });
+    }
+
+    // ===== 4. Compose final timeline =====
+    const result: TimelineSegment[] = [
+      // ưu tiên hiển thị: forgot → late → timeline → early
+      ...extraSegments.filter(i => i.type === ETimelineType.FORGOT_TO_CLOCK_TIME),
+      ...extraSegments.filter(i => i.type === ETimelineType.LATE),
+      ...updatedTimeline,
+      ...extraSegments.filter(i => i.type === ETimelineType.EARLY),
+    ];
+    if (timeline.some(item => item.type === 'WFH')) {
+      return [{
+        type: ETimelineType.WFH,
+        label: t('shiftEntry.wfh'),
+        startTime: checkInTime ?? shiftStartTime,
+        endTime: checkOutTime ?? shiftEndTime,
+        color: '#F59E0B',
+      }];
+    }
+    if (timeline.some(item => item.type === 'BUSINESS_TRIP')) {
+      return [{
+        type: ETimelineType.BUSINESS_TRIP,
+        label: t('shiftEntry.businessTrip'),
+        startTime: checkInTime ?? shiftStartTime,
+        endTime: checkOutTime ?? shiftEndTime,
+        color: '#F5A524',
+      }];
+    }
+    if ((isMissingCheckIn && isMissingCheckOut) && updatedTimeline.length > 0 && !isLeavePN && !isLeaveKL) {
+      return [{
+        type: ETimelineType.VM,
+        label: t('shiftEntry.vm'),
+        startTime: checkInTime ?? shiftStartTime,
+        endTime: checkOutTime ?? shiftEndTime,
+        color: '#9734EE',
+      }];
+    }
+    if ((isMissingCheckIn || isMissingCheckOut) && updatedTimeline.length > 0 && !isLeavePN) {
+      return [{
+        type: ETimelineType.FORGOT_TO_CLOCK_TIME,
+        label: t('shiftEntry.forgotClockTime'),
+        startTime: checkInTime ?? shiftStartTime,
+        endTime: checkOutTime ?? shiftEndTime,
+        color: '#F59E0B',
+      }];
+    }
+    // ===== 5. Normalize time format =====
     return result
   };
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
@@ -141,7 +270,7 @@ export function ShiftEntry({
           </div>
           <div className="w-px h-7.5 bg-[#E4E4E7]" />
           <div className="flex-1 h-14">
-            <ShiftTimeline timeline={convertTimeLine() ?? []} />
+            <ShiftTimeline timeline={convertTimeLine({ timeline, lateMinutes, earlyMinutes, checkInTime, checkOutTime, t }) ?? []} />
           </div>
           <div className="w-px h-7.5 bg-[#E4E4E7]" />
           <div className="flex items-center justify-between dark:border-slate-700">

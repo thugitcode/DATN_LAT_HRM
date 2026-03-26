@@ -73,6 +73,11 @@ export const TIMELINE_COLOR_MAP: Record<TimelineType, string> = {
     OT: "#006FEE",     // Màu xanh dương đậm (OT)
     LEAVE: "#F5A524",  // Màu cam (Nghỉ phép)
     OTHER: "#F31260",  // Màu hồng/đỏ (Muộn/Khác)
-    LATE: "#F31260",  // Màu hồng/đỏ (Muộn/Khác)
-    EARLY: "#F31260",  // Màu hồng/đỏ (Muộn/Khác)
+    LATE: "#D55829",
+    EARLY: "#73C9C6",
+    UNAUTHORIZED_LEAVE: "#F31260",  // Màu hồng/đỏ (Muộn/Khác)
+    FORGOT_TO_CLOCK_TIME: "#17C964",  // Màu xanh lá (Quên check in/out),
+    WFH: "#9DCAFF",
+    BUSINESS_TRIP: "#F5A524",
+    VM: "#9734EE",
 };
