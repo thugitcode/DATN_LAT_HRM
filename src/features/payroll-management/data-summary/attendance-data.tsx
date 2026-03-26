@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import type { RequestsParams } from '@/types/global.type';
 import { icons } from '@/lib/icons';
-import { useColumnVisibility } from '@/hooks/use-column-visibility';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { usePaginationConfig } from '@/hooks/use-pagination-config';
 import { useQueryFilter } from '@/hooks/useQueryFilter';

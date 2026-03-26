@@ -23,6 +23,7 @@ class PayrollByMonthService extends BaseApiService<
   async create(data: ApprovePayload) {
     return super.create(data);
   }
+
   // /payroll/results/:id/detailed
   async getResultDetails(id: string) {
     return this.request(async () => {

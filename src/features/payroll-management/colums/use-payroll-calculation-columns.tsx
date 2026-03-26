@@ -131,6 +131,7 @@ export const usePayrollCalculationColumns = () => {
       key: 'action',
       title: t('payrollCalculation.columns.action'),
       width: 100,
+      sticky: 'right',
       align: 'center',
       render: (_, record) => (
         <Button
