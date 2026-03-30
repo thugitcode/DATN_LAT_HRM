@@ -167,7 +167,7 @@ export const exportStaffTemplate = (data: any[]) => {
       item.jobTitle || '',
       item.position || '',
       item.contractType || '',
-      item.contractDuration || '',
+      item.workingPeriod || '',
       item.qualification || '',
       item.major || '',
       item.academicDegree || '',

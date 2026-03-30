@@ -172,7 +172,7 @@ export const DepartmentSection = () => {
                 <div className="col-span-2">
                     <FormInput
                         control={control}
-                        name="contractDuration"
+                        name="workingPeriod"
                         label={t('staffForm.fields.contractDuration.label')}
                         placeholder={t('staffForm.fields.contractDuration.placeholder')}
                         readOnly={isView}

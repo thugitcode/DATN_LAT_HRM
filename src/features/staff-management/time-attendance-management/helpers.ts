@@ -1,4 +1,5 @@
-import type { TimelineType } from "./types"
+import { EMPTY_COLOR, EMPTY_TYPE } from "./contants/data"
+import type { HourSlot, MergedSlot, TimelineSegment, TimelineType } from "./types"
 
 type TimeSlot = {
     time: string
@@ -81,3 +82,101 @@ export const TIMELINE_COLOR_MAP: Record<TimelineType, string> = {
     BUSINESS_TRIP: "#F5A524",
     VM: "#9734EE",
 };
+
+
+export function parseMins(time?: string | null): number | null {
+    if (!time) return null;
+    const match = time.match(/(\d+):(\d+)/);
+    if (!match) return null;
+    let hh = parseInt(match[1] || '0', 10);
+    const mm = parseInt(match[2] || '0', 10);
+    const lower = time.toLowerCase();
+    if (lower.includes('pm') && hh < 12) hh += 12;
+    if (lower.includes('am') && hh === 12) hh = 0;
+    return hh * 60 + mm;
+}
+
+export function formatTimeLabel(mins: number): string {
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+}
+
+export function buildHourlySlots(segments: TimelineSegment[], startHour: number, endHour: number): HourSlot[] {
+    const PRIORITY = ['LATE', 'EARLY', 'FORGOT_TO_CLOCK_TIME'];
+    const sorted = [
+        ...segments.filter(s => PRIORITY.includes(s.type)),
+        ...segments.filter(s => !PRIORITY.includes(s.type)),
+    ];
+
+    const slots: HourSlot[] = [];
+
+    for (let h = startHour; h <= endHour; h++) {
+        const slotStart = h * 60;
+        const slotEnd = slotStart + 60;
+
+        const match = sorted.find(seg => {
+            const sMin = parseMins(seg.startTime);
+            const eMin = parseMins(seg.endTime);
+            const effectiveStart = sMin !== null ? sMin : (eMin !== null ? 0 : null);
+            const effectiveEnd = eMin !== null && eMin !== 0 ? eMin : 24 * 60;
+            if (effectiveStart === null) return false;
+            return effectiveStart < slotEnd && effectiveEnd > slotStart;
+        });
+
+        slots.push({
+            hour: h,
+            type: match ? match.type : EMPTY_TYPE,
+            color: match ? (TIMELINE_COLOR_MAP[match.type] ?? match.color) : EMPTY_COLOR,
+            segment: match,
+        });
+    }
+
+    return slots;
+}
+
+export function mergeConsecutiveSlots(slots: HourSlot[]): MergedSlot[] {
+    if (!slots.length) return [];
+    const merged: MergedSlot[] = [];
+
+    let currentGroup: HourSlot[] = [slots[0]!];
+
+    for (let i = 1; i < slots.length; i++) {
+        const s = slots[i]!;
+        if (s.type === currentGroup[0]!.type) {
+            currentGroup.push(s);
+        } else {
+            merged.push(createMergedSlot(currentGroup));
+            currentGroup = [s];
+        }
+    }
+    merged.push(createMergedSlot(currentGroup));
+    return merged;
+}
+
+export function createMergedSlot(group: HourSlot[]): MergedSlot {
+    const first = group[0]!;
+    const last = group[group.length - 1]!;
+
+    let labelStart = formatTimeLabel(first.hour * 60);
+    let labelEnd = formatTimeLabel((last.hour + 1) * 60);
+
+    if (first.segment && first.segment.startTime) {
+        const m = parseMins(first.segment.startTime);
+        if (m !== null) labelStart = formatTimeLabel(m);
+    }
+
+    if (last.segment && last.segment.endTime) {
+        const m = parseMins(last.segment.endTime);
+        if (m !== null) labelEnd = formatTimeLabel(m);
+    }
+
+    return {
+        type: first.type,
+        color: first.color,
+        span: group.length,
+        hourStart: first.hour,
+        labelStart,
+        labelEnd,
+    };
+}

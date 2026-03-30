@@ -9,6 +9,7 @@ import { NAMESPACES } from '@/i18n/constants';
 
 import { ETimelineType, type AttendanceDay, type TimelineSegment } from '../types';
 import { ShiftTimeline } from './shift-timeline';
+import { parseMins } from '../helpers';
 
 export function ShiftEntry({
   date,
@@ -19,6 +20,9 @@ export function ShiftEntry({
   explanationStatus,
   lateMinutes,
   earlyMinutes,
+  allowedLateMinutes,
+  allowedEarlyLeaveMinutes,
+  displayCode
 }: AttendanceDay) {
   type ConvertTimelineInput = {
     timeline: TimelineSegment[];
@@ -52,19 +56,19 @@ export function ShiftEntry({
         const hasCheckOut = !!checkOutTime;
         const type = item.label === 'KL' ? ETimelineType.UNAUTHORIZED_LEAVE : ETimelineType.LEAVE;
         if (hasCheckIn || hasCheckOut) {
-          const parseMins = (str?: string | null) => {
-            if (!str) return null;
-            let hh = 0, mm = 0;
-            const match = str.match(/(\d+):(\d+)/);
-            if (match) {
-              hh = parseInt(match[1] || '0', 10);
-              mm = parseInt(match[2] || '0', 10);
-            }
-            if (str.toLowerCase().includes('pm') && hh < 12) hh += 12;
-            // handle the "12:xx AM" edge case where it means noon
-            if (str.toLowerCase().includes('am') && hh === 12) hh = 12;
-            return hh * 60 + mm;
-          };
+          // const parseMins = (str?: string | null) => {
+          //   if (!str) return null;
+          //   let hh = 0, mm = 0;
+          //   const match = str.match(/(\d+):(\d+)/);
+          //   if (match) {
+          //     hh = parseInt(match[1] || '0', 10);
+          //     mm = parseInt(match[2] || '0', 10);
+          //   }
+          //   if (str.toLowerCase().includes('pm') && hh < 12) hh += 12;
+          //   // handle the "12:xx AM" edge case where it means noon
+          //   if (str.toLowerCase().includes('am') && hh === 12) hh = 12;
+          //   return hh * 60 + mm;
+          // };
 
           const sMin = parseMins(item.startTime) ?? 0;
           const eMin = parseMins(item.endTime) ?? 0;
@@ -74,7 +78,7 @@ export function ShiftEntry({
           const baseItem = { ...item, type: type };
 
           // Gap before Check-in
-          if (iMin !== null && iMin > sMin) {
+          if (iMin !== null && iMin - sMin > allowedLateMinutes) {
             normalizedTimeline.push({ ...baseItem, endTime: checkInTime! });
           }
 

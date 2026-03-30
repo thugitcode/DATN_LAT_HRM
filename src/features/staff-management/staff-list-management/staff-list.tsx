@@ -190,7 +190,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
               jobTitle: row['Chức danh (*)']?.toString().trim(),
               position: row['Cấp bậc (*)']?.toString().trim(),
               contractType: row['Loại hợp đồng']?.toString().trim(),
-              contractDuration: row['Thời hạn làm việc']?.toString().trim(),
+              workingPeriod: row['Thời hạn làm việc']?.toString().trim(),
               qualification: row['Trình độ chuyên môn (*)']?.toString().trim(),
               major: row['Chuyên ngành']?.toString().trim(),
               academicDegree: row['Học hàm học vị']?.toString().trim(),

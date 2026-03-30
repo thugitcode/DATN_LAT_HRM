@@ -1,3 +1,4 @@
+import type { AttendanceStatus } from '@/features/timekeeping-shift-scheduling/timekeeping-management/types/index.type';
 import type { AttendanceExplanationStatus } from '@/types/attendance-explanation.type';
 
 // Kiểu thời gian chuẩn HH:mm:ss hoặc HH:mm AM/PM (tùy dữ liệu thực tế)
@@ -52,6 +53,9 @@ export interface AttendanceDay {
 
   shiftCode: string | null; // "CS, CT" | "CG" | "LH-007, CT-003" | null
   timeline: TimelineSegment[];
+  allowedLateMinutes: number;
+  allowedEarlyLeaveMinutes: number
+  displayCode: AttendanceStatus
 }
 
 // Phần tóm tắt tổng hợp (thường của cả tháng/quý/năm)
@@ -76,3 +80,19 @@ export interface StaffAttendanceRecord {
   summary: IAttendanceSummary;
   days: AttendanceDay[]; // danh sách các ngày (thường 1 tháng)
 }
+
+export type HourSlot = {
+  hour: number;
+  type: TimelineType;
+  color: string;
+  segment?: TimelineSegment;
+};
+
+export type MergedSlot = {
+  type: TimelineType;
+  color: string;
+  span: number;
+  hourStart: number;
+  labelStart: string;
+  labelEnd: string;
+};
