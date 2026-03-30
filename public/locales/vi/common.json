@@ -139,7 +139,8 @@
     "pending": "Chờ duyệt",
     "working": "Đang làm việc",
     "off": "Nghỉ",
-    "confirmed": "Đã xác nhận"
+    "confirmed": "Đã xác nhận",
+    "pendingFeedback": "Chờ phản hồi"
   },
   "select": "Chọn",
   "table": {

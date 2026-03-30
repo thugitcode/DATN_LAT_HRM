@@ -127,6 +127,11 @@ export interface StaffPayslipFeedback {
   managementModule: unknown;
   isSendPasswordEmail: boolean;
 }
+export enum PayslipFeedbackStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  REJECTED = 'REJECTED',
+}
 export interface PayslipFeedback {
   createdAt: string;
   updatedAt: string;
@@ -134,7 +139,7 @@ export interface PayslipFeedback {
   id: string;
   content: string;
   responseContent: string | null;
-  status: Status;
+  status: PayslipFeedbackStatus;
   resolvedAt: string | null;
   staff: StaffPayslipFeedback;
   payrollResult: PayrollResult;

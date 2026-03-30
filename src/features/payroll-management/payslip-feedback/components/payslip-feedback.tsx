@@ -11,8 +11,9 @@ import { PageContainer } from '@/components/page-container';
 import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 
-import { usePayrollFeedbackColumns } from '../colums/use-payroll-feedback-columns';
-import { usePayrollFeedbackList } from '../hooks/use-payroll-management';
+import { usePayrollFeedbackColumns } from '../../colums/use-payroll-feedback-columns';
+import { usePayrollFeedbackList } from '../../hooks/use-payroll-management';
+import { StatusFilter } from '../status-filter';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-260px)]' } as const;
 
@@ -32,7 +33,7 @@ export const PayslipFeedback = () => {
     status,
     page,
     limit,
-    getAll: true,
+    // getAll: true,
   });
 
   const { paginationConfig } = usePaginationConfig({
@@ -49,7 +50,7 @@ export const PayslipFeedback = () => {
         <ActionsPage hiddenLayoutSwitcher />
       </div>
 
-      <PageFilter />
+      <PageFilter extraFilters={<StatusFilter />} />
 
       <DataTable
         dataSource={data?.data ?? []}

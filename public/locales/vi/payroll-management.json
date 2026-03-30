@@ -108,6 +108,11 @@
       "confirmed_at": "Thời gian xác nhận",
       "feedback": "Phản hồi",
       "action": "Thao tác"
+    },
+    "feedbackStatus": {
+      "PENDING": "Chờ phản hồi",
+      "CONFIRMED": "Đã xác nhận",
+      "REJECTED": "Từ chối"
     }
   },
 
