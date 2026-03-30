@@ -201,6 +201,20 @@
       "EMINENT_PHYSICIAN": "Eminent Physician",
       "BACHELOR": "Bachelor",
       "ENGINEER": "Engineer"
+    },
+    "timeline": {
+      "WORK": "Work",
+      "BREAK": "Break",
+      "OT": "Overtime",
+      "LEAVE": "Leave",
+      "OTHER": "Other",
+      "LATE": "Late",
+      "EARLY": "Early",
+      "UNAUTHORIZED_LEAVE": "Unauthorized Leave",
+      "FORGOT_TO_CLOCK_TIME": "Forgot to Clock Time",
+      "WFH": "Work From Home",
+      "BUSINESS_TRIP": "Business Trip",
+      "VM": "Absent"
     }
   },
   "staff": "Staff",

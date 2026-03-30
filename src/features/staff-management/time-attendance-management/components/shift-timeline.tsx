@@ -1,62 +1,96 @@
-import { formatTime } from '@/lib/utils';
-
-import { TIMELINE_COLOR_MAP } from '../helpers';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
+import { buildHourlySlots, mergeConsecutiveSlots, parseMins } from '../helpers';
 import type { TimelineSegment } from '../types';
+import { EMPTY_COLOR, EMPTY_TYPE } from '../contants/data';
 
 interface ShiftTimelineProps {
   timeline: TimelineSegment[];
 }
 
+// Parse "HH:mm:ss", "HH:mm", "HH:mm AM/PM" → minutes since midnight
+
+
 export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
+  const { t } = useTranslation(NAMESPACES.COMMON);
+
+  if (!timeline || timeline.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full px-6 text-gray-400 text-sm">--</div>
+    );
+  }
+
+  const startHour = Math.min(
+    ...timeline.map(s => {
+      const m = parseMins(s.startTime);
+      return m !== null ? Math.floor(m / 60) : 23;
+    })
+  );
+  const endHour = 23;
+  const totalHours = endHour - startHour + 1;
+
+  const hourlySlots = buildHourlySlots(timeline, startHour, endHour);
+  const mergedSlots = mergeConsecutiveSlots(hourlySlots);
+
   return (
-    <div className="overflow-x-auto px-6 py-0 h-full">
+    <div className="overflow-x-auto h-full px-2">
       <div
-        className="relative grid gap-0.5"
+        className="grid gap-0"
         style={{
-          gridTemplateColumns: `repeat(${timeline.length}, minmax(80px, 1fr))`,
+          gridTemplateColumns: `repeat(${totalHours}, minmax(28px, 1fr))`,
+          gridTemplateRows: '12px 28px',
+          minWidth: `${totalHours * 28}px`,
         }}
       >
-        {/* Grid lines background */}
-        {timeline.map((slot, i) => (
-          <div className="flex justify-between h-2.5 px-2" key={i}>
-            <div className="text-xs text-center text-gray-500 py-0">
-              {formatTime(slot.startTime)}
-            </div>
-            <div
-              // key={i}
-              className="text-xs text-center text-gray-500 py-0"
-            >
-              {formatTime(slot.endTime)}
-            </div>
-          </div>
-        ))}
+        {/* Row 1: hour labels — one per merged block (at its start column) */}
+        {mergedSlots.map((slot, i) => {
+          const colStart = slot.hourStart - startHour + 1;
+          const isLast = i === mergedSlots.length - 1;
 
-        {/* Timeline blocks */}
-        {timeline.map((slot, i) => (
-          <div
-            key={i}
-            className={`
-          absolute
-          h-7
-          flex items-center justify-center
-          text-white text-[14px] py-0.5 leading-5 font-normal
-          rounded-lg
-          w-full
-          transition-all
-          hover:scale-101
-          hover:shadow-lg
-          cursor-pointer
-        `}
-            style={{
-              gridColumn: `${i + 1} / span ${1}`,
-              top: '26px',
-              background: TIMELINE_COLOR_MAP?.[slot.type],
-              color: slot.type === 'BREAK' ? 'black' : 'white',
-            }}
-          >
-            {slot.label}
-          </div>
-        ))}
+          return (
+            <div
+              key={`label-${i}`}
+              className="flex items-end pb-0.5"
+              style={{ gridColumn: `${colStart} / span ${slot.span}`, gridRow: 1 }}
+            >
+              <span className="text-[10px] text-gray-400 leading-none">
+                {slot.labelStart}
+              </span>
+              {isLast && slot.span >= 2 && (
+                <span className="text-[10px] text-gray-400 leading-none ml-auto">
+                  {slot.labelEnd}
+                </span>
+              )}
+            </div>
+          );
+        })}
+
+        {/* Row 2: merged colored blocks with type label inside */}
+        {mergedSlots.map((slot, i) => {
+          const colStart = slot.hourStart - startHour + 1;
+          const isEmpty = slot.type === EMPTY_TYPE && slot.color === EMPTY_COLOR;
+          return (
+            <div
+              key={`block-${i}`}
+              title={isEmpty ? undefined : t(`options.timeline.${slot.type}` as any)}
+              className="flex items-center justify-center rounded-lg transition-all hover:brightness-110 cursor-pointer overflow-hidden"
+              style={{
+                gridColumn: `${colStart} / span ${slot.span}`,
+                gridRow: 2,
+                background: slot.color,
+                color: slot.type === 'BREAK' ? '#52525B' : 'white',
+                marginLeft: '1px',
+                marginRight: '1px',
+              }}
+            >
+              {!isEmpty && (
+                <span className="text-[11px] font-medium truncate px-1 text-center w-full">
+                  {t(`options.timeline.${slot.type}` as any)}
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

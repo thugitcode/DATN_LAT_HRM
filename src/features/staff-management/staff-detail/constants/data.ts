@@ -16,6 +16,7 @@ export const STAFF_FORM_DEFAULT_VALUES = {
     position: "",
     contractType: "",
     contractDuration: "",
+    workingPeriod: "",
     taxCode: "",
     insuranceNumber: "",
     healthInsuranceNumber: "",

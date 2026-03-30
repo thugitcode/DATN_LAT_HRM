@@ -7,12 +7,13 @@ interface LoadingWrapperProps {
   isLoading: boolean;
   children: ReactNode;
   className?: string;
+  height?: string;
 }
 
-export const LoadingWrapper: FC<LoadingWrapperProps> = ({ isLoading, children, className }) => {
+export const LoadingWrapper: FC<LoadingWrapperProps> = ({ isLoading, children, className, height }) => {
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center size-full">
+      <div className="flex items-center justify-center size-full" style={{ height }}>
         <Spinner size="lg" />
       </div>
     );

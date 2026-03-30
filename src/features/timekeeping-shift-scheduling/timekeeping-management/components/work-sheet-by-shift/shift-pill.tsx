@@ -1,13 +1,12 @@
-import { memo, useEffect, useRef, type FC } from 'react';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { memo, useRef, type FC } from 'react';
 
 import { getLabelShift } from '@/features/timekeeping-shift-scheduling/helper';
 
 import {
   CELL_W,
   PILL_INSET,
-  STATUS_COLOR_MAP,
-  WORK_SHEET_LEGEND_ITEMS,
+  STATUS_COLOR_MAP
 } from '../../constants/data';
 import type { ShiftCode } from '../../types/index.type';
 

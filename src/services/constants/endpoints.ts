@@ -41,6 +41,7 @@ export const API_ENDPOINTS = {
     UPLOAD: '/upload',
 
     CONFIGURATION: '/configuration',
+    TAX: '/tax',
   },
 
   OTHER_SERVICE: {
