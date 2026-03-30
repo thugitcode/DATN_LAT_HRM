@@ -13,7 +13,7 @@ export function NetIncomeSection({ data }: NetIncomeSectionProps) {
     const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
 
     return (
-        <div className="bg-[#E6F1FE] rounded-xl p-4">
+        <div className="bg-[#E6F1FE] rounded-xl px-4 py-6">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[#006FEE]">
                     {icons.moneyBag}
