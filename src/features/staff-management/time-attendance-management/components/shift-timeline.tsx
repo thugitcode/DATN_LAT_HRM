@@ -31,7 +31,7 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
 
   const hourlySlots = buildHourlySlots(timeline, startHour, endHour);
   const mergedSlots = mergeConsecutiveSlots(hourlySlots);
-
+  const FULL_SPAN = 17
   return (
     <div className="overflow-x-auto h-full px-2">
       <div
@@ -75,12 +75,13 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
               title={isEmpty ? undefined : t(`options.timeline.${slot.type}` as any)}
               className="flex items-center justify-center rounded-lg transition-all hover:brightness-110 cursor-pointer overflow-hidden"
               style={{
-                gridColumn: `${colStart} / span ${slot.span}`,
+                gridColumn: `${colStart} / span ${mergedSlots.length === 2 && mergedSlots.findIndex((s) => s.type === 'OTHER') !== -1 ? FULL_SPAN : slot.span}`,
                 gridRow: 2,
                 background: slot.color,
                 color: slot.type === 'BREAK' ? '#52525B' : 'white',
                 marginLeft: '1px',
                 marginRight: '1px',
+                zIndex: slot.type === 'OTHER' ? 0 : 1
               }}
             >
               {!isEmpty && (

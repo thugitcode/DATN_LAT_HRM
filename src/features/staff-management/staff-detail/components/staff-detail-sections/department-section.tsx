@@ -41,7 +41,7 @@ export const DepartmentSection = () => {
         "jobTitle",
         "position",
         "contractType",
-        "contractDuration"
+        "workingPeriod"
     ];
 
     const handleSave = async () => {
