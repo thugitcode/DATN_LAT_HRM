@@ -10,7 +10,7 @@ import { ShiftTypeEnum } from "@/types/shift-management.type";
 import { useParams } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-export const ShiftManagementContainer = ({ staffId }: { staffId?: string }) => {
+export const ShiftManagementContainer = ({ staffId, disabled }: { staffId?: string, disabled?: boolean }) => {
     const { id } = useParams({ strict: false })
     const { filters } = useQueryFilter<ShiftManagementParams>();
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
@@ -68,7 +68,7 @@ export const ShiftManagementContainer = ({ staffId }: { staffId?: string }) => {
             <div className="flex bg-white mb-5 rounded-b-xl py-1.5">
                 {SHIFT_CA_LEGEND.map(item => <StatsSection stats={item} />)}
             </div>
-            <ShiftManagementGrid data={data?.data?.data} isLoading={isLoading} height={cn(staffId ? 'h-[calc(100vh-360px)]' : "h-[calc(100vh-480px)]", " bg-white")} />
+            <ShiftManagementGrid data={data?.data?.data} isLoading={isLoading} height={cn(staffId ? 'h-[calc(100vh-360px)]' : "h-[calc(100vh-480px)]", " bg-white")} disabled={disabled} />
         </>
     )
 }

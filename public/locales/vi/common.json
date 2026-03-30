@@ -8,7 +8,19 @@
     "search": "Tìm kiếm",
     "department": "Khoa",
     "room": "Phòng",
-    "status": "Trạng thái"
+    "status": "Trạng thái",
+    "explanation_type": "Loại giải trình",
+    "explanation_types": {
+      "LATE": "Đi muộn",
+      "EARLY_LEAVE": "Về sớm",
+      "MISSING_CHECK_IN": "Quên chấm vào",
+      "MISSING_CHECK_OUT": "Quên chấm ra",
+      "ABSENT": "Vắng mặt",
+      "MISSING_HOURS": "Thiếu giờ",
+      "BUSINESS_TRIP": "Công tác",
+      "SICK": "Nghỉ ốm",
+      "OTHER": "Khác"
+    }
   },
 
   "layout": {

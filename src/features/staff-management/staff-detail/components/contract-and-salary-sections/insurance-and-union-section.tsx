@@ -119,8 +119,8 @@ export const InsuranceAndUnionSection: FC = () => {
             </span>}
             isRequired={hasUnionFee}
             disabled={isSubmitting || isView || !hasUnionFee}
-            allowNegative={false}
             variant={variant}
+            allowNegative={false}
           // Nếu muốn format tiền Việt Nam: thousandSeparator=".", decimalScale={0}
           />
         </div>
@@ -130,7 +130,7 @@ export const InsuranceAndUnionSection: FC = () => {
           control={control}
           name="salary.hasHealthCareInsurance"
           label={t('insurance_union.healthcare_insurance')}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isView}
         />
 
         <FormInput
@@ -140,6 +140,7 @@ export const InsuranceAndUnionSection: FC = () => {
           placeholder={t('insurance_union.placeholders.enter_company')}
           disabled={isSubmitting || !hasHealthCareInsurance}
           isRequired={hasHealthCareInsurance}
+          variant={variant}
         />
 
         <div className="grid grid-cols-2 gap-4 mt-2">
@@ -152,6 +153,7 @@ export const InsuranceAndUnionSection: FC = () => {
             disabled={isSubmitting || !hasHealthCareInsurance}
             allowNegative={false}
             isRequired={hasHealthCareInsurance}
+            variant={variant}
           // Gợi ý: thousandSeparator=".", decimalScale={0} nếu là số nguyên VNĐ
           />
 
@@ -165,6 +167,7 @@ export const InsuranceAndUnionSection: FC = () => {
             allowNegative={false}
             isRequired={hasHealthCareInsurance}
             max={100}
+            variant={variant}
           />
         </div>
       </div>
