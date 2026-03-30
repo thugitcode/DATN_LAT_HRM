@@ -55,14 +55,14 @@ export const RowPayrollCalculationActions: FC<RowPayrollCalculationActionsProps>
     open(
       {
         title: t('payrollCalculation.sendPayslip.title'),
-        description: t('payrollCalculation.sendPayslip.description'),
+        description: t('payrollCalculation.sendPayslip.descriptionStaff', { name: dataRow?.staffName }),
         confirmColor: 'primary',
         requireReason: false,
         confirmLabel: t('payrollCalculation.sendPayslip.confirmLabel'),
       },
       send,
     );
-  }, [open, send, t]);
+  }, [open, send, t, dataRow?.staffName]);
 
   if (!dataRow) return null;
 

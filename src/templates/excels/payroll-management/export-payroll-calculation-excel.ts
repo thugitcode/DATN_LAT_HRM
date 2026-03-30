@@ -18,7 +18,6 @@ import {
 } from '@/templates/shares/excel-header-footer';
 import dayjs from 'dayjs';
 
-import { formatCurrency } from '@/lib/utils';
 import type { StaffPayroll } from '@/features/payroll-management/types/payroll-caculation.type';
 
 const SHEET_NAME = 'Tính lương';
@@ -63,7 +62,7 @@ const buildDataRow = (row: StaffPayroll, idx: number): unknown[] => [
   row.staffCode ?? '-',
   row.staffName ?? '-',
   row.position ? i18n.t(`common:options.staff_position.${row.position}`) : '-',
-  row.confirmationStatus ?? '-',
+  row.salaryTemplateName ?? '-',
   row.basicSalary ?? '-',
   row.totalGross ?? '-',
   row.actualWorkDays ?? '-',
@@ -72,7 +71,10 @@ const buildDataRow = (row: StaffPayroll, idx: number): unknown[] => [
   row.overtimeAmount ?? '-',
   row.deductionAmount ?? '-',
   row.netPay ?? '-',
-  row.confirmationStatus ?? '-',
+  i18n.t(
+    `payroll-management:payrollCalculation.confirmationStatus.${row.confirmationStatus === 'N/A' ? 'DRAFT' : row.confirmationStatus
+    }` as any,
+  ) ?? '-',
 ];
 
 const buildAoa = (
@@ -82,11 +84,14 @@ const buildAoa = (
   unitName: string,
   departmentName: string,
   t: (key: string, options?: object) => string,
+  month?: string,
 ): unknown[][] => {
+  const checkMonth = month ? dayjs(month, "YYYY-MM").format('MM') : dayjs().format('MM');
+  const checkYear = month ? dayjs(month, "YYYY-MM").format('YYYY') : dayjs().format('YYYY');
   const headerCfg: ExcelHeaderConfig = {
     companyName,
     unitName,
-    title: t('payrollCalculation.title'),
+    title: t('payrollCalculation.monthly_table_with_date', { month: checkMonth, year: checkYear }),
     departmentName: departmentName ? `Khoa ${departmentName}` : undefined,
     totalCols: TOTAL_COLS,
     leftInfoCols: LEFT_INFO_COLS,
@@ -172,7 +177,7 @@ export const exportPayrollCalculationExcel = ({
   const dataLength = data.length;
 
   const config: SheetConfig = {
-    aoa: buildAoa(data, base, companyName, unitName, departmentName, t),
+    aoa: buildAoa(data, base, companyName, unitName, departmentName, t, month),
     merges: buildMerges(dataLength),
     colWidths: COL_WIDTHS,
     rowHeights: [22, 18, 8, 36, ...Array(dataLength).fill(20), 12, 12, 12, 12, 8, 20, 8, 20],

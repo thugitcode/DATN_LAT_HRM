@@ -1,4 +1,5 @@
 import type { Item } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
+import type { StaffPosition } from '@/types/global.type';
 
 /**
  * Định nghĩa kỳ tính lương
@@ -23,7 +24,7 @@ export interface StaffPayroll {
   avatar: string | null;
   departments: Item[];
   rooms: Item[];
-  position: 'STAFF' | 'HEAD_OF_DEPARTMENT' | 'MANAGER' | string;
+  position: StaffPosition
   workDays: number;
   totalAttendance: number;
   actualWorkDays: number;
@@ -37,9 +38,16 @@ export interface StaffPayroll {
   deductionAmount: number;
   netPay: number;
   totalGross: number;
-  confirmationStatus: 'N/A' | 'PENDING' | 'CONFIRMED' | string;
+  confirmationStatus: ConfirmationStatus;
+  salaryTemplateName: string;
 }
-
+export enum ConfirmationStatus {
+  DRAFT = 'N/A',
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  REJECTED = 'REJECTED',
+  AUTO_CONFIRMED = 'AUTO_CONFIRMED',
+}
 /**
  * Thông tin phân trang
  */

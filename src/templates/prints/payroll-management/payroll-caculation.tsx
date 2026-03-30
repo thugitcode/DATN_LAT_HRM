@@ -6,6 +6,8 @@ import dayjs from 'dayjs';
 
 import { formatCurrency } from '@/lib/utils';
 import type { StaffPayroll } from '@/features/payroll-management/types/payroll-caculation.type';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 interface PrintPayrollCalculationProps {
   data: StaffPayroll[];
@@ -53,7 +55,7 @@ export const PrintPayrollCalculation = forwardRef<HTMLDivElement, PrintPayrollCa
   ({ data, month, companyName, unitName, departmentName }, ref) => {
     const base = resolveMonth(month);
     const monthLabel = base.format('MM/YYYY');
-
+    const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT)
     return (
       <div
         ref={ref}
@@ -75,7 +77,7 @@ export const PrintPayrollCalculation = forwardRef<HTMLDivElement, PrintPayrollCa
         <PrintHeader
           companyName={companyName}
           unitName={unitName}
-          title={t('payrollCalculation.title')}
+          title={t('payrollCalculation.monthly_table_with_date', { month: base.format('MM'), year: base.format('YYYY') })}
           subtitle={departmentName}
         />
 
@@ -127,7 +129,10 @@ export const PrintPayrollCalculation = forwardRef<HTMLDivElement, PrintPayrollCa
                   <td style={tdL}>
                     {row.position ? tc(`options.staff_position.${row.position}` as any) : '-'}
                   </td>
-                  <td style={td}>{row.confirmationStatus ?? '-'}</td>
+                  <td style={td}>{t(
+                    `payrollCalculation.confirmationStatus.${row.confirmationStatus === 'N/A' ? 'DRAFT' : row.confirmationStatus
+                    }` as any,
+                  )}</td>
                   <td style={tdR}>{row.basicSalary?.toLocaleString('vi-VN') ?? '-'}</td>
                   <td style={tdR}>
                     {row.totalGross != null ? formatCurrency(row.totalGross) : '-'}
@@ -150,7 +155,12 @@ export const PrintPayrollCalculation = forwardRef<HTMLDivElement, PrintPayrollCa
                       : '-'}
                   </td>
                   <td style={tdR}>{row.netPay != null ? formatCurrency(row.netPay) : '-'}</td>
-                  <td style={td}>{row.confirmationStatus ?? '-'}</td>
+                  <td style={td}>
+                    {t(
+                      `payrollCalculation.confirmationStatus.${row.confirmationStatus === 'N/A' ? 'DRAFT' : row.confirmationStatus
+                      }` as any,
+                    )}
+                  </td>
                 </tr>
               );
             })}
