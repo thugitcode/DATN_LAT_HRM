@@ -113,6 +113,31 @@
       "PENDING": "Pending",
       "CONFIRMED": "Confirmed",
       "REJECTED": "Rejected"
+    },
+    "detail": {
+      "title": "Payslip",
+      "payslip_period": "Payslip {{period}}",
+      "status": {
+        "PENDING": "Pending",
+        "CONFIRMED": "Confirmed",
+        "REJECTED": "Rejected"
+      },
+      "from_date": "From date",
+      "to_date": "To date",
+      "standard_days": "Standard days",
+      "actual_work_days": "Actual work days",
+      "on_duty": "On duty",
+      "overtime_hours": "Overtime",
+      "business_trip": "Business trip",
+      "total_gross": "Total gross",
+      "insurance": "Employee insurance",
+      "tax": "Personal income tax",
+      "advance": "Advance (if any)",
+      "net_pay": "Total net pay:",
+      "unit_day": "days",
+      "unit_hour": "hours",
+      "close": "Close",
+      "history": "Feedback history"
     }
   },
 
