@@ -66,7 +66,7 @@ export const TimekeepingDetails = () => {
               <ShiftExplanation staffId={currentStaff?.id} />
             )}
             {TAB_KEYS.SHIFT_ASSIGNMENT === activeKey && (
-              <ShiftManagementContainer staffId={currentStaff?.id} />
+              <ShiftManagementContainer staffId={currentStaff?.id} disabled={true} />
             )}
           </>
         )}

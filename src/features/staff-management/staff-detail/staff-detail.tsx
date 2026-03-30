@@ -19,6 +19,9 @@ import { StaffDetailInfo } from './components/staff-detail-info';
 import { useStaffDetailTabs } from './hooks/use-staff-detail-tabs';
 import { useStaffForm } from './hooks/use-staff-form';
 import { TAB_KEYS } from './types';
+import { LoadingWrapper } from '@/components/loading-wrapper';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import type { ShiftManagementParams } from '@/types';
 
 interface StaffDetailProps {
   id: string;
@@ -28,7 +31,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
   const { data: response, isLoading } = useStaffDetail(id);
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { setMode } = useControlMode();
-  const { form, onSubmit } = useStaffForm(true, response?.data, () => {});
+  const { form, onSubmit } = useStaffForm(true, response?.data, () => { });
   const updateStaffMutation = useUpdateStaff();
   const staff = response?.data;
   const [isEditingAll, setIsEditingAll] = useState(false);
@@ -36,16 +39,14 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center bg-[#F8F9FA]">
-        <div className="w-10 h-10 border-4 border-[#006FEE] border-t-transparent rounded-full animate-spin" />
-      </div>
+      <LoadingWrapper isLoading={isLoading}><></></LoadingWrapper>
     );
   }
 
   if (!staff) {
     return (
       <div className="flex h-full items-center justify-center bg-[#F8F9FA]">
-        <p className="text-[#71717A]">Không tìm thấy thông tin nhân viên</p>
+        <p className="text-[#71717A]">{t('no_staff_found')}</p>
       </div>
     );
   }
@@ -113,6 +114,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
             </FormProvider>
           </Tab>
           <Tab key={TAB_KEYS.CONTRACT} title={t('staffDetail.tabs.contract')}>
+            {/* <StaffContractInfo staffId={id} /> */}
             <StaffContractInfo staffId={id} />
           </Tab>
           <Tab key={TAB_KEYS.SALARY} title={t('staffDetail.tabs.salary')}>

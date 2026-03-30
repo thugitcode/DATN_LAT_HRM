@@ -10,7 +10,7 @@ import { useQueryFilter } from '@/hooks/useQueryFilter';
 
 export const Header = () => {
   const { tabs, activeKey, setActiveKey } = useTimeAttendanceTabs();
-  const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
+  const { filters, setFilter, clearFilters } = useQueryFilter<ShiftManagementParams>();
 
   const currentMonth = dayjs(filters?.month || dayjs().format("YYYY-MM"));
 
@@ -19,7 +19,7 @@ export const Header = () => {
 
   const handlePrevMonth = () => {
     const prev = currentMonth.subtract(1, "month").format("YYYY-MM");
-    
+
     setFilter("month", prev);
   };
 
@@ -38,6 +38,7 @@ export const Header = () => {
           selectedKey={activeKey}
           onSelectionChange={(key) => {
             setActiveKey(key as TAB_KEYS);
+            clearFilters()
           }}
         >
           {tabs.map((tab) => (

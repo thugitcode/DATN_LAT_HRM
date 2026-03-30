@@ -14,9 +14,10 @@ export interface ShiftManagementGridProps {
   isLoading?: boolean;
   fromDetailsEmployee?: boolean;
   height?: string
+  disabled?: boolean
 }
 
-export const ShiftManagementGrid: FC<ShiftManagementGridProps> = ({ data, isLoading, height }) => {
+export const ShiftManagementGrid: FC<ShiftManagementGridProps> = ({ data, isLoading, height, disabled }) => {
   const { id } = useParams({ strict: false });
   const isEmpty = !isLoading && !data?.length;
   const fromDetailsEmployee = !!id;
@@ -24,7 +25,7 @@ export const ShiftManagementGrid: FC<ShiftManagementGridProps> = ({ data, isLoad
     <div className={cn('w-full rounded-xl relative overflow-auto', height ?? 'h-[calc(100vh-282px)]')}>
       <table className="border-collapse min-w-max w-full table-fixed">
         <DayHeader data={data} fromDetailsEmployee={fromDetailsEmployee} />
-        {isEmpty ? <TableEmpty /> : <BodyV2 data={data} fromDetailsEmployee={fromDetailsEmployee} />}
+        {isEmpty ? <TableEmpty /> : <BodyV2 data={data} fromDetailsEmployee={fromDetailsEmployee} disabled={disabled} />}
       </table>
 
       {isLoading && <TableLoading />}

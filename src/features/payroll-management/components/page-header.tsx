@@ -70,7 +70,7 @@ export const PageHeader = ({
           </div>
         </div>
       </div>
-      {/* 
+
       <div className="flex items-center gap-3">
         <div className="flex gap-2">
           <Button
@@ -96,11 +96,11 @@ export const PageHeader = ({
         <span className="text-sm font-medium">
           {currentIndex + 1} / {listStaff?.pagination?.total || 0} {t('staff')}
         </span>
-      </div> */}
+      </div>
 
-      <Button color="primary" className="h-8" onPress={handleClickPrint}>
+      {/* <Button color="primary" className="h-8" onPress={handleClickPrint}>
         In phiếu lương
-      </Button>
+      </Button> */}
     </div>
   );
 };

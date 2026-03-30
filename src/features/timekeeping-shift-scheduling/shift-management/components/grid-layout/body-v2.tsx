@@ -17,6 +17,7 @@ const getShiftsForDay = (schedules: StaffSchedule['schedules'], dateStr?: string
 export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({
   data,
   fromDetailsEmployee = false,
+  disabled = false
 }) => {
   const { month, year } = useYearMonth();
 
@@ -124,6 +125,7 @@ export const BodyV2: FC<Readonly<ShiftManagementGridProps>> = ({
                           cell={shifts[rIdx] ? shifts[rIdx] : null}
                           day={d}
                           record={item}
+                          disabled={disabled}
                         />
                       </div>
                     ))}

@@ -4,6 +4,7 @@ import type { Staff } from '@/types/shift-management.type';
 import { formatVND } from '@/lib/helpers';
 
 import { SalaryDelta } from './salary-delta';
+import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 
 interface SalaryHeaderProps {
   staff: Staff;
@@ -15,13 +16,7 @@ export const SalaryHeader: FC<SalaryHeaderProps> = ({ staff, latestSalary, delta
   <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
     <div className="flex items-center gap-3">
       <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0">
-        {staff.avatar ? (
-          <img src={staff.avatar} alt={staff.name} className="w-full h-full object-cover" />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-sm font-semibold text-gray-500">
-            {staff.name?.[0]?.toUpperCase()}
-          </div>
-        )}
+        <StaffAvatar avatarUrl={staff.avatar} name={staff.name} />
       </div>
       <div>
         <p className="text-sm font-semibold text-gray-900">{staff.name}</p>

@@ -1,5 +1,6 @@
 import type { PaginationMeta } from '.';
 import type { StaffPosition } from './global.type';
+import type { AttendanceExplanationType } from './attendance-explanation.type';
 
 export interface ShiftManagementParams {
   page?: number;
@@ -17,6 +18,7 @@ export interface ShiftManagementParams {
   getAll?: boolean;
   fromDate?: string;
   toDate?: string;
+  type?: AttendanceExplanationType;
 
   [key: string]: unknown;
 }

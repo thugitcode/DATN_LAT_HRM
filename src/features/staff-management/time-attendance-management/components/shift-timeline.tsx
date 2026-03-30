@@ -32,6 +32,9 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
   const hourlySlots = buildHourlySlots(timeline, startHour, endHour);
   const mergedSlots = mergeConsecutiveSlots(hourlySlots);
   const FULL_SPAN = 17
+
+  const hasOneBlock = mergedSlots.length === 2 && mergedSlots.findIndex((s) => s.type === 'OTHER') !== -1
+
   return (
     <div className="overflow-x-auto h-full px-2">
       <div
@@ -43,7 +46,7 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
         }}
       >
         {/* Row 1: hour labels — one per merged block (at its start column) */}
-        {mergedSlots.map((slot, i) => {
+        {!hasOneBlock && mergedSlots.map((slot, i) => {
           const colStart = slot.hourStart - startHour + 1;
           const isLast = i === mergedSlots.length - 1;
 
@@ -75,7 +78,7 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
               title={isEmpty ? undefined : t(`options.timeline.${slot.type}` as any)}
               className="flex items-center justify-center rounded-lg transition-all hover:brightness-110 cursor-pointer overflow-hidden"
               style={{
-                gridColumn: `${colStart} / span ${mergedSlots.length === 2 && mergedSlots.findIndex((s) => s.type === 'OTHER') !== -1 ? FULL_SPAN : slot.span}`,
+                gridColumn: `${colStart} / span ${hasOneBlock ? FULL_SPAN : slot.span}`,
                 gridRow: 2,
                 background: slot.color,
                 color: slot.type === 'BREAK' ? '#52525B' : 'white',
