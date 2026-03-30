@@ -18,7 +18,8 @@ interface StaffTableProps {
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
   onViewDetail?: (id: string) => void;
-  onEdit?: (staff: Staff) => void;
+  // onEdit?: (staff: Staff) => void;
+  onEdit?: (id: string) => void;
 }
 
 export const StaffTable: FC<StaffTableProps> = ({
@@ -48,9 +49,10 @@ export const StaffTable: FC<StaffTableProps> = ({
               size="sm"
               variant="light"
               className="text-[#71717A]"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit?.(record);
+              onPress={(e) => {
+                // e.stopPropagation();
+                if (!record.id) return;
+                onEdit?.(record.id);
               }}
             >
               <IconPencil size={18} stroke={1.5} />

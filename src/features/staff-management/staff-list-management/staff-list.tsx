@@ -104,9 +104,14 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
 
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
-  const handleEdit = (staff: Staff) => {
-    setEditingStaff(staff);
-    onOpen();
+  const handleEdit = (id: string) => {
+    // setEditingStaff(staff);
+    // onOpen();
+
+    navigate({
+      to: '/admin/staff-management/detail/$id',
+      params: { id },
+    });
   };
 
   const handleCloseDrawer = () => {

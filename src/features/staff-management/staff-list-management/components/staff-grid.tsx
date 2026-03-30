@@ -42,7 +42,8 @@ interface StaffGridProps {
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
   onViewDetail?: (id: string) => void;
-  onEdit?: (staff: Staff) => void;
+  // onEdit?: (staff: Staff) => void;
+  onEdit?: (id: string) => void;
 }
 
 export const StaffGrid: FC<StaffGridProps> = ({
@@ -96,7 +97,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
                       size="sm"
                       variant="light"
                       className="text-[#71717A] min-w-6 w-6 h-6"
-                      onClick={() => onEdit?.(staff)}
+                      onClick={() => onEdit?.(staff.id)}
                     >
                       {/* <icons size={16} stroke={1.5} /> */}
                       <icons.edit className="size-5" />
@@ -136,7 +137,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
                     {staff.workType && (
                       <div className="flex flex-1 items-center gap-1.5 line-clamp-1">
                         <IconClock className="stroke-1 size-3" />
-                        {staff.workType ? t(`staff_table.work_type.${(staff.workType)}` as any) : '—'}
+                        {staff.workType ? t(`staff_table.work_type.${staff.workType}` as any) : '—'}
                       </div>
                     )}
                   </div>

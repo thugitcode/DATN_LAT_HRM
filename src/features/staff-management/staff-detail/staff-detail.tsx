@@ -28,7 +28,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
   const { data: response, isLoading } = useStaffDetail(id);
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { setMode } = useControlMode();
-  const { form, onSubmit } = useStaffForm(true, response?.data, () => { });
+  const { form, onSubmit } = useStaffForm(true, response?.data, () => {});
   const updateStaffMutation = useUpdateStaff();
   const staff = response?.data;
   const [isEditingAll, setIsEditingAll] = useState(false);
