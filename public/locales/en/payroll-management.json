@@ -108,6 +108,11 @@
       "confirmed_at": "Confirmation Time",
       "feedback": "Feedback",
       "action": "Action"
+    },
+    "feedbackStatus": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "REJECTED": "Rejected"
     }
   },
 

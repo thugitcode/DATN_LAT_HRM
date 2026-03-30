@@ -139,7 +139,8 @@
     "pending": "Pending",
     "working": "Working",
     "off": "Off",
-    "confirmed": "Confirmed"
+    "confirmed": "Confirmed",
+    "pendingFeedback": "Pending Feedback"
   },
   "select": "Select",
   "table": {

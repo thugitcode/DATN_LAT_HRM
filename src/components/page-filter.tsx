@@ -11,7 +11,7 @@ import { FilterSelect } from '@/components/filters/filter-select';
 import { MonthFilter } from '@/components/filters/month-filter';
 import { SearchInput } from '@/components/filters/search-input';
 
-export const PageFilter = () => {
+export const PageFilter = ({ extraFilters }: { extraFilters?: React.ReactNode }) => {
   const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
   const { t } = useTranslation(NAMESPACES.COMMON);
 
@@ -65,6 +65,8 @@ export const PageFilter = () => {
         onChange={handlePhongChange}
         placeholder={t('actions.room')}
       />
+
+      {extraFilters}
     </div>
   );
 };
