@@ -1,7 +1,7 @@
-
 {
   "payrollCalculation": {
-    "title": "Bảng công",
+    "title": "Danh sách tính lương",
+    "monthly_table_with_date": "Bảng lương tháng {{month}}/{{year}}",
     "columns": {
       "stt": "STT",
       "department": "Khoa/Phòng",
@@ -79,11 +79,20 @@
       "totalEmployerCost": "Tổng chi phí NSDLD"
     },
     "sendPayslip": {
-      "title": "Gửi phiếu lương hàng loạt",
+      "title": "Gửi phiếu lương",
+      "bulkTitle": "Gửi phiếu lương hàng loạt",
       "description": "Bạn có chắc muốn gửi phiếu lương cho tất cả nhân viên không?",
+      "descriptionStaff": "Bạn có chắc muốn gửi phiếu lương cho nhân viên {{name}} không?",
       "confirmLabel": "Xác nhận",
       "buttonLabel": "Gửi",
       "bulkButtonLabel": "Gửi phiếu lương hàng loạt"
+    },
+    "confirmationStatus": {
+      "DRAFT": "Chưa xác nhận",
+      "PENDING": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "REJECTED": "Đã từ chối",
+      "AUTO_CONFIRMED": "Tự động xác nhận"
     }
   },
 

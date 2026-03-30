@@ -1,6 +1,7 @@
 {
   "payrollCalculation": {
-    "title": "Timesheet & Payroll",
+    "title": "Payroll List",
+    "monthly_table_with_date": "Payroll for {{month}}/{{year}}",
     "columns": {
       "stt": "No.",
       "department": "Department/Ward",
@@ -78,11 +79,20 @@
       "totalEmployerCost": "Total Employer Cost"
     },
     "sendPayslip": {
-      "title": "Send Bulk Payslips",
+      "title": "Send Payslip",
+      "bulkTitle": "Send Bulk Payslips",
       "description": "Are you sure you want to send payslips to all employees?",
+      "descriptionStaff": "Are you sure you want to send the payslip to {{name}}?",
       "confirmLabel": "Confirm",
       "buttonLabel": "Send",
       "bulkButtonLabel": "Send Bulk Payslips"
+    },
+    "confirmationStatus": {
+      "DRAFT": "Draft",
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "REJECTED": "Rejected",
+      "AUTO_CONFIRMED": "Auto Confirmed"
     }
   },
 

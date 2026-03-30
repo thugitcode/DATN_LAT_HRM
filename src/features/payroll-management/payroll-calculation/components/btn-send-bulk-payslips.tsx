@@ -41,7 +41,7 @@ export const BtnSendBulkPayslips: FC<BtnSendBulkPayslips> = ({ month }) => {
   const handleSendBulk = useCallback(() => {
     open(
       {
-        title: t('payrollCalculation.sendPayslip.title'),
+        title: t('payrollCalculation.sendPayslip.bulkTitle'),
         description: t('payrollCalculation.sendPayslip.description'),
         confirmColor: 'primary',
         requireReason: false,
