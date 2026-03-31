@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useParams } from '@tanstack/react-router';
 import { NAMESPACES } from '@/i18n/constants';
 import {
   usePatchDetailsStaffSalary,
@@ -7,14 +5,16 @@ import {
 } from '@/services/query-options/staff-management.query';
 import { addToast, Button } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useParams } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { Form, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { icons } from '@/lib/icons';
 import { BtnCancel } from '@/components/btn-cancel';
 import { BtnSave } from '@/components/btn-save';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { TitlePage } from '@/components/title-page';
+import { icons } from '@/lib/icons';
 
 import { InsuranceAndUnionSection } from '../staff-detail/components/contract-and-salary-sections/insurance-and-union-section';
 import { LeaveBenefitsSection } from '../staff-detail/components/contract-and-salary-sections/leave-benefits-section';
@@ -35,7 +35,7 @@ export const SalaryAndBenefits = () => {
 
   const methods = useForm<SalaryFormValues>({
     resolver: zodResolver(salaryFormSchema),
-    defaultValues: mapApiToFormValues({}), // khởi tạo rỗng ban đầu
+    defaultValues: mapApiToFormValues({} as any), // khởi tạo rỗng ban đầu
     mode: 'onChange',
   });
 
@@ -146,7 +146,7 @@ export const SalaryAndBenefits = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full overflow-auto h-[calc(100vh-290px)]">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full overflow-auto h-[calc(100vh-306px)]">
               <div className="flex flex-col gap-6 pb-18">
                 <SalaryInfoSection />
                 <SalaryStructureSection />

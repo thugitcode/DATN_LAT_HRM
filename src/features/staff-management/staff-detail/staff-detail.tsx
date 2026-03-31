@@ -1,15 +1,16 @@
-import { useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useStaffDetail, useUpdateStaff } from '@/query-options/staff';
 import { Button, Tab, Tabs } from '@heroui/react';
+import { useState } from 'react';
 import { Form, FormProvider } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { icons } from '@/lib/icons';
 import { BtnCancel } from '@/components/btn-cancel';
 import { BtnSave } from '@/components/btn-save';
 import { PageContainer } from '@/components/page-container';
+import { icons } from '@/lib/icons';
 
+import { LoadingWrapper } from '@/components/loading-wrapper';
 import { StaffProfile } from '../profile-staff/staff-profile';
 import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
 import { SalaryAndBenefits } from '../salary-and-benefits/salary-and-benefits';
@@ -19,9 +20,8 @@ import { StaffDetailInfo } from './components/staff-detail-info';
 import { useStaffDetailTabs } from './hooks/use-staff-detail-tabs';
 import { useStaffForm } from './hooks/use-staff-form';
 import { TAB_KEYS } from './types';
-import { LoadingWrapper } from '@/components/loading-wrapper';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
-import type { ShiftManagementParams } from '@/types';
+import { ContractInfoSection } from './components/contract-and-salary-sections/contract-info-section';
+import { ContractFormContainer } from './components/contract-form-container';
 
 interface StaffDetailProps {
   id: string;
@@ -115,7 +115,9 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
           </Tab>
           <Tab key={TAB_KEYS.CONTRACT} title={t('staffDetail.tabs.contract')}>
             {/* <StaffContractInfo staffId={id} /> */}
-            <StaffContractInfo staffId={id} />
+            {/* <StaffContractInfo staffId={id} /> */}
+            <ContractFormContainer />
+
           </Tab>
           <Tab key={TAB_KEYS.SALARY} title={t('staffDetail.tabs.salary')}>
             <SalaryAndBenefits />

@@ -398,6 +398,8 @@
     }
   },
   "contract_info": {
+    "add_contract": "Thêm mới hợp đồng",
+    "edit_contract": "Chỉnh sửa hợp đồng",
     "title": "Thông tin hợp đồng",
     "contract_type": "Loại hợp đồng",
     "work_type": "Loại hình",
@@ -557,5 +559,46 @@
     "remainingLeave": "Số phép còn lại",
     "unauthorizedLeave": "Nghỉ không phép"
   },
-  "no_staff_found": "Không tìm thấy thông tin nhân viên"
+  "no_staff_found": "Không tìm thấy thông tin nhân viên",
+  "work_history": {
+    "title": "Lịch sử làm việc",
+    "empty": "Chưa có dữ liệu lịch sử làm việc",
+    "columns": {
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "job_title": "Chức danh",
+      "position": "Cấp bậc",
+      "department": "Khoa/Phòng",
+      "contract_type": "Loại hợp đồng",
+      "work_type": "Loại hình",
+      "duration": "Thời gian",
+      "start_date": "Ngày bắt đầu",
+      "end_date": "Ngày kết thúc",
+      "status": "Trạng thái"
+    },
+    "status": {
+      "PENDING_APPROVAL": "Chờ duyệt",
+      "PENDING_SIGNATURE": "Chờ ký",
+      "SIGNED": "Đã ký",
+      "EXPIRED": "Hết hạn"
+    },
+    "actions": {
+      "approve": "Duyệt",
+      "sign": "Ký hợp đồng",
+      "approve_title": "Xác nhận duyệt hợp đồng",
+      "approve_desc": "Bạn có chắc chắn muốn duyệt hợp đồng này không?",
+      "sign_title": "Xác nhận ký hợp đồng",
+      "sign_desc": "Bạn có chắc chắn muốn ký hợp đồng này không?",
+      "delete_title": "Xác nhận xóa hợp đồng",
+      "delete_desc": "Thông tin hợp đồng sau khi xóa không thể hoàn tác, bạn có chắc chắn muốn xóa hợp đồng?",
+      "approve_success": "Duyệt hợp đồng thành công",
+      "approve_error": "Duyệt hợp đồng thất bại",
+      "sign_success": "Ký hợp đồng thành công",
+      "sign_error": "Ký hợp đồng thất bại",
+      "delete_success": "Xóa hợp đồng thành công",
+      "delete_error": "Xóa hợp đồng thất bại"
+    },
+    "duration_year": "{{duration}} năm",
+    "duration_month": "{{duration}} tháng"
+  }
 }

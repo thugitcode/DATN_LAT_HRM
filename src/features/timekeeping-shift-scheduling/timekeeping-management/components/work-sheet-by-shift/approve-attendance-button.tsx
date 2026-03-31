@@ -55,6 +55,8 @@ export function ApproveAttendanceButton() {
 
   const [year, month] = useMonthYear(monthFilter);
 
+  const periodName = useMemo(() => t('attendance.period_name', { month, year }), [t, month, year]);
+
   const payload = useMemo(() => {
     return {
       month: monthQuery,
@@ -76,7 +78,7 @@ export function ApproveAttendanceButton() {
     open(
       {
         title: t('attendance.approve_title'),
-        description: t('attendance.approve_desc', { name: `Tháng ${month}/${year}` }),
+        description: t('attendance.approve_desc', { name: periodName }),
         confirmLabel: tc('button.confirm'),
         confirmColor: 'primary',
         requireReason: false,
@@ -88,8 +90,8 @@ export function ApproveAttendanceButton() {
   const handleUnlock = useCallback(() => {
     open(
       {
-        title: 'Hủy duyệt bảng công',
-        description: `Bạn có chăc chắn muốn hủy duyệt bảng công Tháng ${month}/${year}`,
+        title: t('attendance.unapprove_title'),
+        description: t('attendance.unapprove_desc', { name: periodName }),
         confirmLabel: tc('button.confirm'),
         confirmColor: 'primary',
         requireReason: false,
@@ -128,7 +130,7 @@ export function ApproveAttendanceButton() {
     return (
       <div className="w-50 h-10 rounded-xl bg-[#17C964] text-white inline-flex items-center justify-center text-sm gap-2">
         <icons.tickCircle className="text-white [&>path]:fill-white!" />
-        Đã chuyển tính lương
+        {t('attendance.published_status')}
       </div>
     );
   }
@@ -144,7 +146,7 @@ export function ApproveAttendanceButton() {
             isDisabled={isPendingUnlock}
             onPress={handleUnlock}
           >
-            Hủy
+            {t('attendance.unapprove_btn')}
           </Button>
         ) : (
           <Button
@@ -166,19 +168,17 @@ export function ApproveAttendanceButton() {
 
       <Modal isOpen={isOpen} onClose={onClose} size="sm">
         <ModalContent>
-          <ModalHeader className="flex gap-2 items-center">⚠️ Chưa duyệt bảng công</ModalHeader>
+          <ModalHeader className="flex gap-2 items-center">
+            {t('attendance.not_approved_modal_title')}
+          </ModalHeader>
           <ModalBody>
             <p className="text-default-600 text-sm">
-              Tháng{' '}
-              <span className="font-semibold text-foreground">
-                {month}/{year}
-              </span>{' '}
-              chưa duyệt bảng công.
+              {t('attendance.not_approved_modal_body', { name: periodName })}
             </p>
           </ModalBody>
           <ModalFooter>
             <Button variant="bordered" onPress={onClose}>
-              Đóng
+              {t('attendance.close_btn')}
             </Button>
           </ModalFooter>
         </ModalContent>

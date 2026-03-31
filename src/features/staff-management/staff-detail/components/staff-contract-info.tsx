@@ -1,4 +1,4 @@
-import { type FC, useState, useMemo, useCallback, Fragment } from 'react';
+import { type FC, useState, useMemo, Fragment, useCallback } from 'react';
 import {
     Card,
     CardHeader,
@@ -50,7 +50,7 @@ import { useStaffList } from '@/query-options/staff';
 import { ContractStatusEnum, StaffPositionEnum } from '@/types/staff.type';
 import type { StaffContract } from '@/types/staff.type';
 import dayjs from 'dayjs';
-import { StaffContractFormDrawer } from './staff-contract-form-drawer';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 import { useQuery } from '@tanstack/react-query';
 import { departmentQueryOptions } from '@/services/query-options/department.query';
 import { roomQueryOptions } from '@/services/query-options/room.query';
@@ -201,7 +201,7 @@ const initFormFromContract = (contract: StaffContract | undefined): EditFormData
 };
 
 export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const onOpenDrawer = useDrawer((state) => state.onOpen);
     const { setMode } = useControlMode()
     const { data: response, isLoading } = useStaffContracts(staffId);
     const contracts = response?.data || [];
@@ -217,13 +217,8 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     const [formData, setFormData] = useState<EditFormData>(() => initFormFromContract(currentContract));
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const [selectedContractId, setSelectedContractId] = useState<string | undefined>(undefined);
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-    const handleCloseDrawer = useCallback(() => {
-        setSelectedContractId(undefined);
-        onClose();
-    }, [onClose]);
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
     // Data queries for dropdowns
@@ -432,7 +427,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 <Button variant="flat" size="sm" startContent={<IconPencil size={18} />} className="bg-[#F4F4F5] text-[#11181C] font-semibold h-9 rounded-xl px-4" onPress={handleStartEdit}>
                                     Chỉnh sửa
                                 </Button>
-                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setSelectedContractId(undefined); onOpen(); setMode(ControlMode.create) }}>
+                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setMode(ControlMode.create); onOpenDrawer(DrawerType.STAFF_CONTRACT_MUTATE, { staffId }); }}>
                                     Thêm mới hợp đồng
                                 </Button>
                             </>
@@ -801,7 +796,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                                 </>
                                             )}
                                             {canEdit && (
-                                                <Button isIconOnly size="sm" variant="light" className="min-w-8 w-8 h-8 text-[#71717A]" onPress={() => { setSelectedContractId(history._contractId); onOpen(); }}>
+                                                <Button isIconOnly size="sm" variant="light" className="min-w-8 w-8 h-8 text-[#71717A]" onPress={() => { onOpenDrawer(DrawerType.STAFF_CONTRACT_MUTATE, { staffId, contractId: history._contractId }); }}>
                                                     <IconPencil size={18} />
                                                 </Button>
                                             )}
@@ -842,7 +837,6 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                 </ModalContent>
             </Modal>
 
-            <StaffContractFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} staffId={staffId} contractId={selectedContractId} />
         </div>
     );
 };

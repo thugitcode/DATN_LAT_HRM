@@ -118,7 +118,7 @@ export interface StaffWorkHistory {
   position: StaffPositionEnum;
   contractNumber: string;
   contractType: ContractTypeEnum;
-  workType: string;
+  workType: WorkingTypeTypeEnum;
   duration: number;
   durationUnit: DurationUnitEnum;
   startDate: string;
@@ -166,7 +166,7 @@ export interface StaffSalary {
 export interface StaffContract {
   id: string;
   contractType: ContractTypeEnum;
-  workType: string;
+  workType: WorkingTypeTypeEnum;
   contractNumber: string;
   startDate: string;
   endDate: string;
