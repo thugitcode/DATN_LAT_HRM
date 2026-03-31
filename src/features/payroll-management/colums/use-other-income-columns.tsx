@@ -9,6 +9,7 @@ import { RowOtherIncomeActions } from '../components/row-other-income-actions';
 import { KPI_SOURCE_LABEL } from '../constants/kpi';
 import { OTHER_INCOME_TYPE_LABEL } from '../constants/other-income';
 import type { OtherIncome } from '../types/other-income.type';
+import { formatDate } from '@/lib/utils';
 
 export const useOtherIncomeColumns = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -65,7 +66,13 @@ export const useOtherIncomeColumns = () => {
     {
       key: 'inputBy',
       title: t('columns.input_by'),
-      render: (_, record) => record.entryPerson?.name || '-',
+      render: (_, record) => (
+        <>
+          <span className="text-[#11181C] text-sm">{record.entryPerson?.name}</span>
+          <br />
+          <span className="text-[#52525B] text-sm">{formatDate(record?.createdAt)}</span>
+        </>
+      )
     },
     {
       key: 'actions',

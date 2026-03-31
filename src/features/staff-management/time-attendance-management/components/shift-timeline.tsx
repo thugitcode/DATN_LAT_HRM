@@ -1,7 +1,7 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 import { buildHourlySlots, mergeConsecutiveSlots, parseMins } from '../helpers';
-import type { TimelineSegment } from '../types';
+import type { TimelineSegment } from '../../types/types';
 import { EMPTY_COLOR, EMPTY_TYPE } from '../contants/data';
 
 interface ShiftTimelineProps {

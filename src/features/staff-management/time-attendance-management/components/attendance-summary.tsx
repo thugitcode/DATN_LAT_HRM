@@ -2,7 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NAMESPACES } from '@/i18n/constants';
-import type { IAttendanceSummary } from '../types';
+import type { IAttendanceSummary } from '../../types/types';
 
 interface StatItemProps {
   label: string;

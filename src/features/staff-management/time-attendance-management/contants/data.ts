@@ -1,4 +1,4 @@
-import type { TimelineType } from "../types";
+import type { TimelineType } from "../../types/types";
 
 export enum TAB_KEYS {
   WORKSHEET_BY_SHIFT = 'worksheet-by-shift',
