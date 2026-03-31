@@ -35,7 +35,6 @@ function SummaryRow({ label, value, isAmount = false, formatCurrency }: SummaryR
 export function SalarySummary({ data }: SalarySummaryProps) {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const employerContributions = calculateEmployerContributions(data);
-  console.log('data_________________', data);
 
   // Extract month/year from monthLabel
   const monthYear = data.monthLabel.replace('PHIẾU LƯƠNG ', '').replace('SALARY SLIP ', '');
@@ -57,11 +56,12 @@ export function SalarySummary({ data }: SalarySummaryProps) {
         <SummaryRow label={t('payrollCalculation.detail.toDate')} value={formatDate(data.toDate)} />
         <SummaryRow
           label={t('payrollCalculation.detail.standardWorkDays')}
-          value={`${data.standardWorkingDays} ${t('payrollCalculation.detail.days')}`}
+          value={`${data.workDays
+            } ${t('payrollCalculation.detail.days')}`}
         />
         <SummaryRow
           label={t('payrollCalculation.detail.actualWorkDays')}
-          value={`${data.actualWorkDays} ${t('payrollCalculation.detail.days')}`}
+          value={`${data.totalAttendance} ${t('payrollCalculation.detail.days')}`}
         />
         <SummaryRow
           label={t('payrollCalculation.detail.paidLeave')}

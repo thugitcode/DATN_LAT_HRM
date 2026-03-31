@@ -81,6 +81,8 @@ export interface SalaryData {
   paidLeave: number;
   unpaidLeave: number;
   totalWorkDays: number;
+  workDays: number;
+  totalAttendance: number;
 
   // Leave info
   totalLeaveDays: number;
