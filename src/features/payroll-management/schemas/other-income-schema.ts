@@ -29,7 +29,7 @@ export const createOtherIncomeMutateSchema = () =>
       }),
     date: z.string().min(1, t('otherIncome.validation.date_required')),
     description: z.string().optional(),
-    entryPersonId: z.string().min(1, t('otherIncome.validation.entry_person_required')),
+    // entryPersonId: z.string().min(1, t('otherIncome.validation.entry_person_required')),
 
     month: z.string().optional(),
     source: z.nativeEnum(KpiSourceEnum).default(KpiSourceEnum.WEB),

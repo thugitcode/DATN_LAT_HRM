@@ -60,7 +60,7 @@ export function BasicIncomeSection({ data }: BasicIncomeSectionProps) {
       <div className="px-4 py-2">
         <SalaryRow
           label={t('payrollCalculation.detail.contractBasicSalary')}
-          sublabel={`${data.actualWorkDays} ${t('payrollCalculation.detail.days')} - ${data.standardWorkingDays} ${t('payrollCalculation.detail.days')}`}
+          sublabel={`${data.totalAttendance} ${t('payrollCalculation.detail.days')} - ${data.workDays} ${t('payrollCalculation.detail.days')}`}
           value={data.actualWorkSalary}
           showFormula
           formulaLabel={t('payrollCalculation.detail.formula')}

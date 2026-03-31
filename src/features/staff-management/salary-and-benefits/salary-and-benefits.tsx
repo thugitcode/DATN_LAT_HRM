@@ -120,7 +120,7 @@ export const SalaryAndBenefits = () => {
   });
 
   return (
-    <LoadingWrapper isLoading={isLoading}>
+    <LoadingWrapper isLoading={isLoading} height="50vh">
       {!data?.data && id ? (
         <StaffContractEmptyState staffId={id} />
       ) : (

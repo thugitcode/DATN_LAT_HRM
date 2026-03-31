@@ -42,7 +42,7 @@ export const ContractFormContainer = () => {
     }
 
     return <FormProvider {...methods}>
-        <LoadingWrapper isLoading={isLoading || isDetailLoading}>
+        <LoadingWrapper isLoading={isDetailLoading || isLoading} height="50vh">
             <Form
                 onSubmit={() => onSubmit()}
                 className="flex flex-col w-full gap-[15px]"

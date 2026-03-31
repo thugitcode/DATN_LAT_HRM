@@ -96,3 +96,13 @@ export type MergedSlot = {
   labelStart: string;
   labelEnd: string;
 };
+
+export type ConvertTimelineInput = {
+  timeline: TimelineSegment[];
+  lateMinutes: number;
+  earlyMinutes: number;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  allowedLateMinutes?: number;
+  t: any;
+};

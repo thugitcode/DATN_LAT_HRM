@@ -12,7 +12,9 @@ import { useDeleteStaffProfile } from "../../salary-and-benefits/hooks/use-staff
 import { convertMimeToExtension, downloadFromSignedUrl } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { NAMESPACES } from "@/i18n/constants";
-
+import pdfIcon from "@public/images/pdf-icon.png"
+import excelIcon from "@public/images/excel-icon.png"
+import wordIcon from "@public/images/word-icon.png"
 interface FileCardProps {
   id: string;
   thumbnail?: string;
@@ -64,17 +66,25 @@ export default function FileCard({
     });
   };
 
+  const getFileIcon = (mimeType: string) => {
+    const extension = convertMimeToExtension(mimeType)?.toLowerCase();
+    if (extension === "pdf") return pdfIcon;
+    if (["xlsx", "xls", "csv"].includes(extension || "")) return excelIcon;
+    if (["doc", "docx"].includes(extension || "")) return wordIcon;
+    return pdfIcon;
+  };
+
   return (
     <>
       <Card className="rounded-2xl shadow-sm border border-default-200">
         {/* Thumbnail */}
         <div className="p-0">
-          <div className="rounded-t-2xl overflow-hidden bg-default-100 pt-3 px-[21.5px]">
+          <div className="rounded-t-2xl flex justify-center py-3 overflow-hidden bg-default-100 px-[21.5px]">
             <Image
-              src={thumbnail}
+              src={getFileIcon(fileType)}
               alt={documentName}
               removeWrapper
-              className="w-full h-55 object-cover rounded-none! rounded-b-0! rounded-t-xl!"
+              className="object-none rounded-none! rounded-b-0! rounded-t-xl!"
             />
           </div>
         </div>
