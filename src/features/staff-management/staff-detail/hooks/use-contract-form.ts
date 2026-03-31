@@ -63,6 +63,72 @@ const DEFAULT_VALUES: StaffContractFormValues = {
   salary: DEFAULT_SALARY,
 };
 
+export function getContractDefaultValues(contract: NonNullable<ReturnType<typeof useContractDetail>['data']>['data']): StaffContractFormValues {
+  const salaryData = contract?.salary;
+
+  return {
+    contractType: contract?.contractType || '',
+    workType: contract?.workType || '',
+    jobTitle: contract?.jobTitle || '',
+    position: contract?.position || '',
+    duration: contract?.duration?.toString() || '',
+    durationUnit: contract?.durationUnit || 'YEAR',
+    workingTime: contract?.workingTime?.toString() || '',
+    workingTimeUnit: contract?.workingTimeUnit || 'MONTH',
+    contractNumber: contract?.contractNumber || '',
+    startDate: contract?.startDate || '',
+    endDate: contract?.endDate || '',
+    roomId: contract?.room?.id || '',
+    directManagerIds: contract?.directManagerIds || [],
+    shiftType: contract?.shiftType || '',
+    fixedShiftId: contract?.fixedShiftId || '',
+    workingDays: contract?.workingDays || [1, 2, 3, 4, 5],
+    managedRoomId: contract?.managedRoom?.id || '',
+    managedDepartmentId: contract?.managedDepartment?.id || '',
+    workingAreas:
+      contract?.departments?.map((it) => ({
+        departmentId: it?.id || '',
+        roomId: (contract?.rooms
+          ?.filter((ite) => ite.departmentId === it?.id)
+          ?.map((item) => item?.id)
+          .filter(Boolean) as string[]),
+      })) ?? [{ departmentId: '', roomId: [] }],
+    salary: {
+      hasHealthInsurance: salaryData?.hasHealthInsurance || false,
+      healthInsuranceRate: salaryData?.healthInsuranceRate?.toString() || '',
+      hasSocialInsurance: salaryData?.hasSocialInsurance || false,
+      socialInsuranceRate: salaryData?.socialInsuranceRate?.toString() || '',
+      hasUnemploymentInsurance: salaryData?.hasUnemploymentInsurance || false,
+      unemploymentInsuranceRate: salaryData?.unemploymentInsuranceRate?.toString() || '',
+      hasUnionFee: salaryData?.hasUnionFee || false,
+      unionFee: salaryData?.unionFee?.toString() || '',
+      hasHealthCareInsurance: salaryData?.hasHealthCareInsurance || false,
+      healthCareInsuranceCompany: salaryData?.healthCareInsuranceCompany || '',
+      healthCareInsuranceBenefit: salaryData?.healthCareInsuranceBenefit?.toString() || '',
+      healthCareInsuranceRate: salaryData?.healthCareInsuranceRate?.toString() || '',
+      leaveQuotaIds: salaryData?.leaveQuotaIds || [],
+      hasFamilyDeduction: salaryData?.hasFamilyDeduction || false,
+      dependentsCount: salaryData?.dependentsCount?.toString() || '',
+      hasPersonalIncomeTax: salaryData?.hasPersonalIncomeTax ?? true,
+      personalIncomeTaxRate: salaryData?.personalIncomeTaxRate?.toString() || '',
+      basicSalary: salaryData?.basicSalary?.toString() || '',
+      insuranceSalary: salaryData?.insuranceSalary?.toString() || '',
+      responsibilityAllowance: salaryData?.responsibilityAllowance?.toString() || '',
+      positionAllowance: salaryData?.positionAllowance?.toString() || '',
+      hazardAllowance: salaryData?.hazardAllowance?.toString() || '',
+      mealAllowance: salaryData?.mealAllowance?.toString() || '',
+      mealAllowanceUnit: salaryData?.mealAllowanceUnit || 'DAY',
+      fuelAllowance: salaryData?.fuelAllowance?.toString() || '',
+      phoneAllowance: salaryData?.phoneAllowance?.toString() || '',
+      businessTripAllowance: salaryData?.businessTripAllowance?.toString() || '',
+      otherAllowance: salaryData?.otherAllowance?.toString() || '',
+      salaryType: salaryData?.salaryType || 'NET',
+      netSalary: salaryData?.netSalary?.toString() || '',
+      grossSalary: salaryData?.grossSalary?.toString() || '',
+    },
+  };
+}
+
 interface UseContractFormParams {
   isOpen: boolean;
   onClose: () => void;
@@ -110,100 +176,7 @@ export function useContractForm({
   // Fill data khi edit
   useEffect(() => {
     if (!contract) return;
-
-    const salaryData = contract.salary;
-
-    reset({
-      // ── Thông tin hợp đồng ───────────────────────────────────────
-      contractType: contract.contractType || '',
-      workType: contract.workType || '',
-      jobTitle: contract.jobTitle || '',
-      position: contract.position || '',
-      duration: contract.duration?.toString() || '',
-      durationUnit: contract.durationUnit || 'YEAR',
-      workingTime: contract.workingTime?.toString() || '',
-      workingTimeUnit: contract.workingTimeUnit || 'MONTH',
-      contractNumber: contract.contractNumber || '',
-      startDate: contract.startDate || '',
-      endDate: contract.endDate || '',
-      roomId: contract.room?.id || '',
-      directManagerIds: contract.directManagerIds || [],
-      shiftType: contract.shiftType || '',
-      fixedShiftId: contract.fixedShiftId || '',
-      workingDays: contract.workingDays || [1, 2, 3, 4, 5],
-
-      // ── Khu vực làm việc (workingAreas) ───────────────────────────
-      managedRoomId: contract?.managedRoom?.id || '',
-      managedDepartmentId: contract?.managedDepartment?.id || '',
-      workingAreas:
-        contract?.departments?.map((it) => ({
-          departmentId: it?.id || '',
-          roomId: (contract?.rooms
-            ?.filter((ite) => ite.departmentId === it?.id)
-            ?.map((item) => item?.id)
-            .filter(Boolean) as string[]),
-        })) ?? [{ departmentId: '', roomId: [] }],
-
-      // ── Salary object ─────────────────────────────────────────────
-      salary: {
-        // Bảo hiểm & công đoàn
-        hasHealthInsurance: salaryData?.hasHealthInsurance || false,
-        healthInsuranceRate:
-          salaryData?.healthInsuranceRate?.toString() || '',
-        hasSocialInsurance: salaryData?.hasSocialInsurance || false,
-        socialInsuranceRate:
-          salaryData?.socialInsuranceRate?.toString() || '',
-        hasUnemploymentInsurance:
-          salaryData?.hasUnemploymentInsurance || false,
-        unemploymentInsuranceRate:
-          salaryData?.unemploymentInsuranceRate?.toString() || '',
-        hasUnionFee: salaryData?.hasUnionFee || false,
-        unionFee: salaryData?.unionFee?.toString() || '',
-
-        // Bảo hiểm sức khỏe
-        hasHealthCareInsurance:
-          salaryData?.hasHealthCareInsurance || false,
-        healthCareInsuranceCompany:
-          salaryData?.healthCareInsuranceCompany || '',
-        healthCareInsuranceBenefit:
-          salaryData?.healthCareInsuranceBenefit?.toString() || '',
-        healthCareInsuranceRate:
-          salaryData?.healthCareInsuranceRate?.toString() || '',
-
-        // Nghỉ phép & phúc lợi
-        leaveQuotaIds: salaryData?.leaveQuotaIds || [],
-
-        // Thuế TNCN
-        hasFamilyDeduction: salaryData?.hasFamilyDeduction || false,
-        dependentsCount: salaryData?.dependentsCount?.toString() || '',
-        hasPersonalIncomeTax:
-          salaryData?.hasPersonalIncomeTax ?? true,
-        personalIncomeTaxRate:
-          salaryData?.personalIncomeTaxRate?.toString() || '',
-
-        // Cấu trúc lương
-        basicSalary: salaryData?.basicSalary?.toString() || '',
-        insuranceSalary: salaryData?.insuranceSalary?.toString() || '',
-        responsibilityAllowance:
-          salaryData?.responsibilityAllowance?.toString() || '',
-        positionAllowance:
-          salaryData?.positionAllowance?.toString() || '',
-        hazardAllowance:
-          salaryData?.hazardAllowance?.toString() || '',
-        mealAllowance: salaryData?.mealAllowance?.toString() || '',
-        mealAllowanceUnit: salaryData?.mealAllowanceUnit || 'DAY',
-        fuelAllowance: salaryData?.fuelAllowance?.toString() || '',
-        phoneAllowance: salaryData?.phoneAllowance?.toString() || '',
-        businessTripAllowance:
-          salaryData?.businessTripAllowance?.toString() || '',
-        otherAllowance: salaryData?.otherAllowance?.toString() || '',
-
-        // Thông tin lương
-        salaryType: salaryData?.salaryType || 'NET',
-        netSalary: salaryData?.netSalary?.toString() || '',
-        grossSalary: salaryData?.grossSalary?.toString() || '',
-      },
-    });
+    reset(getContractDefaultValues(contract));
   }, [contract, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
@@ -236,5 +209,6 @@ export function useContractForm({
     isDetailLoading,
     isSubmitting,
     onSubmit,
+    reset
   };
 }

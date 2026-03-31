@@ -217,6 +217,13 @@
     "approve_title": "Approve Timesheet",
     "approve_desc": "Confirm approval of timesheet {{name}}?",
     "approve_btn": "Approve Timesheet",
-    "navigate_payroll_btn": "Go to Payroll"
+    "navigate_payroll_btn": "Go to Payroll",
+    "published_status": "Published",
+    "unapprove_title": "Unapprove Timesheet",
+    "unapprove_desc": "Confirm unapproval of timesheet {{name}}?",
+    "unapprove_btn": "Unapprove Timesheet",
+    "not_approved_modal_title": "Not Approved Yet",
+    "not_approved_modal_body": "Month {{name}} has not been approved yet.",
+    "close_btn": "Close"
   }
 }

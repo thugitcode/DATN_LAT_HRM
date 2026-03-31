@@ -4,6 +4,7 @@ import type { DrawerProps } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
 import { DetailPayslipFeedback } from '@/features/payroll-management/components/detail-payslip-feedback';
+import { StaffContractFormDrawer } from '@/features/staff-management/staff-detail/components/staff-contract-form-drawer';
 import { FormKpiMutate } from '@/features/payroll-management/components/form-kpi-mutate';
 import { FormOtherIncomeMutate } from '@/features/payroll-management/components/form-other-income-mutate';
 import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
@@ -135,6 +136,16 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
         placement: 'right',
         size: '2xl',
         classNames: { body: 'p-0 bg-[#F4F4F5]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.STAFF_CONTRACT_MUTATE]: {
+      title: '',
+      component: <StaffContractFormDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '5xl',
+        style: { width: '97vw', maxWidth: '97vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
       },
     },
   };

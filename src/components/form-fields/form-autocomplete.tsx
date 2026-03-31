@@ -13,6 +13,7 @@ type Props<T extends FieldValues> = BaseFieldProps<T> & {
   placeholder?: string;
   readOnly?: boolean;
   onSelect?: (key: string) => void;
+  variant?: 'flat' | 'underlined' | 'bordered';
 };
 
 export function FormAutocomplete<T extends FieldValues>({
@@ -25,6 +26,7 @@ export function FormAutocomplete<T extends FieldValues>({
   placeholder,
   readOnly,
   onSelect,
+  variant
 }: Props<T>) {
   return (
     <Controller
@@ -40,14 +42,16 @@ export function FormAutocomplete<T extends FieldValues>({
             {readOnly ? (
               <Input
                 value={selectedLabel}
-                isReadOnly
+                readOnly
                 labelPlacement="outside-top"
                 classNames={{
-                  inputWrapper: 'bg-[#F4F4F5] cursor-default',
+                  inputWrapper: 'cursor-default',
                 }}
+                variant={variant}
               />
             ) : (
               <Autocomplete
+                variant={variant}
                 selectedKey={field.value}
                 isDisabled={disabled}
                 placeholder={placeholder ?? 'Chọn'}

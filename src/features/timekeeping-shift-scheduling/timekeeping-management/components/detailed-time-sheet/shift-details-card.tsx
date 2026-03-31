@@ -10,6 +10,7 @@ import type { shiftDetailsFormValues } from '../../schemas/shift-details.schema'
 import type { AttendanceStatus } from '../../types/index.type';
 import { AttendanceBadge } from './attendance-badge';
 import { CheckInMethodEnum, type ShiftDetails } from './type';
+import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 
 interface ShiftDetailsCardProps {
   shift?: ShiftDetails;
@@ -56,21 +57,7 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
       {/* Header — dark blue */}
       <div className="bg-[#0A1A2F] px-4 py-3 text-white flex items-center justify-between">
         <div className="flex items-center gap-3">
-          {staff.avatar ? (
-            <img src={staff.avatar} alt="avatar" className="w-10 h-10 rounded-full" />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-500 object-cover overflow-hidden">
-              <img
-                src="/images/avatar-default.png"
-                alt="avatar"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src =
-                    'https://ui-avatars.com/api/?name=' + staff.name + '&background=random';
-                }}
-              />
-            </div>
-          )}
+          <StaffAvatar avatarUrl={staff.avatar} name={staff.name} />
           <div>
             <div className="font-semibold text-[15px]">{staff.name}</div>
             <div className="text-xs text-slate-300 font-light mt-0.5">

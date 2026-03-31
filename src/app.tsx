@@ -4,13 +4,14 @@ import { addToast, HeroUIProvider, ToastProvider } from '@heroui/react';
 
 import { PersistProvider } from './components/providers/persist-provider';
 import { routeTree } from './routeTree.gen';
+import i18n from './i18n';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
       if (query.meta?.silentError) return;
       addToast({
-        title: 'Có lỗi xảy ra',
+        title: i18n.t('common:toast.description.error_generic'),
         description: error.message,
         color: 'danger',
       });
