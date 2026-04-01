@@ -7,6 +7,8 @@ import { EmptyState } from './empty-state';
 import { SalaryHeader } from './salary-header';
 import { SalaryHistoryRow } from './salary-history-row';
 import { SkeletonRowSalaryHistory } from './skeleton-row-salary-history';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 type StaffSalaryHistoryProps = {
   staff: Staff | null;
@@ -14,7 +16,7 @@ type StaffSalaryHistoryProps = {
 
 export const StaffSalaryHistory = ({ staff }: StaffSalaryHistoryProps) => {
   const { data, isLoading } = useStaffSalary(staff?.id ?? '');
-
+  const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT)
   const salaryList = data?.data ?? [];
 
   const { latestSalary, latestDelta } = useMemo(() => {
@@ -22,12 +24,12 @@ export const StaffSalaryHistory = ({ staff }: StaffSalaryHistoryProps) => {
     const latest = salaryList[0];
     const prev = salaryList[1] ?? null;
     return {
-      latestSalary: latest.netPay,
-      latestDelta: prev ? latest.netPay - prev.netPay : 0,
+      latestSalary: (latest?.netPay ?? 0),
+      latestDelta: prev ? (latest?.netPay ?? 0) - prev.netPay : 0,
     };
   }, [salaryList]);
 
-  if (!staff) return <EmptyState message="Chọn nhân viên để xem lịch sử lương" />;
+  if (!staff) return <EmptyState message={t('salary-history.select_to_view_history')} />;
 
   return (
     <div className="flex-1 flex flex-col border border-gray-100 rounded-2xl bg-white overflow-hidden">
@@ -37,7 +39,7 @@ export const StaffSalaryHistory = ({ staff }: StaffSalaryHistoryProps) => {
         {isLoading ? (
           Array.from({ length: 5 }).map((_, i) => <SkeletonRowSalaryHistory key={i} />)
         ) : !salaryList.length ? (
-          <EmptyState message="Chưa có lịch sử lương" />
+          <EmptyState message={t('salary-history.no_salary_history')} />
         ) : (
           salaryList.map((item, i) => (
             <SalaryHistoryRow

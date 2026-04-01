@@ -387,5 +387,9 @@
     "BUSINESS_TRIP": "Đi công tác",
     "SICK": "Nghỉ ốm",
     "OTHER": "Lý do khác"
+  },
+  "file_upload": {
+    "drag_drop_hint": "Kéo & thả hoặc click để chọn file",
+    "supported_formats": "Hỗ trợ: docx, doc, pdf, xlsx, xls, csv (tối đa 5MB/file)"
   }
 }

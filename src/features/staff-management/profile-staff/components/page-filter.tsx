@@ -1,13 +1,15 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
-import { FilterSelect } from '@/components/filters/filter-select';
 import { SearchInput } from '@/components/filters/search-input';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { icons } from '@/lib/icons';
 import type { ShiftManagementParams } from '@/types';
 import { Chip, Select, SelectItem, type SharedSelection } from '@heroui/react';
+import { NAMESPACES } from '@/i18n/constants';
+import { useTranslation } from 'react-i18next';
 
 export const PageFilter: React.FC = () => {
+    const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
     const handleSearchChange = useCallback(
         (value: string | undefined) => {
@@ -18,7 +20,7 @@ export const PageFilter: React.FC = () => {
 
     const handleFilter = useCallback(
         (keys: SharedSelection) => {
-            
+
             // const values = Array.from(keys) as string[];            
             setFilter("sortBy", keys.currentKey); // truyền nguyên mảng
         },
@@ -26,10 +28,10 @@ export const PageFilter: React.FC = () => {
     );
 
     const options = [
-        { label: "Đã mở gần đây", key: "RECENTLY_OPENED" },
-        { label: "Thêm mới gần đây", key: "RECENTLY_ADDED" },
+        { label: t("page_filter.recently_opened"), key: "RECENTLY_OPENED" },
+        { label: t("page_filter.recently_added"), key: "RECENTLY_ADDED" },
     ]
-    
+
     return (
         <div className="flex items-center gap-3 justify-between">
             <div className='flex-1'>
@@ -49,7 +51,7 @@ export const PageFilter: React.FC = () => {
                     // selectionMode="multiple"
                     onSelectionChange={(values) => handleFilter(values)}
                     defaultSelectedKeys={["RECENTLY_ADDED"]}
-                    renderValue={(items) => {                        
+                    renderValue={(items) => {
                         return (
                             <div className="flex flex-nowrap gap-2">
                                 {items.map((item) => (

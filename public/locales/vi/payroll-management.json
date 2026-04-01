@@ -352,6 +352,11 @@
   },
 
   "salary-history": {
-    "title": "Lịch sử lương nhân viên"
+    "title": "Lịch sử lương nhân viên",
+    "current_salary": "Lương hiện tại",
+    "created_by": "Được tạo bởi",
+    "approved_by": "Phê duyệt bởi",
+    "no_salary_history": "Chưa có lịch sử lương",
+    "select_to_view_history": "Chọn nhân viên để xem lịch sử lương"
   }
 }

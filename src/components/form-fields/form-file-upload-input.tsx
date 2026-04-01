@@ -6,6 +6,8 @@ import { IconAlertCircle, IconFile, IconUpload } from '@tabler/icons-react'
 import { useViewFile } from '@/hooks/common/use-view-file'
 import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form'
 import { FormLabel } from './form-label'
+import { useTranslation } from 'react-i18next'
+import { NAMESPACES } from '@/i18n/constants'
 
 interface FileUploadInputProps {
   accept?: string
@@ -32,6 +34,7 @@ export function FileUploadInput({
   isRequired,
   onRemoveFile,
 }: FileUploadInputProps) {
+  const { t } = useTranslation(NAMESPACES.COMMON)
   const [dragActive, setDragActive] = React.useState(false)
   const inputRef = React.useRef<HTMLInputElement>(null)
   const { onOpen } = useViewFile()
@@ -136,10 +139,10 @@ export function FileUploadInput({
           <div className="flex flex-col items-center justify-center gap-3 p-6 bg-[#f4f4f5]">
             <IconUpload size={28} className="text-primary" />
             <p className="text-sm text-center">
-              Kéo & thả hoặc click để chọn file
+              {t('file_upload.drag_drop_hint')}
             </p>
             <p className="text-xs text-default-400">
-              Hỗ trợ: docx, doc, pdf, xlsx, xls, csv (tối đa 5MB/file)
+              {t('file_upload.supported_formats')}
             </p>
           </div>
         </Card>

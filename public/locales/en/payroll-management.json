@@ -319,6 +319,11 @@
   },
 
   "salary-history": {
-    "title": "Employee Salary History"
+    "title": "Employee Salary History",
+    "current_salary": "Current Salary",
+    "created_by": "Created by",
+    "approved_by": "Approved by",
+    "no_salary_history": "No salary history",
+    "select_to_view_history": "Select staff to view salary history"
   }
 }

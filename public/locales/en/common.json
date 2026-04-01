@@ -388,5 +388,9 @@
     "BUSINESS_TRIP": "Business Trip",
     "SICK": "Sick Leave",
     "OTHER": "Other Reason"
+  },
+  "file_upload": {
+    "drag_drop_hint": "Drag & drop or click to select file",
+    "supported_formats": "Supported: docx, doc, pdf, xlsx, xls, csv (max 5MB/file)"
   }
 }
