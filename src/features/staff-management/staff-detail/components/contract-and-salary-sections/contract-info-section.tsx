@@ -199,6 +199,7 @@ export const ContractInfoSection: FC = () => {
             control={control}
             name="contractNumber"
             label={t('contract_info.contract_number')}
+            isRequired
             readOnly={isSubmitting || isView}
             variant={variant}
           />
@@ -310,7 +311,7 @@ export const ContractInfoSection: FC = () => {
                   <Dropdown>
                     <DropdownTrigger>
                       <Button
-                        isDisabled={isSubmitting}
+                        disabled={isSubmitting || isView}
                         className="h-8 min-h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white hover:bg-gray-50"
                         endContent={<IconChevronDown size={14} />}
                         variant={isView ? "solid" : "bordered"}

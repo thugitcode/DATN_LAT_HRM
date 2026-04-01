@@ -1,4 +1,4 @@
-import { Form, FormProvider } from "react-hook-form"
+import { FormProvider } from "react-hook-form"
 import { ContractInfoSection } from "./contract-and-salary-sections/contract-info-section"
 import { getContractDefaultValues, useContractForm } from "../hooks/use-contract-form";
 import { TitlePage } from "@/components/title-page";
@@ -17,21 +17,33 @@ import { useEffect } from "react";
 import { WorkHistoryTable } from "./work-history-table";
 import { LoadingWrapper } from "@/components/loading-wrapper";
 import StaffContractEmptyState from "./staff-contract-empty-state";
+import type { StaffContractFormValues } from "../schemas";
+
+const CONTRACT_SECTION_FIELDS: (keyof StaffContractFormValues)[] = [
+    'contractType', 'workType', 'jobTitle', 'position',
+    'duration', 'durationUnit', 'contractNumber',
+    'startDate', 'endDate',
+    'managedDepartmentId', 'managedRoomId', 'workingAreas',
+    'directManagerIds', 'shiftType', 'fixedShiftId',
+    'workingTime', 'workingTimeUnit', 'workingDays',
+];
 
 export const ContractFormContainer = () => {
     const { id: staffId } = useParams({ strict: false })
-    const { methods, isEditMode, isDetailLoading, isSubmitting, onSubmit, reset } =
-        useContractForm({ isOpen: true, onClose: () => { }, staffId: staffId ?? "", contractId: "" });
 
     const { data: response, isLoading } = useStaffContracts(staffId ?? "");
     const contracts = response?.data || [];
 
     const currentContract = contracts.find((c) => c.status === ContractStatusEnum.SIGNED) || contracts[0];
+    const { methods, isEditMode, isDetailLoading, isSubmitting, submitHandler, reset } =
+        useContractForm({ isOpen: true, onClose: () => { }, staffId: staffId ?? "", contractId: currentContract?.id ?? "" });
 
     const { onOpen } = useDrawer()
     const { mode, setMode } = useControlMode();
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
-
+    useEffect(() => {
+        setMode(ControlMode.view)
+    }, [])
     useEffect(() => {
         if (!currentContract) return;
         reset(getContractDefaultValues(currentContract));
@@ -42,10 +54,18 @@ export const ContractFormContainer = () => {
         methods.reset()
         onOpen(DrawerType.STAFF_CONTRACT_MUTATE, { staffId: staffId ?? "", contractId: "" })
     }
+
+    const handleContractSectionSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const isValid = await methods.trigger(CONTRACT_SECTION_FIELDS);
+        if (!isValid) return;
+        await submitHandler(methods.getValues());
+    };
+
     return <FormProvider {...methods}>
         <LoadingWrapper isLoading={isLoading} height="50vh">
-            {contracts.length === 0 ? <StaffContractEmptyState staffId={staffId ?? ""} /> : <Form
-                onSubmit={() => onSubmit()}
+            {contracts.length === 0 ? <StaffContractEmptyState staffId={staffId ?? ""} /> : <form
+                onSubmit={handleContractSectionSubmit}
                 className="flex flex-col w-full gap-[15px]"
             >
                 <div className="flex justify-between items-center">
@@ -75,7 +95,7 @@ export const ContractFormContainer = () => {
                     <ContractInfoSection />
                     <WorkHistoryTable staffId={staffId ?? ""} />
                 </div>
-            </Form>}
+            </form>}
         </LoadingWrapper>
     </FormProvider>
 }
