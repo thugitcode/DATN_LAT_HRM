@@ -357,6 +357,7 @@
   },
   "contract_info": {
     "add_contract": "Add New Contract",
+    "empty_description": "This employee has no contract data yet. Please add a new contract.",
     "edit_contract": "Edit Contract",
     "title": "Contract Information",
     "contract_type": "Contract Type",
@@ -386,13 +387,13 @@
       "MONTH": "Month"
     },
     "days": {
+      "0": "Sunday",
       "2": "Monday",
       "3": "Tuesday",
       "4": "Wednesday",
       "5": "Thursday",
       "6": "Friday",
-      "7": "Saturday",
-      "0": "Sunday"
+      "7": "Saturday"
     }
   },
   "shift_type": {
@@ -562,5 +563,16 @@
     },
     "duration_year": "{{duration}} year(s)",
     "duration_month": "{{duration}} month(s)"
+  },
+  "page_filter": {
+    "recently_opened": "Recently opened",
+    "recently_added": "Recently added"
+  },
+  "time_attendance": {
+    "tabs": {
+      "worksheet_by_shift": "Timekeeping",
+      "shift_explanation": "Shift explanation",
+      "shift_assignment": "Shift scheduling"
+    }
   }
 }

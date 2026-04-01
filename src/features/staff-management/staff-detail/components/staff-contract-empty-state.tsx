@@ -2,6 +2,8 @@ import { Button, Card, CardBody } from "@heroui/react";
 import { IconAlertCircle, IconPlus } from "@tabler/icons-react";
 import { DrawerType, useDrawer } from "@/store/useDrawer";
 import { ControlMode, useControlMode } from "../../salary-and-benefits/hooks/use-control-mode-handle";
+import { useTranslation } from "react-i18next";
+import { NAMESPACES } from "@/i18n/constants";
 
 interface StaffContractEmptyStateProps {
     staffId: string;
@@ -10,6 +12,7 @@ interface StaffContractEmptyStateProps {
 export default function StaffContractEmptyState({
     staffId,
 }: StaffContractEmptyStateProps) {
+    const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const onOpenDrawer = useDrawer((state) => state.onOpen);
     const { setMode } = useControlMode();
 
@@ -25,7 +28,7 @@ export default function StaffContractEmptyState({
                         <IconAlertCircle size={48} className="text-[#A1A1AA]" />
 
                         <p className="text-[15px] text-[#71717A] text-center max-w-md">
-                            Nhân viên chưa có dữ liệu hợp đồng, vui lòng thêm mới hợp đồng.
+                            {t('contract_info.empty_description')}
                         </p>
 
                         <Button
@@ -35,7 +38,7 @@ export default function StaffContractEmptyState({
                             className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-6 min-w-[180px]"
                             onPress={handleAddNew}
                         >
-                            Thêm mới hợp đồng
+                            {t('contract_info.add_contract')}
                         </Button>
                     </CardBody>
                 </Card>

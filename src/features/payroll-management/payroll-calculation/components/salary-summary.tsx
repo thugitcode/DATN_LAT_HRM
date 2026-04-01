@@ -108,7 +108,7 @@ export function SalarySummary({ data }: SalarySummaryProps) {
         />
         <SummaryRow
           label={t('payrollCalculation.detail.employeeContribution')}
-          value={data.socialInsurance + data.healthInsurance + data.unemploymentInsurance}
+          value={data.totalDeduction}
           isAmount
           formatCurrency={formatCurrency}
         />

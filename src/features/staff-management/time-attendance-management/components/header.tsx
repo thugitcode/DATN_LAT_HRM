@@ -7,8 +7,11 @@ import type { TAB_KEYS } from '../contants/data';
 import { useTimeAttendanceTabs } from '../hooks/use-time-attendance-tabs';
 import type { ShiftManagementParams } from '@/types';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 export const Header = () => {
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { tabs, activeKey, setActiveKey } = useTimeAttendanceTabs();
   const { filters, setFilter, clearFilters } = useQueryFilter<ShiftManagementParams>();
 
@@ -42,7 +45,7 @@ export const Header = () => {
           }}
         >
           {tabs.map((tab) => (
-            <Tab key={tab.key} title={tab.label} />
+            <Tab key={tab.key} title={t(tab.label)} />
           ))}
         </Tabs>
 

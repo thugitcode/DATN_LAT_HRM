@@ -399,6 +399,7 @@
   },
   "contract_info": {
     "add_contract": "Thêm mới hợp đồng",
+    "empty_description": "Nhân viên chưa có dữ liệu hợp đồng, vui lòng thêm mới hợp đồng.",
     "edit_contract": "Chỉnh sửa hợp đồng",
     "title": "Thông tin hợp đồng",
     "contract_type": "Loại hợp đồng",
@@ -428,13 +429,13 @@
       "MONTH": "Tháng"
     },
     "days": {
+      "0": "Chủ nhật",
       "2": "Thứ 2",
       "3": "Thứ 3",
       "4": "Thứ 4",
       "5": "Thứ 5",
       "6": "Thứ 6",
-      "7": "Thứ 7",
-      "0": "Chủ nhật"
+      "7": "Thứ 7"
     }
   },
   "shift_type": {
@@ -604,5 +605,16 @@
     },
     "duration_year": "{{duration}} năm",
     "duration_month": "{{duration}} tháng"
+  },
+  "page_filter": {
+    "recently_opened": "Đã mở gần đây",
+    "recently_added": "Thêm mới gần đây"
+  },
+  "time_attendance": {
+    "tabs": {
+      "worksheet_by_shift": "Chấm công",
+      "shift_explanation": "Giải trình ca",
+      "shift_assignment": "Phân ca"
+    }
   }
 }
