@@ -66,7 +66,17 @@ export const usePayrollSummary = (month: string) => {
     queryFn: () => payrollSummaryFinalizeService.getSumary(month),
     enabled: !!month,
     select: (res) => res.data,
-    meta: { silentError: true }
+    meta: { silentError: true },
+    retry: 1
+  });
+};
+export const usePayrollSummaryLatest = () => {
+  return useQuery({
+    queryKey: PAYROLL_SUMMARY_QUERY_KEYS.summary('latest'),
+    queryFn: () => payrollSummaryFinalizeService.getSumaryLatest(),
+    select: (res) => res.data,
+    meta: { silentError: true },
+    retry: 1
   });
 };
 

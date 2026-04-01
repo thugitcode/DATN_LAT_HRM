@@ -1,4 +1,5 @@
 export interface SummaryFinalize {
+  month?: string; // 2026-04
   inputs: {
     attendance: string;
     revenue: number;

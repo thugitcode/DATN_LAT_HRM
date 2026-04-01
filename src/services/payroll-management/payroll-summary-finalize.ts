@@ -32,6 +32,14 @@ class PayrollSummaryFinalizeService extends BaseApiService<
       return res.data;
     });
   }
+
+  async getSumaryLatest(): Promise<ApiResponse<SummaryFinalize>> {
+    return this.request(async () => {
+      const res = await this.instance.get(`${this.url()}/latest-summary`);
+
+      return res.data;
+    });
+  }
 }
 
 export const payrollSummaryFinalizeService = new PayrollSummaryFinalizeService();
