@@ -66,7 +66,11 @@ export function ShiftEntry({
           </div>
           <div className="w-px h-7.5 bg-[#E4E4E7]" />
           <div className="flex-1 h-14">
-            <ShiftTimeline timeline={convertTimeLine({ timeline, lateMinutes, earlyMinutes, checkInTime, checkOutTime, allowedLateMinutes, t }) ?? []} />
+            <ShiftTimeline
+              timeline={convertTimeLine({ timeline, lateMinutes, earlyMinutes, checkInTime, checkOutTime, allowedLateMinutes, t }) ?? []}
+              checkInTime={checkInTime}
+              checkOutTime={checkOutTime}
+            />
           </div>
           <div className="w-px h-7.5 bg-[#E4E4E7]" />
           <div className="flex items-center justify-between dark:border-slate-700">

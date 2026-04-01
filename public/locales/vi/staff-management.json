@@ -548,7 +548,11 @@
     "checkOut": "Chấm công về",
     "totalHours": "Tổng giờ",
     "late": "Đi muộn",
-    "early": "Về sớm"
+    "early": "Về sớm",
+    "wfh": "Làm việc tại nhà",
+    "businessTrip": "Công tác",
+    "vm": "Vắng mặt không phép",
+    "forgotClockTime": "Quên chấm công"
   },
   "attendanceSummary": {
     "noData": "Không có dữ liệu",

@@ -1,17 +1,16 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
-import { buildHourlySlots, mergeConsecutiveSlots, parseMins } from '../helpers';
+import { buildHourlySlots, isCrossMidnight, mergeConsecutiveSlots, parseMins, toAbsoluteMins } from '../helpers';
 import type { TimelineSegment } from '../../types/types';
 import { EMPTY_COLOR, EMPTY_TYPE } from '../contants/data';
 
 interface ShiftTimelineProps {
   timeline: TimelineSegment[];
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
 }
 
-// Parse "HH:mm:ss", "HH:mm", "HH:mm AM/PM" → minutes since midnight
-
-
-export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
+export function ShiftTimeline({ timeline, checkInTime, checkOutTime }: ShiftTimelineProps) {
   const { t } = useTranslation(NAMESPACES.COMMON);
 
   if (!timeline || timeline.length === 0) {
@@ -20,16 +19,21 @@ export function ShiftTimeline({ timeline }: ShiftTimelineProps) {
     );
   }
 
-  const startHour = Math.min(
-    ...timeline.map(s => {
-      const m = parseMins(s.startTime);
-      return m !== null ? Math.floor(m / 60) : 23;
-    })
-  );
-  const endHour = 23;
+  const crossMidnight = isCrossMidnight(checkInTime, checkOutTime);
+
+  // startHour từ checkIn hoặc segment đầu tiên
+  const rawStartMins = parseMins(checkInTime)
+    ?? Math.min(...timeline.map(s => parseMins(s.startTime) ?? 1440));
+  const startHour = Math.floor(rawStartMins / 60);
+
+  // endHour: nếu ca đêm, giờ kết thúc là absolute (có thể > 23)
+  const rawEndMins = toAbsoluteMins(checkOutTime, rawStartMins, crossMidnight)
+    ?? Math.max(...timeline.map(s => toAbsoluteMins(s.endTime, rawStartMins, crossMidnight) ?? 0));
+  const endHour = Math.ceil(rawEndMins / 60);
+
   const totalHours = endHour - startHour + 1;
 
-  const hourlySlots = buildHourlySlots(timeline, startHour, endHour);
+  const hourlySlots = buildHourlySlots(timeline, startHour, endHour, crossMidnight);
   const mergedSlots = mergeConsecutiveSlots(hourlySlots);
   const FULL_SPAN = 17
 

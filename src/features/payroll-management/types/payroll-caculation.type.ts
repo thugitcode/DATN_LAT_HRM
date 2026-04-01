@@ -151,6 +151,12 @@ export interface SalaryData {
   advancePayment: number;
   pensionFund1Percent: number;
   finalAmount: number;
+
+  employerSocialInsurance: number;
+  employerHealthInsurance: number;
+  employerUnemploymentInsurance: number;
+  employerUnionFee: number;
+  employerTotal: number;
 }
 
 export enum PayslipChannelEnum {

@@ -28,7 +28,7 @@ const WorksheetTab = ({ summary, days }: WorksheetTabProps) => {
   return (
     <div className="space-y-4 ">
       <AttendanceSummary data={summary} />
-      <div className="overflow-auto space-y-4 py-2 h-[calc(100vh-260px)]">
+      <div className="overflow-auto space-y-4 py-2 h-[calc(100vh-370px)]">
         {days?.map((shift, idx) => (
           <ShiftEntry key={idx} {...shift} />
         ))}
@@ -64,7 +64,7 @@ export const TimekeepingDetails = () => {
       case TAB_KEYS.SHIFT_EXPLANATION:
         return <ShiftExplanation staffId={currentStaff?.id} />;
       case TAB_KEYS.SHIFT_ASSIGNMENT:
-        return <ShiftManagementContainer staffId={currentStaff?.id} />;
+        return <ShiftManagementContainer staffId={currentStaff?.id} disabled={true} />;
       default:
         return null;
     }
