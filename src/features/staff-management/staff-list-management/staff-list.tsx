@@ -23,16 +23,6 @@ import { StaffListPrint } from './components/staff-list-print';
 import { StaffTable } from './components/staff-table';
 import { useStaffExport } from './hooks/use-staff-export';
 
-const POSITION_OPTIONS = [
-  { key: 'STAFF', label: 'Nhân viên' },
-  { key: 'HEAD_OF_DEPARTMENT', label: 'Trưởng khoa' },
-  { key: 'DEPUTY_HEAD_OF_DEPARTMENT', label: 'Phó khoa' },
-  { key: 'CHIEF_NURSE', label: 'Điều dưỡng trưởng' },
-  { key: 'MANAGER', label: 'Trưởng phòng' },
-  { key: 'HEAD_OF_UNIT', label: 'Trưởng bộ phận' },
-  { key: 'DEPUTY_MANAGER', label: 'Phó phòng' },
-];
-
 interface StaffListProps {
   title: string;
   contractType: ContractTypeEnum;
@@ -46,7 +36,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   });
   const printRef = useRef<HTMLDivElement>(null);
   const page = searchParams.page || 1;
-  const limit = searchParams.limit || 10;
+  const limit = searchParams.limit;
 
   const filters = {
     search: searchParams.search,
@@ -280,7 +270,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                   data: staffData,
                   loading: isLoading,
                   page: page,
-                  limit: limit,
+                  limit: limit || 10,
                   total: total,
                   onPageChange: setPage,
                   onLimitChange: setLimit,
@@ -294,7 +284,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                   data: staffData,
                   loading: isLoading,
                   page: page,
-                  limit: limit,
+                  limit: limit || 12,
                   total: total,
                   onPageChange: setPage,
                   onLimitChange: setLimit,

@@ -1,37 +1,22 @@
-import type { FC } from 'react';
 import i18n from '@/i18n';
 import { NAMESPACES } from '@/i18n/constants';
-import { Button, Chip, Pagination, Select, SelectItem, Switch } from '@heroui/react';
+import { Button, Pagination, Select, SelectItem, Switch } from '@heroui/react';
 import {
   IconArrowRight,
   IconBriefcase,
   IconClock,
   IconMail,
-  IconPencil,
-  IconPhone,
+  IconPhone
 } from '@tabler/icons-react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { Staff } from '@/types/staff.type';
+import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
+import type { Staff } from '@/types/staff.type';
 
-import { translateJobTitle } from '../../time-attendance-management/helpers';
 import { renderStatusChip } from '../hooks/use-staff-columns';
-
-const translatePosition = (position: string) => {
-  const positions: Record<string, string> = {
-    STAFF: 'Nhân viên',
-    HEAD_OF_DEPARTMENT: 'Trưởng khoa',
-    DEPUTY_HEAD_OF_DEPARTMENT: 'Phó khoa',
-    CHIEF_NURSE: 'Điều dưỡng trưởng',
-    MANAGER: 'Trưởng phòng',
-    HEAD_OF_UNIT: 'Trưởng bộ phận',
-    DEPUTY_MANAGER: 'Phó phòng',
-  };
-  return positions[position] || position || '—';
-};
 
 interface StaffGridProps {
   data: Staff[];
@@ -57,7 +42,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
   onViewDetail,
   onEdit,
 }) => {
-  const totalPages = Math.ceil((total || 1) / limit);
+  const totalPages = Math.ceil((total || 1) / (limit ?? 12));
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
   const currentLocale = i18n.language.startsWith('vi') ? 'vi-VN' : 'en-US';
@@ -70,8 +55,8 @@ export const StaffGrid: FC<StaffGridProps> = ({
   }
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 mt-4 h-full px-5">
-      <div className="flex-1 overflow-y-auto pb-4">
+    <div className="flex-1 flex flex-col min-h-0 mt-4 overflow-hidden h-[calc(100vh-285px)] px-5">
+      <div className="flex-1 pb-4 overflow-y-auto h-[calc(100vh-305px)]">
         {data.length === 0 ? (
           <div className="h-full flex items-center justify-center text-[#71717A] text-sm">
             {tc('table.empty')}
@@ -200,10 +185,10 @@ export const StaffGrid: FC<StaffGridProps> = ({
               trigger: 'h-8 min-h-8 rounded-lg',
             }}
           >
-            <SelectItem key="10">10</SelectItem>
-            <SelectItem key="25">25</SelectItem>
-            <SelectItem key="50">50</SelectItem>
-            <SelectItem key="100">100</SelectItem>
+            <SelectItem key="12">12</SelectItem>
+            <SelectItem key="24">24</SelectItem>
+            <SelectItem key="48">48</SelectItem>
+            <SelectItem key="96">96</SelectItem>
           </Select>
           <span className="text-sm text-[#71717A]">of {totalPages}</span>
         </div>
