@@ -151,25 +151,25 @@ export function SalarySummary({ data }: SalarySummaryProps) {
 
         <div className="space-y-1 px-6 py-3">
           <SummaryRow
-            label={t('payrollCalculation.detail.socialInsurance')}
+            label={t('payrollCalculation.detail.socialInsurance') + " (17.5%)"}
             value={employerContributions.socialInsurance}
             isAmount
             formatCurrency={formatCurrency}
           />
           <SummaryRow
-            label={t('payrollCalculation.detail.healthInsurance')}
+            label={t('payrollCalculation.detail.healthInsurance') + " (3%)"}
             value={employerContributions.healthInsurance}
             isAmount
             formatCurrency={formatCurrency}
           />
           <SummaryRow
-            label={t('payrollCalculation.detail.unemploymentInsurance')}
+            label={t('payrollCalculation.detail.unemploymentInsurance') + " (1%)"}
             value={employerContributions.unemploymentInsurance}
             isAmount
             formatCurrency={formatCurrency}
           />
           <SummaryRow
-            label={t('payrollCalculation.detail.employerUnionFee')}
+            label={t('payrollCalculation.detail.employerUnionFee') + " (2%)"}
             value={employerContributions.unionFee}
             isAmount
             formatCurrency={formatCurrency}

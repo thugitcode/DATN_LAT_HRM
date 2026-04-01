@@ -66,6 +66,7 @@ export const usePayrollSummary = (month: string) => {
     queryFn: () => payrollSummaryFinalizeService.getSumary(month),
     enabled: !!month,
     select: (res) => res.data,
+    meta: { silentError: true }
   });
 };
 

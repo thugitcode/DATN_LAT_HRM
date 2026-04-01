@@ -14,6 +14,7 @@ import { BtnCreateKpi } from '../components/btn-create-kpi';
 import { PayrollManagementFilters } from '../components/payroll-management-filters';
 import { statusKpiOptions } from '../constants/constants';
 import { useKpiList } from '../hooks/use-payroll-management';
+import dayjs from 'dayjs';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-340px)]' } as const;
 
@@ -28,7 +29,7 @@ export const Kpi = () => {
   const { data, isLoading } = useKpiList({
     page: page ?? 1,
     limit: limit ?? 10,
-    month,
+    month: month ?? dayjs().format("YYYY-MM"),
     search: search,
     departmentId: departmentId,
     roomId: roomId,
