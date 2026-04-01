@@ -39,7 +39,7 @@ export const PersonnelInfoSection = () => {
                 return obj;
             }, {} as any);
 
-            console.log("Submit Section Personnel:", payload);
+            // console.log("Submit Section Personnel:", payload);
             await updateStaff({ id: getValues().id, data: payload as any });
 
             if (data !== "ALL") setMode(ControlMode.view, null);

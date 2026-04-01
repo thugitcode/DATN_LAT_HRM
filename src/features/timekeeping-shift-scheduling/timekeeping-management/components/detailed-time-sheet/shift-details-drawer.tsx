@@ -107,8 +107,7 @@ export const ShiftDetailsDrawer = () => {
         reset();
         refetch();
       },
-      onError(error) {
-        console.log(error, 'err');
+      onError() {
         addToast({
           description: t('shift_details.toast.update_error'),
           color: 'danger',

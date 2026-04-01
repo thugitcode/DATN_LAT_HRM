@@ -4,6 +4,12 @@ import { z } from 'zod';
 
 const searchSchema = z.object({
   staffId: z.string().optional(),
+  month: z.string().optional(),
+  page: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
+  search: z.string().optional(),
+  departmentId: z.string().optional(),
+  roomId: z.string().optional(),
 });
 
 export const Route = createFileRoute(

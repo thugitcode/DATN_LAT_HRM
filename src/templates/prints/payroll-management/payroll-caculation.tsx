@@ -137,7 +137,7 @@ export const PrintPayrollCalculation = forwardRef<HTMLDivElement, PrintPayrollCa
                   <td style={tdR}>
                     {row.totalGross != null ? formatCurrency(row.totalGross) : '-'}
                   </td>
-                  <td style={td}>{row.actualWorkDays ?? '-'}</td>
+                  <td style={td}>{row.totalAttendance ?? '-'}</td>
                   <td style={td}>{row.overtimeHours ?? '-'}</td>
                   <td style={tdR}>
                     {row.allowanceAmount != null

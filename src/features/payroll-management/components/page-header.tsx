@@ -1,26 +1,28 @@
-import { useEffect, useMemo } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
-import { Button, Chip } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { IconArrowLeft, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { renderStatusChip } from '@/features/staff-management/staff-list-management/hooks/use-staff-columns';
 import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
-import { useAttendanceTable } from '@/features/timekeeping-shift-scheduling/timekeeping-management/hooks/use-timekeeping-management';
 import type { StaffTimeKeeping } from '@/features/timekeeping-shift-scheduling/timekeeping-management/types/timekeeping-management.type';
 import { useStaffList } from '@/hooks/queries/use-staff-query';
-import { renderStatusChip } from '@/features/staff-management/staff-list-management/hooks/use-staff-columns';
 
 export const PageHeader = ({
   currentStaff,
   setCurrentStaff,
   handleBack,
   onPrint,
+  ...props
 }: {
   currentStaff: StaffTimeKeeping | undefined;
   setCurrentStaff: (staff: StaffTimeKeeping) => void;
   handleBack?: () => void;
   onPrint?: () => void;
+  handleNext?: () => void;
+  handlePrev?: () => void;
 }) => {
   const { t } = useTranslation(NAMESPACES.COMMON);
   const { data: staffId } = useDrawer();
@@ -38,6 +40,7 @@ export const PageHeader = ({
     const nextStaff = listStaff?.data?.[currentIndex + 1];
     if (nextStaff) {
       setCurrentStaff(nextStaff);
+      props?.handleNext?.()
     }
   };
 
@@ -45,6 +48,7 @@ export const PageHeader = ({
     const prevStaff = listStaff?.data?.[currentIndex - 1];
     if (prevStaff) {
       setCurrentStaff(prevStaff);
+      props?.handlePrev?.()
     }
   };
 

@@ -1,24 +1,22 @@
-import { useRef } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { exportPayrollCalculationExcel } from '@/templates/excels/payroll-management/export-payroll-calculation-excel';
 import { PrintPayrollCalculation } from '@/templates/prints/payroll-management/payroll-caculation';
-import { Button } from '@heroui/react';
 import dayjs from 'dayjs';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
 
-import type { ShiftManagementParams } from '@/types';
-import { icons } from '@/lib/icons';
-import { useDepartmentName } from '@/hooks/use-department-name';
-import { useMonthDateRange } from '@/hooks/use-month-date-range';
-import { usePaginationConfig } from '@/hooks/use-pagination-config';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionsPage } from '@/components/actions-page';
 import DataTable from '@/components/data-table/data-table';
 import { PageContainer } from '@/components/page-container';
 import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
+import { useDepartmentName } from '@/hooks/use-department-name';
+import { useMonthDateRange } from '@/hooks/use-month-date-range';
+import { usePaginationConfig } from '@/hooks/use-pagination-config';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import type { ShiftManagementParams } from '@/types';
 
 import { usePayrollCalculationColumns } from '../colums/use-payroll-calculation-columns';
 import { usePayrollCalculationList } from '../hooks/use-payroll-calculation';
@@ -63,6 +61,8 @@ export const PayrollCalculation = () => {
       month,
       departmentName,
       t,
+      companyName: '',
+      unitName: '',
     });
   };
 
@@ -95,6 +95,8 @@ export const PayrollCalculation = () => {
           data={data?.data?.data ?? []}
           month={month}
           departmentName={departmentName}
+          companyName=''
+          unitName=''
         />
       </div>
     </PageContainer>

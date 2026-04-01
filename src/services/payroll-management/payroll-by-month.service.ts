@@ -5,6 +5,7 @@ import type { ApprovePayload } from '@/features/timekeeping-shift-scheduling/tim
 
 import { BaseApiService } from '../base-api.service';
 import { API_ENDPOINTS } from '../constants/endpoints';
+import type { ApiResponse } from '@/types';
 
 class PayrollByMonthService extends BaseApiService<
   PayrollApiResponse,
@@ -16,8 +17,11 @@ class PayrollByMonthService extends BaseApiService<
     super(hrmInstance, API_ENDPOINTS.HRM.PAYROLL_MANAGEMENT.PAYROLL_BY_MONTH);
   }
 
-  async getAll(params?: RequestsParams) {
-    return super.getAll(params);
+  async getAll(params?: RequestsParams): Promise<ApiResponse<PayrollApiResponse>> {
+    return this.request(async () => {
+      const res = await this.instance.get(this.url(), { params });
+      return res.data;
+    });
   }
 
   async create(data: ApprovePayload) {
