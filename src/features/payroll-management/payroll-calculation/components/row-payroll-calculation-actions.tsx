@@ -79,7 +79,7 @@ export const RowPayrollCalculationActions: FC<RowPayrollCalculationActionsProps>
         onPress={() =>
           navigate({
             to: `/admin/payroll-management/payroll-calculation/${dataRow.payrollResultId}`,
-            search: { staffId: dataRow.staffId },
+            search: { staffId: dataRow.staffId, month: filters.month },
           })
         }
       >

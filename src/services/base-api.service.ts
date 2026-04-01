@@ -27,7 +27,7 @@ export abstract class BaseApiService<
   constructor(
     protected readonly instance: AxiosInstance,
     protected readonly endpoint: string,
-  ) {}
+  ) { }
 
   protected url(path?: ID): string {
     return path !== undefined ? `${this.endpoint}/${path}` : this.endpoint;

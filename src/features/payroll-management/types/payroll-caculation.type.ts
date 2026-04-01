@@ -1,5 +1,6 @@
 import type { Item } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 import type { StaffPosition } from '@/types/global.type';
+import type { StaffStatusEnum } from '@/types/staff.type';
 
 /**
  * Định nghĩa kỳ tính lương
@@ -40,6 +41,8 @@ export interface StaffPayroll {
   totalGross: number;
   confirmationStatus: ConfirmationStatus;
   salaryTemplateName: string;
+  note?: string;
+  staffStatus: StaffStatusEnum
 }
 export enum ConfirmationStatus {
   DRAFT = 'N/A',

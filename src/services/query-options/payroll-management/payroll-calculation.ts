@@ -16,10 +16,6 @@ export const payrollCalculationOptions = {
     queryOptions({
       queryKey: payrollCalculationKeys.list(params),
       queryFn: () => payrollByMonthService.getAll(params),
-      // retry: (failureCount, error: any) => {
-      //     if (error?.status === 404) return false;
-      //     return failureCount < 3;
-      // },
       meta: { silentError: true },
       retry: false,
     }),
@@ -34,5 +30,7 @@ export const payrollCalculationOptions = {
     queryOptions({
       queryKey: payrollCalculationKeys.detail(id),
       queryFn: () => payrollByMonthService.getResultDetails(id),
+      meta: { silentError: true },
+      retry: false,
     }),
 } as const;

@@ -33,7 +33,7 @@ export const StaffProfile = () => {
                         {...profile}
                         thumbnail={profile.thumbnail || ""}
                         uploadedBy={profile.uploadedBy || profile.createdByName}
-                        onMore={() => console.log("More", profile.id)}
+                        onMore={() => { }}
                     />
                 ))}
             </div> : (

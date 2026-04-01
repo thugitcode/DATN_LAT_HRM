@@ -1,19 +1,17 @@
-import { useQuery } from '@tanstack/react-query';
 import { NAMESPACES } from '@/i18n/constants';
-import { uploadQueryOptions } from '@/services/query-options/upload.query';
 import { Avatar, Button, Chip, Switch } from '@heroui/react';
 import { IconMail, IconPencil, IconPhone } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
-import type { Staff } from '@/types/staff.type';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import GetSignedUrl from '@/components/get-signed-url';
+import type { Staff } from '@/types/staff.type';
 
 export const renderStatusChip = (status: string | undefined, t: any) => {
   // Định nghĩa style dựa trên key i18n
   const statusConfig: Record<
     string,
-    { color: 'success' | 'warning' | 'default'; content: string; base: string }
+    { color: 'success' | 'warning' | 'danger'; content: string; base: string }
   > = {
     WORKING: {
       color: 'success',
@@ -21,9 +19,9 @@ export const renderStatusChip = (status: string | undefined, t: any) => {
       base: 'bg-[#E8FAF0]',
     },
     RESIGNED: {
-      color: 'default',
-      content: 'text-[#71717A]',
-      base: 'bg-[#F4F4F5]',
+      color: 'danger',
+      content: 'text-danger',
+      base: 'bg-danger-100',
     },
     PENDING: {
       color: 'warning',
@@ -95,8 +93,8 @@ export const useStaffColumns = () => {
         <span className="text-sm text-[#11181C]">
           {record?.birthday
             ? new Date(record.birthday).toLocaleDateString(
-                tc('locale') === 'en' ? 'en-US' : 'vi-VN',
-              )
+              tc('locale') === 'en' ? 'en-US' : 'vi-VN',
+            )
             : ''}
         </span>
       ),

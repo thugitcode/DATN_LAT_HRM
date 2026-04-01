@@ -19,6 +19,8 @@ import {
 import dayjs from 'dayjs';
 
 import type { StaffPayroll } from '@/features/payroll-management/types/payroll-caculation.type';
+import type { TFunction } from 'i18next';
+import type { NAMESPACES } from '@/i18n/constants';
 
 const SHEET_NAME = 'Tính lương';
 const HEADER_BG = 'DBEAFE';
@@ -65,7 +67,7 @@ const buildDataRow = (row: StaffPayroll, idx: number): unknown[] => [
   row.salaryTemplateName ?? '-',
   row.basicSalary ?? '-',
   row.totalGross ?? '-',
-  row.actualWorkDays ?? '-',
+  row.totalAttendance ?? '-',
   row.overtimeHours ?? '-',
   row.allowanceAmount ?? '-',
   row.overtimeAmount ?? '-',
@@ -83,7 +85,7 @@ const buildAoa = (
   companyName: string,
   unitName: string,
   departmentName: string,
-  t: (key: string, options?: object) => string,
+  t: TFunction<any, undefined>,
   month?: string,
 ): unknown[][] => {
   const checkMonth = month ? dayjs(month, "YYYY-MM").format('MM') : dayjs().format('MM');
@@ -162,7 +164,7 @@ interface ExportPayrollCalculationParams {
   companyName: string;
   unitName: string;
   departmentName?: string;
-  t: (key: string, options?: object) => string;
+  t: TFunction<"payroll-management", undefined>;
 }
 
 export const exportPayrollCalculationExcel = ({

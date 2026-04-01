@@ -1,14 +1,12 @@
 import { NAMESPACES } from '@/i18n/constants';
-import { Chip } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
-import { formatCurrency } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
+import { formatCurrency } from '@/lib/utils';
 
 import { RowPayrollCalculationActions } from '../payroll-calculation/components/row-payroll-calculation-actions';
 import type { StaffPayroll } from '../types/payroll-caculation.type';
-import { StatusChip } from '@/components/status-chip';
 
 export const usePayrollCalculationColumns = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -69,11 +67,11 @@ export const usePayrollCalculationColumns = () => {
       render: (_, record) => formatCurrency(record.totalGross),
     },
     {
-      key: 'actualWorkDays', // Map từ actualWorkDays
+      key: 'totalAttendance', // Map từ totalAttendance
       title: t('payrollCalculation.columns.total_paid_working_days'),
       width: 180,
       align: 'center',
-      render: (_, record) => record.actualWorkDays,
+      render: (_, record) => record.totalAttendance,
     },
     {
       key: 'overtimeHours', // Map từ overtimeHours
