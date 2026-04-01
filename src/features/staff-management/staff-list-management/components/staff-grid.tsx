@@ -61,7 +61,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
               {data.map((staff) => (
                 <div
                   key={staff.id}
-                  className="bg-white rounded-2xl border border-[#F4F4F5] gap-3 p-4 flex flex-col shadow-sm"
+                  className="bg-white rounded-2xl border border-[#F4F4F5] gap-3 p-4 flex flex-col justify-between shadow-sm"
                 >
                   {/* ... previous card content ... */}
                   {/* Card Header */}
@@ -77,7 +77,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
                         size="sm"
                         variant="light"
                         className="text-[#71717A] min-w-6 w-6 h-6"
-                        onClick={() => onEdit?.(staff.id)}
+                        onPress={() => onEdit?.(staff.id)}
                       >
                         {/* <icons size={16} stroke={1.5} /> */}
                         <icons.edit className="size-5" />
@@ -145,7 +145,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
                     <Button
                       size="sm"
                       variant="light"
-                      className="text-[11px] font-medium text-[#11181C] p-0 h-auto gap-1"
+                      className="text-[11px] font-medium text-[#11181C] p-1 h-auto gap-1"
                       endContent={<IconArrowRight size={14} />}
                       onPress={() => onViewDetail?.(staff.id)}
                     >

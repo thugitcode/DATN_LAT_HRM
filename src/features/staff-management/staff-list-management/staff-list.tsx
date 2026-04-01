@@ -22,6 +22,7 @@ import { StaffGrid } from './components/staff-grid';
 import { StaffListPrint } from './components/staff-list-print';
 import { StaffTable } from './components/staff-table';
 import { useStaffExport } from './hooks/use-staff-export';
+import { useCurrentLayout } from '@/features/timekeeping-shift-scheduling/hooks/use-current-layout';
 
 interface StaffListProps {
   title: string;
@@ -34,9 +35,11 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const searchParams: any = useSearch({
     from: '/_private/admin/_dashboard/staff-management/$type',
   });
+  const currentLayout = useCurrentLayout();
+
   const printRef = useRef<HTMLDivElement>(null);
   const page = searchParams.page || 1;
-  const limit = searchParams.limit;
+  const limit = searchParams.limit || currentLayout === LayoutSwitcherEnum.GRID ? 12 : 10;
 
   const filters = {
     search: searchParams.search,
@@ -79,6 +82,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const { exportStaff, onExportStaffTemplate } = useStaffExport(staffData);
   const { setMode } = useControlMode();
 
+
   const handleViewDetail = (id: string) => {
     setMode(ControlMode.edit);
     navigate({
@@ -97,11 +101,11 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const handleEdit = (id: string) => {
     // setEditingStaff(staff);
     // onOpen();
-
     navigate({
       to: '/admin/staff-management/detail/$id',
       params: { id },
     });
+    setMode(ControlMode.edit, "ALL");
   };
 
   const handleCloseDrawer = () => {

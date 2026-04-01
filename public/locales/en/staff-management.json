@@ -506,7 +506,11 @@
     "checkOut": "Check-out",
     "totalHours": "Total hours",
     "late": "Late arrival",
-    "early": "Early leave"
+    "early": "Early leave",
+    "wfh": "Work from home",
+    "businessTrip": "Business trip",
+    "vm": "Absent without notice",
+    "forgotClockTime": "Forgot to clock in/out"
   },
   "attendanceSummary": {
     "noData": "No data",

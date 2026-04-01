@@ -38,7 +38,7 @@ export const Header = () => {
           selectedKey={activeKey}
           onSelectionChange={(key) => {
             setActiveKey(key as TAB_KEYS);
-            clearFilters()
+            // clearFilters()
           }}
         >
           {tabs.map((tab) => (

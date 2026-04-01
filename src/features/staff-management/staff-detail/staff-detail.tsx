@@ -1,7 +1,7 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useStaffDetail, useUpdateStaff } from '@/query-options/staff';
 import { Button, Tab, Tabs } from '@heroui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, FormProvider } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -15,13 +15,12 @@ import { StaffProfile } from '../profile-staff/staff-profile';
 import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
 import { SalaryAndBenefits } from '../salary-and-benefits/salary-and-benefits';
 import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
-import { StaffContractInfo, StaffDetailHeader } from './components';
+import { StaffDetailHeader } from './components';
+import { ContractFormContainer } from './components/contract-form-container';
 import { StaffDetailInfo } from './components/staff-detail-info';
 import { useStaffDetailTabs } from './hooks/use-staff-detail-tabs';
 import { useStaffForm } from './hooks/use-staff-form';
 import { TAB_KEYS } from './types';
-import { ContractInfoSection } from './components/contract-and-salary-sections/contract-info-section';
-import { ContractFormContainer } from './components/contract-form-container';
 
 interface StaffDetailProps {
   id: string;
@@ -30,16 +29,19 @@ interface StaffDetailProps {
 export const StaffDetail = ({ id }: StaffDetailProps) => {
   const { data: response, isLoading } = useStaffDetail(id);
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
-  const { setMode } = useControlMode();
+  const { setMode, data: dataMode, isEdit } = useControlMode();
   const { form, onSubmit } = useStaffForm(true, response?.data, () => { });
   const updateStaffMutation = useUpdateStaff();
   const staff = response?.data;
   const [isEditingAll, setIsEditingAll] = useState(false);
   const { activeKey, onSelectionChange } = useStaffDetailTabs();
+  useEffect(() => {
+    setIsEditingAll(isEdit && dataMode === "ALL")
+  }, [isEdit, dataMode])
 
   if (isLoading) {
     return (
-      <LoadingWrapper isLoading={isLoading}><></></LoadingWrapper>
+      <LoadingWrapper isLoading={isLoading} height='50vh'><></></LoadingWrapper>
     );
   }
 
