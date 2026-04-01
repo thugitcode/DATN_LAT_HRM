@@ -16,6 +16,7 @@ import { ContractStatusEnum } from "@/types/staff.type";
 import { useEffect } from "react";
 import { WorkHistoryTable } from "./work-history-table";
 import { LoadingWrapper } from "@/components/loading-wrapper";
+import StaffContractEmptyState from "./staff-contract-empty-state";
 
 export const ContractFormContainer = () => {
     const { id: staffId } = useParams({ strict: false })
@@ -24,6 +25,7 @@ export const ContractFormContainer = () => {
 
     const { data: response, isLoading } = useStaffContracts(staffId ?? "");
     const contracts = response?.data || [];
+
     const currentContract = contracts.find((c) => c.status === ContractStatusEnum.SIGNED) || contracts[0];
 
     const { onOpen } = useDrawer()
@@ -40,10 +42,9 @@ export const ContractFormContainer = () => {
         methods.reset()
         onOpen(DrawerType.STAFF_CONTRACT_MUTATE, { staffId: staffId ?? "", contractId: "" })
     }
-
     return <FormProvider {...methods}>
-        <LoadingWrapper isLoading={isDetailLoading || isLoading} height="50vh">
-            <Form
+        <LoadingWrapper isLoading={isLoading} height="50vh">
+            {contracts.length === 0 ? <StaffContractEmptyState staffId={staffId ?? ""} /> : <Form
                 onSubmit={() => onSubmit()}
                 className="flex flex-col w-full gap-[15px]"
             >
@@ -74,7 +75,7 @@ export const ContractFormContainer = () => {
                     <ContractInfoSection />
                     <WorkHistoryTable staffId={staffId ?? ""} />
                 </div>
-            </Form>
+            </Form>}
         </LoadingWrapper>
     </FormProvider>
 }

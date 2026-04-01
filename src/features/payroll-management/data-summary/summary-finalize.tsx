@@ -56,7 +56,6 @@ export const SummaryFinalize = () => {
   const { data, isLoading } = usePayrollSummary(month);
   const { mutate: mutateCalculate, isPending: isPendingCalculate } = useCalculateMutation(month);
   const { mutate: mutateDraft, isPending: isPendingSaveDraft } = useSaveDraftMutation(month);
-
   const handleSaveDraft = () => {
     mutateDraft({ month });
   };
@@ -184,6 +183,7 @@ export const SummaryFinalize = () => {
           onSaveDraft={handleSaveDraft}
           onTransfer={handleClickTransfer}
           isTransferring={isPendingCalculate}
+          data={data}
         />
       </div>
     </div>
