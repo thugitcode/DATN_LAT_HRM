@@ -356,6 +356,27 @@
     }
   },
   "contract_info": {
+    "validation": {
+      "contract_type_required": "Please select a contract type",
+      "work_type_required": "Please select a work type",
+      "job_title_required": "Please select a job title",
+      "position_required": "Please select a position",
+      "working_time_required": "Please enter working time",
+      "working_time_positive": "Working time must be a positive number",
+      "managed_room_required": "Please select a managed room",
+      "managed_department_required": "Please select a managed department",
+      "duration_required": "Please enter contract duration",
+      "duration_positive": "Duration must be a positive number",
+      "contract_number_required": "Please enter a contract number",
+      "start_date_required": "Please select a start date",
+      "end_date_required": "Please select an end date",
+      "end_date_after_start": "End date must be after start date",
+      "direct_manager_required": "Please select at least one direct manager",
+      "shift_type_required": "Please select a shift type",
+      "working_days_required": "Please select at least one working day",
+      "working_area_required": "At least one working area is required",
+      "working_area_department_required": "Working department must not be empty"
+    },
     "add_contract": "Add New Contract",
     "empty_description": "This employee has no contract data yet. Please add a new contract.",
     "edit_contract": "Edit Contract",

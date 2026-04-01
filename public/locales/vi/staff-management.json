@@ -398,6 +398,27 @@
     }
   },
   "contract_info": {
+    "validation": {
+      "contract_type_required": "Vui lòng chọn loại hợp đồng",
+      "work_type_required": "Vui lòng chọn loại hình làm việc",
+      "job_title_required": "Vui lòng chọn chức danh",
+      "position_required": "Vui lòng chọn cấp bậc",
+      "working_time_required": "Vui lòng nhập thời gian làm việc",
+      "working_time_positive": "Thời gian làm việc phải là số dương",
+      "managed_room_required": "Vui lòng chọn phòng quản lý",
+      "managed_department_required": "Vui lòng chọn khoa quản lý",
+      "duration_required": "Vui lòng nhập thời hạn",
+      "duration_positive": "Thời hạn phải là số dương",
+      "contract_number_required": "Vui lòng nhập số hợp đồng",
+      "start_date_required": "Vui lòng chọn ngày bắt đầu",
+      "end_date_required": "Vui lòng chọn ngày kết thúc",
+      "end_date_after_start": "Ngày kết thúc phải lớn hơn ngày bắt đầu",
+      "direct_manager_required": "Vui lòng chọn ít nhất một quản lý trực tiếp",
+      "shift_type_required": "Vui lòng chọn loại hình làm việc theo ca",
+      "working_days_required": "Vui lòng chọn ít nhất một ngày làm việc",
+      "working_area_required": "Phải có ít nhất một khu vực làm việc",
+      "working_area_department_required": "Khoa làm việc không được để trống"
+    },
     "add_contract": "Thêm mới hợp đồng",
     "empty_description": "Nhân viên chưa có dữ liệu hợp đồng, vui lòng thêm mới hợp đồng.",
     "edit_contract": "Chỉnh sửa hợp đồng",

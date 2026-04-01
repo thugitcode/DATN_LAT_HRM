@@ -8,6 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import { staffContractSchema, type StaffContractFormValues } from '../schemas';
+import { ControlMode, useControlMode } from '../../salary-and-benefits/hooks/use-control-mode-handle';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 const DEFAULT_SALARY = {
   hasHealthInsurance: false,
@@ -152,9 +155,10 @@ export function useContractForm({
   const createMutation = useCreateContract(staffId);
   const updateMutation = useUpdateContract(staffId);
   const queryClient = useQueryClient();
-
+  const { setMode } = useControlMode()
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const methods = useForm<StaffContractFormValues>({
-    resolver: zodResolver(staffContractSchema) as any,
+    resolver: zodResolver(staffContractSchema(t)) as any,
     defaultValues: DEFAULT_VALUES,
     mode: 'onChange',
   });
@@ -179,7 +183,7 @@ export function useContractForm({
     reset(getContractDefaultValues(contract));
   }, [contract, reset]);
 
-  const onSubmit = handleSubmit(async (data) => {
+  const submitHandler = async (data: StaffContractFormValues) => {
     const payload = {
       staffId,
       ...data,
@@ -190,18 +194,28 @@ export function useContractForm({
     };
 
     if (isEditMode && contractId) {
-      await updateMutation.mutateAsync({ id: contractId, data: payload });
+      await updateMutation.mutateAsync({ id: contractId, data: payload }, {
+        onSuccess() {
+          queryClient.invalidateQueries({
+            queryKey: ['salary-details', staffId],
+          });
+          setMode(ControlMode.view)
+        },
+      });
     } else {
       await createMutation.mutateAsync(payload, {
         onSuccess() {
           queryClient.invalidateQueries({
             queryKey: ['salary-details', staffId],
           });
+          setMode(ControlMode.view)
         },
       });
     }
     onClose();
-  });
+  };
+
+  const onSubmit = handleSubmit(submitHandler);
 
   return {
     methods,
@@ -209,6 +223,7 @@ export function useContractForm({
     isDetailLoading,
     isSubmitting,
     onSubmit,
+    submitHandler,
     reset
   };
 }
