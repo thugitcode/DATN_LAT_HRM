@@ -1,26 +1,28 @@
 import type { FC } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
 import { Chip } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
 import { RecruitmentRequestStatusEnum } from '../type';
 
 const STATUS_MAP: Record<
   RecruitmentRequestStatusEnum,
-  { label: string; color: 'primary' | 'warning' | 'default' | 'secondary' }
+  { i18nKey: string; color: 'primary' | 'warning' | 'default' | 'secondary' }
 > = {
   [RecruitmentRequestStatusEnum.RECRUITING]: {
-    label: 'Đang tuyển',
+    i18nKey: 'recruitment_request.status.recruiting',
     color: 'primary',
   },
   [RecruitmentRequestStatusEnum.PENDING]: {
-    label: 'Chờ duyệt',
+    i18nKey: 'recruitment_request.status.pending',
     color: 'warning',
   },
   [RecruitmentRequestStatusEnum.CLOSED]: {
-    label: 'Đã đóng',
+    i18nKey: 'recruitment_request.status.closed',
     color: 'default',
   },
   [RecruitmentRequestStatusEnum.INTERVIEWING]: {
-    label: 'Chờ phỏng vấn',
+    i18nKey: 'recruitment_request.status.interviewing',
     color: 'secondary',
   },
 };
@@ -35,12 +37,14 @@ interface RecruitmentRequestStatusChipProps {
 }
 
 export const RecruitmentRequestStatusChip: FC<RecruitmentRequestStatusChipProps> = ({ status }) => {
+  const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+
   const config = STATUS_MAP[status];
   if (!config) return null;
 
   return (
     <Chip size="md" variant="flat" color={config.color} classNames={CHIP_CLASS_NAMES}>
-      {config.label}
+      {t(config.i18nKey as any)}
     </Chip>
   );
 };

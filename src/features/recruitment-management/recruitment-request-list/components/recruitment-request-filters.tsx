@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
@@ -12,16 +12,20 @@ import { SearchInput } from '@/components/filters/search-input';
 
 import { RecruitmentRequestStatusEnum, type RecruitmentRequestFilters } from '../type';
 
-const STATUS_OPTIONS = [
-  { key: RecruitmentRequestStatusEnum.RECRUITING, label: 'Đang tuyển' },
-  { key: RecruitmentRequestStatusEnum.PENDING, label: 'Chờ duyệt' },
-  { key: RecruitmentRequestStatusEnum.CLOSED, label: 'Đã đóng' },
-  { key: RecruitmentRequestStatusEnum.INTERVIEWING, label: 'Chờ phỏng vấn' },
-] as const;
-
 export const RecruitmentRequestFilterBar = () => {
   const { filters, setFilter } = useQueryFilter<RecruitmentRequestFilters>();
   const { t } = useTranslation(NAMESPACES.COMMON);
+  const { t: tR } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+
+  const statusOptions = useMemo(
+    () => [
+      { key: RecruitmentRequestStatusEnum.RECRUITING, label: tR('recruitment_request.status.recruiting') },
+      { key: RecruitmentRequestStatusEnum.PENDING, label: tR('recruitment_request.status.pending') },
+      { key: RecruitmentRequestStatusEnum.CLOSED, label: tR('recruitment_request.status.closed') },
+      { key: RecruitmentRequestStatusEnum.INTERVIEWING, label: tR('recruitment_request.status.interviewing') },
+    ],
+    [tR],
+  );
 
   const { options: departmentOptions } = useDepartmentOptions();
   const { options: roomOptions } = useRoomOptions(filters?.departmentIds);
@@ -82,7 +86,7 @@ export const RecruitmentRequestFilterBar = () => {
       />
 
       <FilterSelect
-        options={STATUS_OPTIONS}
+        options={statusOptions}
         value={filters.status as string}
         onChange={handleStatusChange}
         placeholder={t('actions.status')}

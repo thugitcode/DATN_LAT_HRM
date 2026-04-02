@@ -30,6 +30,17 @@
       "recruiting": "Recruiting",
       "pending": "Pending",
       "closed": "Closed"
+    },
+    "status": {
+      "recruiting": "Recruiting",
+      "pending": "Pending",
+      "closed": "Closed",
+      "interviewing": "Interviewing"
+    },
+    "toast": {
+      "approve_success": "Recruitment request approved successfully.",
+      "reject_success": "Recruitment request rejected successfully.",
+      "close_success": "Recruitment request closed successfully."
     }
   }
 }

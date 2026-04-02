@@ -5,6 +5,8 @@ import {
   recruitmentRequestQueryOptions,
 } from '@/services/query-options/recruitment-request.query';
 import { addToast } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 import { normalizeAxiosError } from '@/lib/axios';
 
@@ -20,6 +22,7 @@ export function useRecruitmentRequestList(params?: RecruitmentRequestFilters) {
 
 export function useApproveRecruitmentRequest() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload?: ApproveRecruitmentRequestPayload }) =>
@@ -28,7 +31,7 @@ export function useApproveRecruitmentRequest() {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
 
       addToast({
-        description: 'Duyệt yêu cầu tuyển dụng thành công.',
+        description: t('recruitment_request.toast.approve_success'),
         color: 'success',
       });
     },
@@ -44,6 +47,7 @@ export function useApproveRecruitmentRequest() {
 
 export function useRejectRecruitmentRequest() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
   return useMutation({
     mutationFn: ({ id, payload }: { id: string; payload: RejectRecruitmentRequestPayload }) =>
@@ -51,7 +55,7 @@ export function useRejectRecruitmentRequest() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
       addToast({
-        description: 'Từ chối yêu cầu tuyển dụng thành công.',
+        description: t('recruitment_request.toast.reject_success'),
         color: 'success',
       });
     },
@@ -67,13 +71,14 @@ export function useRejectRecruitmentRequest() {
 
 export function useCloseRecruitmentRequest() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
   return useMutation({
     mutationFn: (id: string) => recruitmentRequestService.close(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
       addToast({
-        description: 'Đóng yêu cầu tuyển dụng thành công.',
+        description: t('recruitment_request.toast.close_success'),
         color: 'success',
       });
     },

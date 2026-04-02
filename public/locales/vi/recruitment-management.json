@@ -30,6 +30,17 @@
       "recruiting": "Đang tuyển",
       "pending": "Chờ duyệt",
       "closed": "Đã đóng"
+    },
+    "status": {
+      "recruiting": "Đang tuyển",
+      "pending": "Chờ duyệt",
+      "closed": "Đã đóng",
+      "interviewing": "Chờ phỏng vấn"
+    },
+    "toast": {
+      "approve_success": "Duyệt yêu cầu tuyển dụng thành công.",
+      "reject_success": "Từ chối yêu cầu tuyển dụng thành công.",
+      "close_success": "Đóng yêu cầu tuyển dụng thành công."
     }
   }
 }
