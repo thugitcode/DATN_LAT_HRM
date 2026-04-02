@@ -1,0 +1,35 @@
+{
+  "recruitment_request": {
+    "title": "Recruitment Request List",
+    "columns": {
+      "code": "Request Code",
+      "department": "Department",
+      "position": "Position",
+      "quantity": "Qty",
+      "salary_range": "Salary Range",
+      "required_date": "Required Date",
+      "status": "Status",
+      "created_by": "Created By",
+      "actions": "Actions"
+    },
+    "actions": {
+      "approve": "Approve",
+      "approve_title": "Approve Recruitment Request",
+      "approve_desc": "Are you sure you want to approve this recruitment request?",
+      "close": "Close",
+      "close_title": "Close Recruitment Request",
+      "close_desc": "Are you sure you want to close this recruitment request?",
+      "view_interview": "View Interviews",
+      "edit": "Edit",
+      "delete": "Delete",
+      "create": "New Request",
+      "import": "Import"
+    },
+    "summary": {
+      "total": "Total Requests",
+      "recruiting": "Recruiting",
+      "pending": "Pending",
+      "closed": "Closed"
+    }
+  }
+}

@@ -38,6 +38,7 @@ export const API_ENDPOINTS = {
     },
 
     LEAVE_REQUEST: '/leave-request',
+    RECRUITMENT_REQUEST: '/recruitment-request',
     UPLOAD: '/upload',
 
     CONFIGURATION: '/configuration',

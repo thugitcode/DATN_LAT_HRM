@@ -1,3 +1,1 @@
-export const RecruitmentManagement = () => {
-  return <div>RecruitmentManagement</div>;
-};
+export { RecruitmentRequestList } from './recruitment-request-list/recruitment-request-list';

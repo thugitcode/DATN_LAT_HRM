@@ -1,0 +1,35 @@
+{
+  "recruitment_request": {
+    "title": "Danh sách yêu cầu tuyển dụng",
+    "columns": {
+      "code": "Mã yêu cầu",
+      "department": "Khoa/phòng",
+      "position": "Vị trí",
+      "quantity": "SL",
+      "salary_range": "Mức lương",
+      "required_date": "Ngày cần",
+      "status": "Trạng thái",
+      "created_by": "Người tạo",
+      "actions": "Thao tác"
+    },
+    "actions": {
+      "approve": "Duyệt",
+      "approve_title": "Duyệt yêu cầu tuyển dụng",
+      "approve_desc": "Bạn có chắc chắn muốn duyệt yêu cầu tuyển dụng này?",
+      "close": "Đóng",
+      "close_title": "Đóng yêu cầu tuyển dụng",
+      "close_desc": "Bạn có chắc chắn muốn đóng yêu cầu tuyển dụng này?",
+      "view_interview": "Xem lịch PV",
+      "edit": "Chỉnh sửa",
+      "delete": "Xóa",
+      "create": "Tạo mới yêu cầu",
+      "import": "Import"
+    },
+    "summary": {
+      "total": "Tổng yêu cầu",
+      "recruiting": "Đang tuyển",
+      "pending": "Chờ duyệt",
+      "closed": "Đã đóng"
+    }
+  }
+}
