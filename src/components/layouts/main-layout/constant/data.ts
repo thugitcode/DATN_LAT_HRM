@@ -127,6 +127,39 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
       },
     ],
   },
+  {
+    id: '9',
+    path: '/admin/recruitment-management',
+    label: t('sidebar.recruitment_management'),
+    icon: icons.recruitment,
+    children: [
+      {
+        id: '1',
+        label: t('sidebar.recruitment_request'),
+        path: '/admin/recruitment-management/recruitment-request',
+      },
+      {
+        id: '2',
+        label: t('sidebar.candidate'),
+        path: '/admin/recruitment-management/candidate',
+      },
+      {
+        id: '3',
+        label: t('sidebar.interview_schedule'),
+        path: '/admin/recruitment-management/interview-schedule',
+      },
+      {
+        id: '4',
+        label: t('sidebar.probation_management'),
+        path: '/admin/recruitment-management/probation-management',
+      },
+      {
+        id: '5',
+        label: t('sidebar.recruitment_report'),
+        path: '/admin/recruitment-management/report',
+      },
+    ],
+  },
 ];
 
 export const menuSidebar: MenuItem[] = [
