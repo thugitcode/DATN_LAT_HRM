@@ -169,7 +169,7 @@ export const ContractInfoSection: FC = () => {
                           // variant="bordered"
                           className="h-8 min-h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white transition-all hover:bg-gray-50"
                           endContent={<IconChevronDown size={14} />}
-                          isDisabled={isSubmitting || isView}
+                          disabled={isSubmitting || isView}
                           variant={isView ? "solid" : "bordered"}
                         >
                           {watch('durationUnit') === 'YEAR' ? t('contract_info.duration_units.YEAR') : t('contract_info.duration_units.MONTH')}

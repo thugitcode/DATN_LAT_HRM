@@ -61,6 +61,15 @@ export interface PayrollResult {
   payslipChannel: string | null;
   payslipSentAt: string | null;
   payrollPeriod: PayrollPeriod;
+  employeeContribution: number;
+  personalIncomeTax: number;
+  totalGross: number;
+  workDays: number;
+  totalAttendance: number;
+  overtimeHours: number;
+  onCallDays: number;
+  businessTripDays: number;
+  advancePayment: number;
 }
 
 export enum PayslipStatus {
@@ -142,5 +151,12 @@ export interface PayslipFeedback {
   status: PayslipFeedbackStatus;
   resolvedAt: string | null;
   staff: StaffPayslipFeedback;
-  payrollResult: PayrollResult;
+  payroll: PayrollResult;
+  period: {
+    id: string;
+    month: string;
+    name: string;
+    fromDate: string;
+    toDate: string;
+  };
 }
