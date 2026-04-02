@@ -6,6 +6,7 @@ import type { ColumnDef } from '@/components/data-table/data-table';
 import { RowPayslipActions } from '../components/row-payslip-feedback-actions';
 import type { PayslipFeedback, PayslipFeedbackStatus } from '../types/payslip-feedback.type';
 import { StatusChip, type StatusConfig } from '@/components/status-chip';
+import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 const StatusConfig: Record<PayslipFeedbackStatus, StatusConfig> = {
   CONFIRMED: {
@@ -41,6 +42,9 @@ export const usePayrollFeedbackColumns = () => {
       key: 'department',
       title: t('payslipFeedback.columns.department'),
       minWidth: 140,
+      render(value, record, index) {
+        return <DepartmentRoomInfo departments={record.staff?.departments} rooms={record.staff?.rooms} />
+      },
     },
     {
       key: 'code',
@@ -59,13 +63,13 @@ export const usePayrollFeedbackColumns = () => {
       ),
     },
     {
-      key: 'payrollResult',
+      key: 'payroll',
       title: t('payslipFeedback.columns.net_salary'),
       minWidth: 130,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">
-          {row.payrollResult?.netPay
-            ? Number(row.payrollResult.netPay).toLocaleString('vi-VN') + ' đ'
+          {row.payroll?.netPay
+            ? Number(row.payroll.netPay).toLocaleString('vi-VN') + ' đ'
             : '—'}
         </span>
       ),
