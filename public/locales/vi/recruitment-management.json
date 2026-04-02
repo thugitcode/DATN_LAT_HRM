@@ -1,0 +1,73 @@
+{
+  "recruitment_request": {
+    "title": "Danh sách yêu cầu tuyển dụng",
+    "columns": {
+      "code": "Mã yêu cầu",
+      "department": "Khoa/phòng",
+      "position": "Vị trí",
+      "quantity": "SL",
+      "salary_range": "Mức lương",
+      "required_date": "Ngày cần",
+      "status": "Trạng thái",
+      "created_by": "Người tạo",
+      "actions": "Thao tác"
+    },
+    "actions": {
+      "approve": "Duyệt",
+      "approve_title": "Duyệt yêu cầu tuyển dụng",
+      "approve_desc": "Bạn có chắc chắn muốn duyệt yêu cầu tuyển dụng này?",
+      "close": "Đóng yêu cầu",
+      "close_title": "Đóng yêu cầu tuyển dụng",
+      "close_desc": "Bạn có chắc chắn muốn đóng yêu cầu tuyển dụng này?",
+      "edit": "Sửa",
+      "delete": "Xóa",
+      "create": "Tạo mới yêu cầu",
+      "import": "Import",
+      "pause": "Tạm dừng",
+      "resume": "Mở lại",
+      "submit_review": "Gửi duyệt",
+      "resubmit_review": "Gửi duyệt lại",
+      "start_recruiting": "Mở tuyển",
+      "view_detail": "Xem chi tiết",
+      "revoke": "Thu hồi",
+      "print": "In phiếu",
+      "view_reason": "Xem lý do",
+      "edit_limited": "Sửa hạn chế",
+      "view_candidates": "Xem ứng viên",
+      "duplicate": "Nhân bản"
+    },
+    "summary": {
+      "total": "Tổng yêu cầu",
+      "recruiting": "Đang tuyển",
+      "pending": "Chờ duyệt",
+      "rejected": "Từ chối duyệt",
+      "approved": "Đã duyệt",
+      "cancelled": "Đã hủy",
+      "paused": "Tạm dừng",
+      "closed": "Đã đóng"
+    },
+    "status": {
+      "draft": "Nháp",
+      "recruiting": "Đang tuyển",
+      "pending": "Chờ duyệt",
+      "rejected": "Từ chối duyệt",
+      "approved": "Đã duyệt",
+      "paused": "Tạm dừng",
+      "cancelled": "Đã hủy",
+      "closed": "Đã đóng"
+    },
+    "card": {
+      "candidates": "Ứng viên ứng tuyển",
+      "interviews": "Đợi phỏng vấn",
+      "required_date": "Ngày cần:",
+      "days_remaining": "Còn {{count}} ngày",
+      "created_by": "Người tạo:",
+      "people_count": "{{count}} người"
+    },
+    "toast": {
+      "approve_success": "Duyệt yêu cầu tuyển dụng thành công.",
+      "reject_success": "Từ chối yêu cầu tuyển dụng thành công.",
+      "close_success": "Đóng yêu cầu tuyển dụng thành công."
+    }
+  }
+}

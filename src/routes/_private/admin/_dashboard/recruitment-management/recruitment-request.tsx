@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { RecruitmentRequest } from '@/features/recruitment-management/recruitment-request/recruitment-request';
+import { RecruitmentRequestList } from '@/features/recruitment-management/recruitment-request-list/recruitment-request-list';
 
 export const Route = createFileRoute(
   '/_private/admin/_dashboard/recruitment-management/recruitment-request',
 )({
-  component: RecruitmentRequest,
+  component: RecruitmentRequestList,
 });

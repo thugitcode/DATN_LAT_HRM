@@ -1,0 +1,73 @@
+{
+  "recruitment_request": {
+    "title": "Recruitment Request List",
+    "columns": {
+      "code": "Request Code",
+      "department": "Department",
+      "position": "Position",
+      "quantity": "Qty",
+      "salary_range": "Salary Range",
+      "required_date": "Required Date",
+      "status": "Status",
+      "created_by": "Created By",
+      "actions": "Actions"
+    },
+    "actions": {
+      "approve": "Approve",
+      "approve_title": "Approve Recruitment Request",
+      "approve_desc": "Are you sure you want to approve this recruitment request?",
+      "close": "Close Request",
+      "close_title": "Close Recruitment Request",
+      "close_desc": "Are you sure you want to close this recruitment request?",
+      "edit": "Edit",
+      "delete": "Delete",
+      "create": "New Request",
+      "import": "Import",
+      "pause": "Pause",
+      "resume": "Resume",
+      "submit_review": "Submit for Review",
+      "resubmit_review": "Resubmit for Review",
+      "start_recruiting": "Start Recruiting",
+      "view_detail": "View Detail",
+      "revoke": "Revoke",
+      "print": "Print Form",
+      "view_reason": "View Reason",
+      "edit_limited": "Edit (Limited)",
+      "view_candidates": "View Candidates",
+      "duplicate": "Duplicate"
+    },
+    "summary": {
+      "total": "Total Requests",
+      "recruiting": "Recruiting",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "approved": "Approved",
+      "cancelled": "Cancelled",
+      "paused": "Paused",
+      "closed": "Closed"
+    },
+    "status": {
+      "draft": "Draft",
+      "recruiting": "Recruiting",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "approved": "Approved",
+      "paused": "Paused",
+      "cancelled": "Cancelled",
+      "closed": "Closed"
+    },
+    "card": {
+      "candidates": "Candidates Applied",
+      "interviews": "Awaiting Interview",
+      "required_date": "Required:",
+      "days_remaining": "{{count}} days left",
+      "created_by": "Created by:",
+      "people_count": "{{count}} people"
+    },
+    "toast": {
+      "approve_success": "Recruitment request approved successfully.",
+      "reject_success": "Recruitment request rejected successfully.",
+      "close_success": "Recruitment request closed successfully."
+    }
+  }
+}
