@@ -17,8 +17,8 @@ import { TitlePage } from '@/components/title-page';
 
 import { RecruitmentRequestFilterBar } from './components/recruitment-request-filters';
 import { RecruitmentRequestGrid } from './components/recruitment-request-grid';
-// import { SummaryBadges } from './components/summary-badges';
-import { MOCK_RECRUITMENT_REQUESTS } from './constants/mock-data';
+import { SummaryBadges } from './components/summary-badges';
+import { MOCK_METADATA, MOCK_RECRUITMENT_REQUESTS } from './constants/mock-data';
 import { useColumns } from './hooks/use-columns';
 // import { useRecruitmentRequestList } from './hooks/use-recruitment-request';
 // import type { RecruitmentRequestFilters } from './type';
@@ -87,8 +87,7 @@ export const RecruitmentRequestList = () => {
         </div>
       </div>
 
-      {/* TODO: Bật lại khi có API */}
-      {/* {!isGridView && <SummaryBadges summary={data?.metadata} />} */}
+      <SummaryBadges summary={MOCK_METADATA} />
 
       <RecruitmentRequestFilterBar />
 

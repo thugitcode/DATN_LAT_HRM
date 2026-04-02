@@ -16,10 +16,9 @@
       "approve": "Approve",
       "approve_title": "Approve Recruitment Request",
       "approve_desc": "Are you sure you want to approve this recruitment request?",
-      "close": "Close",
+      "close": "Close Request",
       "close_title": "Close Recruitment Request",
       "close_desc": "Are you sure you want to close this recruitment request?",
-      "view_interview": "View Interviews",
       "edit": "Edit",
       "delete": "Delete",
       "create": "New Request",
@@ -29,7 +28,13 @@
       "submit_review": "Submit for Review",
       "resubmit_review": "Resubmit for Review",
       "start_recruiting": "Start Recruiting",
-      "view_detail": "View Detail"
+      "view_detail": "View Detail",
+      "revoke": "Revoke",
+      "print": "Print Form",
+      "view_reason": "View Reason",
+      "edit_limited": "Edit (Limited)",
+      "view_candidates": "View Candidates",
+      "duplicate": "Duplicate"
     },
     "summary": {
       "total": "Total Requests",

@@ -27,7 +27,7 @@ export const SummaryBadges: FC<Readonly<SummaryBadgesProps>> = ({ summary }) => 
   };
 
   return (
-    <StatusSummaryTabs className="flex flex-wrap items-center gap-3">
+    <StatusSummaryTabs className="flex items-center gap-3">
       {SUMMARY_BADGE_KEYS.map(({ key, icon, color, bgColor }) => (
         <StatusSummaryItem
           key={key}
@@ -36,6 +36,7 @@ export const SummaryBadges: FC<Readonly<SummaryBadgesProps>> = ({ summary }) => 
           count={summary?.[key]}
           color={color}
           bgColor={bgColor}
+          className="flex-1"
         />
       ))}
     </StatusSummaryTabs>

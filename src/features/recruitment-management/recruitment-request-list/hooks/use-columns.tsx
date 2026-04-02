@@ -83,8 +83,10 @@ export const useColumns = () => {
       {
         key: 'actions',
         title: t('recruitment_request.columns.actions'),
-        minWidth: 180,
+        width: 220,
+        minWidth: 220,
         hideable: false,
+        sticky: 'right',
         render: (_, row) => <RowRecruitmentRequestActions dataRow={row} />,
       },
     ],

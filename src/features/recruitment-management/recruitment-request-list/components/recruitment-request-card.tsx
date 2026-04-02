@@ -8,7 +8,17 @@ import {
   DropdownTrigger,
   Progress,
 } from '@heroui/react';
-import { IconCalendar, IconDots, IconEdit, IconEye, IconTrash } from '@tabler/icons-react';
+import {
+  IconCalendar,
+  IconCopy,
+  IconDots,
+  IconEdit,
+  IconEye,
+  IconPrinter,
+  IconTrash,
+  IconUsers,
+  IconX,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
 import { formatDate } from '@/lib/utils';
@@ -91,6 +101,63 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
     }
   };
 
+  const getDropdownItems = () => {
+    const items: { key: string; label: string; icon: React.ReactNode; color?: 'danger' }[] = [];
+
+    switch (data.status) {
+      case RecruitmentRequestStatusEnum.DRAFT:
+        items.push(
+          { key: 'edit', label: t('recruitment_request.actions.edit'), icon: <IconEdit size={16} /> },
+          { key: 'delete', label: t('recruitment_request.actions.delete'), icon: <IconTrash size={16} />, color: 'danger' },
+        );
+        break;
+      case RecruitmentRequestStatusEnum.PENDING:
+        items.push(
+          { key: 'revoke', label: t('recruitment_request.actions.revoke'), icon: <IconX size={16} /> },
+          { key: 'print', label: t('recruitment_request.actions.print'), icon: <IconPrinter size={16} /> },
+        );
+        break;
+      case RecruitmentRequestStatusEnum.REJECTED:
+        items.push(
+          { key: 'view_reason', label: t('recruitment_request.actions.view_reason'), icon: <IconEye size={16} /> },
+          { key: 'edit', label: t('recruitment_request.actions.edit'), icon: <IconEdit size={16} /> },
+        );
+        break;
+      case RecruitmentRequestStatusEnum.APPROVED:
+        items.push(
+          { key: 'edit_limited', label: t('recruitment_request.actions.edit_limited'), icon: <IconEdit size={16} /> },
+        );
+        break;
+      case RecruitmentRequestStatusEnum.RECRUITING:
+        items.push(
+          { key: 'close', label: t('recruitment_request.actions.close'), icon: <IconX size={16} /> },
+          { key: 'view_candidates', label: t('recruitment_request.actions.view_candidates'), icon: <IconUsers size={16} /> },
+        );
+        break;
+      case RecruitmentRequestStatusEnum.PAUSED:
+        items.push(
+          { key: 'close', label: t('recruitment_request.actions.close'), icon: <IconX size={16} /> },
+        );
+        break;
+      case RecruitmentRequestStatusEnum.CLOSED:
+      case RecruitmentRequestStatusEnum.CANCELLED:
+        items.push(
+          { key: 'duplicate', label: t('recruitment_request.actions.duplicate'), icon: <IconCopy size={16} /> },
+        );
+        break;
+    }
+
+    items.push({
+      key: 'view_detail',
+      label: t('recruitment_request.actions.view_detail'),
+      icon: <IconEye size={16} />,
+    });
+
+    return items;
+  };
+
+  const dropdownItems = getDropdownItems();
+
   return (
     <div className="bg-white rounded-xl shadow-sm p-3 flex flex-col gap-3">
       {/* Header: Status + Menu */}
@@ -103,15 +170,16 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
             </Button>
           </DropdownTrigger>
           <DropdownMenu aria-label="actions">
-            <DropdownItem key="view" startContent={<IconEye size={16} />}>
-              {t('recruitment_request.actions.view_detail')}
-            </DropdownItem>
-            <DropdownItem key="edit" startContent={<IconEdit size={16} />}>
-              {t('recruitment_request.actions.edit')}
-            </DropdownItem>
-            <DropdownItem key="delete" startContent={<IconTrash size={16} />} className="text-danger" color="danger">
-              {t('recruitment_request.actions.delete')}
-            </DropdownItem>
+            {dropdownItems.map((item) => (
+              <DropdownItem
+                key={item.key}
+                startContent={item.icon}
+                color={item.color}
+                className={item.color === 'danger' ? 'text-danger' : ''}
+              >
+                {item.label}
+              </DropdownItem>
+            ))}
           </DropdownMenu>
         </Dropdown>
       </div>
