@@ -15,13 +15,13 @@ const formatDate = (value?: string | null) => {
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 };
 
-const calcGross = (payrollResult: PayslipFeedback['payrollResult']) => {
-  if (!payrollResult) return 0;
+const calcGross = (payroll: PayslipFeedback['payroll']) => {
+  if (!payroll) return 0;
   return (
-    Number(payrollResult.basicSalary) +
-    Number(payrollResult.allowanceAmount) +
-    Number(payrollResult.overtimeAmount) +
-    Number(payrollResult.bonusAmount)
+    Number(payroll.basicSalary) +
+    Number(payroll.allowanceAmount) +
+    Number(payroll.overtimeAmount) +
+    Number(payroll.bonusAmount)
   );
 };
 
@@ -45,9 +45,10 @@ export const DetailPayslipFeedback = () => {
 
   if (!dataRow) return null;
 
-  const { staff, payrollResult, status, resolvedAt } = dataRow;
-  const period = payrollResult?.payrollPeriod;
-  const details = payrollResult?.calculationDetails;
+  const { staff, payroll, status, resolvedAt, period } = dataRow;
+  console.log(payroll, 222);
+
+  const details = payroll?.calculationDetails;
 
   const isResolved = status === 'CONFIRMED';
   const staffSubtitle = [
@@ -98,34 +99,34 @@ export const DetailPayslipFeedback = () => {
             <Row label={t('payslipFeedback.detail.to_date')} value={formatDate(period?.toDate)} bold />
             <Row
               label={t('payslipFeedback.detail.standard_days')}
-              value={details?.standardDays != null ? `${details.standardDays} ${t('payslipFeedback.detail.unit_day')}` : '—'}
+              value={payroll?.workDays != null ? `${payroll.workDays} ${t('payslipFeedback.detail.unit_day')}` : '—'}
               bold
             />
             <Row
               label={t('payslipFeedback.detail.actual_work_days')}
-              value={details?.actualWorkDays != null ? `${details.actualWorkDays} ${t('payslipFeedback.detail.unit_day')}` : '—'}
+              value={payroll?.totalAttendance != null ? `${payroll.totalAttendance} ${t('payslipFeedback.detail.unit_day')}` : '—'}
               bold
             />
-            <Row label={t('payslipFeedback.detail.on_duty')} value="—" bold />
+            <Row label={t('payslipFeedback.detail.on_duty')} value={payroll?.onCallDays != null ? `${payroll.onCallDays} ${t('payslipFeedback.detail.unit_hour')}` : '—'} bold />
             <Row
               label={t('payslipFeedback.detail.overtime_hours')}
-              value={details?.overtimeHours != null ? `${details.overtimeHours} ${t('payslipFeedback.detail.unit_hour')}` : '—'}
+              value={payroll?.overtimeHours != null ? `${payroll.overtimeHours} ${t('payslipFeedback.detail.unit_hour')}` : '—'}
               bold
             />
-            <Row label={t('payslipFeedback.detail.business_trip')} value="—" bold />
+            <Row label={t('payslipFeedback.detail.business_trip')} value={payroll?.businessTripDays != null ? `${payroll.businessTripDays} ${t('payslipFeedback.detail.unit_day')}` : '—'} bold />
           </div>
 
           <div className="border-t border-dashed border-gray-200 my-2" />
 
           <div className="">
-            <Row label={t('payslipFeedback.detail.total_gross')} value={formatVND(calcGross(payrollResult))} bold />
+            <Row label={t('payslipFeedback.detail.total_gross')} value={formatVND(payroll?.totalGross ?? 0)} bold />
             <Row
               label={t('payslipFeedback.detail.insurance')}
-              value={formatVND(Number(payrollResult?.insuranceAmount))}
+              value={formatVND(Number(payroll?.employeeContribution ?? 0))}
               bold
             />
-            <Row label={t('payslipFeedback.detail.tax')} value={formatVND(Number(payrollResult?.taxAmount))} bold />
-            <Row label={t('payslipFeedback.detail.advance')} value="—" />
+            <Row label={t('payslipFeedback.detail.tax')} value={formatVND(Number(payroll?.personalIncomeTax ?? 0))} bold />
+            <Row label={t('payslipFeedback.detail.advance')} value={formatVND(Number(payroll?.advancePayment ?? 0))} bold />
           </div>
 
           <div className="border-t border-dashed border-gray-200 my-6" />
@@ -136,7 +137,7 @@ export const DetailPayslipFeedback = () => {
               <span className="text-[#006FEE] font-medium text-lg leading-7">{t('payslipFeedback.detail.net_pay')}</span>
             </div>
             <span className="text-2xl font-medium leading-8 text-blue-600">
-              {formatVND(Number(payrollResult?.netPay))}
+              {formatVND(Number(payroll?.netPay ?? 0))}
             </span>
           </div>
 
