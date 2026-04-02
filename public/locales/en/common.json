@@ -44,6 +44,11 @@
     "contract_management": "Contract Management",
 
     "recruitment_management": "Recruitment Management",
+    "recruitment_request": "Recruitment Request",
+    "candidate": "Candidate",
+    "interview_schedule": "Interview Schedule",
+    "probation_management": "Probation Management",
+    "recruitment_report": "Report",
     "management_report": "Management Report",
 
     "other_requests_management": "Other Requests Management",

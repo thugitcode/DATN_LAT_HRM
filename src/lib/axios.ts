@@ -3,6 +3,7 @@ import axios, { AxiosError } from 'axios';
 import { config as configApp } from './config';
 import { getErrorMessage } from './utils';
 import i18n from '@/i18n';
+import { jwtDecode } from 'jwt-decode';
 
 export const apiTokens: {
   accessToken?: string;
@@ -25,8 +26,9 @@ hrmInstance.interceptors.request.use((config) => {
     config.headers['Content-Type'] = 'application/json';
   }
   if (jwt) {
-    // const xTenantId = jwtDecode(jwt).partner_code;
-    const xTenantId = 'noiquoctuan5';
+    const xTenantId = jwtDecode(jwt).partner_code;
+
+    // const xTenantId = 'noiquoctuan5';
     config.headers['x-tenant-id'] = xTenantId;
 
     config.headers.Authorization = `Bearer ${jwt}`;

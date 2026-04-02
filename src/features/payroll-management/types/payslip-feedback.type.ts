@@ -1,5 +1,4 @@
-import type { Status } from '@/types/global.type';
-import type { Staff } from '@/types/staff.type';
+import type { Item } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 export interface AllowanceBreakdown {
   fuel: number;
@@ -135,6 +134,9 @@ export interface StaffPayslipFeedback {
   modulePermission: unknown;
   managementModule: unknown;
   isSendPasswordEmail: boolean;
+
+  departments: Item[];
+  rooms: Item[];
 }
 export enum PayslipFeedbackStatus {
   PENDING = 'PENDING',
