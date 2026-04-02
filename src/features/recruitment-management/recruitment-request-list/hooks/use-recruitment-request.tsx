@@ -16,8 +16,14 @@ import type {
   RejectRecruitmentRequestPayload,
 } from '../type';
 
-export function useRecruitmentRequestList(params?: RecruitmentRequestFilters) {
-  return useQuery(recruitmentRequestQueryOptions.list(params));
+export function useRecruitmentRequestList(
+  params?: RecruitmentRequestFilters,
+  enabled = true,
+) {
+  return useQuery({
+    ...recruitmentRequestQueryOptions.list(params),
+    enabled,
+  });
 }
 
 export function useApproveRecruitmentRequest() {

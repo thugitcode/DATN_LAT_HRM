@@ -23,19 +23,41 @@
       "edit": "Chỉnh sửa",
       "delete": "Xóa",
       "create": "Tạo mới yêu cầu",
-      "import": "Import"
+      "import": "Import",
+      "pause": "Tạm dừng",
+      "resume": "Mở lại",
+      "submit_review": "Gửi duyệt",
+      "resubmit_review": "Gửi duyệt lại",
+      "start_recruiting": "Mở tuyển",
+      "view_detail": "Xem chi tiết"
     },
     "summary": {
       "total": "Tổng yêu cầu",
       "recruiting": "Đang tuyển",
       "pending": "Chờ duyệt",
+      "rejected": "Từ chối duyệt",
+      "approved": "Đã duyệt",
+      "cancelled": "Đã hủy",
+      "paused": "Tạm dừng",
       "closed": "Đã đóng"
     },
     "status": {
+      "draft": "Nháp",
       "recruiting": "Đang tuyển",
       "pending": "Chờ duyệt",
-      "closed": "Đã đóng",
-      "interviewing": "Chờ phỏng vấn"
+      "rejected": "Từ chối duyệt",
+      "approved": "Đã duyệt",
+      "paused": "Tạm dừng",
+      "cancelled": "Đã hủy",
+      "closed": "Đã đóng"
+    },
+    "card": {
+      "candidates": "Ứng viên ứng tuyển",
+      "interviews": "Đợi phỏng vấn",
+      "required_date": "Ngày cần:",
+      "days_remaining": "Còn {{count}} ngày",
+      "created_by": "Người tạo:",
+      "people_count": "{{count}} người"
     },
     "toast": {
       "approve_success": "Duyệt yêu cầu tuyển dụng thành công.",

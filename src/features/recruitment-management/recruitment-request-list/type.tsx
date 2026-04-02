@@ -26,6 +26,9 @@ export interface RecruitmentRequest {
   salaryRange: string;
   requiredDate: string;
   status: RecruitmentRequestStatusEnum;
+  workType: string;
+  candidateCount: number;
+  interviewCount: number;
   createdById: string;
   createdByName: string;
   approvedById: string | null;
@@ -37,16 +40,24 @@ export interface RecruitmentRequest {
 }
 
 export enum RecruitmentRequestStatusEnum {
-  RECRUITING = 'RECRUITING',
+  DRAFT = 'DRAFT',
   PENDING = 'PENDING',
+  REJECTED = 'REJECTED',
+  APPROVED = 'APPROVED',
+  RECRUITING = 'RECRUITING',
+  PAUSED = 'PAUSED',
+  CANCELLED = 'CANCELLED',
   CLOSED = 'CLOSED',
-  INTERVIEWING = 'INTERVIEWING',
 }
 
 export interface MetadataRecruitmentRequest {
   totalAll: number;
   totalRecruiting: number;
   totalPending: number;
+  totalRejected: number;
+  totalApproved: number;
+  totalCancelled: number;
+  totalPaused: number;
   totalClosed: number;
   [key: string]: unknown;
 }

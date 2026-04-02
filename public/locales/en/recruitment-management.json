@@ -23,19 +23,41 @@
       "edit": "Edit",
       "delete": "Delete",
       "create": "New Request",
-      "import": "Import"
+      "import": "Import",
+      "pause": "Pause",
+      "resume": "Resume",
+      "submit_review": "Submit for Review",
+      "resubmit_review": "Resubmit for Review",
+      "start_recruiting": "Start Recruiting",
+      "view_detail": "View Detail"
     },
     "summary": {
       "total": "Total Requests",
       "recruiting": "Recruiting",
       "pending": "Pending",
+      "rejected": "Rejected",
+      "approved": "Approved",
+      "cancelled": "Cancelled",
+      "paused": "Paused",
       "closed": "Closed"
     },
     "status": {
+      "draft": "Draft",
       "recruiting": "Recruiting",
       "pending": "Pending",
-      "closed": "Closed",
-      "interviewing": "Interviewing"
+      "rejected": "Rejected",
+      "approved": "Approved",
+      "paused": "Paused",
+      "cancelled": "Cancelled",
+      "closed": "Closed"
+    },
+    "card": {
+      "candidates": "Candidates Applied",
+      "interviews": "Awaiting Interview",
+      "required_date": "Required:",
+      "days_remaining": "{{count}} days left",
+      "created_by": "Created by:",
+      "people_count": "{{count}} people"
     },
     "toast": {
       "approve_success": "Recruitment request approved successfully.",

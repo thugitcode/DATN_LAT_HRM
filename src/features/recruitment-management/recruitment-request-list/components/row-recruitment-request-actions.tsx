@@ -90,17 +90,6 @@ export const RowRecruitmentRequestActions: FC<RowRecruitmentRequestActionsProps>
             {t('recruitment_request.actions.close')}
           </Button>
         );
-      case RecruitmentRequestStatusEnum.INTERVIEWING:
-        return (
-          <Button
-            size="sm"
-            variant="bordered"
-            color="secondary"
-            className="rounded-lg font-medium h-8 px-4 text-sm"
-          >
-            {t('recruitment_request.actions.view_interview')}
-          </Button>
-        );
       default:
         return null;
     }

@@ -19,10 +19,14 @@ export const RecruitmentRequestFilterBar = () => {
 
   const statusOptions = useMemo(
     () => [
-      { key: RecruitmentRequestStatusEnum.RECRUITING, label: tR('recruitment_request.status.recruiting') },
+      { key: RecruitmentRequestStatusEnum.DRAFT, label: tR('recruitment_request.status.draft') },
       { key: RecruitmentRequestStatusEnum.PENDING, label: tR('recruitment_request.status.pending') },
+      { key: RecruitmentRequestStatusEnum.REJECTED, label: tR('recruitment_request.status.rejected') },
+      { key: RecruitmentRequestStatusEnum.APPROVED, label: tR('recruitment_request.status.approved') },
+      { key: RecruitmentRequestStatusEnum.RECRUITING, label: tR('recruitment_request.status.recruiting') },
+      { key: RecruitmentRequestStatusEnum.PAUSED, label: tR('recruitment_request.status.paused') },
+      { key: RecruitmentRequestStatusEnum.CANCELLED, label: tR('recruitment_request.status.cancelled') },
       { key: RecruitmentRequestStatusEnum.CLOSED, label: tR('recruitment_request.status.closed') },
-      { key: RecruitmentRequestStatusEnum.INTERVIEWING, label: tR('recruitment_request.status.interviewing') },
     ],
     [tR],
   );

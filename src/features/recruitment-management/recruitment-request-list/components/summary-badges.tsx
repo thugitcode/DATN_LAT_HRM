@@ -19,6 +19,10 @@ export const SummaryBadges: FC<Readonly<SummaryBadgesProps>> = ({ summary }) => 
     totalAll: t('recruitment_request.summary.total'),
     totalRecruiting: t('recruitment_request.summary.recruiting'),
     totalPending: t('recruitment_request.summary.pending'),
+    totalRejected: t('recruitment_request.summary.rejected'),
+    totalApproved: t('recruitment_request.summary.approved'),
+    totalCancelled: t('recruitment_request.summary.cancelled'),
+    totalPaused: t('recruitment_request.summary.paused'),
     totalClosed: t('recruitment_request.summary.closed'),
   };
 
