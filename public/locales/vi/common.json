@@ -44,6 +44,11 @@
     "contract_management": "Quản lý hợp đồng",
 
     "recruitment_management": "Quản lý tuyển dụng",
+    "recruitment_request": "Yêu cầu tuyển dụng",
+    "candidate": "Ứng viên",
+    "interview_schedule": "Lịch phỏng vấn",
+    "probation_management": "Quản lý thử việc",
+    "recruitment_report": "Báo cáo",
     "management_report": "Báo cáo quản trị",
 
     "other_requests_management": "Quản lý các yêu cầu khác",

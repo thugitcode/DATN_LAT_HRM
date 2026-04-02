@@ -33,6 +33,11 @@ import { Route as PrivateAdminDashboardManagementReportIndexRouteImport } from '
 import { Route as PrivateAdminDashboardLeaveManagementIndexRouteImport } from './routes/_private/admin/_dashboard/leave-management/index'
 import { Route as PrivateAdminDashboardContractManagementIndexRouteImport } from './routes/_private/admin/_dashboard/contract-management/index'
 import { Route as PrivateAdminDashboardStaffManagementTypeRouteImport } from './routes/_private/admin/_dashboard/staff-management/$type'
+import { Route as PrivateAdminDashboardRecruitmentManagementReportRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/report'
+import { Route as PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/recruitment-request'
+import { Route as PrivateAdminDashboardRecruitmentManagementProbationManagementRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/probation-management'
+import { Route as PrivateAdminDashboardRecruitmentManagementInterviewScheduleRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/interview-schedule'
+import { Route as PrivateAdminDashboardRecruitmentManagementCandidateRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/candidate'
 import { Route as PrivateAdminDashboardPayrollManagementSalaryHistoryRouteImport } from './routes/_private/admin/_dashboard/payroll-management/salary-history'
 import { Route as PrivateAdminDashboardPayrollManagementPayslipFeedbackRouteImport } from './routes/_private/admin/_dashboard/payroll-management/payslip-feedback'
 import { Route as PrivateAdminDashboardPayrollManagementPayrollCalculationRouteImport } from './routes/_private/admin/_dashboard/payroll-management/payroll-calculation'
@@ -189,6 +194,42 @@ const PrivateAdminDashboardStaffManagementTypeRoute =
   PrivateAdminDashboardStaffManagementTypeRouteImport.update({
     id: '/staff-management/$type',
     path: '/staff-management/$type',
+    getParentRoute: () => PrivateAdminDashboardRoute,
+  } as any)
+const PrivateAdminDashboardRecruitmentManagementReportRoute =
+  PrivateAdminDashboardRecruitmentManagementReportRouteImport.update({
+    id: '/recruitment-management/report',
+    path: '/recruitment-management/report',
+    getParentRoute: () => PrivateAdminDashboardRoute,
+  } as any)
+const PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute =
+  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRouteImport.update(
+    {
+      id: '/recruitment-management/recruitment-request',
+      path: '/recruitment-management/recruitment-request',
+      getParentRoute: () => PrivateAdminDashboardRoute,
+    } as any,
+  )
+const PrivateAdminDashboardRecruitmentManagementProbationManagementRoute =
+  PrivateAdminDashboardRecruitmentManagementProbationManagementRouteImport.update(
+    {
+      id: '/recruitment-management/probation-management',
+      path: '/recruitment-management/probation-management',
+      getParentRoute: () => PrivateAdminDashboardRoute,
+    } as any,
+  )
+const PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute =
+  PrivateAdminDashboardRecruitmentManagementInterviewScheduleRouteImport.update(
+    {
+      id: '/recruitment-management/interview-schedule',
+      path: '/recruitment-management/interview-schedule',
+      getParentRoute: () => PrivateAdminDashboardRoute,
+    } as any,
+  )
+const PrivateAdminDashboardRecruitmentManagementCandidateRoute =
+  PrivateAdminDashboardRecruitmentManagementCandidateRouteImport.update({
+    id: '/recruitment-management/candidate',
+    path: '/recruitment-management/candidate',
     getParentRoute: () => PrivateAdminDashboardRoute,
   } as any)
 const PrivateAdminDashboardPayrollManagementSalaryHistoryRoute =
@@ -378,6 +419,11 @@ export interface FileRoutesByFullPath {
   '/admin/payroll-management/payroll-calculation': typeof PrivateAdminDashboardPayrollManagementPayrollCalculationRouteWithChildren
   '/admin/payroll-management/payslip-feedback': typeof PrivateAdminDashboardPayrollManagementPayslipFeedbackRoute
   '/admin/payroll-management/salary-history': typeof PrivateAdminDashboardPayrollManagementSalaryHistoryRoute
+  '/admin/recruitment-management/candidate': typeof PrivateAdminDashboardRecruitmentManagementCandidateRoute
+  '/admin/recruitment-management/interview-schedule': typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute
+  '/admin/recruitment-management/probation-management': typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRoute
+  '/admin/recruitment-management/recruitment-request': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute
+  '/admin/recruitment-management/report': typeof PrivateAdminDashboardRecruitmentManagementReportRoute
   '/admin/staff-management/$type': typeof PrivateAdminDashboardStaffManagementTypeRoute
   '/admin/contract-management/': typeof PrivateAdminDashboardContractManagementIndexRoute
   '/admin/leave-management/': typeof PrivateAdminDashboardLeaveManagementIndexRoute
@@ -420,6 +466,11 @@ export interface FileRoutesByTo {
   '/admin/other-requests-management/training-registration-ranagement': typeof PrivateAdminDashboardOtherRequestsManagementTrainingRegistrationRanagementRoute
   '/admin/payroll-management/payslip-feedback': typeof PrivateAdminDashboardPayrollManagementPayslipFeedbackRoute
   '/admin/payroll-management/salary-history': typeof PrivateAdminDashboardPayrollManagementSalaryHistoryRoute
+  '/admin/recruitment-management/candidate': typeof PrivateAdminDashboardRecruitmentManagementCandidateRoute
+  '/admin/recruitment-management/interview-schedule': typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute
+  '/admin/recruitment-management/probation-management': typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRoute
+  '/admin/recruitment-management/recruitment-request': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute
+  '/admin/recruitment-management/report': typeof PrivateAdminDashboardRecruitmentManagementReportRoute
   '/admin/staff-management/$type': typeof PrivateAdminDashboardStaffManagementTypeRoute
   '/admin/contract-management': typeof PrivateAdminDashboardContractManagementIndexRoute
   '/admin/leave-management': typeof PrivateAdminDashboardLeaveManagementIndexRoute
@@ -468,6 +519,11 @@ export interface FileRoutesById {
   '/_private/admin/_dashboard/payroll-management/payroll-calculation': typeof PrivateAdminDashboardPayrollManagementPayrollCalculationRouteWithChildren
   '/_private/admin/_dashboard/payroll-management/payslip-feedback': typeof PrivateAdminDashboardPayrollManagementPayslipFeedbackRoute
   '/_private/admin/_dashboard/payroll-management/salary-history': typeof PrivateAdminDashboardPayrollManagementSalaryHistoryRoute
+  '/_private/admin/_dashboard/recruitment-management/candidate': typeof PrivateAdminDashboardRecruitmentManagementCandidateRoute
+  '/_private/admin/_dashboard/recruitment-management/interview-schedule': typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute
+  '/_private/admin/_dashboard/recruitment-management/probation-management': typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRoute
+  '/_private/admin/_dashboard/recruitment-management/recruitment-request': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute
+  '/_private/admin/_dashboard/recruitment-management/report': typeof PrivateAdminDashboardRecruitmentManagementReportRoute
   '/_private/admin/_dashboard/staff-management/$type': typeof PrivateAdminDashboardStaffManagementTypeRoute
   '/_private/admin/_dashboard/contract-management/': typeof PrivateAdminDashboardContractManagementIndexRoute
   '/_private/admin/_dashboard/leave-management/': typeof PrivateAdminDashboardLeaveManagementIndexRoute
@@ -515,6 +571,11 @@ export interface FileRouteTypes {
     | '/admin/payroll-management/payroll-calculation'
     | '/admin/payroll-management/payslip-feedback'
     | '/admin/payroll-management/salary-history'
+    | '/admin/recruitment-management/candidate'
+    | '/admin/recruitment-management/interview-schedule'
+    | '/admin/recruitment-management/probation-management'
+    | '/admin/recruitment-management/recruitment-request'
+    | '/admin/recruitment-management/report'
     | '/admin/staff-management/$type'
     | '/admin/contract-management/'
     | '/admin/leave-management/'
@@ -557,6 +618,11 @@ export interface FileRouteTypes {
     | '/admin/other-requests-management/training-registration-ranagement'
     | '/admin/payroll-management/payslip-feedback'
     | '/admin/payroll-management/salary-history'
+    | '/admin/recruitment-management/candidate'
+    | '/admin/recruitment-management/interview-schedule'
+    | '/admin/recruitment-management/probation-management'
+    | '/admin/recruitment-management/recruitment-request'
+    | '/admin/recruitment-management/report'
     | '/admin/staff-management/$type'
     | '/admin/contract-management'
     | '/admin/leave-management'
@@ -604,6 +670,11 @@ export interface FileRouteTypes {
     | '/_private/admin/_dashboard/payroll-management/payroll-calculation'
     | '/_private/admin/_dashboard/payroll-management/payslip-feedback'
     | '/_private/admin/_dashboard/payroll-management/salary-history'
+    | '/_private/admin/_dashboard/recruitment-management/candidate'
+    | '/_private/admin/_dashboard/recruitment-management/interview-schedule'
+    | '/_private/admin/_dashboard/recruitment-management/probation-management'
+    | '/_private/admin/_dashboard/recruitment-management/recruitment-request'
+    | '/_private/admin/_dashboard/recruitment-management/report'
     | '/_private/admin/_dashboard/staff-management/$type'
     | '/_private/admin/_dashboard/contract-management/'
     | '/_private/admin/_dashboard/leave-management/'
@@ -797,6 +868,41 @@ declare module '@tanstack/react-router' {
       path: '/staff-management/$type'
       fullPath: '/admin/staff-management/$type'
       preLoaderRoute: typeof PrivateAdminDashboardStaffManagementTypeRouteImport
+      parentRoute: typeof PrivateAdminDashboardRoute
+    }
+    '/_private/admin/_dashboard/recruitment-management/report': {
+      id: '/_private/admin/_dashboard/recruitment-management/report'
+      path: '/recruitment-management/report'
+      fullPath: '/admin/recruitment-management/report'
+      preLoaderRoute: typeof PrivateAdminDashboardRecruitmentManagementReportRouteImport
+      parentRoute: typeof PrivateAdminDashboardRoute
+    }
+    '/_private/admin/_dashboard/recruitment-management/recruitment-request': {
+      id: '/_private/admin/_dashboard/recruitment-management/recruitment-request'
+      path: '/recruitment-management/recruitment-request'
+      fullPath: '/admin/recruitment-management/recruitment-request'
+      preLoaderRoute: typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRouteImport
+      parentRoute: typeof PrivateAdminDashboardRoute
+    }
+    '/_private/admin/_dashboard/recruitment-management/probation-management': {
+      id: '/_private/admin/_dashboard/recruitment-management/probation-management'
+      path: '/recruitment-management/probation-management'
+      fullPath: '/admin/recruitment-management/probation-management'
+      preLoaderRoute: typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRouteImport
+      parentRoute: typeof PrivateAdminDashboardRoute
+    }
+    '/_private/admin/_dashboard/recruitment-management/interview-schedule': {
+      id: '/_private/admin/_dashboard/recruitment-management/interview-schedule'
+      path: '/recruitment-management/interview-schedule'
+      fullPath: '/admin/recruitment-management/interview-schedule'
+      preLoaderRoute: typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRouteImport
+      parentRoute: typeof PrivateAdminDashboardRoute
+    }
+    '/_private/admin/_dashboard/recruitment-management/candidate': {
+      id: '/_private/admin/_dashboard/recruitment-management/candidate'
+      path: '/recruitment-management/candidate'
+      fullPath: '/admin/recruitment-management/candidate'
+      preLoaderRoute: typeof PrivateAdminDashboardRecruitmentManagementCandidateRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
     '/_private/admin/_dashboard/payroll-management/salary-history': {
@@ -1037,6 +1143,11 @@ interface PrivateAdminDashboardRouteChildren {
   PrivateAdminDashboardPayrollManagementPayrollCalculationRoute: typeof PrivateAdminDashboardPayrollManagementPayrollCalculationRouteWithChildren
   PrivateAdminDashboardPayrollManagementPayslipFeedbackRoute: typeof PrivateAdminDashboardPayrollManagementPayslipFeedbackRoute
   PrivateAdminDashboardPayrollManagementSalaryHistoryRoute: typeof PrivateAdminDashboardPayrollManagementSalaryHistoryRoute
+  PrivateAdminDashboardRecruitmentManagementCandidateRoute: typeof PrivateAdminDashboardRecruitmentManagementCandidateRoute
+  PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute: typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute
+  PrivateAdminDashboardRecruitmentManagementProbationManagementRoute: typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRoute
+  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute: typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute
+  PrivateAdminDashboardRecruitmentManagementReportRoute: typeof PrivateAdminDashboardRecruitmentManagementReportRoute
   PrivateAdminDashboardStaffManagementTypeRoute: typeof PrivateAdminDashboardStaffManagementTypeRoute
   PrivateAdminDashboardContractManagementIndexRoute: typeof PrivateAdminDashboardContractManagementIndexRoute
   PrivateAdminDashboardLeaveManagementIndexRoute: typeof PrivateAdminDashboardLeaveManagementIndexRoute
@@ -1074,6 +1185,16 @@ const PrivateAdminDashboardRouteChildren: PrivateAdminDashboardRouteChildren = {
     PrivateAdminDashboardPayrollManagementPayslipFeedbackRoute,
   PrivateAdminDashboardPayrollManagementSalaryHistoryRoute:
     PrivateAdminDashboardPayrollManagementSalaryHistoryRoute,
+  PrivateAdminDashboardRecruitmentManagementCandidateRoute:
+    PrivateAdminDashboardRecruitmentManagementCandidateRoute,
+  PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute:
+    PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute,
+  PrivateAdminDashboardRecruitmentManagementProbationManagementRoute:
+    PrivateAdminDashboardRecruitmentManagementProbationManagementRoute,
+  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute:
+    PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute,
+  PrivateAdminDashboardRecruitmentManagementReportRoute:
+    PrivateAdminDashboardRecruitmentManagementReportRoute,
   PrivateAdminDashboardStaffManagementTypeRoute:
     PrivateAdminDashboardStaffManagementTypeRoute,
   PrivateAdminDashboardContractManagementIndexRoute:
