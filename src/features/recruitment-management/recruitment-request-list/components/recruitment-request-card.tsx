@@ -23,7 +23,7 @@ import { useTranslation } from 'react-i18next';
 
 import { formatDate } from '@/lib/utils';
 
-import { RecruitmentRequestStatusEnum, type RecruitmentRequest } from '../type';
+import { RecruitmentRequestStatusEnum, type RecruitmentRequest } from '../types/type';
 import { RecruitmentRequestStatusChip } from './recruitment-request-status-chip';
 
 interface RecruitmentRequestCardProps {

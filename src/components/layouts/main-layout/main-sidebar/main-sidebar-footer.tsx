@@ -3,7 +3,7 @@ import { WrapperSidebar } from './wrapper-sidebar';
 
 export const MainSidebarFooter = () => {
   return (
-    <WrapperSidebar className="pt-5 border-t border-[#11111126]">
+    <WrapperSidebar className="pt-5 border-t border-[#11111126] flex">
       <WrapperIconSidebar>
         <svg
           xmlns="http://www.w3.org/2000/svg"

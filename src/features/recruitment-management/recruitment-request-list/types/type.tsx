@@ -1,3 +1,6 @@
+import type { Department } from "@/types/deparment.type";
+import type { Room } from "@/types/room.type";
+
 export interface RecruitmentRequestFilters {
   fromDate?: string;
   toDate?: string;
@@ -19,6 +22,8 @@ export interface RecruitmentRequest {
   code: string;
   departmentId: string;
   departmentName: string;
+  department: Department;
+  room: Room;
   roomId: string;
   roomName: string;
   position: string;
@@ -67,6 +72,27 @@ export interface ApproveRecruitmentRequestPayload {
 }
 
 export interface RejectRecruitmentRequestPayload {
-  approvedById: string;
-  rejectedReason: string;
+  rejectionReason: string;
 }
+
+export enum RecruitmentRequestActionEnum {
+  SUBMIT = 'submit',
+  APPROVE = 'approve',
+  REJECT = 'reject',
+  CLOSE = 'close',
+  OPEN_RECRUITING = 'openRecruiting',
+  PAUSE = 'pause',
+  RESUME = 'resume',
+  CANCEL = 'cancel',
+}
+
+export type ActionPayload = {
+  [RecruitmentRequestActionEnum.SUBMIT]: ApproveRecruitmentRequestPayload | undefined;
+  [RecruitmentRequestActionEnum.APPROVE]: ApproveRecruitmentRequestPayload | undefined;
+  [RecruitmentRequestActionEnum.REJECT]: RejectRecruitmentRequestPayload;
+  [RecruitmentRequestActionEnum.CLOSE]: undefined;
+  [RecruitmentRequestActionEnum.OPEN_RECRUITING]: undefined;
+  [RecruitmentRequestActionEnum.PAUSE]: undefined;
+  [RecruitmentRequestActionEnum.RESUME]: undefined;
+  [RecruitmentRequestActionEnum.CANCEL]: undefined;
+};

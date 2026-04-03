@@ -10,7 +10,7 @@ import { FilterSelect } from '@/components/filters/filter-select';
 import { MonthFilter } from '@/components/filters/month-filter';
 import { SearchInput } from '@/components/filters/search-input';
 
-import { RecruitmentRequestStatusEnum, type RecruitmentRequestFilters } from '../type';
+import { RecruitmentRequestStatusEnum, type RecruitmentRequestFilters } from '../types/type';
 
 export const RecruitmentRequestFilterBar = () => {
   const { filters, setFilter } = useQueryFilter<RecruitmentRequestFilters>();

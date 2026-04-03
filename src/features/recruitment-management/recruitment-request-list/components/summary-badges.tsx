@@ -6,7 +6,7 @@ import { StatusSummaryItem } from '@/components/status-summary-tabs/status-summa
 import { StatusSummaryTabs } from '@/components/status-summary-tabs/status-summary-tabs';
 
 import { SUMMARY_BADGE_KEYS } from '../../constants/constants';
-import type { MetadataRecruitmentRequest } from '../type';
+import type { MetadataRecruitmentRequest } from '../types/type';
 
 interface SummaryBadgesProps {
   summary?: MetadataRecruitmentRequest | null;
@@ -31,11 +31,11 @@ export const SummaryBadges: FC<Readonly<SummaryBadgesProps>> = ({ summary }) => 
       {SUMMARY_BADGE_KEYS.map(({ key, icon, color, bgColor }) => (
         <StatusSummaryItem
           key={key}
-          icon={icon}
+          icon={null}
           label={labelMap[key] ?? key}
           count={summary?.[key]}
           color={color}
-          bgColor={bgColor}
+          bgColor={"#F4F4F5"}
           className="flex-1"
         />
       ))}

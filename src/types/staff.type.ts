@@ -88,6 +88,15 @@ export enum ContractTypeEnum {
   EXPERT_COOPERATION = 'EXPERT_COOPERATION', // Chuyên gia hợp tác
 }
 
+export enum StaffTypeEnum {
+  DOCTOR = 'DOCTOR',
+  NURSE = 'NURSE',
+  TECHNICIAN = 'TECHNICIAN',
+  PHARMACIST = 'PHARMACIST',
+  ADMINISTRATIVE = 'ADMINISTRATIVE',
+  OTHER = 'OTHER',
+}
+
 export enum WorkingTypeTypeEnum {
   FULL_TIME = 'FULL_TIME',
   PART_TIME = 'PART_TIME',

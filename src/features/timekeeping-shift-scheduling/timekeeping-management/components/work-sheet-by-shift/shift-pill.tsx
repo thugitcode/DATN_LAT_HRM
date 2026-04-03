@@ -14,7 +14,7 @@ interface ShiftPillProps {
   shift: ShiftCode;
   span: number;
   hoveredOffset: number | null;
-  workScheduleDetailId?: string;
+  workScheduleDetailId?: string[] | string;
 }
 
 export const ShiftPill: FC<ShiftPillProps> = memo(
@@ -23,10 +23,14 @@ export const ShiftPill: FC<ShiftPillProps> = memo(
     const open = useDrawer((state) => state.onOpen);
 
     const onClick = (index: number) => {
+      const id = Array.isArray(workScheduleDetailId)
+        ? workScheduleDetailId[index]
+        : workScheduleDetailId;
+
       open(
         DrawerType.TIME_SHEET_DETAIL,
 
-        workScheduleDetailId?.[index],
+        id,
       );
     };
 
