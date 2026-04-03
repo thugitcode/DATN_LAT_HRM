@@ -16,7 +16,7 @@ export const SUMMARY_BADGE_KEYS = [
   {
     key: 'totalAll' satisfies SummaryKey,
     icon: icons.questionCircle,
-    color: '#006FEE',
+    color: '#6576FF',
     bgColor: '#E6F1FE',
   },
   {
@@ -44,7 +44,7 @@ export const SUMMARY_BADGES = [
     key: 'totalAll' satisfies SummaryKey,
     icon: icons.questionCircle,
     label: 'Tổng yêu cầu',
-    color: '#006FEE',
+    color: '#6576FF',
     bgColor: '#E6F1FE',
   },
   {

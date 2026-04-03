@@ -8,9 +8,9 @@ export const MainNavItem: FC<Readonly<MenuItem>> = memo(({ label, path }) => {
     <li>
       <Link
         to={path}
-        className="px-4 py-2 text-medium font-medium text-[#A1A1AA] hover:text-white transition-all duration-200 rounded-xl whitespace-nowrap"
+        className="px-4 py-2 text-medium font-semibold text-[#2C3782] hover:text-primary-500 uppercase transition-all duration-200 whitespace-nowrap"
         activeProps={{
-          className: 'text-white bg-[#006FEE] shadow-sm rounded-xl',
+          className: 'text-primary border-b-2 border-primary',
         }}
       >
         {label}

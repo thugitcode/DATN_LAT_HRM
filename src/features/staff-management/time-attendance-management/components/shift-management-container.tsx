@@ -31,7 +31,7 @@ export const ShiftManagementContainer = ({ staffId, disabled }: { staffId?: stri
 
     // 1. Định nghĩa cấu hình màu sắc/meta cho từng loại ca
     const SHIFT_CONFIG = {
-        [ShiftTypeEnum.FIXED]: { color: '#006FEE' },
+        [ShiftTypeEnum.FIXED]: { color: '#6576FF' },
         [ShiftTypeEnum.SPLIT]: { color: '#F5A524' },
         [ShiftTypeEnum.ON_DUTY]: { color: '#7828C8' },
         [ShiftTypeEnum.FLEXIBLE]: { color: '#17C964' },

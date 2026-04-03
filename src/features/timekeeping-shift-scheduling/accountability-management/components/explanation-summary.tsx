@@ -33,7 +33,7 @@ const getSummaryBadges = (t: TFunction<typeof NAMESPACES.TIMEKEEPING_SHIFT_SCHED
     key: 'totalRequests' as SummaryKey,
     icon: icons.questionCircle,
     label: t('explanation_management.summary.total'),
-    color: '#006FEE',
+    color: '#6576FF',
     bgColor: '#E6F1FE',
   },
   {

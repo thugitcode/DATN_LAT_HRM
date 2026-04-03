@@ -271,7 +271,7 @@ export const ProfileDetailsDrawer = () => {
         <Button
           variant="light"
           onPress={closedDrawer}
-          className="border-[#006FEE] border bg-white text-[#006FEE]"
+          className="border-[#6576FF] border bg-white text-[#6576FF]"
         >
           {tCommon("button.cancel")}
         </Button>

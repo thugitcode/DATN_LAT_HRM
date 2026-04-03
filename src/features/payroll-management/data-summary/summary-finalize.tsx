@@ -25,7 +25,7 @@ const COST_DOT_COLORS = {
   gross: '#000000',
   bonus: '#17C964',
   penalty: '#F31260',
-  payout: '#006FEE',
+  payout: '#6576FF',
 } as const;
 
 const formatVND = (amount: number): string => `${amount.toLocaleString('vi-VN')} đ`;

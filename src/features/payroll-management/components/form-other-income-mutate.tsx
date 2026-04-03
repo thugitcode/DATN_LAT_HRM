@@ -369,7 +369,7 @@ export const FormOtherIncomeMutate = () => {
             <Button
               variant="light"
               onPress={onClose}
-              className="border border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
+              className="border border-[#6576FF] bg-white text-[14px] font-normal text-[#6576FF]"
             >
               {tc('button.cancel')}
             </Button>

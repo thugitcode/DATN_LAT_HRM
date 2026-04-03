@@ -267,7 +267,7 @@ const ShiftImportReviewForm = ({ parsed, onClose }: ShiftImportReviewFormProps) 
                     aria-label={staffName}
                     title={
                       <div className="flex items-center gap-3 pr-2">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#EFF6FF] text-xs font-semibold text-[#006FEE]">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F0F1FF] text-xs font-semibold text-[#6576FF]">
                           {staffName?.charAt(0)?.toUpperCase() ?? '?'}
                         </div>
                         <div className="min-w-0 flex-1">
@@ -314,7 +314,7 @@ const ShiftImportReviewForm = ({ parsed, onClose }: ShiftImportReviewFormProps) 
             type="button"
             variant="light"
             onPress={onClose}
-            className="border border-[#006FEE] bg-white text-sm font-normal text-[#006FEE]"
+            className="border border-[#6576FF] bg-white text-sm font-normal text-[#6576FF]"
           >
             Hủy
           </Button>
@@ -434,7 +434,7 @@ const DayBlock = ({
         ))}
 
         <Button
-          className="border-2 border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
+          className="border-2 border-[#6576FF] bg-white text-[14px] font-normal text-[#6576FF]"
           type="button"
           size="sm"
           onPress={() => append({ ...DEFAULT_SHIFT })}

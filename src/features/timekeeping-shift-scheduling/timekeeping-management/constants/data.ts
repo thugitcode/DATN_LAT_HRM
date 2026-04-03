@@ -47,7 +47,7 @@ export const getWorkSheetLegendItems = (t: TTimekeeping): LegendItem[] => [
 ];
 
 export const getHourlyPayrollLegendItems = (t: TTimekeeping): LegendItem[] => [
-  { status: HoursStatusEnum.FULL, label: t('legend.full_hours'), color: '#006FEE' },
+  { status: HoursStatusEnum.FULL, label: t('legend.full_hours'), color: '#6576FF' },
   { status: HoursStatusEnum.MISSING, label: t('legend.missing'), color: '#F31260' },
   { status: HoursStatusEnum.OVERTIME, label: t('legend.exceed'), color: '#52525B' },
   { status: HoursStatusEnum.OFF, label: t('legend.off'), color: '#000000', shape: 'line' },
@@ -79,14 +79,14 @@ export enum HoursStatusEnum {
 }
 
 export const HOURLY_PAYROLL_LEGEND_ITEMS: LegendItem[] = [
-  { status: HoursStatusEnum.FULL, label: 'Đủ giờ', color: '#006FEE' },
+  { status: HoursStatusEnum.FULL, label: 'Đủ giờ', color: '#6576FF' },
   { status: HoursStatusEnum.MISSING, label: 'Thiếu', color: '#F31260' },
   { status: HoursStatusEnum.OVERTIME, label: 'Thừa', color: '#52525B' },
   { status: HoursStatusEnum.OFF, label: 'Nghỉ', color: '#000000', shape: 'line' },
 ];
 
 // export const HOURLY_PAYROLL_LEGEND_ITEMS: LegendItem[] = [
-//   { status: HoursStatusEnum.FULL, label: 'Đủ giờ', color: '#006FEE' },
+//   { status: HoursStatusEnum.FULL, label: 'Đủ giờ', color: '#6576FF' },
 //   { status: HoursStatusEnum.LATE, label: 'Đi trễ', color: '#F59E0B' },
 //   { status: HoursStatusEnum.EARLY, label: 'Về sớm', color: '#F31260' },
 //   { status: HoursStatusEnum.OVERTIME, label: 'Thừa', color: '#52525B' },

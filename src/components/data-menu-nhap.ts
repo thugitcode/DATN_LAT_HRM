@@ -81,7 +81,7 @@ export const menuSidebar: MenuItem[] = [
 //         to={path}
 //         className="px-3 py-1  text-medium font-normal text-[#71717A] hover:text-white duration-75 ease-in-out "
 //         activeProps={{
-//           className: 'text-white bg-[#006FEE] rounded-lg',
+//           className: 'text-white bg-[#6576FF] rounded-lg',
 //         }}
 //       >
 //         {label}

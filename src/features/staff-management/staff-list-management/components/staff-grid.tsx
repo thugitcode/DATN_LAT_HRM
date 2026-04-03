@@ -14,10 +14,12 @@ import { useTranslation } from 'react-i18next';
 import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import type { Staff } from '@/types/staff.type';
+import { ActiveStatusEnum, type Staff } from '@/types/staff.type';
 
 import { renderStatusChip } from '../hooks/use-staff-columns';
 import { LoadingWrapper } from '@/components/loading-wrapper';
+import { useUpdateStaff } from '@/query-options/staff';
+import { useConfirmStore } from '@/store/useConfirmStore';
 
 interface StaffGridProps {
   data: Staff[];
@@ -47,6 +49,23 @@ export const StaffGrid: FC<StaffGridProps> = ({
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
   const currentLocale = i18n.language.startsWith('vi') ? 'vi-VN' : 'en-US';
+  const { mutate: updateStaff, isPending: isUpdatingStatus } = useUpdateStaff();
+  const openConfirm = useConfirmStore((state) => state.open);
+
+  const handleToggleStatus = (staff: Staff, checked: boolean) => {
+    const nextStatus = checked ? ActiveStatusEnum.ACTIVE : ActiveStatusEnum.INACTIVE;
+    openConfirm(
+      {
+        title: checked ? t('staff_table.activate_title') : t('staff_table.deactivate_title'),
+        description: checked ? t('staff_table.activate_confirm', { name: staff.name }) : t('staff_table.deactivate_confirm', { name: staff.name }),
+        confirmLabel: tc('button.confirm'),
+        confirmColor: 'primary'
+      },
+      async () => {
+        updateStaff({ id: staff.id, data: { activeStatus: nextStatus } });
+      },
+    );
+  };
 
   return (
     <LoadingWrapper isLoading={!!loading} height='50vh'>
@@ -70,9 +89,11 @@ export const StaffGrid: FC<StaffGridProps> = ({
                     <div className="flex items-center gap-2">
                       <Switch
                         size="sm"
-                        isSelected={(staff.activeStatus as unknown as string) === 'ACTIVE'}
+                        isSelected={staff.activeStatus === ActiveStatusEnum.ACTIVE}
+                        // isDisabled={isUpdatingStatus}
+                        onValueChange={(checked) => handleToggleStatus(staff, checked)}
                       />
-                      <Button
+                      {staff?.activeStatus === ActiveStatusEnum.ACTIVE && <Button
                         isIconOnly
                         size="sm"
                         variant="light"
@@ -81,7 +102,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
                       >
                         {/* <icons size={16} stroke={1.5} /> */}
                         <icons.edit className="size-5" />
-                      </Button>
+                      </Button>}
                     </div>
                   </div>
                   {/* Avatar & Name */}
@@ -119,10 +140,10 @@ export const StaffGrid: FC<StaffGridProps> = ({
                         </div>
                       )}
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-[#006FEE]">
+                    <div className="flex items-center gap-1.5 text-xs text-[#6576FF]">
                       <IconMail className="stroke-1 size-3  text-black" /> {staff.email}
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-[#006FEE]">
+                    <div className="flex items-center gap-1.5 text-xs text-[#6576FF]">
                       <IconPhone className="stroke-1 size-3 text-black" /> {staff.phone}
                     </div>
                   </div>
@@ -189,7 +210,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
             showControls
             size="sm"
             classNames={{
-              cursor: 'bg-[#006FEE] text-white',
+              cursor: 'bg-[#6576FF] text-white',
             }}
           />
         </div>

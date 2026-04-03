@@ -39,7 +39,7 @@ export const ContractFormContainer = () => {
         useContractForm({ isOpen: true, onClose: () => { }, staffId: staffId ?? "", contractId: currentContract?.id ?? "" });
 
     const { onOpen } = useDrawer()
-    const { mode, setMode } = useControlMode();
+    const { mode, setMode, isReadOnly } = useControlMode();
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
     useEffect(() => {
         setMode(ControlMode.view)
@@ -71,12 +71,12 @@ export const ContractFormContainer = () => {
                 <div className="flex justify-between items-center">
                     <TitlePage title={t('contract_info.title')} />
                     <div className="flex items-center gap-[15px]">
-                        {currentContract?.status !== ContractStatusEnum.SIGNED && <div>
+                        {!isReadOnly && currentContract?.status !== ContractStatusEnum.SIGNED && <div>
                             {mode === ControlMode.view ? (
                                 <Button
                                     variant="bordered"
                                     color="primary"
-                                    startContent={<icons.edit width="20px" height="20px" stroke="#006FEE" />}
+                                    startContent={<icons.edit width="20px" height="20px" stroke="#6576FF" />}
                                     onPress={() => setMode(ControlMode.edit)}
                                 >
                                     {t('salary_benefits.edit')}
@@ -88,7 +88,7 @@ export const ContractFormContainer = () => {
                                 </div>
                             )}
                         </div>}
-                        <Button onPress={() => handleNewContract()} color="primary">{t('contract_info.add_contract')}</Button>
+                        {!isReadOnly && <Button onPress={() => handleNewContract()} color="primary">{t('contract_info.add_contract')}</Button>}
                     </div>
                 </div>
                 <div className="overflow-auto h-[calc(100vh-305px)] flex flex-col gap-6">

@@ -59,7 +59,7 @@ export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record, dis
       <Button
         className={cn(
           `flex items-center justify-center rounded-lg border border-dashed border-[#D4D4D8]
-          cursor-pointer hover:border-[#60A5FA] hover:bg-[#EFF6FF] transition-colors group`,
+          cursor-pointer hover:border-[#60A5FA] hover:bg-[#F0F1FF] transition-colors group`,
           isWeekend(day.dayOfWeek) ? 'bg-[#FAFAFA]' : 'bg-white',
         )}
         style={{ width: w, height: h, color }}

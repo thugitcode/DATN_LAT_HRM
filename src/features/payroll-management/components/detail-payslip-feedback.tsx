@@ -46,7 +46,6 @@ export const DetailPayslipFeedback = () => {
   if (!dataRow) return null;
 
   const { staff, payroll, status, resolvedAt, period } = dataRow;
-  console.log(payroll, 222);
 
   const details = payroll?.calculationDetails;
 
@@ -132,9 +131,9 @@ export const DetailPayslipFeedback = () => {
           <div className="border-t border-dashed border-gray-200 my-6" />
 
           <div className="rounded-xl bg-blue-50 p-3 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#006FEE]">
+            <div className="flex items-center gap-2 text-[#6576FF]">
               {icons.moneyBag}
-              <span className="text-[#006FEE] font-medium text-lg leading-7">{t('payslipFeedback.detail.net_pay')}</span>
+              <span className="text-[#6576FF] font-medium text-lg leading-7">{t('payslipFeedback.detail.net_pay')}</span>
             </div>
             <span className="text-2xl font-medium leading-8 text-blue-600">
               {formatVND(Number(payroll?.netPay ?? 0))}
@@ -165,7 +164,7 @@ export const DetailPayslipFeedback = () => {
           variant="light"
           size="sm"
           onPress={onClose}
-          className="border-[#006FEE] border bg-white text-[#006FEE] text-[14px] font-normal"
+          className="border-[#6576FF] border bg-white text-[#6576FF] text-[14px] font-normal"
         >
           {t('payslipFeedback.detail.close')}
         </Button>

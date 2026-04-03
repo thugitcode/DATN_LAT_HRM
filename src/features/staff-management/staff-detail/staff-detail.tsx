@@ -13,6 +13,7 @@ import { icons } from '@/lib/icons';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { StaffProfile } from '../profile-staff/staff-profile';
 import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
+import { ActiveStatusEnum } from '@/types/staff.type';
 import { SalaryAndBenefits } from '../salary-and-benefits/salary-and-benefits';
 import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
 import { StaffDetailHeader } from './components';
@@ -29,15 +30,23 @@ interface StaffDetailProps {
 export const StaffDetail = ({ id }: StaffDetailProps) => {
   const { data: response, isLoading } = useStaffDetail(id);
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
-  const { setMode, data: dataMode, isEdit } = useControlMode();
+  const { setMode, setReadOnly, data: dataMode, isEdit } = useControlMode();
   const { form, onSubmit } = useStaffForm(true, response?.data, () => { });
   const updateStaffMutation = useUpdateStaff();
   const staff = response?.data;
+  const isInactive = staff?.activeStatus === ActiveStatusEnum.INACTIVE;
   const [isEditingAll, setIsEditingAll] = useState(false);
   const { activeKey, onSelectionChange } = useStaffDetailTabs();
+
   useEffect(() => {
     setIsEditingAll(isEdit && dataMode === "ALL")
   }, [isEdit, dataMode])
+
+  // Lock toàn bộ về readonly khi staff inactive
+  useEffect(() => {
+    setReadOnly(!!isInactive);
+    if (isInactive) setIsEditingAll(false);
+  }, [isInactive])
 
   if (isLoading) {
     return (
@@ -81,7 +90,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                     {t('staffDetail.infoTab.title')}
                   </h2>
                   <div className="flex items-center gap-2">
-                    {isEditingAll ? (
+                    {!isInactive && (isEditingAll ? (
                       <>
                         <BtnCancel
                           onPress={handleCancelAll}
@@ -90,7 +99,6 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                         <BtnSave
                           type="submit"
                           form="staff-detail-form"
-                          // onPress={handleSaveAll}
                           isLoading={updateStaffMutation.isPending}
                         />
                       </>
@@ -98,7 +106,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                       <Button
                         variant="bordered"
                         className="border-primary text-primary font-semibold rounded-xl px-4"
-                        startContent={<icons.edit stroke="#006FEE" className="size-5" />}
+                        startContent={<icons.edit stroke="#6576FF" className="size-5" />}
                         onPress={() => {
                           setIsEditingAll(true);
                           setMode(ControlMode.edit, 'ALL');
@@ -106,7 +114,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                       >
                         {t('staffDetail.infoTab.buttons.edit')}
                       </Button>
-                    )}
+                    ))}
                   </div>
                 </div>
                 <div className="overflow-auto h-[calc(100vh-310px)]">

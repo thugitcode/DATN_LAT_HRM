@@ -1,4 +1,31 @@
 {
+  "header": {
+    "my_profile": "Hồ sơ của tôi",
+    "settings": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "logout": "Đăng xuất"
+  },
+  "right_menu": {
+    "home": "Trang chủ",
+    "hrm": "Quản lý nhân sự",
+    "hrm_label": "HRM",
+    "cis": "Quản lý khám bệnh",
+    "cis_label": "CIS",
+    "lis": "Xét nghiệm",
+    "lis_label": "LIS",
+    "ris": "Chẩn đoán hình ảnh",
+    "ris_label": "RIS",
+    "prm": "Quản lý bệnh nhân",
+    "prm_label": "PRM",
+    "vat_tu": "Dược - Vật tư tiêu hao từ trực",
+    "vat_tu_label": "Vật tư",
+    "kham_doan": "Khám đoàn",
+    "kham_doan_label": "Khám đoàn",
+    "bao_cao": "Báo cáo",
+    "bao_cao_label": "Báo cáo",
+    "ql_benh_nhan": "Quản lý bệnh nhân",
+    "ql_benh_nhan_label": "QL BN"
+  },
   "actions": {
     "reload": "Tải lại",
     "import_excel": "Nhập file excel",

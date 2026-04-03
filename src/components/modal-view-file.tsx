@@ -116,7 +116,7 @@ export default function ModalViewFile() {
                   onCloseModal();
                   handleClose();
                 }}
-                className='border-[#006FEE] border bg-white text-[#006FEE]'
+                className='border-[#6576FF] border bg-white text-[#6576FF]'
               >
                 Hủy
               </Button>

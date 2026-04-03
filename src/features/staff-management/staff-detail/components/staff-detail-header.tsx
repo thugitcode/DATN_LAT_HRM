@@ -128,14 +128,14 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
                 <Button
                     variant="bordered"
                     className="bg-white border-[#E4E4E7] text-[#11181C] font-semibold h-10 rounded-xl shadow-sm px-4"
-                    startContent={<IconScan size={18} className="text-[#006FEE]" />}
+                    startContent={<IconScan size={18} className="text-[#6576FF]" />}
                 >
                     {t('actions.reset_faceid')}
                 </Button>
 
                 <Button
                     color="primary"
-                    className="h-10 px-4 font-semibold rounded-xl shadow-sm bg-[#006FEE]"
+                    className="h-10 px-4 font-semibold rounded-xl shadow-sm bg-[#6576FF]"
                     startContent={<IconMail size={18} />}
                 >
                     {t('actions.send_email')}

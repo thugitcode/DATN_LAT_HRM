@@ -12,7 +12,7 @@ export const MainSidebar = () => {
   return (
     <div
       className={cn(
-        'bg-white flex flex-col justify-between shadow-[0_1px_3px_0_#0000001A]  pt-6 transition-all duration-300 ease-in-out overflow-hidden',
+        'bg-[#2C3782] flex flex-col justify-between shadow-[0_1px_3px_0_#0000001A]  pt-6 transition-all duration-300 ease-in-out overflow-hidden',
         isCollapsed ? 'w-16 px-1.5' : 'w-72 px-3',
       )}
     >

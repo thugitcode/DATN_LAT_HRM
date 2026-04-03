@@ -10,7 +10,7 @@ import type { LegendItem } from '../../timekeeping-management/types/index.type';
 type TTimekeeping = TFunction<typeof NAMESPACES.TIMEKEEPING_SHIFT_SCHEDULING>;
 
 export const getShiftCaLegend = (t: TTimekeeping): LegendItem[] => [
-  { label: t('shift_management.legend.fixed'), color: '#006FEE', status: ShiftTypeEnum.FIXED },
+  { label: t('shift_management.legend.fixed'), color: '#6576FF', status: ShiftTypeEnum.FIXED },
   { label: t('shift_management.legend.split'), color: '#F5A524', status: ShiftTypeEnum.SPLIT },
   { label: t('shift_management.legend.on_duty'), color: '#7828C8', status: ShiftTypeEnum.ON_DUTY },
   {
@@ -50,7 +50,7 @@ export const STAFF_POSITION = {
 export const SHIFT_CA_LEGEND: LegendItem[] = [
   {
     label: 'Ca cố định',
-    color: '#006FEE',
+    color: '#6576FF',
     status: ShiftTypeEnum.FIXED,
   },
 

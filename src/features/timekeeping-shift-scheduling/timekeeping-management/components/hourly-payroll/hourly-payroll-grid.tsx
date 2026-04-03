@@ -96,7 +96,7 @@ export const HourlyPayrollGrid: FC<HourlyPayrollGridProps> = ({ data = [], isLoa
                         style={{
                           width: SUMMARY_COL_W,
                           minWidth: SUMMARY_COL_W,
-                          backgroundColor: isColHovered ? '#EFF6FF' : '#ffffff',
+                          backgroundColor: isColHovered ? '#F0F1FF' : '#ffffff',
                         }}
                       >
                         {col.render(null, row)}
