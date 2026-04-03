@@ -8,15 +8,16 @@ import type {
   RecruitmentRequestFilters,
   MetadataRecruitmentRequest,
   RejectRecruitmentRequestPayload,
-} from '@/features/recruitment-management/recruitment-request-list/type';
+} from '@/features/recruitment-management/recruitment-request-list/types/type';
+import type { RecruitmentRequestFormValues } from '@/features/recruitment-management/recruitment-request-list/schemas/schema';
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
 
 class RecruitmentRequestService extends BaseApiService<
   RecruitmentRequest,
-  never,
-  never,
+  RecruitmentRequestFormValues,
+  RecruitmentRequestFormValues,
   RecruitmentRequestFilters
 > {
   constructor() {
@@ -46,12 +47,21 @@ class RecruitmentRequestService extends BaseApiService<
     return res as ApiResponse<RecruitmentRequest[], MetadataRecruitmentRequest>;
   }
 
+  async submit(
+    id: string,
+    payload?: ApproveRecruitmentRequestPayload,
+  ): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url(id)}/submit`, payload);
+      return res.data;
+    });
+  }
   async approve(
     id: string,
     payload?: ApproveRecruitmentRequestPayload,
   ): Promise<ApiResponse<void>> {
     return this.request(async () => {
-      const res = await this.instance.post(`${this.url(id)}/approve`, payload);
+      const res = await this.instance.patch(`${this.url(id)}/approve`, payload);
       return res.data;
     });
   }
@@ -61,14 +71,38 @@ class RecruitmentRequestService extends BaseApiService<
     payload: RejectRecruitmentRequestPayload,
   ): Promise<ApiResponse<void>> {
     return this.request(async () => {
-      const res = await this.instance.post(`${this.url(id)}/reject`, payload);
+      const res = await this.instance.patch(`${this.url(id)}/reject`, payload);
       return res.data;
     });
   }
 
   async close(id: string): Promise<ApiResponse<void>> {
     return this.request(async () => {
-      const res = await this.instance.post(`${this.url(id)}/close`);
+      const res = await this.instance.patch(`${this.url(id)}/close`);
+      return res.data;
+    });
+  }
+  async openRecruiting(id: string): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url(id)}/open-recruiting`);
+      return res.data;
+    });
+  }
+  async pauseRecruiting(id: string): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url(id)}/pause`);
+      return res.data;
+    });
+  }
+  async resumeRecruiting(id: string): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url(id)}/resume`);
+      return res.data;
+    });
+  }
+  async cancelRecruiting(id: string): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url(id)}/cancel`);
       return res.data;
     });
   }

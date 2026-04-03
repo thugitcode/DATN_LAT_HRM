@@ -232,7 +232,7 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
               </TableCell>
               <TableCell>
                 {record.firstAttachmentName ? (
-                  <button className="flex items-center gap-1 text-[#006FEE] hover:underline text-sm">
+                  <button className="flex items-center gap-1 text-[#6576FF] hover:underline text-sm">
                     <IconFileText size={16} />
                     <span>{record.firstAttachmentName}</span>
                     {record.attachmentCount > 1 && (
@@ -288,7 +288,7 @@ export const ExplanationTable: FC<ExplanationTableProps> = ({
           showControls
           size="sm"
           classNames={{
-            cursor: 'bg-[#006FEE] text-white',
+            cursor: 'bg-[#6576FF] text-white',
           }}
         />
       </div>

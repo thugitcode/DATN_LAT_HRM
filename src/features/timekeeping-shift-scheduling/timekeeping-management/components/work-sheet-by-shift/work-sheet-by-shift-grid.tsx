@@ -127,7 +127,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                           width: SUMMARY_COL_W,
                           minWidth: SUMMARY_COL_W,
                           backgroundColor: isColHovered
-                            ? '#EFF6FF'
+                            ? '#F0F1FF'
                             : isRowHovered
                               ? 'rgba(239,246,255,0.4)'
                               : '#ffffff',

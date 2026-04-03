@@ -1,4 +1,31 @@
 {
+  "header": {
+    "my_profile": "My Profile",
+    "settings": "Settings",
+    "language": "Language",
+    "logout": "Logout"
+  },
+  "right_menu": {
+    "home": "Home",
+    "hrm": "Human Resource Management",
+    "hrm_label": "HRM",
+    "cis": "Clinical Information System",
+    "cis_label": "CIS",
+    "lis": "Laboratory Information System",
+    "lis_label": "LIS",
+    "ris": "Radiology Information System",
+    "ris_label": "RIS",
+    "prm": "Patient Relationship Management",
+    "prm_label": "PRM",
+    "vat_tu": "Pharmacy & Medical Supplies",
+    "vat_tu_label": "Supplies",
+    "kham_doan": "Health Checkup",
+    "kham_doan_label": "Checkup",
+    "bao_cao": "Reports",
+    "bao_cao_label": "Reports",
+    "ql_benh_nhan": "Patient Management",
+    "ql_benh_nhan_label": "Patients"
+  },
   "actions": {
     "reload": "Reload",
     "import_excel": "Import excel",
@@ -43,7 +70,7 @@
     "partner_staff": "Partner Staff",
     "contract_management": "Contract Management",
 
-    "recruitment_management": "Recruitment Management",
+    "recruitment_management": "Recruitment",
     "recruitment_request": "Recruitment Request",
     "candidate": "Candidate",
     "interview_schedule": "Interview Schedule",

@@ -21,10 +21,10 @@ export const DepartmentSection = () => {
     const { mutateAsync: updateStaff } = useUpdateStaff();
 
     // Logic mode
-    const { data, setMode, isCreate } = useControlMode();
+    const { data, setMode, isCreate, isView: view } = useControlMode();
 
     const isEditing = data === STAFF_SECTION_KEYS.DEPARTMENT || data === "ALL";
-    const isView = !isEditing;
+    const isView = !isEditing || view;
     const variant = isView ? "underlined" : "flat";
 
     // Logic lấy options

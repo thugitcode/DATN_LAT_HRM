@@ -1,5 +1,119 @@
 {
+  "form": {
+    "sections": {
+      "general_info": "Thông tin chung",
+      "recruitment_need": "Nhu cầu tuyển dụng",
+      "job_description": "Mô tả công việc",
+      "candidate_requirements": "Yêu cầu ứng viên",
+      "salary_budget": "Đề xuất lương & ngân sách",
+      "internal_note": "Ghi chú nội bộ"
+    },
+    "fields": {
+      "code": "Mã yêu cầu",
+      "created_at": "Ngày yêu cầu",
+      "department": "Khoa",
+      "room": "Phòng",
+      "position": "Vị trí tuyển dụng",
+      "staff_type": "Loại nhân sự",
+      "work_type": "Hình thức làm việc",
+      "quantity": "Số lượng",
+      "required_date": "Ngày cần nhân sự",
+      "reason": "Lý do tuyển dụng",
+      "description": "Mô tả công việc",
+      "education_level": "Trình độ",
+      "required_certificates": "Bằng cấp/chứng chỉ bắt buộc",
+      "experience_years": "Kinh nghiệm (năm)",
+      "technical_skills": "Kỹ năng chuyên môn",
+      "soft_skills": "Kỹ năng mềm",
+      "other_requirements": "Yêu cầu khác",
+      "salary_expected": "Mức lương dự kiến (tr/tháng)",
+      "salary_from": "Mức lương từ",
+      "salary_to": "Mức lương đến",
+      "note": "Ghi chú"
+    },
+    "placeholders": {
+      "auto_generated": "Tự sinh",
+      "select_department": "Chọn khoa",
+      "select_room": "Chọn phòng",
+      "select_position": "Chọn vị trí",
+      "select_staff_type": "Chọn loại nhân sự",
+      "select_work_type": "Chọn hình thức",
+      "enter_quantity": "Nhập số lượng",
+      "enter_reason": "Nhập lý do",
+      "enter_description": "Chi tiết công việc, nhiệm vụ chính",
+      "enter_education_level": "Nhập trình độ",
+      "enter_certificates": "Nhập bằng cấp",
+      "enter_experience_years": "Nhập số năm kinh nghiệm",
+      "enter_technical_skills": "Nhập kỹ năng chuyên môn",
+      "enter_soft_skills": "Nhập kỹ năng mềm",
+      "enter_other_requirements": "Tin học, ngoại ngữ, trực đêm, sức khỏe...",
+      "from": "Từ",
+      "to": "Đến",
+      "enter_note": "Nhập ghi chú",
+      "medical_position_note": "Với vị trí y tế (Bác sĩ, Điều dưỡng, KTV), vui lòng nêu rõ yêu cầu Chứng chỉ hành nghề (CCHN) trong phần yêu cầu ứng viên."
+    },
+    "toast": {
+      "create_success": "Tạo yêu cầu tuyển dụng thành công.",
+      "create_error": "Tạo yêu cầu tuyển dụng thất bại.",
+      "update_success": "Cập nhật yêu cầu tuyển dụng thành công.",
+      "update_error": "Cập nhật yêu cầu tuyển dụng thất bại.",
+      "submit_success": "Gửi duyệt yêu cầu tuyển dụng thành công.",
+      "submit_error": "Gửi duyệt yêu cầu tuyển dụng thất bại.",
+      "approve_success": "Duyệt yêu cầu tuyển dụng thành công.",
+      "approve_error": "Duyệt yêu cầu tuyển dụng thất bại.",
+      "reject_success": "Từ chối yêu cầu tuyển dụng thành công.",
+      "reject_error": "Từ chối yêu cầu tuyển dụng thất bại.",
+      "close_success": "Đóng yêu cầu tuyển dụng thành công.",
+      "close_error": "Đóng yêu cầu tuyển dụng thất bại.",
+      "openRecruiting_success": "Mở tuyển yêu cầu tuyển dụng thành công.",
+      "openRecruiting_error": "Mở tuyển yêu cầu tuyển dụng thất bại.",
+      "pause_success": "Tạm dừng yêu cầu tuyển dụng thành công.",
+      "pause_error": "Tạm dừng yêu cầu tuyển dụng thất bại.",
+      "resume_success": "Mở lại yêu cầu tuyển dụng thành công.",
+      "resume_error": "Mở lại yêu cầu tuyển dụng thất bại.",
+      "cancel_success": "Hủy yêu cầu tuyển dụng thành công.",
+      "cancel_error": "Hủy yêu cầu tuyển dụng thất bại."
+    },
+    "validation": {
+      "department_required": "Vui lòng chọn khoa",
+      "room_required": "Vui lòng chọn phòng",
+      "position_required": "Vui lòng chọn vị trí tuyển dụng",
+      "staff_type_required": "Vui lòng chọn loại nhân sự",
+      "work_type_required": "Vui lòng chọn hình thức làm việc",
+      "quantity_required": "Vui lòng nhập số lượng",
+      "description_required": "Vui lòng nhập mô tả công việc",
+      "education_level_required": "Vui lòng nhập trình độ",
+      "certificates_required": "Vui lòng nhập bằng cấp/chứng chỉ",
+      "experience_years_required": "Vui lòng nhập số năm kinh nghiệm",
+      "salary_from_required": "Vui lòng nhập mức lương từ",
+      "salary_to_required": "Vui lòng nhập mức lương đến"
+    },
+    "options": {
+      "position": {
+        "STAFF": "Nhân viên",
+        "HEAD_OF_DEPARTMENT": "Trưởng khoa",
+        "DEPUTY_HEAD_OF_DEPARTMENT": "Phó khoa",
+        "CHIEF_NURSE": "Điều dưỡng trưởng",
+        "MANAGER": "Trưởng phòng",
+        "HEAD_OF_UNIT": "Trưởng bộ phận",
+        "DEPUTY_MANAGER": "Phó phòng"
+      },
+      "staff_type": {
+        "DOCTOR": "Bác sĩ",
+        "NURSE": "Điều dưỡng",
+        "TECHNICIAN": "Kỹ thuật viên",
+        "PHARMACIST": "Dược sĩ",
+        "ADMINISTRATIVE": "Hành chính",
+        "OTHER": "Khác"
+      },
+      "work_type": {
+        "FULL_TIME": "Toàn thời gian",
+        "PART_TIME": "Bán thời gian"
+      }
+    }
+  },
   "recruitment_request": {
+    "add": "Tạo mới yêu cầu",
     "title": "Danh sách yêu cầu tuyển dụng",
     "columns": {
       "code": "Mã yêu cầu",
@@ -19,7 +133,8 @@
       "close": "Đóng yêu cầu",
       "close_title": "Đóng yêu cầu tuyển dụng",
       "close_desc": "Bạn có chắc chắn muốn đóng yêu cầu tuyển dụng này?",
-      "edit": "Sửa",
+      "edit": "Chỉnh sửa",
+      "edit_request": "Chỉnh sửa yêu cầu",
       "delete": "Xóa",
       "create": "Tạo mới yêu cầu",
       "import": "Import",
@@ -34,7 +149,14 @@
       "view_reason": "Xem lý do",
       "edit_limited": "Sửa hạn chế",
       "view_candidates": "Xem ứng viên",
-      "duplicate": "Nhân bản"
+      "duplicate": "Nhân bản",
+      "reject": "Từ chối"
+    },
+    "confirm": {
+      "reject_title": "Từ chối yêu cầu tuyển dụng",
+      "reject_description": "Bạn có chắc chắn muốn từ chối yêu cầu tuyển dụng này? Vui lòng nhập lý do.",
+      "close_title": "Đóng yêu cầu tuyển dụng",
+      "close_description": "Bạn có chắc chắn muốn đóng yêu cầu tuyển dụng này? Vui lòng nhập lý do."
     },
     "summary": {
       "total": "Tổng yêu cầu",

@@ -14,7 +14,7 @@ import type {
   ApproveRecruitmentRequestPayload,
   RecruitmentRequestFilters,
   RejectRecruitmentRequestPayload,
-} from '../type';
+} from '../types/type';
 
 export function useRecruitmentRequestList(
   params?: RecruitmentRequestFilters,

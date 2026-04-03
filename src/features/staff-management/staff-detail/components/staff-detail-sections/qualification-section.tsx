@@ -15,7 +15,7 @@ import { AcademicTitleEnum, StaffQualificationEnum } from "@/types/staff.type";
 export const QualificationSection = () => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { control, trigger, getValues } = useFormContext();
-    const { data, setMode } = useControlMode();
+    const { data, setMode, isView: view } = useControlMode();
 
     const { mutateAsync: updateStaff, isPending: isUpdating } = useUpdateStaff();
 
@@ -79,7 +79,7 @@ export const QualificationSection = () => {
                         name="qualification"
                         label={t('staffForm.fields.qualification.label')}
                         isRequired
-                        disabled={!isEditingQual}
+                        disabled={!isEditingQual || view}
                         variant={variantQual}
                         options={Object.values(StaffQualificationEnum).map((val) => ({
                             label: t(`options.qualifications.${val}`),
@@ -91,7 +91,7 @@ export const QualificationSection = () => {
                         name="major"
                         label={t('staffForm.fields.major.label')}
                         placeholder={t('staffForm.fields.major.placeholder')}
-                        readOnly={!isEditingQual}
+                        readOnly={!isEditingQual || view}
                         variant={variantQual}
                     />
                     <FormSelect
@@ -99,7 +99,7 @@ export const QualificationSection = () => {
                         name="academicTitles"
                         label={t('staffForm.fields.academicTitles.label')}
                         selectionMode="multiple"
-                        readOnly={!isEditingQual}
+                        readOnly={!isEditingQual || view}
                         variant={variantQual}
                         options={Object.values(AcademicTitleEnum).map((val) => ({
                             label: t(`options.academicTitles.${val}`),
@@ -111,7 +111,7 @@ export const QualificationSection = () => {
                         name="certificateNumber"
                         label={t('staffForm.fields.certificateNumber.label')}
                         placeholder={t('staffForm.fields.certificateNumber.placeholder')}
-                        readOnly={!isEditingQual}
+                        readOnly={!isEditingQual || view}
                         variant={variantQual}
                     />
                     <FormInput
@@ -119,14 +119,14 @@ export const QualificationSection = () => {
                         name="certificateIssuePlace"
                         label={t('staffForm.fields.certificateIssuePlace.label')}
                         placeholder={t('staffForm.fields.certificateIssuePlace.placeholder')}
-                        readOnly={!isEditingQual}
+                        readOnly={!isEditingQual || view}
                         variant={variantQual}
                     />
                     <FormDatePicker
                         control={control}
                         name="certificateExpiryDate"
                         label={t('staffForm.fields.certificateExpiryDate.label')}
-                        isReadOnly={!isEditingQual}
+                        isReadOnly={!isEditingQual || view}
                         variant={variantQual}
                     />
                 </div>
@@ -145,7 +145,7 @@ export const QualificationSection = () => {
                     name="note"
                     placeholder={t('staffForm.fields.note.placeholder')}
                     maxRows={4}
-                    readOnly={!isEditingNotes}
+                    readOnly={!isEditingNotes || view}
                     variant={variantNotes}
                 />
             </div>

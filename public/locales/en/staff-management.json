@@ -321,7 +321,11 @@
     "work_type": {
       "Fulltime": "Full-time",
       "Parttime": "Part-time"
-    }
+    },
+    "activate_title": "Activate Staff",
+    "deactivate_title": "Deactivate Staff",
+    "activate_confirm": "Are you sure you want to activate {{name}}?",
+    "deactivate_confirm": "Are you sure you want to deactivate {{name}}?"
   },
   "button": {
     "add_staff": "Add New Staff"

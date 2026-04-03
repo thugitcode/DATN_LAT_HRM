@@ -3,7 +3,7 @@ import { NAMESPACES } from '@/i18n/constants';
 import { Chip } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
-import { RecruitmentRequestStatusEnum } from '../type';
+import { RecruitmentRequestStatusEnum } from '../types/type';
 
 const STATUS_MAP: Record<
   RecruitmentRequestStatusEnum,

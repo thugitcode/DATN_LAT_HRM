@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import type { RecruitmentRequestFilters } from '@/features/recruitment-management/recruitment-request-list/type';
+import type { RecruitmentRequestFilters } from '@/features/recruitment-management/recruitment-request-list/types/type';
 
 import { recruitmentRequestService } from '../recruitment-request.service';
 
@@ -18,5 +18,11 @@ export const recruitmentRequestQueryOptions = {
     queryOptions({
       queryKey: recruitmentRequestKeys.list(params),
       queryFn: () => recruitmentRequestService.getAll(params),
+    }),
+  detail: (id: string) =>
+    queryOptions({
+      queryKey: recruitmentRequestKeys.detail(id),
+      queryFn: () => recruitmentRequestService.getById(id),
+      enabled: !!id,
     }),
 } as const;

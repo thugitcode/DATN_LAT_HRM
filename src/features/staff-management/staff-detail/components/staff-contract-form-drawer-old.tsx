@@ -399,7 +399,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                         <DrawerBody className="p-6 overflow-y-auto w-full">
                             {isDetailLoading ? (
                                 <div className="flex h-full items-center justify-center">
-                                    <div className="w-8 h-8 border-2 border-[#006FEE] border-t-transparent rounded-full animate-spin" />
+                                    <div className="w-8 h-8 border-2 border-[#6576FF] border-t-transparent rounded-full animate-spin" />
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full">
@@ -873,7 +873,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                             </Button>
                             <Button
                                 color="primary"
-                                className="bg-[#006FEE] text-white font-semibold h-10 px-6 rounded-xl shadow-sm"
+                                className="bg-[#6576FF] text-white font-semibold h-10 px-6 rounded-xl shadow-sm"
                                 onPress={handleSave}
                                 isLoading={isPending}
                             >

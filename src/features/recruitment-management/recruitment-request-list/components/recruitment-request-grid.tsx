@@ -1,7 +1,7 @@
 import type { FC } from 'react';
 import { Spinner } from '@heroui/react';
 
-import type { RecruitmentRequest } from '../type';
+import type { RecruitmentRequest } from '../types/type';
 import { RecruitmentRequestCard } from './recruitment-request-card';
 
 interface RecruitmentRequestGridProps {

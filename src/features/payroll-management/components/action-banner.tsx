@@ -18,15 +18,15 @@ export const ActionBanner = ({ t, onSaveDraft, onTransfer, isTransferring, data 
       <div className="flex items-start gap-3">
         <span
           aria-hidden
-          className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#006FEE] text-xs font-bold text-white"
+          className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#6576FF] text-xs font-bold text-white"
         >
           i
         </span>
-        <div className="text-sm text-[#006FEE]">
+        <div className="text-sm text-[#6576FF]">
           <p className="font-medium">
             {t('summary-finalize.banner.ready', 'Sẵn sàng chuyển sang Tính lương')}
           </p>
-          <p className="mt-0.5 text-[#006FEE]">
+          <p className="mt-0.5 text-[#6576FF]">
             {t(
               'summary-finalize.banner.warning',
               'Sau khi chốt, dữ liệu đầu vào sẽ bị khoá. Mọi thay đổi cần huỷ chốt trước khi chỉnh sửa.',

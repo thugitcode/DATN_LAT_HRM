@@ -347,7 +347,7 @@ export const WorkShiftsForm = () => {
           <Button
             variant="light"
             onPress={onClose}
-            className="border border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
+            className="border border-[#6576FF] bg-white text-[14px] font-normal text-[#6576FF]"
           >
             {tc('button.cancel')}
           </Button>
@@ -397,7 +397,7 @@ const DayBlock = ({ dayIndex, date, isLoading, caseCategoryOptions }: DayBlockPr
         ))}
 
         <Button
-          className="border-2 border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
+          className="border-2 border-[#6576FF] bg-white text-[14px] font-normal text-[#6576FF]"
           type="button"
           onPress={() => append({ ...DEFAULT_SHIFT })}
           disabled={isLoading}

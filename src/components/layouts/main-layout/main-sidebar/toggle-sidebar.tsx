@@ -13,7 +13,7 @@ export const ToggleSidebar = () => {
         isIconOnly
         onPress={toggle}
         className={cn(
-          'size-8 rounded-sm bg-white hover:bg-gray-100 duration-300 transition-all',
+          'size-8 rounded-sm bg-transparent text-[#8F99D3] hover:bg-primary hover:text-white duration-300 transition-all',
           isCollapsed && 'rotate-180',
         )}
       >

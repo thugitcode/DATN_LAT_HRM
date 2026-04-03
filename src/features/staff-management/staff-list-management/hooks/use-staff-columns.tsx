@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next';
 
 import type { ColumnDef } from '@/components/data-table/data-table';
 import GetSignedUrl from '@/components/get-signed-url';
-import type { Staff } from '@/types/staff.type';
+import { ActiveStatusEnum, type Staff } from '@/types/staff.type';
+import { useUpdateStaff } from '@/query-options/staff';
 
 export const renderStatusChip = (status: string | undefined, t: any) => {
   // Định nghĩa style dựa trên key i18n
@@ -51,6 +52,7 @@ export const renderStatusChip = (status: string | undefined, t: any) => {
 export const useStaffColumns = () => {
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
+  const { mutate: updateStaff, isPending: isUpdatingStatus } = useUpdateStaff();
 
   const columns: ColumnDef<Staff>[] = [
     {
@@ -112,7 +114,7 @@ export const useStaffColumns = () => {
       key: 'contact',
       title: t('staff_table.columns.contact'),
       render: (_, record) => (
-        <div className="flex flex-col gap-0.5 text-sm text-[#006FEE]">
+        <div className="flex flex-col gap-0.5 text-sm text-[#6576FF]">
           <span className="flex gap-1.5">
             <IconMail size={20} color="#000000" stroke="1px" /> {record.email}
           </span>
@@ -176,7 +178,17 @@ export const useStaffColumns = () => {
       title: t('staff_table.columns.actions'),
       render: (_, record) => (
         <div className="flex items-center gap-3">
-          <Switch size="sm" isSelected={record.activeStatus === 'ACTIVE'} />
+          <Switch
+            size="sm"
+            isSelected={record.activeStatus === ActiveStatusEnum.ACTIVE}
+            isDisabled={isUpdatingStatus}
+            onValueChange={(checked) =>
+              updateStaff({
+                id: record.id,
+                data: { activeStatus: checked ? ActiveStatusEnum.ACTIVE : ActiveStatusEnum.INACTIVE },
+              })
+            }
+          />
           <Button isIconOnly size="sm" variant="light" className="text-[#71717A]">
             <IconPencil size={18} stroke={1.5} />
           </Button>

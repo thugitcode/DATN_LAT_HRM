@@ -15,7 +15,7 @@ const getLabel = (shift: ShiftCode): string => {
 
 interface NonPillBadgeProps {
   shift: ShiftCode;
-  workScheduleDetailId?: string;
+  workScheduleDetailId?: string[] | string;
 }
 
 export const NonPillBadge: FC<NonPillBadgeProps> = memo(({ shift, workScheduleDetailId }) => {
@@ -24,10 +24,14 @@ export const NonPillBadge: FC<NonPillBadgeProps> = memo(({ shift, workScheduleDe
   const open = useDrawer((state) => state.onOpen);
 
   const onClick = () => {
+    const id = Array.isArray(workScheduleDetailId)
+      ? workScheduleDetailId[0]
+      : workScheduleDetailId;
+
     open(
       DrawerType.TIME_SHEET_DETAIL,
 
-      workScheduleDetailId,
+      id,
     );
   };
 

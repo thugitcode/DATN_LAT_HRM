@@ -363,7 +363,11 @@
     "work_type": {
       "Fulltime": "Toàn thời gian",
       "Parttime": "Bán thời gian"
-    }
+    },
+    "activate_title": "Kích hoạt nhân viên",
+    "deactivate_title": "Ngừng kích hoạt nhân viên",
+    "activate_confirm": "Bạn có chắc muốn kích hoạt nhân viên {{name}}?",
+    "deactivate_confirm": "Bạn có chắc muốn ngừng kích hoạt nhân viên {{name}}?"
   },
   "button": {
     "add_staff": "Thêm mới nhân viên"

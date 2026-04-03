@@ -41,7 +41,7 @@ export function SalarySummary({ data }: SalarySummaryProps) {
   return (
     <div className="rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="bg-[#006FEE] px-6 py-3">
+      <div className="bg-[#6576FF] px-6 py-3">
         <h3 className="text-white font-medium leading-7 text-lg uppercase">
           {t('payrollCalculation.detail.summaryTitle')} {monthYear}
         </h3>
@@ -128,13 +128,13 @@ export function SalarySummary({ data }: SalarySummaryProps) {
         {/* Net Income Highlight */}
         <div className="mt-4 bg-[#E6F1FE] rounded-lg p-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-[#006FEE]">
+            <div className="flex items-center gap-2 text-[#6576FF]">
               {icons.moneyBag}
               <span className="font-medium text-base">
                 {t('payrollCalculation.detail.totalNetIncome')}
               </span>
             </div>
-            <span className="text-xl font-medium text-[#006FEE]">
+            <span className="text-xl font-medium text-[#6576FF]">
               {formatCurrency(data.finalAmount)}
             </span>
           </div>

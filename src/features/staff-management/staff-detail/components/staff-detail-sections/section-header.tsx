@@ -6,7 +6,7 @@ import { Button } from "@heroui/react";
 import type { StaffSectionKey } from "../../types";
 
 export const SectionHeader = ({ icon: Icon, title, onSave, sectionKey }: { icon: any, title: string, onSave?: () => {}, sectionKey: StaffSectionKey }) => {
-    const { setMode, data } = useControlMode()
+    const { setMode, data, isReadOnly } = useControlMode()
 
     return (
         <div className="flex items-center justify-between gap-2 mb-4">
@@ -14,14 +14,14 @@ export const SectionHeader = ({ icon: Icon, title, onSave, sectionKey }: { icon:
                 {Icon}
                 <h3 className="font-semibold text-sm text-[#11181C] uppercase tracking-wider">{title}</h3>
             </div>
-            {sectionKey !== data && data !== "ALL" &&
+            {!isReadOnly && sectionKey !== data && data !== "ALL" &&
                 <Button
                     isIconOnly
                     variant="bordered"
                     onPress={() => setMode(ControlMode.edit, sectionKey)}>
                     <icons.edit className="size-5" />
                 </Button>}
-            {data && sectionKey === data && data !== "ALL" && <div className="flex gap-2">
+            {!isReadOnly && data && sectionKey === data && data !== "ALL" && <div className="flex gap-2">
                 <BtnCancel
                     onPress={() => setMode(ControlMode.view, null)}
                 />

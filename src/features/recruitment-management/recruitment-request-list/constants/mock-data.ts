@@ -2,7 +2,7 @@ import {
   RecruitmentRequestStatusEnum,
   type MetadataRecruitmentRequest,
   type RecruitmentRequest,
-} from '../type';
+} from '../types/type';
 
 export const MOCK_METADATA: MetadataRecruitmentRequest = {
   totalAll: 10,

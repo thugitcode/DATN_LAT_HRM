@@ -28,7 +28,7 @@ import { salaryFormSchema, type SalaryFormValues } from './schemas';
 
 export const SalaryAndBenefits = () => {
   const { id } = useParams({ strict: false });
-  const { mode, setMode } = useControlMode();
+  const { mode, setMode, isView, isReadOnly } = useControlMode();
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { mutate, isPending, isError } = usePatchDetailsStaffSalary();
   const { data, isLoading, refetch } = useSalaryDetailsQuery(id);
@@ -129,11 +129,11 @@ export const SalaryAndBenefits = () => {
             <div className="flex justify-between items-center">
               <TitlePage title={t('salary_benefits.title')} />
 
-              {mode === ControlMode.view ? (
+              {!isReadOnly && (isView ? (
                 <Button
                   variant="bordered"
                   color="primary"
-                  startContent={<icons.edit width="20px" height="20px" stroke="#006FEE" />}
+                  startContent={<icons.edit width="20px" height="20px" stroke="#6576FF" />}
                   onPress={() => setMode(ControlMode.edit)}
                 >
                   {t('salary_benefits.edit')}
@@ -143,7 +143,7 @@ export const SalaryAndBenefits = () => {
                   <BtnCancel isDisabled={isPending} onPress={() => setMode(ControlMode.view)} />
                   <BtnSave isLoading={isPending} />
                 </div>
-              )}
+              ))}
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full overflow-auto h-[calc(100vh-306px)]">

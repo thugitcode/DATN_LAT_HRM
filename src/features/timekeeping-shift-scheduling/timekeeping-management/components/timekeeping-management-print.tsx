@@ -35,7 +35,7 @@ const COLOR = {
   rowEven: '#FFFFFF',
   rowOdd: '#F9FAFB',
   titleText: '#fff',
-  summaryBg: '#EFF6FF',
+  summaryBg: '#F0F1FF',
 };
 
 const thTitle: CSSProperties = {

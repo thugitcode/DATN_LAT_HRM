@@ -4,6 +4,7 @@ import type { ShiftManagementParams } from '@/types';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { useStaffDailyAttendance } from '@/features/timekeeping-shift-scheduling/shift-management/hooks/use-shift-management';
+import { useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
 
 import AttendanceSummary from './components/attendance-summary';
 import { Header } from './components/header';
@@ -20,6 +21,7 @@ export const TimeAttendanceManagementTab = () => {
   const { activeKey } = useTimeAttendanceTabs();
   const { startDate, endDate } = useMonthDateRange(filters.month);
 
+  const { isReadOnly } = useControlMode();
   const { data, isLoading } = useStaffDailyAttendance({
     page: filters.page ?? 1,
     limit: filters.limit ?? 10,
@@ -48,7 +50,7 @@ export const TimeAttendanceManagementTab = () => {
         </div>
       )}
       {TAB_KEYS.SHIFT_EXPLANATION === activeKey && <ShiftExplanation />}
-      {TAB_KEYS.SHIFT_ASSIGNMENT === activeKey && <ShiftManagementContainer />}
+      {TAB_KEYS.SHIFT_ASSIGNMENT === activeKey && <ShiftManagementContainer disabled={isReadOnly} />}
     </div>
   );
 };

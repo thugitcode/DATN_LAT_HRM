@@ -16,6 +16,7 @@ import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
 import { WorkShiftsForm } from '@/features/timekeeping-shift-scheduling/shift-management/components/work-shifts-form';
 import { ShiftDetailsDrawer } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-drawer';
+import { FormRecruitmentRequestMutate } from '@/features/recruitment-management/recruitment-request-list/components/form-recruitment-request-mutate';
 
 type DrawerConfig = {
   title: string;
@@ -145,6 +146,16 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
         placement: 'right',
         size: '5xl',
         style: { width: '97vw', maxWidth: '97vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.RECRUITMENT_REQUEST_MUTATE]: {
+      title: '',
+      component: <FormRecruitmentRequestMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
         classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
       },
     },

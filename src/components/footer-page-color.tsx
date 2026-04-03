@@ -3,7 +3,7 @@ export const FooterPageColor = () => {
     <div className="h-20.5 px-6 flex items-center justify-end bg-white border-t border-[#11111126] ">
       <ul className="flex items-center gap-6">
         <li className="flex items-center gap-1.5">
-          <span className="inline-block size-4.75 bg-[#006FEE] rounded-4xl" />
+          <span className="inline-block size-4.75 bg-[#6576FF] rounded-4xl" />
           Ca chính
         </li>
         <li className="flex items-center gap-1.5">

@@ -9,17 +9,15 @@ type Props = React.PropsWithChildren;
 
 export const KeycloakProvider = ({ children }: Props) => {
   return (
-    // <ReactKeycloakProvider
-    //   authClient={keycloakClient}
-    //   LoadingComponent={<KeycloakLoadingScreen />}
-    //   autoRefreshToken={false}
-    //   onEvent={(event, error) => {
-    //     logger.log('Keycloak Event:', event, error);
-    //   }}
-    // >
-    //   {children}
-    // </ReactKeycloakProvider>
-
-    <> {children}</>
+    <ReactKeycloakProvider
+      authClient={keycloakClient}
+      LoadingComponent={<KeycloakLoadingScreen />}
+      autoRefreshToken={false}
+      onEvent={(event, error) => {
+        logger.log('Keycloak Event:', event, error);
+      }}
+    >
+      {children}
+    </ReactKeycloakProvider>
   );
 };

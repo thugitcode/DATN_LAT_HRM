@@ -6,7 +6,7 @@ import { formatDate } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
 
 import { RowRecruitmentRequestActions } from '../components/row-recruitment-request-actions';
-import type { RecruitmentRequest } from '../type';
+import type { RecruitmentRequest } from '../types/type';
 import { RecruitmentRequestStatusChip } from '../components/recruitment-request-status-chip';
 
 export const useColumns = () => {

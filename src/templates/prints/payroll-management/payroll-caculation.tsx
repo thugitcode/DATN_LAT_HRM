@@ -110,7 +110,7 @@ export const PrintPayrollCalculation = forwardRef<HTMLDivElement, PrintPayrollCa
           </thead>
           <tbody>
             {data.map((row, idx) => {
-              const bg = idx % 2 === 0 ? '#FFFFFF' : '#EFF6FF';
+              const bg = idx % 2 === 0 ? '#FFFFFF' : '#F0F1FF';
               const td = { ...tdCenter, backgroundColor: bg };
               const tdL = { ...tdLeft, backgroundColor: bg };
               const tdR = { ...tdRight, backgroundColor: bg };

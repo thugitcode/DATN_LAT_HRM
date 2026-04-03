@@ -15,7 +15,7 @@ export const ExplanationTypeRow: FC<
       </span>
       <div className="relative h-2 w-16 rounded-full bg-[#E4E4E7] shrink-0">
         <div
-          className="absolute inset-y-0 left-0 rounded-full bg-[#006FEE] transition-all duration-300"
+          className="absolute inset-y-0 left-0 rounded-full bg-[#6576FF] transition-all duration-300"
           style={{ width: `${percentage}%` }}
         />
       </div>

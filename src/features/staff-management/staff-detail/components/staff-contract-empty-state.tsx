@@ -14,7 +14,7 @@ export default function StaffContractEmptyState({
 }: StaffContractEmptyStateProps) {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const onOpenDrawer = useDrawer((state) => state.onOpen);
-    const { setMode } = useControlMode();
+    const { setMode, isReadOnly } = useControlMode();
 
     const handleAddNew = () => {
         setMode(ControlMode.create);
@@ -31,15 +31,17 @@ export default function StaffContractEmptyState({
                             {t('contract_info.empty_description')}
                         </p>
 
-                        <Button
-                            color="primary"
-                            size="sm"
-                            startContent={<IconPlus size={18} />}
-                            className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-6 min-w-[180px]"
-                            onPress={handleAddNew}
-                        >
-                            {t('contract_info.add_contract')}
-                        </Button>
+                        {!isReadOnly && (
+                            <Button
+                                color="primary"
+                                size="sm"
+                                startContent={<IconPlus size={18} />}
+                                className="bg-[#6576FF] text-white font-semibold h-9 rounded-xl px-6 min-w-[180px]"
+                                onPress={handleAddNew}
+                            >
+                                {t('contract_info.add_contract')}
+                            </Button>
+                        )}
                     </CardBody>
                 </Card>
 

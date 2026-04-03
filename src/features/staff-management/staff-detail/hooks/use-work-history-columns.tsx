@@ -50,7 +50,7 @@ export interface WorkHistoryRow {
 
 const STATUS_CLASS: Record<string, string> = {
   PENDING_APPROVAL: 'bg-[#FFF7ED] text-[#EA580C]',
-  PENDING_SIGNATURE: 'bg-[#EFF6FF] text-[#006FEE]',
+  PENDING_SIGNATURE: 'bg-[#F0F1FF] text-[#6576FF]',
   SIGNED: 'bg-[#F0FDF4] text-[#16A34A]',
   EXPIRED: 'bg-[#FEF2F2] text-[#DC2626]',
 };

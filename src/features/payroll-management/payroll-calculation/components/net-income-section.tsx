@@ -15,11 +15,11 @@ export function NetIncomeSection({ data }: NetIncomeSectionProps) {
     return (
         <div className="bg-[#E6F1FE] rounded-xl px-4 py-6">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[#006FEE]">
+                <div className="flex items-center gap-2 text-[#6576FF]">
                     {icons.moneyBag}
-                    <span className="text-[#006FEE] font-medium text-lg leading-7">{t("payrollCalculation.detail.netIncomeTitle")}</span>
+                    <span className="text-[#6576FF] font-medium text-lg leading-7">{t("payrollCalculation.detail.netIncomeTitle")}</span>
                 </div>
-                <span className="text-xl font-medium leading-7 text-[#006FEE]">
+                <span className="text-xl font-medium leading-7 text-[#6576FF]">
                     {formatCurrency(data.finalAmount)}
                 </span>
             </div>

@@ -50,7 +50,7 @@ export const GridStickyHourlyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> =
               style={{
                 width: CELL_W,
                 minWidth: CELL_W,
-                backgroundColor: isHovered ? '#EFF6FF' : isCN ? '#FEF2F2' : '#ffffff',
+                backgroundColor: isHovered ? '#F0F1FF' : isCN ? '#FEF2F2' : '#ffffff',
               }}
             >
               <div className="flex flex-col gap-3 items-center justify-center h-full">
@@ -79,7 +79,7 @@ export const GridStickyHourlyHeaderRow: FC<Readonly<GridStickyHeaderRowProps>> =
             style={{
               width: SUMMARY_COL_W,
               minWidth: SUMMARY_COL_W,
-              backgroundColor: hoveredSummaryCol === col.key ? '#EFF6FF' : '#FFFFFF',
+              backgroundColor: hoveredSummaryCol === col.key ? '#F0F1FF' : '#FFFFFF',
             }}
           >
             <div className="flex items-center justify-center h-full px-1">
