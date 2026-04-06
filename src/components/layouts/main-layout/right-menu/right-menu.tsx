@@ -31,6 +31,8 @@ const w = window as any;
 export const RightMenu = () => {
   const { t } = useTranslation(NAMESPACES.COMMON);
   const { accessToken, refreshToken } = apiTokens;
+  const partnerCode = localStorage.getItem("partner_code") || "";
+  const partnerParam = partnerCode ? `&partner_code=${partnerCode}` : "";
 
   const cisUrl = window.CIS_WEB_UI_URL ?? '';
 
@@ -57,7 +59,7 @@ export const RightMenu = () => {
       label: t('right_menu.lis_label'),
       tooltip: t('right_menu.lis'),
       icon: <IconLis />,
-      href: `${w?.[urlKeys.LIS_WEB_UI_URL]}?access_token=${accessToken}&refresh_token=${refreshToken}`,
+      href: `${w?.[urlKeys.LIS_WEB_UI_URL]}?access_token=${accessToken}&refresh_token=${refreshToken}${partnerParam}`,
     },
     // { type: 'divider' as const },
     {
@@ -73,7 +75,7 @@ export const RightMenu = () => {
       label: t('right_menu.prm_label'),
       tooltip: t('right_menu.prm'),
       icon: <IconPrm />,
-      href: `${w?.[urlKeys.PRM_WEB_UI_URL]}?access_token=${accessToken}`,
+      href: `${w?.[urlKeys.PRM_WEB_UI_URL]}?access_token=${accessToken}${partnerParam}`,
     },
     // { type: 'divider' as const },
     {
@@ -81,7 +83,7 @@ export const RightMenu = () => {
       label: t('right_menu.vat_tu_label'),
       tooltip: t('right_menu.vat_tu'),
       icon: <IconVatTu />,
-      href: `${w?.[urlKeys.SUPPLIES_WEB_UI_URL]}?access_token=${accessToken}&refresh_token=${refreshToken}`,
+      href: `${w?.[urlKeys.SUPPLIES_WEB_UI_URL]}?access_token=${accessToken}&refresh_token=${refreshToken}${partnerParam}`,
     },
     // { type: 'divider' as const },
     {
@@ -89,7 +91,7 @@ export const RightMenu = () => {
       label: t('right_menu.kham_doan_label'),
       tooltip: t('right_menu.kham_doan'),
       icon: <IconKhamDoan />,
-      href: `${w?.[urlKeys.PHR_WEB_UI_URL]}?access_token=${accessToken}&refresh_token=${refreshToken}`,
+      href: `${w?.[urlKeys.PHR_WEB_UI_URL]}?access_token=${accessToken}&refresh_token=${refreshToken}${partnerParam}`,
     },
     // { type: 'divider' as const },
     {
@@ -97,7 +99,7 @@ export const RightMenu = () => {
       label: t('right_menu.bao_cao_label'),
       tooltip: t('right_menu.bao_cao'),
       icon: <IconBaoCao />,
-      href: `${w?.[urlKeys.RP_WEB_UI_URL]}?access_token=${accessToken}&refresh_token=${refreshToken}`,
+      href: `${w?.[urlKeys.RP_WEB_UI_URL]}?access_token=${accessToken}&refresh_token=${refreshToken}${partnerParam}`,
     },
     // { type: 'divider' as const },
     {
