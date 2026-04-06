@@ -22,12 +22,21 @@ hrmInstance.interceptors.request.use((config) => {
   if (!config.headers['Content-Type']) {
     config.headers['Content-Type'] = 'application/json';
   }
-  if (apiTokens.accessToken) {
-    const xTenantId = jwtDecode(apiTokens.accessToken).partner_code;
+  // Flow 1: CIS JWT from URL (stored in localStorage)
+  const localJwt = localStorage.getItem('jwt');
+  // Flow 2: Keycloak access token
+  const token = localJwt || apiTokens.accessToken;
 
-    config.headers['x-tenant-id'] = xTenantId;
+  if (token) {
+    const xTenantId =
+      jwtDecode(token).partner_code ||
+      localStorage.getItem('partner_code');
 
-    config.headers.Authorization = `Bearer ${apiTokens.accessToken}`;
+    if (xTenantId) {
+      config.headers['x-tenant-id'] = xTenantId;
+    }
+
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
   return config;

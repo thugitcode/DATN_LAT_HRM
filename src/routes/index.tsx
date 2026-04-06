@@ -3,7 +3,11 @@ import type { GlobalSearchParams } from '@/types/global.type';
 
 export const Route = createFileRoute('/')({
   beforeLoad: ({ context: { auth }, search }) => {
-    const { jwt } = search as GlobalSearchParams;
+    const { jwt, partner_code } = search as GlobalSearchParams;
+
+    if (partner_code) {
+      localStorage.setItem('partner_code', partner_code);
+    }
 
     // Flow 1: CIS/external system truyền token qua URL (?jwt=TOKEN)
     if (jwt) {
