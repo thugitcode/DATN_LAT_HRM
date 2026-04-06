@@ -5,18 +5,21 @@ import { cn } from '@/lib/utils';
 import { MainSidebarFooter } from './main-sidebar-footer';
 import { MainSidebarNav } from './main-sidebar-nav';
 import { ToggleSidebar } from './toggle-sidebar';
-
+import logoFull from '@public/images/logo-deepcare.png'
+import logo from '@public/images/logo.png'
+import { Image } from '@heroui/react';
 export const MainSidebar = () => {
   const isCollapsed = useSidebarStore((state) => state.isCollapsed);
 
   return (
     <div
       className={cn(
-        'bg-white flex flex-col justify-between shadow-[0_1px_3px_0_#0000001A]  pt-6 transition-all duration-300 ease-in-out overflow-hidden',
+        'bg-[#2C3782] flex flex-col justify-between shadow-[0_1px_3px_0_#0000001A]  pt-6 transition-all duration-300 ease-in-out overflow-hidden',
         isCollapsed ? 'w-16 px-1.5' : 'w-72 px-3',
       )}
     >
       <div className="flex flex-col items-center gap-6">
+        <Image src={isCollapsed ? logo : logoFull} alt="logo" width={isCollapsed ? 42 : 200} height={isCollapsed ? 42 : 100} className='object-contain' />
         <ToggleSidebar />
         <MainSidebarNav isCollapsed={isCollapsed} />
       </div>

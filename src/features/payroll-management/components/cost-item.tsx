@@ -17,6 +17,6 @@ export const CostItem = ({ dotColor, label, value, valueClassName }: CostItemPro
       />
       {label}
     </div>
-    <span className={cn('text-2xl font-medium text-[#006FEE]', valueClassName)}>{value}</span>
+    <span className={cn('text-2xl font-medium text-[#6576FF]', valueClassName)}>{value}</span>
   </div>
 );

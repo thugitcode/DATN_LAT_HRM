@@ -4,6 +4,7 @@ import type { DrawerProps } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
 import { DetailPayslipFeedback } from '@/features/payroll-management/components/detail-payslip-feedback';
+import { StaffContractFormDrawer } from '@/features/staff-management/staff-detail/components/staff-contract-form-drawer';
 import { FormKpiMutate } from '@/features/payroll-management/components/form-kpi-mutate';
 import { FormOtherIncomeMutate } from '@/features/payroll-management/components/form-other-income-mutate';
 import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
@@ -15,6 +16,7 @@ import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
 import { WorkShiftsForm } from '@/features/timekeeping-shift-scheduling/shift-management/components/work-shifts-form';
 import { ShiftDetailsDrawer } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-drawer';
+import { FormRecruitmentRequestMutate } from '@/features/recruitment-management/recruitment-request-list/components/form-recruitment-request-mutate';
 
 type DrawerConfig = {
   title: string;
@@ -135,6 +137,26 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
         placement: 'right',
         size: '2xl',
         classNames: { body: 'p-0 bg-[#F4F4F5]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.STAFF_CONTRACT_MUTATE]: {
+      title: '',
+      component: <StaffContractFormDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '5xl',
+        style: { width: '97vw', maxWidth: '97vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.RECRUITMENT_REQUEST_MUTATE]: {
+      title: '',
+      component: <FormRecruitmentRequestMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
       },
     },
   };

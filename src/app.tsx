@@ -1,16 +1,19 @@
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { addToast, HeroUIProvider, ToastProvider } from '@heroui/react';
+import { useKeycloak } from '@react-keycloak/web';
 
 import { PersistProvider } from './components/providers/persist-provider';
 import { routeTree } from './routeTree.gen';
+import i18n from './i18n';
+import type { AuthContext } from './types/auth.type';
 
 const queryClient = new QueryClient({
   queryCache: new QueryCache({
     onError: (error, query) => {
       if (query.meta?.silentError) return;
       addToast({
-        title: 'Có lỗi xảy ra',
+        title: i18n.t('common:toast.description.error_generic'),
         description: error.message,
         color: 'danger',
       });
@@ -92,22 +95,21 @@ declare module '@tanstack/react-router' {
 }
 
 export function App() {
-  // const { keycloak } = useKeycloak();
-  // const auth: AuthContext = {
-  //   isLoggedIn: keycloak.authenticated ?? false,
-  //   tokenPayload: keycloak.tokenParsed,
-  //   accessToken: keycloak.token,
-  //   refreshToken: keycloak.refreshToken,
-  //   logout: () => keycloak.logout(),
-  // };
+  const { keycloak } = useKeycloak();
+  const auth: AuthContext = {
+    isLoggedIn: keycloak.authenticated ?? false,
+    tokenPayload: keycloak.tokenParsed,
+    accessToken: keycloak.token,
+    refreshToken: keycloak.refreshToken,
+    logout: () => keycloak.logout(),
+  };
 
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider placement={'top-right'} />
       <PersistProvider>
-        {/* <GlobalLoading /> */}
         <HeroUIProvider className="h-full">
-          <RouterProvider router={router} context={{ queryClient }} />
+          <RouterProvider router={router} context={{ queryClient, auth }} />
         </HeroUIProvider>
       </PersistProvider>
     </QueryClientProvider>

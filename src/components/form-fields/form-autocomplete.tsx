@@ -5,6 +5,8 @@ import type { FieldValues } from 'react-hook-form';
 import { FormErrorText } from './form-error-text';
 import { FormLabel } from './form-label';
 import type { BaseFieldProps } from './types';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 type Option = { key: string; label: string };
 
@@ -13,6 +15,7 @@ type Props<T extends FieldValues> = BaseFieldProps<T> & {
   placeholder?: string;
   readOnly?: boolean;
   onSelect?: (key: string) => void;
+  variant?: 'flat' | 'underlined' | 'bordered';
 };
 
 export function FormAutocomplete<T extends FieldValues>({
@@ -25,7 +28,9 @@ export function FormAutocomplete<T extends FieldValues>({
   placeholder,
   readOnly,
   onSelect,
+  variant
 }: Props<T>) {
+  const { t } = useTranslation(NAMESPACES.COMMON)
   return (
     <Controller
       name={name}
@@ -40,17 +45,19 @@ export function FormAutocomplete<T extends FieldValues>({
             {readOnly ? (
               <Input
                 value={selectedLabel}
-                isReadOnly
+                readOnly
                 labelPlacement="outside-top"
                 classNames={{
-                  inputWrapper: 'bg-[#F4F4F5] cursor-default',
+                  inputWrapper: 'cursor-default',
                 }}
+                variant={variant}
               />
             ) : (
               <Autocomplete
+                variant={variant}
                 selectedKey={field.value}
                 isDisabled={disabled}
-                placeholder={placeholder ?? 'Chọn'}
+                placeholder={placeholder ?? t('select')}
                 onSelectionChange={(key) => {
                   const value = key ?? '';
                   field.onChange(value);

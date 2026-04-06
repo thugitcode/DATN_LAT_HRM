@@ -1,4 +1,31 @@
 {
+  "header": {
+    "my_profile": "Hồ sơ của tôi",
+    "settings": "Cài đặt",
+    "language": "Ngôn ngữ",
+    "logout": "Đăng xuất"
+  },
+  "right_menu": {
+    "home": "Trang chủ",
+    "hrm": "Quản lý nhân sự",
+    "hrm_label": "HRM",
+    "cis": "Quản lý khám bệnh",
+    "cis_label": "CIS",
+    "lis": "Xét nghiệm",
+    "lis_label": "LIS",
+    "ris": "Chẩn đoán hình ảnh",
+    "ris_label": "RIS",
+    "prm": "Quản lý bệnh nhân",
+    "prm_label": "PRM",
+    "vat_tu": "Dược - Vật tư tiêu hao từ trực",
+    "vat_tu_label": "Vật tư",
+    "kham_doan": "Khám đoàn",
+    "kham_doan_label": "Khám đoàn",
+    "bao_cao": "Báo cáo",
+    "bao_cao_label": "Báo cáo",
+    "ql_benh_nhan": "Quản lý bệnh nhân",
+    "ql_benh_nhan_label": "QL BN"
+  },
   "actions": {
     "reload": "Tải lại",
     "import_excel": "Nhập file excel",
@@ -8,7 +35,19 @@
     "search": "Tìm kiếm",
     "department": "Khoa",
     "room": "Phòng",
-    "status": "Trạng thái"
+    "status": "Trạng thái",
+    "explanation_type": "Loại giải trình",
+    "explanation_types": {
+      "LATE": "Đi muộn",
+      "EARLY_LEAVE": "Về sớm",
+      "MISSING_CHECK_IN": "Quên chấm vào",
+      "MISSING_CHECK_OUT": "Quên chấm ra",
+      "ABSENT": "Vắng mặt",
+      "MISSING_HOURS": "Thiếu giờ",
+      "BUSINESS_TRIP": "Công tác",
+      "SICK": "Nghỉ ốm",
+      "OTHER": "Khác"
+    }
   },
 
   "layout": {
@@ -31,7 +70,12 @@
     "partner_staff": "Nhân sự hợp tác",
     "contract_management": "Quản lý hợp đồng",
 
-    "recruitment_management": "Quản lý tuyển dụng",
+    "recruitment_management": "Tuyển dụng",
+    "recruitment_request": "Yêu cầu tuyển dụng",
+    "candidate": "Ứng viên",
+    "interview_schedule": "Lịch phỏng vấn",
+    "probation_management": "Quản lý thử việc",
+    "recruitment_report": "Báo cáo",
     "management_report": "Báo cáo quản trị",
 
     "other_requests_management": "Quản lý các yêu cầu khác",
@@ -126,7 +170,9 @@
     "rejected": "Từ chối",
     "pending": "Chờ duyệt",
     "working": "Đang làm việc",
-    "off": "Nghỉ"
+    "off": "Nghỉ",
+    "confirmed": "Đã xác nhận",
+    "pendingFeedback": "Chờ phản hồi"
   },
   "select": "Chọn",
   "table": {
@@ -200,6 +246,20 @@
       "EMINENT_PHYSICIAN": "Thầy thuốc Ưu tú",
       "BACHELOR": "Cử nhân",
       "ENGINEER": "Kỹ sư"
+    },
+    "timeline": {
+      "WORK": "Làm việc",
+      "BREAK": "Giờ nghỉ",
+      "OT": "Tăng ca",
+      "LEAVE": "Nghỉ phép",
+      "OTHER": "Khác",
+      "LATE": "Đi muộn",
+      "EARLY": "Về sớm",
+      "UNAUTHORIZED_LEAVE": "Nghỉ không phép",
+      "FORGOT_TO_CLOCK_TIME": "Quên chấm công",
+      "WFH": "Làm việc tại nhà",
+      "BUSINESS_TRIP": "Công tác",
+      "VM": "Vắng mặt"
     }
   },
   "staff": "Nhân viên",
@@ -359,5 +419,9 @@
     "BUSINESS_TRIP": "Đi công tác",
     "SICK": "Nghỉ ốm",
     "OTHER": "Lý do khác"
+  },
+  "file_upload": {
+    "drag_drop_hint": "Kéo & thả hoặc click để chọn file",
+    "supported_formats": "Hỗ trợ: docx, doc, pdf, xlsx, xls, csv (tối đa 5MB/file)"
   }
 }

@@ -1,13 +1,12 @@
-import { memo, useEffect, useRef, type FC } from 'react';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { memo, useRef, type FC } from 'react';
 
 import { getLabelShift } from '@/features/timekeeping-shift-scheduling/helper';
 
 import {
   CELL_W,
   PILL_INSET,
-  STATUS_COLOR_MAP,
-  WORK_SHEET_LEGEND_ITEMS,
+  STATUS_COLOR_MAP
 } from '../../constants/data';
 import type { ShiftCode } from '../../types/index.type';
 
@@ -15,7 +14,7 @@ interface ShiftPillProps {
   shift: ShiftCode;
   span: number;
   hoveredOffset: number | null;
-  workScheduleDetailId?: string;
+  workScheduleDetailId?: string[] | string;
 }
 
 export const ShiftPill: FC<ShiftPillProps> = memo(
@@ -24,10 +23,14 @@ export const ShiftPill: FC<ShiftPillProps> = memo(
     const open = useDrawer((state) => state.onOpen);
 
     const onClick = (index: number) => {
+      const id = Array.isArray(workScheduleDetailId)
+        ? workScheduleDetailId[index]
+        : workScheduleDetailId;
+
       open(
         DrawerType.TIME_SHEET_DETAIL,
 
-        workScheduleDetailId?.[index],
+        id,
       );
     };
 

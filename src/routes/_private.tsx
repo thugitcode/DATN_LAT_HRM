@@ -8,11 +8,20 @@ import { apiTokens } from '@/lib/axios';
 
 export const Route = createFileRoute('/_private')({
   beforeLoad: ({ context: { auth } }) => {
-    // if (!auth.isLoggedIn) {
-    //   throw redirect({ to: '/login' });
-    // }
-    // apiTokens.accessToken = auth.accessToken;
-    // apiTokens.refreshToken = auth.refreshToken;
+    const localJwt = localStorage.getItem('jwt');
+
+    // Ưu tiên token từ URL (CIS flow)
+    if (localJwt) {
+      apiTokens.accessToken = localJwt;
+      return;
+    }
+
+    // Keycloak flow
+    if (!auth?.isLoggedIn) {
+      throw redirect({ to: '/login' });
+    }
+    apiTokens.accessToken = auth.accessToken;
+    apiTokens.refreshToken = auth.refreshToken;
   },
   // loader: async ({ context: { queryClient } }) => {
   //   await queryClient.ensureQueryData(identityQueryOptions());

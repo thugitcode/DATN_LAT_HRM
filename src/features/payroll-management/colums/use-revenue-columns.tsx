@@ -6,10 +6,11 @@ import type { ColumnDef } from '@/components/data-table/data-table';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 import { RowRevenueActions } from '../components/revenue/row-revenue-actions';
-import { StatusChip } from '../components/revenue/status-chip';
 import { KPI_SOURCE_LABEL } from '../constants/kpi';
 import type { KpiSourceEnum } from '../types/kpi.type';
 import type { RevenueDataListType } from '../types/revenue.type';
+import { StatusChip } from '@/components/status-chip';
+import type { Status } from '@/types/global.type';
 
 // import { RowRevenueActions } from '../components/row-attendance-actions';
 
@@ -43,6 +44,7 @@ export const useRevenueDataColumns = () => {
     {
       key: 'staffName',
       title: t('revenue.columns.staff_name'),
+      sticky: 'left',
       width: 180,
       render: (_, record) => record.staff?.name,
       // render: (_, record) => (
@@ -91,13 +93,14 @@ export const useRevenueDataColumns = () => {
       title: t('revenue.columns.status'),
       width: 120,
       align: 'center',
-      render: (_, record) => <StatusChip status={record.status} />,
+      render: (_, record) => <StatusChip status={record.status as Status} />,
     },
     {
       key: 'actions',
       title: t('revenue.columns.actions'),
       width: 100,
       align: 'center',
+      sticky: 'right',
       render: (_, record) => <RowRevenueActions dataRow={record} />,
     },
   ];

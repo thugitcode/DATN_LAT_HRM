@@ -23,5 +23,6 @@ export const otherIncomeOptions = {
       queryKey: otherIncomeKeys.detail(id),
       enabled: !!id,
       queryFn: () => otherIncomeService.getDetail(id),
+      staleTime: 0
     }),
 } as const;

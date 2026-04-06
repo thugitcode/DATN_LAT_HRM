@@ -1,4 +1,4 @@
-import { type FC, useState, useMemo, useCallback, Fragment } from 'react';
+import { type FC, useState, useMemo, Fragment, useCallback } from 'react';
 import {
     Card,
     CardHeader,
@@ -50,7 +50,7 @@ import { useStaffList } from '@/query-options/staff';
 import { ContractStatusEnum, StaffPositionEnum } from '@/types/staff.type';
 import type { StaffContract } from '@/types/staff.type';
 import dayjs from 'dayjs';
-import { StaffContractFormDrawer } from './staff-contract-form-drawer';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 import { useQuery } from '@tanstack/react-query';
 import { departmentQueryOptions } from '@/services/query-options/department.query';
 import { roomQueryOptions } from '@/services/query-options/room.query';
@@ -133,7 +133,7 @@ const getStatusChip = (status: ContractStatusEnum) => {
         case ContractStatusEnum.PENDING_APPROVAL:
             return <Chip size="sm" variant="flat" className="bg-[#FFF7ED] text-[#EA580C] border-none font-medium text-xs px-2">Chờ duyệt</Chip>;
         case ContractStatusEnum.PENDING_SIGNATURE:
-            return <Chip size="sm" variant="flat" className="bg-[#EFF6FF] text-[#006FEE] border-none font-medium text-xs px-2">Chờ ký</Chip>;
+            return <Chip size="sm" variant="flat" className="bg-[#F0F1FF] text-[#6576FF] border-none font-medium text-xs px-2">Chờ ký</Chip>;
         case ContractStatusEnum.SIGNED:
             return <Chip size="sm" variant="flat" className="bg-[#F0FDF4] text-[#16A34A] border-none font-medium text-xs px-2">Đã ký</Chip>;
         case ContractStatusEnum.EXPIRED:
@@ -201,7 +201,7 @@ const initFormFromContract = (contract: StaffContract | undefined): EditFormData
 };
 
 export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const onOpenDrawer = useDrawer((state) => state.onOpen);
     const { setMode } = useControlMode()
     const { data: response, isLoading } = useStaffContracts(staffId);
     const contracts = response?.data || [];
@@ -217,13 +217,8 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     const [formData, setFormData] = useState<EditFormData>(() => initFormFromContract(currentContract));
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const [selectedContractId, setSelectedContractId] = useState<string | undefined>(undefined);
     const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-    const handleCloseDrawer = useCallback(() => {
-        setSelectedContractId(undefined);
-        onClose();
-    }, [onClose]);
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
 
     // Data queries for dropdowns
@@ -394,7 +389,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     if (isLoading) {
         return (
             <div className="flex h-32 items-center justify-center">
-                <div className="w-8 h-8 border-2 border-[#006FEE] border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-2 border-[#6576FF] border-t-transparent rounded-full animate-spin" />
             </div>
         );
     }
@@ -423,7 +418,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 <Button variant="bordered" size="sm" className="border-[#E4E4E7] text-[#11181C] font-semibold h-9 rounded-xl px-4" onPress={handleCancelEdit}>
                                     Hủy
                                 </Button>
-                                <Button color="primary" size="sm" className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" isLoading={isSaving} onPress={handleSave}>
+                                <Button color="primary" size="sm" className="bg-[#6576FF] text-white font-semibold h-9 rounded-xl px-4" isLoading={isSaving} onPress={handleSave}>
                                     Lưu
                                 </Button>
                             </>
@@ -432,7 +427,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 <Button variant="flat" size="sm" startContent={<IconPencil size={18} />} className="bg-[#F4F4F5] text-[#11181C] font-semibold h-9 rounded-xl px-4" onPress={handleStartEdit}>
                                     Chỉnh sửa
                                 </Button>
-                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#006FEE] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setSelectedContractId(undefined); onOpen(); setMode(ControlMode.create) }}>
+                                <Button color="primary" size="sm" startContent={<IconPlus size={18} />} className="bg-[#6576FF] text-white font-semibold h-9 rounded-xl px-4" onPress={() => { setMode(ControlMode.create); onOpenDrawer(DrawerType.STAFF_CONTRACT_MUTATE, { staffId }); }}>
                                     Thêm mới hợp đồng
                                 </Button>
                             </>
@@ -785,7 +780,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                                     {/* <Button isIconOnly size="sm" variant="flat" className="bg-[#FEE2E2] text-[#EF4444] min-w-8 w-8 h-8 rounded-lg" onPress={() => openDeleteModal(history._contractId)}>
                                                         <IconX size={16} />
                                                     </Button> */}
-                                                    <Button size="sm" color="primary" className="bg-[#006FEE] text-white font-semibold h-8 rounded-lg px-4" isLoading={approveMutation.isPending} onPress={() => handleApprove(history._contractId)}>
+                                                    <Button size="sm" color="primary" className="bg-[#6576FF] text-white font-semibold h-8 rounded-lg px-4" isLoading={approveMutation.isPending} onPress={() => handleApprove(history._contractId)}>
                                                         Duyệt
                                                     </Button>
                                                 </>
@@ -801,7 +796,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                                 </>
                                             )}
                                             {canEdit && (
-                                                <Button isIconOnly size="sm" variant="light" className="min-w-8 w-8 h-8 text-[#71717A]" onPress={() => { setSelectedContractId(history._contractId); onOpen(); }}>
+                                                <Button isIconOnly size="sm" variant="light" className="min-w-8 w-8 h-8 text-[#71717A]" onPress={() => { onOpenDrawer(DrawerType.STAFF_CONTRACT_MUTATE, { staffId, contractId: history._contractId }); }}>
                                                     <IconPencil size={18} />
                                                 </Button>
                                             )}
@@ -842,7 +837,6 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                 </ModalContent>
             </Modal>
 
-            <StaffContractFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} staffId={staffId} contractId={selectedContractId} />
         </div>
     );
 };

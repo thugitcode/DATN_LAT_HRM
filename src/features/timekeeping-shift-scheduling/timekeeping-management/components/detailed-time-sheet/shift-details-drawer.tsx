@@ -107,8 +107,7 @@ export const ShiftDetailsDrawer = () => {
         reset();
         refetch();
       },
-      onError(error) {
-        console.log(error, 'err');
+      onError() {
         addToast({
           description: t('shift_details.toast.update_error'),
           color: 'danger',
@@ -222,12 +221,12 @@ export const ShiftDetailsDrawer = () => {
           <Button
             variant="light"
             onPress={closedDrawer}
-            className="border-[#006FEE] border bg-white text-[#006FEE] text-[14px] font-normal"
+            className="border-[#6576FF] border bg-white text-[#6576FF] text-[14px] font-normal"
           >
             {tc('button.cancel')}
           </Button>
 
-          {!isLocked && (
+          {!isLock && (
             <Button type="submit" color="primary" isLoading={isSubmitting}>
               {tc('button.update')}
             </Button>

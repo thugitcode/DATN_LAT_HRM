@@ -363,7 +363,11 @@
     "work_type": {
       "Fulltime": "Toàn thời gian",
       "Parttime": "Bán thời gian"
-    }
+    },
+    "activate_title": "Kích hoạt nhân viên",
+    "deactivate_title": "Ngừng kích hoạt nhân viên",
+    "activate_confirm": "Bạn có chắc muốn kích hoạt nhân viên {{name}}?",
+    "deactivate_confirm": "Bạn có chắc muốn ngừng kích hoạt nhân viên {{name}}?"
   },
   "button": {
     "add_staff": "Thêm mới nhân viên"
@@ -398,6 +402,30 @@
     }
   },
   "contract_info": {
+    "validation": {
+      "contract_type_required": "Vui lòng chọn loại hợp đồng",
+      "work_type_required": "Vui lòng chọn loại hình làm việc",
+      "job_title_required": "Vui lòng chọn chức danh",
+      "position_required": "Vui lòng chọn cấp bậc",
+      "working_time_required": "Vui lòng nhập thời gian làm việc",
+      "working_time_positive": "Thời gian làm việc phải là số dương",
+      "managed_room_required": "Vui lòng chọn phòng quản lý",
+      "managed_department_required": "Vui lòng chọn khoa quản lý",
+      "duration_required": "Vui lòng nhập thời hạn",
+      "duration_positive": "Thời hạn phải là số dương",
+      "contract_number_required": "Vui lòng nhập số hợp đồng",
+      "start_date_required": "Vui lòng chọn ngày bắt đầu",
+      "end_date_required": "Vui lòng chọn ngày kết thúc",
+      "end_date_after_start": "Ngày kết thúc phải lớn hơn ngày bắt đầu",
+      "direct_manager_required": "Vui lòng chọn ít nhất một quản lý trực tiếp",
+      "shift_type_required": "Vui lòng chọn loại hình làm việc theo ca",
+      "working_days_required": "Vui lòng chọn ít nhất một ngày làm việc",
+      "working_area_required": "Phải có ít nhất một khu vực làm việc",
+      "working_area_department_required": "Khoa làm việc không được để trống"
+    },
+    "add_contract": "Thêm mới hợp đồng",
+    "empty_description": "Nhân viên chưa có dữ liệu hợp đồng, vui lòng thêm mới hợp đồng.",
+    "edit_contract": "Chỉnh sửa hợp đồng",
     "title": "Thông tin hợp đồng",
     "contract_type": "Loại hợp đồng",
     "work_type": "Loại hình",
@@ -426,13 +454,13 @@
       "MONTH": "Tháng"
     },
     "days": {
+      "0": "Chủ nhật",
       "2": "Thứ 2",
       "3": "Thứ 3",
       "4": "Thứ 4",
       "5": "Thứ 5",
       "6": "Thứ 6",
-      "7": "Thứ 7",
-      "0": "Chủ nhật"
+      "7": "Thứ 7"
     }
   },
   "shift_type": {
@@ -537,6 +565,81 @@
     "messages": {
       "selectInfo": "Vui lòng chọn thông tin tài liệu cần tải lên",
       "updateError": "Có lỗi xảy ra trong quá trình cập nhật"
+    }
+  },
+  "shiftEntry": {
+    "today": "Hôm nay",
+    "approved": "Đã được duyệt",
+    "checkIn": "Chấm công vào",
+    "checkOut": "Chấm công về",
+    "totalHours": "Tổng giờ",
+    "late": "Đi muộn",
+    "early": "Về sớm",
+    "wfh": "Làm việc tại nhà",
+    "businessTrip": "Công tác",
+    "vm": "Vắng mặt không phép",
+    "forgotClockTime": "Quên chấm công"
+  },
+  "attendanceSummary": {
+    "noData": "Không có dữ liệu",
+    "dayOff": "Ngày nghỉ",
+    "lateCount": "Chấm công muộn",
+    "earlyLeaveCount": "Về sớm",
+    "missedCheckIn": "Quên chấm công",
+    "remainingLeave": "Số phép còn lại",
+    "unauthorizedLeave": "Nghỉ không phép"
+  },
+  "no_staff_found": "Không tìm thấy thông tin nhân viên",
+  "work_history": {
+    "title": "Lịch sử làm việc",
+    "empty": "Chưa có dữ liệu lịch sử làm việc",
+    "columns": {
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "job_title": "Chức danh",
+      "position": "Cấp bậc",
+      "department": "Khoa/Phòng",
+      "contract_type": "Loại hợp đồng",
+      "work_type": "Loại hình",
+      "duration": "Thời gian",
+      "start_date": "Ngày bắt đầu",
+      "end_date": "Ngày kết thúc",
+      "status": "Trạng thái"
+    },
+    "status": {
+      "PENDING_APPROVAL": "Chờ duyệt",
+      "PENDING_SIGNATURE": "Chờ ký",
+      "SIGNED": "Đã ký",
+      "EXPIRED": "Hết hạn"
+    },
+    "actions": {
+      "approve": "Duyệt",
+      "sign": "Ký hợp đồng",
+      "approve_title": "Xác nhận duyệt hợp đồng",
+      "approve_desc": "Bạn có chắc chắn muốn duyệt hợp đồng này không?",
+      "sign_title": "Xác nhận ký hợp đồng",
+      "sign_desc": "Bạn có chắc chắn muốn ký hợp đồng này không?",
+      "delete_title": "Xác nhận xóa hợp đồng",
+      "delete_desc": "Thông tin hợp đồng sau khi xóa không thể hoàn tác, bạn có chắc chắn muốn xóa hợp đồng?",
+      "approve_success": "Duyệt hợp đồng thành công",
+      "approve_error": "Duyệt hợp đồng thất bại",
+      "sign_success": "Ký hợp đồng thành công",
+      "sign_error": "Ký hợp đồng thất bại",
+      "delete_success": "Xóa hợp đồng thành công",
+      "delete_error": "Xóa hợp đồng thất bại"
+    },
+    "duration_year": "{{duration}} năm",
+    "duration_month": "{{duration}} tháng"
+  },
+  "page_filter": {
+    "recently_opened": "Đã mở gần đây",
+    "recently_added": "Thêm mới gần đây"
+  },
+  "time_attendance": {
+    "tabs": {
+      "worksheet_by_shift": "Chấm công",
+      "shift_explanation": "Giải trình ca",
+      "shift_assignment": "Phân ca"
     }
   }
 }

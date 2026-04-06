@@ -2,14 +2,14 @@ import { NAMESPACES } from '@/i18n/constants';
 import { DrawerType } from '@/store/useDrawer';
 import { useTranslation } from 'react-i18next';
 
-import { ActionButton } from '@/components/action-button';
-import DataTable from '@/components/data-table/data-table';
-import { TitlePage } from '@/components/title-page';
+import type { RequestsParams } from '@/types/global.type';
+import { icons } from '@/lib/icons';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { usePaginationConfig } from '@/hooks/use-pagination-config';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
-import { icons } from '@/lib/icons';
-import type { RequestsParams } from '@/types/global.type';
+import { ActionButton } from '@/components/action-button';
+import DataTable from '@/components/data-table/data-table';
+import { TitlePage } from '@/components/title-page';
 
 import { useRevenueDataColumns } from '../colums/use-revenue-columns';
 import { BtnCreateKpi } from '../components/btn-create-kpi';
@@ -36,6 +36,7 @@ export const RevenueData = () => {
     search: search,
     departmentId: departmentId,
     roomId: roomId,
+    status,
   });
 
   const { paginationConfig } = usePaginationConfig({

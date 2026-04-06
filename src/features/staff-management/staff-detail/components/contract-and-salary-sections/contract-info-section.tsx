@@ -8,6 +8,7 @@ import { StaffJobTitleEnum, StaffPositionEnum, WorkingTypeTypeEnum } from '@/typ
 
 // Các custom component bạn đã có
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
+import { FormCheckboxGroup } from '@/components/form-fields/form-checkbox-group';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
 import { FormInput } from '@/components/form-fields/form-input';
 import { FormLabel } from '@/components/form-fields/form-label';
@@ -17,12 +18,14 @@ import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { shiftTemplateQueryOptions } from '@/services/query-options/shift-template.query';
-import { Button, Checkbox, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { WorkingAreaSection } from './working-area-section';
 import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
 import { useRoomOptions } from '@/hooks/select-options/use-room-options';
+import { taxOptions } from '@/services/query-options/tax/tax.query';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 
 export const ContractInfoSection: FC = () => {
   const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
@@ -30,6 +33,11 @@ export const ContractInfoSection: FC = () => {
   const { options: departmentOptions } = useDepartmentOptions();
   const selectedDepts = watch("managedDepartmentId");
   const { options: roomOptions } = useRoomOptions(selectedDepts);
+  const { data: taxRateRes } = useQuery(taxOptions.getTaxRate());
+  const { data: taxBracketRes } = useQuery(taxOptions.getTaxBracket());
+
+  const { isView } = useControlMode()
+  const variant = isView ? "underlined" : "flat"
 
   const { data: managersRes } = useStaffList({
     getAll: true,
@@ -79,7 +87,7 @@ export const ContractInfoSection: FC = () => {
   const workingTimeUnit = watch("workingTimeUnit") || "MONTH";
 
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
+    <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4 w-full">
       <div className="flex items-center gap-2 mb-2">
         {icons.archiveBook}
         <h3 className="text-[15px] font-bold text-[#11181C]">{t('contract_info.title')}</h3>
@@ -93,7 +101,8 @@ export const ContractInfoSection: FC = () => {
             label={t('contract_info.contract_type')}
             isRequired
             options={contractTypeOptions}
-            disabled={isSubmitting}
+            readOnly={isSubmitting || isView}
+            variant={variant}
           />
 
           <FormSelect
@@ -105,7 +114,8 @@ export const ContractInfoSection: FC = () => {
               label: t(`options.workType.${val}`),
               key: val
             }))}
-            disabled={isSubmitting}
+            readOnly={isSubmitting || isView}
+            variant={variant}
           />
 
           <FormSelect
@@ -117,7 +127,8 @@ export const ContractInfoSection: FC = () => {
               label: t(`options.job_title.${val}`),
               key: val
             }))}
-            disabled={isSubmitting}
+            readOnly={isSubmitting || isView}
+            variant={variant}
           />
 
           <FormSelect
@@ -129,7 +140,8 @@ export const ContractInfoSection: FC = () => {
               label: t(`options.staff_position.${val}`),
               key: val
             }))}
-            disabled={isSubmitting}
+            readOnly={isSubmitting || isView}
+            variant={variant}
           />
         </div>
 
@@ -144,19 +156,21 @@ export const ContractInfoSection: FC = () => {
                 name="duration"
                 placeholder={t('contract_info.placeholders.enter')}
                 isRequired
-                disabled={isSubmitting}
+                readOnly={isSubmitting || isView}
                 classNames={{
                   // inputWrapper: "pr-28", // hoặc pr-[7rem] nếu cần rộng hơn
                 }}
+                variant={variant}
                 endContent={
                   <div className="flex items-center gap-2">
                     <Dropdown>
                       <DropdownTrigger>
                         <Button
-                          variant="bordered"
+                          // variant="bordered"
                           className="h-8 min-h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white transition-all hover:bg-gray-50"
                           endContent={<IconChevronDown size={14} />}
-                          isDisabled={isSubmitting}
+                          disabled={isSubmitting || isView}
+                          variant={isView ? "solid" : "bordered"}
                         >
                           {watch('durationUnit') === 'YEAR' ? t('contract_info.duration_units.YEAR') : t('contract_info.duration_units.MONTH')}
                         </Button>
@@ -185,7 +199,9 @@ export const ContractInfoSection: FC = () => {
             control={control}
             name="contractNumber"
             label={t('contract_info.contract_number')}
-            disabled={isSubmitting}
+            isRequired
+            readOnly={isSubmitting || isView}
+            variant={variant}
           />
         </div>
 
@@ -195,7 +211,8 @@ export const ContractInfoSection: FC = () => {
             name="startDate"
             label={t('contract_info.start_date')}
             isRequired
-            disabled={isSubmitting}
+            isReadOnly={isSubmitting || isView}
+            variant={variant}
           />
 
           <FormDatePicker
@@ -203,7 +220,9 @@ export const ContractInfoSection: FC = () => {
             name="endDate"
             label={t('contract_info.end_date')}
             isRequired
-            disabled={isSubmitting}
+            isReadOnly={isSubmitting || isView}
+            variant={variant}
+
           />
         </div>
 
@@ -215,8 +234,9 @@ export const ContractInfoSection: FC = () => {
             label={t('staffForm.fields.departmentIds.label')}
             selectionMode="single"
             isRequired
-            disabled={isSubmitting}
+            readOnly={isSubmitting || isView}
             options={departmentOptions?.map(it => ({ key: it.value, label: it.label }))}
+            variant={variant}
           />
 
           {/* Phòng quản lý */}
@@ -226,11 +246,12 @@ export const ContractInfoSection: FC = () => {
             label={t('staffForm.fields.roomIds.label')}
             selectionMode="single"
             isRequired
-            disabled={isSubmitting}
+            readOnly={isSubmitting || isView}
             options={roomOptions?.map(it => ({ key: it.value, label: it.label }))}
+            variant={variant}
           />
         </div>
-        <WorkingAreaSection />
+        <WorkingAreaSection isView={isView} variant={variant} />
 
         <FormSelect
           control={control}
@@ -238,8 +259,9 @@ export const ContractInfoSection: FC = () => {
           label={t('contract_info.direct_manager')}
           isRequired
           options={managerOptions}
-          disabled={isSubmitting}
+          readOnly={isSubmitting || isView}
           selectionMode='multiple'
+          variant={variant}
         />
 
         <div className={cn(shiftType === 'FIXED' ? "grid grid-cols-2" : "flex w-full", "gap-4 items-end")}>
@@ -250,7 +272,8 @@ export const ContractInfoSection: FC = () => {
               label={t('contract_info.shift_type')}
               isRequired
               options={shiftTypeOptions}
-              disabled={isSubmitting}
+              readOnly={isSubmitting || isView}
+              variant={variant}
             />
           </div>
 
@@ -265,7 +288,8 @@ export const ContractInfoSection: FC = () => {
                 key: s.id,
                 label: `${s.code} - ${s.name}`
               })) || []}
-              disabled={isSubmitting}
+              readOnly={isSubmitting || isView}
+              variant={variant}
             />
           )}
           <div className="flex flex-col gap-2 col-span-2 flex-1">
@@ -281,15 +305,16 @@ export const ContractInfoSection: FC = () => {
                 name="workingTime"
                 placeholder={t('contract_info.placeholders.enter')}
                 isRequired
-                disabled={isSubmitting}
+                readOnly={isSubmitting || isView}
+                variant={variant}
                 endContent={
                   <Dropdown>
                     <DropdownTrigger>
                       <Button
-                        variant="bordered"
-                        isDisabled={isSubmitting}
+                        disabled={isSubmitting || isView}
                         className="h-8 min-h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white hover:bg-gray-50"
                         endContent={<IconChevronDown size={14} />}
+                        variant={isView ? "solid" : "bordered"}
                       >
                         {WORKING_TIME_UNITS.find((u) => u.key === workingTimeUnit)?.label}
                       </Button>
@@ -322,32 +347,22 @@ export const ContractInfoSection: FC = () => {
       {
         shiftType === 'FIXED' && (
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-[#11181C]">
-              {t('contract_info.working_days')} <span className="text-danger">*</span>
-            </label>
-            <div className="flex flex-wrap gap-4">
-              {[2, 3, 4, 5, 6, 7, 0].map((dayValue) => {
-                return (
-                  // Nếu chưa có FormCheckboxGroup, tạm dùng Checkbox gốc
-                  // hoặc bạn tạo thêm component FormCheckbox sau
-                  <Checkbox
-                    key={dayValue}
-                    isSelected={watch('workingDays')?.includes(dayValue) ?? false}
-                    onValueChange={checked => {
-                      const current = watch('workingDays') || [];
-                      if (checked) {
-                        setValue('workingDays', [...current, dayValue], { shouldValidate: true });
-                      } else {
-                        setValue('workingDays', current.filter((d: number) => d !== dayValue), { shouldValidate: true });
-                      }
-                    }}
-                    size="sm"
-                  >
-                    {t(`contract_info.days.${dayValue}` as any)}
-                  </Checkbox>
-                );
-              })}
-            </div>
+            <FormLabel
+              label={t('contract_info.working_days')}
+              isRequired
+              isError={!!errors.workingDays}
+            />
+            <FormCheckboxGroup
+              control={control}
+              name="workingDays"
+              disabled={isView}
+              className="flex-row flex-wrap"
+              transform={(key) => Number(key)}
+              options={[2, 3, 4, 5, 6, 7, 0].map((dayValue) => ({
+                key: String(dayValue),
+                label: t(`contract_info.days.${dayValue}` as any),
+              }))}
+            />
           </div>
         )
       }

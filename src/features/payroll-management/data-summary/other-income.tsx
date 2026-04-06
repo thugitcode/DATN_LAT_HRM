@@ -1,19 +1,19 @@
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
-import type { RequestsParams } from '@/types/global.type';
-import { icons } from '@/lib/icons';
-import { usePaginationConfig } from '@/hooks/use-pagination-config';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { ActionButton } from '@/components/action-button';
 import DataTable from '@/components/data-table/data-table';
 import { TitlePage } from '@/components/title-page';
+import { usePaginationConfig } from '@/hooks/use-pagination-config';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { icons } from '@/lib/icons';
+import type { RequestsParams } from '@/types/global.type';
 
 import { useOtherIncomeColumns } from '../colums/use-other-income-columns';
 import { BtnCreateOtherIncome } from '../components/btn-create-other-income';
 import { PayrollManagementFilters } from '../components/payroll-management-filters';
-import { statusKpiOptions } from '../constants/constants';
 import { useOtherIncomeList } from '../hooks/use-payroll-management';
+import dayjs from 'dayjs';
 
 const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-340px)]' } as const;
 
@@ -28,7 +28,7 @@ export const OtherIncome = () => {
   const { data, isLoading } = useOtherIncomeList({
     page: page ?? 1,
     limit: limit ?? 10,
-    month,
+    month: month ?? dayjs().format("YYYY-MM"),
     search: search,
     departmentId: departmentId,
     roomId: roomId,

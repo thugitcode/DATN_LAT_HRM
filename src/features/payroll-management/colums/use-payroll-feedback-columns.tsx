@@ -4,12 +4,26 @@ import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@/components/data-table/data-table';
 
 import { RowPayslipActions } from '../components/row-payslip-feedback-actions';
-import type { PayslipFeedback } from '../types/payslip-feedback.type';
+import type { PayslipFeedback, PayslipFeedbackStatus } from '../types/payslip-feedback.type';
+import { StatusChip, type StatusConfig } from '@/components/status-chip';
+import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
-const StatusLabel: Record<string, string> = {
-  PENDING: 'Chờ xử lý',
-  RESOLVED: 'Đã xử lý',
-  REJECTED: 'Từ chối',
+const StatusConfig: Record<PayslipFeedbackStatus, StatusConfig> = {
+  CONFIRMED: {
+    color: 'success',
+    icon: 'checkedDone',
+    i18nKey: 'status.confirmed',
+  },
+  REJECTED: {
+    color: 'danger',
+    icon: 'cancel',
+    i18nKey: 'status.rejected',
+  },
+  PENDING: {
+    color: 'warning',
+    icon: 'peinding',
+    i18nKey: 'status.pendingFeedback',
+  },
 };
 
 export const usePayrollFeedbackColumns = () => {
@@ -28,6 +42,9 @@ export const usePayrollFeedbackColumns = () => {
       key: 'department',
       title: t('payslipFeedback.columns.department'),
       minWidth: 140,
+      render(value, record, index) {
+        return <DepartmentRoomInfo departments={record.staff?.departments} rooms={record.staff?.rooms} />
+      },
     },
     {
       key: 'code',
@@ -46,13 +63,13 @@ export const usePayrollFeedbackColumns = () => {
       ),
     },
     {
-      key: 'payrollResult',
+      key: 'payroll',
       title: t('payslipFeedback.columns.net_salary'),
       minWidth: 130,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">
-          {row.payrollResult?.netPay
-            ? Number(row.payrollResult.netPay).toLocaleString('vi-VN') + ' đ'
+          {row.payroll?.netPay
+            ? Number(row.payroll.netPay).toLocaleString('vi-VN') + ' đ'
             : '—'}
         </span>
       ),
@@ -63,7 +80,7 @@ export const usePayrollFeedbackColumns = () => {
       minWidth: 130,
       render: (_, row) => (
         <span className="text-sm text-[#11181C] whitespace-nowrap">
-          {StatusLabel[row.status] ?? row.status}
+          <StatusChip status={row.status} statusConfig={StatusConfig} />
         </span>
       ),
     },
@@ -75,10 +92,10 @@ export const usePayrollFeedbackColumns = () => {
         <span className="text-sm text-[#11181C] whitespace-nowrap">
           {row.resolvedAt
             ? new Date(row.resolvedAt).toLocaleDateString('vi-VN', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-              })
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            })
             : '—'}
         </span>
       ),

@@ -1,20 +1,23 @@
-import { useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useStaffDetail, useUpdateStaff } from '@/query-options/staff';
 import { Button, Tab, Tabs } from '@heroui/react';
+import { useEffect, useState } from 'react';
 import { Form, FormProvider } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { icons } from '@/lib/icons';
 import { BtnCancel } from '@/components/btn-cancel';
 import { BtnSave } from '@/components/btn-save';
 import { PageContainer } from '@/components/page-container';
+import { icons } from '@/lib/icons';
 
+import { LoadingWrapper } from '@/components/loading-wrapper';
 import { StaffProfile } from '../profile-staff/staff-profile';
 import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
+import { ActiveStatusEnum } from '@/types/staff.type';
 import { SalaryAndBenefits } from '../salary-and-benefits/salary-and-benefits';
 import { TimeAttendanceManagementTab } from '../time-attendance-management/time-attendance-management-tab';
-import { StaffContractInfo, StaffDetailHeader } from './components';
+import { StaffDetailHeader } from './components';
+import { ContractFormContainer } from './components/contract-form-container';
 import { StaffDetailInfo } from './components/staff-detail-info';
 import { useStaffDetailTabs } from './hooks/use-staff-detail-tabs';
 import { useStaffForm } from './hooks/use-staff-form';
@@ -27,25 +30,34 @@ interface StaffDetailProps {
 export const StaffDetail = ({ id }: StaffDetailProps) => {
   const { data: response, isLoading } = useStaffDetail(id);
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
-  const { setMode } = useControlMode();
-  const { form, onSubmit } = useStaffForm(true, response?.data, () => {});
+  const { setMode, setReadOnly, data: dataMode, isEdit } = useControlMode();
+  const { form, onSubmit } = useStaffForm(true, response?.data, () => { });
   const updateStaffMutation = useUpdateStaff();
   const staff = response?.data;
+  const isInactive = staff?.activeStatus === ActiveStatusEnum.INACTIVE;
   const [isEditingAll, setIsEditingAll] = useState(false);
   const { activeKey, onSelectionChange } = useStaffDetailTabs();
 
+  useEffect(() => {
+    setIsEditingAll(isEdit && dataMode === "ALL")
+  }, [isEdit, dataMode])
+
+  // Lock toàn bộ về readonly khi staff inactive
+  useEffect(() => {
+    setReadOnly(!!isInactive);
+    if (isInactive) setIsEditingAll(false);
+  }, [isInactive])
+
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center bg-[#F8F9FA]">
-        <div className="w-10 h-10 border-4 border-[#006FEE] border-t-transparent rounded-full animate-spin" />
-      </div>
+      <LoadingWrapper isLoading={isLoading} height='50vh'><></></LoadingWrapper>
     );
   }
 
   if (!staff) {
     return (
       <div className="flex h-full items-center justify-center bg-[#F8F9FA]">
-        <p className="text-[#71717A]">Không tìm thấy thông tin nhân viên</p>
+        <p className="text-[#71717A]">{t('no_staff_found')}</p>
       </div>
     );
   }
@@ -78,7 +90,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                     {t('staffDetail.infoTab.title')}
                   </h2>
                   <div className="flex items-center gap-2">
-                    {isEditingAll ? (
+                    {!isInactive && (isEditingAll ? (
                       <>
                         <BtnCancel
                           onPress={handleCancelAll}
@@ -87,7 +99,6 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                         <BtnSave
                           type="submit"
                           form="staff-detail-form"
-                          // onPress={handleSaveAll}
                           isLoading={updateStaffMutation.isPending}
                         />
                       </>
@@ -95,7 +106,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                       <Button
                         variant="bordered"
                         className="border-primary text-primary font-semibold rounded-xl px-4"
-                        startContent={<icons.edit stroke="#006FEE" className="size-5" />}
+                        startContent={<icons.edit stroke="#6576FF" className="size-5" />}
                         onPress={() => {
                           setIsEditingAll(true);
                           setMode(ControlMode.edit, 'ALL');
@@ -103,7 +114,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                       >
                         {t('staffDetail.infoTab.buttons.edit')}
                       </Button>
-                    )}
+                    ))}
                   </div>
                 </div>
                 <div className="overflow-auto h-[calc(100vh-310px)]">
@@ -113,7 +124,10 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
             </FormProvider>
           </Tab>
           <Tab key={TAB_KEYS.CONTRACT} title={t('staffDetail.tabs.contract')}>
-            <StaffContractInfo staffId={id} />
+            {/* <StaffContractInfo staffId={id} /> */}
+            {/* <StaffContractInfo staffId={id} /> */}
+            <ContractFormContainer />
+
           </Tab>
           <Tab key={TAB_KEYS.SALARY} title={t('staffDetail.tabs.salary')}>
             <SalaryAndBenefits />

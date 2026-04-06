@@ -1,23 +1,13 @@
 import { useDrawer } from '@/store/useDrawer';
 import { Button } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
 
+import { NAMESPACES } from '@/i18n/constants';
 import { formatVND } from '@/lib/helpers';
 import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 
 import type { PayslipFeedback } from '../types/payslip-feedback.type';
-
-const StatusLabel: Record<string, string> = {
-  PENDING: 'Chờ xử lý',
-  RESOLVED: 'Đã xử lý',
-  REJECTED: 'Từ chối',
-};
-
-const JobTitleLabel: Record<string, string> = {
-  DOCTOR: 'Bác sĩ',
-  NURSE: 'Y tá',
-  PHARMACIST: 'Dược sĩ',
-  TECHNICIAN: 'Kỹ thuật viên',
-};
+import { icons } from '@/lib/icons';
 
 const formatDate = (value?: string | null) => {
   if (!value) return '—';
@@ -25,22 +15,22 @@ const formatDate = (value?: string | null) => {
   return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 };
 
-const calcGross = (payrollResult: PayslipFeedback['payrollResult']) => {
-  if (!payrollResult) return 0;
+const calcGross = (payroll: PayslipFeedback['payroll']) => {
+  if (!payroll) return 0;
   return (
-    Number(payrollResult.basicSalary) +
-    Number(payrollResult.allowanceAmount) +
-    Number(payrollResult.overtimeAmount) +
-    Number(payrollResult.bonusAmount)
+    Number(payroll.basicSalary) +
+    Number(payroll.allowanceAmount) +
+    Number(payroll.overtimeAmount) +
+    Number(payroll.bonusAmount)
   );
 };
 
 const Row = ({ label, value, bold }: { label: string; value: string; bold?: boolean }) => (
-  <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
-    <span className={`text-sm ${bold ? 'font-semibold text-gray-800' : 'text-gray-600'}`}>
+  <div className="flex items-center justify-between py-1">
+    <span className={`text-sm text-gray-600`}>
       {label}
     </span>
-    <span className={`text-sm ${bold ? 'font-semibold text-gray-800' : 'text-gray-800'}`}>
+    <span className={`text-base leading-6 ${bold ? 'font-medium text-gray-800' : 'text-gray-800'}`}>
       {value}
     </span>
   </div>
@@ -48,41 +38,41 @@ const Row = ({ label, value, bold }: { label: string; value: string; bold?: bool
 
 export const DetailPayslipFeedback = () => {
   const { data, onClose } = useDrawer((state) => state);
+  const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
+  const { t: tCommon } = useTranslation(NAMESPACES.COMMON);
 
   const dataRow = data as PayslipFeedback | undefined;
 
   if (!dataRow) return null;
 
-  const { staff, payrollResult, status, resolvedAt } = dataRow;
-  const period = payrollResult?.payrollPeriod;
-  const details = payrollResult?.calculationDetails;
+  const { staff, payroll, status, resolvedAt, period } = dataRow;
 
-  const isResolved = status === 'RESOLVED';
+  const details = payroll?.calculationDetails;
+
+  const isResolved = status === 'CONFIRMED';
   const staffSubtitle = [
     staff?.code,
-    staff?.jobTitle ? (JobTitleLabel[staff.jobTitle] ?? staff.jobTitle) : null,
+    staff?.jobTitle ? tCommon(`options.job_title.${staff.jobTitle}`, { defaultValue: staff.jobTitle }) : null,
   ]
     .filter(Boolean)
     .join(' · ');
 
   return (
-    <div className="flex flex-col justify-between pb-6 h-full bg-white">
+    <div className="flex flex-col justify-between pb-5 h-full gap-3 bg-white overflow-hidden">
       <div className="px-6">
-        <div className="flex items-center justify-between px-4 pt-4 pb-2">
-          <h2 className="text-xl font-bold text-gray-900">Phiếu lương</h2>
+        <div className="flex items-center justify-between pb-3 pt-4">
+          <h2 className="text-xl font-bold text-gray-900">{t('payslipFeedback.detail.title')}</h2>
           <div className="flex items-center gap-3">
             {resolvedAt && <span className="text-xs text-gray-400">{formatDate(resolvedAt)}</span>}
             <span
-              className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${
-                isResolved ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'
-              }`}
+              className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-full ${isResolved ? 'bg-green-50 text-green-700' : 'bg-yellow-50 text-yellow-700'
+                }`}
             >
               <span
-                className={`w-1.5 h-1.5 rounded-full ${
-                  isResolved ? 'bg-green-500' : 'bg-yellow-500'
-                }`}
+                className={`w-1.5 h-1.5 rounded-full ${isResolved ? 'bg-green-500' : 'bg-yellow-500'
+                  }`}
               />
-              {StatusLabel[status] ?? status}
+              {t(`payslipFeedback.detail.status.${status}`, { defaultValue: status })}
             </span>
           </div>
         </div>
@@ -96,58 +86,75 @@ export const DetailPayslipFeedback = () => {
             </div>
           </div>
           {period?.name && (
-            <p className="text-white text-base font-semibold uppercase tracking-wide text-right">
-              Phiếu lương {period.name.toUpperCase()}
+            <p className="text-white text-xl font-medium uppercase tracking-wide text-right">
+              {t('payslipFeedback.detail.payslip_period', { period: period.name.toUpperCase() })}
             </p>
           )}
         </div>
 
-        <div className="flex-1 rounded-b-xl border border-[#11111126] overflow-y-auto px-4 pb-4">
-          <div className="mb-4">
-            <Row label="Từ ngày" value={formatDate(period?.fromDate)} bold />
-            <Row label="Đến ngày" value={formatDate(period?.toDate)} bold />
+        <div className="flex-1 rounded-b-xl border border-[#11111126] overflow-y-auto px-6 py-3 overflow-auto h-[calc(100vh-185px)]">
+          <div className="mb-4 flex flex-col gap-2">
+            <Row label={t('payslipFeedback.detail.from_date')} value={formatDate(period?.fromDate)} bold />
+            <Row label={t('payslipFeedback.detail.to_date')} value={formatDate(period?.toDate)} bold />
             <Row
-              label="Công chuẩn"
-              value={details?.standardDays != null ? `${details.standardDays} ngày` : '—'}
+              label={t('payslipFeedback.detail.standard_days')}
+              value={payroll?.workDays != null ? `${payroll.workDays} ${t('payslipFeedback.detail.unit_day')}` : '—'}
               bold
             />
             <Row
-              label="Công thực tế"
-              value={details?.actualWorkDays != null ? `${details.actualWorkDays} ngày` : '—'}
+              label={t('payslipFeedback.detail.actual_work_days')}
+              value={payroll?.totalAttendance != null ? `${payroll.totalAttendance} ${t('payslipFeedback.detail.unit_day')}` : '—'}
               bold
             />
-            <Row label="Công trực" value="—" bold />
+            <Row label={t('payslipFeedback.detail.on_duty')} value={payroll?.onCallDays != null ? `${payroll.onCallDays} ${t('payslipFeedback.detail.unit_hour')}` : '—'} bold />
             <Row
-              label="Làm thêm"
-              value={details?.overtimeHours != null ? `${details.overtimeHours} giờ` : '—'}
+              label={t('payslipFeedback.detail.overtime_hours')}
+              value={payroll?.overtimeHours != null ? `${payroll.overtimeHours} ${t('payslipFeedback.detail.unit_hour')}` : '—'}
               bold
             />
-            <Row label="Công tác" value="—" bold />
+            <Row label={t('payslipFeedback.detail.business_trip')} value={payroll?.businessTripDays != null ? `${payroll.businessTripDays} ${t('payslipFeedback.detail.unit_day')}` : '—'} bold />
           </div>
 
           <div className="border-t border-dashed border-gray-200 my-2" />
 
           <div className="">
-            <Row label="Tổng Gross" value={formatVND(calcGross(payrollResult))} bold />
+            <Row label={t('payslipFeedback.detail.total_gross')} value={formatVND(payroll?.totalGross ?? 0)} bold />
             <Row
-              label="BH NV đóng"
-              value={formatVND(Number(payrollResult?.insuranceAmount))}
+              label={t('payslipFeedback.detail.insurance')}
+              value={formatVND(Number(payroll?.employeeContribution ?? 0))}
               bold
             />
-            <Row label="Thuế TNCN" value={formatVND(Number(payrollResult?.taxAmount))} bold />
-            <Row label="Tạm ứng (Nếu có)" value="—" />
+            <Row label={t('payslipFeedback.detail.tax')} value={formatVND(Number(payroll?.personalIncomeTax ?? 0))} bold />
+            <Row label={t('payslipFeedback.detail.advance')} value={formatVND(Number(payroll?.advancePayment ?? 0))} bold />
           </div>
 
           <div className="border-t border-dashed border-gray-200 my-6" />
 
-          <div className="mt-2 rounded-xl bg-blue-50 px-4 py-6 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-blue-500 text-base">🔒</span>
-              <span className="text-sm font-semibold text-gray-800">Tổng thực nhận:</span>
+          <div className="rounded-xl bg-blue-50 p-3 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-[#6576FF]">
+              {icons.moneyBag}
+              <span className="text-[#6576FF] font-medium text-lg leading-7">{t('payslipFeedback.detail.net_pay')}</span>
             </div>
-            <span className="text-base font-bold text-blue-600">
-              {formatVND(Number(payrollResult?.netPay))}
+            <span className="text-2xl font-medium leading-8 text-blue-600">
+              {formatVND(Number(payroll?.netPay ?? 0))}
             </span>
+          </div>
+
+          <div className="border-t border-dashed border-gray-200 my-6" />
+
+          <div className='border border-[#11111126] rounded-xl'>
+            <div className='bg-[#F4F4F5] rounded-t-xl p-3'>
+              {t("payslipFeedback.detail.history")}
+            </div>
+            <div className='p-3 gap-2 flex flex-col'>
+              <div className='flex items-center gap-2'>
+                <StaffAvatar avatarUrl={staff.avatar} name={staff.name} />
+                <span className='text-sm leading-5'>{staff.name}</span>
+              </div>
+              <div className='bg-[#F4F4F5] rounded-xl p-3 text-xs leading-4'>
+                {dataRow.content}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -157,9 +164,9 @@ export const DetailPayslipFeedback = () => {
           variant="light"
           size="sm"
           onPress={onClose}
-          className="border-[#006FEE] border bg-white text-[#006FEE] text-[14px] font-normal"
+          className="border-[#6576FF] border bg-white text-[#6576FF] text-[14px] font-normal"
         >
-          Thoát
+          {t('payslipFeedback.detail.close')}
         </Button>
       </div>
     </div>

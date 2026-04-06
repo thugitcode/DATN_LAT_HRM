@@ -2,10 +2,10 @@ import { DEFAULT_PAGINATION } from '@/query-options/constants';
 
 import type {
   StaffAttendanceRecord
-} from '@/features/staff-management/time-attendance-management/types';
+} from '@/features/staff-management/types/types';
 import type { WorkScheduleDetail } from '@/features/timekeeping-shift-scheduling/shift-management/types/type';
 import { hrmInstance } from '@/lib/axios';
-import type { ApiResponse } from '@/types';
+import type { ApiResponse, IApiResponseShiftDivision } from '@/types';
 import type {
   CreateStaffSchedule,
   StaffSchedule,
@@ -50,7 +50,7 @@ class ShiftManagementService extends BaseApiService<
     });
   }
 
-  async getAllGrid(params?: StaffParams): Promise<ApiResponse<StaffSchedule[]>> {
+  async getAllGrid(params?: StaffParams): Promise<IApiResponseShiftDivision<StaffSchedule>> {
     return this.request(async () => {
       const res = await this.instance.get(`${this.url()}/calendar`, { params });
       return res.data;

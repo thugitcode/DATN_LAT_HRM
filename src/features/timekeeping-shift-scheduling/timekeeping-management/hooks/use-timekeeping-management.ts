@@ -69,3 +69,38 @@ export function useCraetePeriodsMutation(month: string) {
     },
   });
 }
+export function useLockPeriodsMutation(month: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ApprovePayload) => payrollPerriodsService.lock(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: payrollPeriodsKeys.status(month),
+      });
+
+      addToast({
+        description: 'Duyệt bảng công thành công.',
+        color: 'success',
+      });
+    },
+  });
+}
+
+export function useUnLockPeriodsMutation(month: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ApprovePayload) => payrollPerriodsService.unlock(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: payrollPeriodsKeys.status(month),
+      });
+
+      addToast({
+        description: 'Hủy duyệt bảng công thành công.',
+        color: 'success',
+      });
+    },
+  });
+}

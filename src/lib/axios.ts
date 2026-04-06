@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 import { config as configApp } from './config';
 import { getErrorMessage } from './utils';
@@ -14,22 +15,19 @@ export const apiTokens: {
 
 export const hrmInstance = axios.create({
   baseURL: window.GATEWAY + 'hrm/api',
-  // baseURL: window.GATEWAY + 'api',
   timeout: 15000,
 });
 
 hrmInstance.interceptors.request.use((config) => {
-  const jwt = localStorage.getItem('jwt');
-
   if (!config.headers['Content-Type']) {
     config.headers['Content-Type'] = 'application/json';
   }
-  if (jwt) {
-    // const xTenantId = jwtDecode(jwt).partner_code;
-    const xTenantId = 'noiquoctuan5';
+  if (apiTokens.accessToken) {
+    const xTenantId = jwtDecode(apiTokens.accessToken).partner_code;
+
     config.headers['x-tenant-id'] = xTenantId;
 
-    config.headers.Authorization = `Bearer ${jwt}`;
+    config.headers.Authorization = `Bearer ${apiTokens.accessToken}`;
   }
 
   return config;

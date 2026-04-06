@@ -254,7 +254,7 @@ const InfoCard: FC<{
                             <Button
                                 color="primary"
                                 size="sm"
-                                className="h-8 px-3 font-semibold rounded-lg bg-[#006FEE]"
+                                className="h-8 px-3 font-semibold rounded-lg bg-[#6576FF]"
                                 onPress={handleSave}
                                 isLoading={isUpdating}
                             >
@@ -372,7 +372,7 @@ const EmploymentInfoCard: FC<{
                             <Button variant="bordered" size="sm" className="bg-white border-[#E4E4E7] text-[#71717A] font-semibold h-8 rounded-lg px-3" onPress={handleCancel} isDisabled={isUpdating}>
                                 Hủy
                             </Button>
-                            <Button color="primary" size="sm" className="h-8 px-3 font-semibold rounded-lg bg-[#006FEE]" onPress={handleSave} isLoading={isUpdating}>
+                            <Button color="primary" size="sm" className="h-8 px-3 font-semibold rounded-lg bg-[#6576FF]" onPress={handleSave} isLoading={isUpdating}>
                                 Lưu
                             </Button>
                         </>
@@ -409,7 +409,7 @@ const EmploymentInfoCard: FC<{
                             <div className="flex flex-wrap gap-1.5 min-h-[1.25rem]">
                                 {staff.rlsStaffDepartments && staff.rlsStaffDepartments.length > 0
                                     ? staff.rlsStaffDepartments.map((rsd) => (
-                                        <Chip key={rsd.id as string} size="sm" variant="flat" classNames={{ base: "bg-[#EFF6FF] h-6", content: "text-[#006FEE] font-medium text-xs px-1" }}>
+                                        <Chip key={rsd.id as string} size="sm" variant="flat" classNames={{ base: "bg-[#F0F1FF] h-6", content: "text-[#6576FF] font-medium text-xs px-1" }}>
                                             {rsd.department.name}
                                         </Chip>
                                     ))
@@ -582,8 +582,8 @@ export const StaffDetailInfo: FC<StaffDetailInfoProps> = ({ staff, isEditingAll 
                             <div>
                                 <span className="text-[13px] font-semibold text-[#11181C]">Thông tin chính</span>
                                 <div className="grid grid-cols-2 gap-4 mt-3">
-                                    <InfoRow label="Số điện thoại" value={<span className="text-[#006FEE]">{staff.phone}</span>} isEditing={isEditing} fieldName="phone" />
-                                    <InfoRow label="Email" value={<span className="text-[#006FEE]">{staff.email}</span>} isEditing={isEditing} fieldName="email" />
+                                    <InfoRow label="Số điện thoại" value={<span className="text-[#6576FF]">{staff.phone}</span>} isEditing={isEditing} fieldName="phone" />
+                                    <InfoRow label="Email" value={<span className="text-[#6576FF]">{staff.email}</span>} isEditing={isEditing} fieldName="email" />
                                 </div>
                             </div>
                             <Divider className="bg-[#F4F4F5]" />

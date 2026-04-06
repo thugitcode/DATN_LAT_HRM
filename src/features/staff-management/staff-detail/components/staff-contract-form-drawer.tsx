@@ -1,11 +1,4 @@
-// staff-contract-form-drawer.tsx
-import type { FC } from 'react';
-import {
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerHeader,
-} from '@heroui/react';
+import { useDrawer } from '@/store/useDrawer';
 import { Form, FormProvider } from 'react-hook-form';
 
 import { BtnCancel } from '@/components/btn-cancel';
@@ -18,71 +11,58 @@ import { LeaveBenefitsSection } from './contract-and-salary-sections/leave-benef
 import { PersonalIncomeTaxSection } from './contract-and-salary-sections/personal-income-tax-section';
 import { SalaryInfoSection } from './contract-and-salary-sections/salary-info-section';
 import { SalaryStructureSection } from './contract-and-salary-sections/salary-structure-section';
+import { LoadingWrapper } from '@/components/loading-wrapper';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
-interface StaffContractFormDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
+interface StaffContractDrawerData {
   staffId: string;
   contractId?: string;
 }
 
-export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
-  isOpen,
-  onClose,
-  staffId,
-  contractId,
-}) => {
-  const { methods, isEditMode, isDetailLoading, isSubmitting, onSubmit } =
-    useContractForm({ isOpen, onClose, staffId, contractId });
+export const StaffContractFormDrawer = () => {
+  const onClose = useDrawer((state) => state.onClose);
+  const drawerData = useDrawer((state) => state.data) as StaffContractDrawerData;
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
+  const { staffId, contractId } = drawerData ?? {};
+
+  const { methods, isEditMode, isDetailLoading, isSubmitting, onSubmit } = useContractForm({
+    isOpen: true,
+    onClose,
+    staffId,
+    contractId,
+  });
 
   return (
-    <Drawer
-      isOpen={isOpen}
-      onOpenChange={(open) => !open && onClose()}
-      size="full"
-      placement="right"
-      classNames={{ base: 'bg-[#FAFAFA]' }}
-      style={{ width: '97vw', maxWidth: '97vw' }}
-    >
-      <DrawerContent>
-        <DrawerHeader className="...">
-          <h2 className="text-3xl font-bold text-[#11181C]">
-            {isEditMode ? 'Chỉnh sửa hợp đồng' : 'Thêm mới hợp đồng'}
-          </h2>
-        </DrawerHeader>
-
-        <DrawerBody className="p-6 overflow-y-auto w-full">
-          {isDetailLoading ? (
-            <div className="flex h-full items-center justify-center">
-              <div className="w-8 h-8 border-2 border-[#006FEE] border-t-transparent rounded-full animate-spin" />
+    <div className="relative h-full overflow-hidden bg-[#FAFAFA]">
+      <div className="px-6 py-5 bg-white border-b border-[#F4F4F5]">
+        <h2 className="text-3xl font-bold text-[#11181C]">
+          {isEditMode ? t('contract_info.edit_contract') : t('contract_info.add_contract')}
+        </h2>
+      </div>
+      <LoadingWrapper isLoading={isDetailLoading}>
+        <FormProvider {...methods}>
+          <Form
+            onSubmit={() => onSubmit()}
+            className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full overflow-y-auto p-6 h-[calc(100vh-150px)]"
+          >
+            <div className="flex flex-col gap-6">
+              <ContractInfoSection />
+              <InsuranceAndUnionSection />
             </div>
-          ) : (
-            <FormProvider {...methods}>
-              <Form
-                onSubmit={() => onSubmit()}
-                className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full pb-18 max-md:pb-28"
-              >
-                {/* Bắt đầu với phần Thông tin hợp đồng */}
-                <div className="flex flex-col gap-6">
-                  <ContractInfoSection />
-                  <InsuranceAndUnionSection />
-                </div>
-
-                <div className="flex flex-col gap-6">
-                  <SalaryStructureSection />
-                  <SalaryInfoSection />
-                  <LeaveBenefitsSection />
-                  <PersonalIncomeTaxSection />
-                </div>
-                <div className="absolute bottom-0 bg-white p-4 w-full left-0 flex justify-end gap-2 z-10">
-                  <BtnCancel isDisabled={isSubmitting} onPress={onClose} />
-                  <BtnSave isLoading={isSubmitting} />
-                </div>
-              </Form>
-            </FormProvider>
-          )}
-        </DrawerBody>
-      </DrawerContent>
-    </Drawer>
+            <div className="flex flex-col gap-6">
+              <SalaryStructureSection />
+              <SalaryInfoSection />
+              <LeaveBenefitsSection />
+              <PersonalIncomeTaxSection />
+            </div>
+            <div className="absolute bottom-0 bg-white p-4 w-full left-0 flex justify-end gap-2 z-10">
+              <BtnCancel isDisabled={isSubmitting} onPress={onClose} />
+              <BtnSave isLoading={isSubmitting} />
+            </div>
+          </Form>
+        </FormProvider>
+      </LoadingWrapper>
+    </div>
   );
 };

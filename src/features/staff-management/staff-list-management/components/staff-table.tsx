@@ -1,11 +1,13 @@
 import type { FC } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { Button, Switch } from '@heroui/react';
-import { IconPencil } from '@tabler/icons-react';
+import { IconEye, IconPencil } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
-import type { Staff } from '@/types/staff.type';
+import { ActiveStatusEnum, type Staff } from '@/types/staff.type';
 import { DataTable, type ColumnDef } from '@/components/data-table/data-table';
+import { useUpdateStaff } from '@/query-options/staff';
+import { useConfirmStore } from '@/store/useConfirmStore';
 
 import { useStaffColumns } from '../hooks/use-staff-columns';
 
@@ -18,7 +20,8 @@ interface StaffTableProps {
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
   onViewDetail?: (id: string) => void;
-  onEdit?: (staff: Staff) => void;
+  // onEdit?: (staff: Staff) => void;
+  onEdit?: (id: string) => void;
 }
 
 export const StaffTable: FC<StaffTableProps> = ({
@@ -34,26 +37,54 @@ export const StaffTable: FC<StaffTableProps> = ({
 }) => {
   const totalPages = Math.ceil((total || 1) / limit);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
+  const { t: ts } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { columns } = useStaffColumns();
+  const { mutate: updateStaff, isPending: isUpdatingStatus } = useUpdateStaff();
+  const openConfirm = useConfirmStore((state) => state.open);
+
+  const handleToggleStatus = (record: Staff, checked: boolean) => {
+    const nextStatus = checked ? ActiveStatusEnum.ACTIVE : ActiveStatusEnum.INACTIVE;
+    openConfirm(
+      {
+        title: checked ? ts('staff_table.activate_title') : ts('staff_table.deactivate_title'),
+        description: checked
+          ? ts('staff_table.activate_confirm', { name: record.name })
+          : ts('staff_table.deactivate_confirm', { name: record.name }),
+        confirmLabel: tc('button.confirm'),
+        confirmColor: 'primary',
+      },
+      async () => {
+        updateStaff({ id: record.id, data: { activeStatus: nextStatus } });
+      },
+    );
+  };
+
   // Update the actions column to include the edit handler
   const columnsWithHandlers: ColumnDef<Staff>[] = columns.map((col) => {
     if (col.key === 'actions') {
       return {
         ...col,
+        sticky: 'right',
         render: (_: unknown, record: Staff) => (
           <div className="flex items-center gap-3">
-            <Switch size="sm" isSelected={record.activeStatus === 'ACTIVE'} />
+            <Switch
+              size="sm"
+              isSelected={record.activeStatus === ActiveStatusEnum.ACTIVE}
+              isDisabled={isUpdatingStatus}
+              onValueChange={(checked) => handleToggleStatus(record, checked)}
+            />
             <Button
               isIconOnly
               size="sm"
               variant="light"
               className="text-[#71717A]"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit?.(record);
+              onPress={(e) => {
+                // e.stopPropagation();
+                if (!record.id) return;
+                onEdit?.(record.id);
               }}
             >
-              <IconPencil size={18} stroke={1.5} />
+              {record?.activeStatus === ActiveStatusEnum.ACTIVE ? <IconPencil size={18} stroke={1.5} /> : <IconEye size={18} stroke={1.5} />}
             </Button>
           </div>
         ),
@@ -65,7 +96,7 @@ export const StaffTable: FC<StaffTableProps> = ({
   if (loading) {
     return (
       <div className="flex-1 h-[calc(100vh-315px)] flex flex-col min-h-0 bg-white shadow-sm border border-[#E4E4E7] rounded-xl overflow-hidden mt-4 items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#006FEE] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#6576FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }

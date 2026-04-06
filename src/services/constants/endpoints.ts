@@ -34,12 +34,15 @@ export const API_ENDPOINTS = {
       SALARY_STAFF_HISTORY: '/payroll/staff',
       PAYROLL_PERIODS: '/payroll/periods',
       PAYROLL_BY_MONTH: '/payroll/by-month',
+      PAYROLL_SEND_PAYSLIP: '/payroll/send-payslip',
     },
 
     LEAVE_REQUEST: '/leave-request',
+    RECRUITMENT_REQUEST: '/recruitment-request',
     UPLOAD: '/upload',
 
     CONFIGURATION: '/configuration',
+    TAX: '/tax',
   },
 
   OTHER_SERVICE: {

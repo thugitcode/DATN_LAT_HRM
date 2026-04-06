@@ -18,7 +18,7 @@ export const FooterFrawer: FC<FooterFrawerProps> = ({ isLoading, submitLabel = '
       <Button
         variant="light"
         onPress={closedDrawer}
-        className="border-[#006FEE] border bg-white text-[#006FEE] text-[14px] font-normal"
+        className="border-[#6576FF] border bg-white text-[#6576FF] text-[14px] font-normal"
       >
         {t('button.cancel')}
       </Button>

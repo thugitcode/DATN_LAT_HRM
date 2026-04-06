@@ -1,5 +1,4 @@
-import type { Status } from '@/types/global.type';
-import type { Staff } from '@/types/staff.type';
+import type { Item } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 
 export interface AllowanceBreakdown {
   fuel: number;
@@ -61,6 +60,15 @@ export interface PayrollResult {
   payslipChannel: string | null;
   payslipSentAt: string | null;
   payrollPeriod: PayrollPeriod;
+  employeeContribution: number;
+  personalIncomeTax: number;
+  totalGross: number;
+  workDays: number;
+  totalAttendance: number;
+  overtimeHours: number;
+  onCallDays: number;
+  businessTripDays: number;
+  advancePayment: number;
 }
 
 export enum PayslipStatus {
@@ -126,6 +134,14 @@ export interface StaffPayslipFeedback {
   modulePermission: unknown;
   managementModule: unknown;
   isSendPasswordEmail: boolean;
+
+  departments: Item[];
+  rooms: Item[];
+}
+export enum PayslipFeedbackStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  REJECTED = 'REJECTED',
 }
 export interface PayslipFeedback {
   createdAt: string;
@@ -134,8 +150,15 @@ export interface PayslipFeedback {
   id: string;
   content: string;
   responseContent: string | null;
-  status: Status;
+  status: PayslipFeedbackStatus;
   resolvedAt: string | null;
   staff: StaffPayslipFeedback;
-  payrollResult: PayrollResult;
+  payroll: PayrollResult;
+  period: {
+    id: string;
+    month: string;
+    name: string;
+    fromDate: string;
+    toDate: string;
+  };
 }

@@ -22,16 +22,7 @@ import { StaffGrid } from './components/staff-grid';
 import { StaffListPrint } from './components/staff-list-print';
 import { StaffTable } from './components/staff-table';
 import { useStaffExport } from './hooks/use-staff-export';
-
-const POSITION_OPTIONS = [
-  { key: 'STAFF', label: 'Nhân viên' },
-  { key: 'HEAD_OF_DEPARTMENT', label: 'Trưởng khoa' },
-  { key: 'DEPUTY_HEAD_OF_DEPARTMENT', label: 'Phó khoa' },
-  { key: 'CHIEF_NURSE', label: 'Điều dưỡng trưởng' },
-  { key: 'MANAGER', label: 'Trưởng phòng' },
-  { key: 'HEAD_OF_UNIT', label: 'Trưởng bộ phận' },
-  { key: 'DEPUTY_MANAGER', label: 'Phó phòng' },
-];
+import { useCurrentLayout } from '@/features/timekeeping-shift-scheduling/hooks/use-current-layout';
 
 interface StaffListProps {
   title: string;
@@ -44,9 +35,11 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const searchParams: any = useSearch({
     from: '/_private/admin/_dashboard/staff-management/$type',
   });
+  const currentLayout = useCurrentLayout();
+
   const printRef = useRef<HTMLDivElement>(null);
   const page = searchParams.page || 1;
-  const limit = searchParams.limit || 10;
+  const limit = searchParams.limit || currentLayout === LayoutSwitcherEnum.GRID ? 12 : 10;
 
   const filters = {
     search: searchParams.search,
@@ -89,6 +82,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const { exportStaff, onExportStaffTemplate } = useStaffExport(staffData);
   const { setMode } = useControlMode();
 
+
   const handleViewDetail = (id: string) => {
     setMode(ControlMode.edit);
     navigate({
@@ -104,9 +98,14 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
 
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
-  const handleEdit = (staff: Staff) => {
-    setEditingStaff(staff);
-    onOpen();
+  const handleEdit = (id: string) => {
+    // setEditingStaff(staff);
+    // onOpen();
+    navigate({
+      to: '/admin/staff-management/detail/$id',
+      params: { id },
+    });
+    setMode(ControlMode.edit, "ALL");
   };
 
   const handleCloseDrawer = () => {
@@ -185,7 +184,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
               jobTitle: row['Chức danh (*)']?.toString().trim(),
               position: row['Cấp bậc (*)']?.toString().trim(),
               contractType: row['Loại hợp đồng']?.toString().trim(),
-              contractDuration: row['Thời hạn làm việc']?.toString().trim(),
+              workingPeriod: row['Thời hạn làm việc']?.toString().trim(),
               qualification: row['Trình độ chuyên môn (*)']?.toString().trim(),
               major: row['Chuyên ngành']?.toString().trim(),
               academicDegree: row['Học hàm học vị']?.toString().trim(),
@@ -275,7 +274,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                   data: staffData,
                   loading: isLoading,
                   page: page,
-                  limit: limit,
+                  limit: limit || 10,
                   total: total,
                   onPageChange: setPage,
                   onLimitChange: setLimit,
@@ -289,7 +288,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
                   data: staffData,
                   loading: isLoading,
                   page: page,
-                  limit: limit,
+                  limit: limit || 12,
                   total: total,
                   onPageChange: setPage,
                   onLimitChange: setLimit,

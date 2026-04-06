@@ -1,6 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { kpiService } from '@/services/payroll-management/kpi.service';
 import { otherIncomeService } from '@/services/payroll-management/other-income.service';
+import { payrollPerriodsService } from '@/services/payroll-management/payroll-periods.service';
+import { payrollSummaryFinalizeService } from '@/services/payroll-management/payroll-summary-finalize';
 import { salaryHistoryService } from '@/services/payroll-management/salary-history.service';
 import { kpiKeys, kpiOptions } from '@/services/query-options/payroll-management/kpi.query';
 import {
@@ -8,12 +11,16 @@ import {
   otherIncomeOptions,
 } from '@/services/query-options/payroll-management/other-income.query';
 import { payrollFeedbackOptions } from '@/services/query-options/payroll-management/payroll-feedback.query';
-import { payrollPeriodsOptions } from '@/services/query-options/payroll-management/payroll-periods.query';
+import {
+  payrollPeriodsKeys,
+  payrollPeriodsOptions,
+} from '@/services/query-options/payroll-management/payroll-periods.query';
 import { useDrawer } from '@/store/useDrawer';
 import { addToast } from '@heroui/react';
 
 import type { RequestsParams } from '@/types/global.type';
 import { normalizeAxiosError } from '@/lib/axios';
+import type { ApprovePayload } from '@/features/timekeeping-shift-scheduling/timekeeping-management/types/timekeeping-management.type';
 
 import type { KpiMutatePayload, KpiUpdate } from '../types/kpi.type';
 import type { OtherIncomePayload, OtherUpdate } from '../types/other-income.type';
@@ -48,6 +55,30 @@ export function useStaffSalary(id: string) {
     enabled: !!id,
   });
 }
+
+const PAYROLL_SUMMARY_QUERY_KEYS = {
+  summary: (month: string) => ['payroll-summary', 'summary', month] as const,
+};
+
+export const usePayrollSummary = (month: string) => {
+  return useQuery({
+    queryKey: PAYROLL_SUMMARY_QUERY_KEYS.summary(month),
+    queryFn: () => payrollSummaryFinalizeService.getSumary(month),
+    enabled: !!month,
+    select: (res) => res.data,
+    meta: { silentError: true },
+    retry: 1
+  });
+};
+export const usePayrollSummaryLatest = () => {
+  return useQuery({
+    queryKey: PAYROLL_SUMMARY_QUERY_KEYS.summary('latest'),
+    queryFn: () => payrollSummaryFinalizeService.getSumaryLatest(),
+    select: (res) => res.data,
+    meta: { silentError: true },
+    retry: 1
+  });
+};
 
 export function useCreateKPIManagement() {
   const queryClient = useQueryClient();
@@ -169,6 +200,50 @@ export function useDeleteOtherIncomeManagement() {
       addToast({
         description: message,
         color: 'danger',
+      });
+    },
+  });
+}
+
+export function useCalculateMutation(month: string) {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (payload: ApprovePayload) => payrollPerriodsService.calculate(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: payrollPeriodsKeys.status(month),
+      });
+
+      addToast({
+        description: 'Chuyển tính lương thành công.',
+        color: 'success',
+      });
+
+      navigate({
+        to: '/admin/payroll-management/payroll-calculation',
+        search: {
+          month,
+        },
+      });
+    },
+  });
+}
+
+export function useSaveDraftMutation(month: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (payload: ApprovePayload) => payrollPerriodsService.saveDraft(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: payrollPeriodsKeys.status(month),
+      });
+
+      addToast({
+        description: 'Lưu nháp thành công.',
+        color: 'success',
       });
     },
   });

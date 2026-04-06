@@ -11,7 +11,7 @@ class SalaryHistoryService extends BaseApiService<SalaryHistory, unknown, unknow
     super(hrmInstance, API_ENDPOINTS.HRM.PAYROLL_MANAGEMENT.SALARY_STAFF_HISTORY);
   }
 
-  async getStaffSalary(id: string): Promise<ApiResponse<SalaryHistory>> {
+  async getStaffSalary(id: string): Promise<ApiResponse<SalaryHistory[]>> {
     return this.request(async () => {
       const res = await this.instance.get(`${this.url(id)}/history`);
 

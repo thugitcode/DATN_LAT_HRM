@@ -218,6 +218,13 @@
     "approve_title": "Duyệt bảng công",
     "approve_desc": "Xác nhận duyệt bảng công {{name}}?",
     "approve_btn": "Duyệt bảng công",
-    "navigate_payroll_btn": "Chuyển tính lương"
+    "navigate_payroll_btn": "Chuyển tính lương",
+    "unapprove_title": "Hủy duyệt bảng công",
+    "unapprove_desc": "Bạn có chắc chắn muốn hủy duyệt bảng công {{name}}?",
+    "published_status": "Đã chuyển tính lương",
+    "unapprove_btn": "Hủy",
+    "not_approved_modal_title": "⚠️ Chưa duyệt bảng công",
+    "not_approved_modal_body": "{{name}} chưa duyệt bảng công.",
+    "close_btn": "Đóng"
   }
 }

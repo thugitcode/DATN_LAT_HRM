@@ -45,6 +45,7 @@ export const useAttendanceDataColumns = () => {
       key: 'staffName',
       title: t('columns.staff_name'),
       width: 160,
+      sticky: 'left',
       render: (_, record) => (
         <div className="w-50">
           <p className="text-sm font-medium text-gray-800 ">{record.staff.name}</p>
@@ -66,13 +67,13 @@ export const useAttendanceDataColumns = () => {
       align: 'center',
       render: (_, record) => record.summary.paidLeave,
     },
-    {
-      key: 'unpaidLeave',
-      title: t('columns.unpaid_leave'),
-      width: 150,
-      align: 'center',
-      render: (_, record) => record.summary.unpaidLeave,
-    },
+    // {
+    //   key: 'unpaidLeave',
+    //   title: t('columns.unpaid_leave'),
+    //   width: 150,
+    //   align: 'center',
+    //   render: (_, record) => record.summary.unpaidLeave,
+    // },
     {
       key: 'onDuty',
       title: t('columns.on_duty'),
@@ -131,9 +132,10 @@ export const useAttendanceDataColumns = () => {
     },
     {
       key: 'actions',
-      title: '',
+      title: 'Hành động',
       width: 120,
       align: 'center',
+      sticky: 'right',
       render: (_, record) => <RowAttendanceActions dataRow={record?.staff} />,
     },
   ];

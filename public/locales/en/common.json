@@ -1,4 +1,31 @@
 {
+  "header": {
+    "my_profile": "My Profile",
+    "settings": "Settings",
+    "language": "Language",
+    "logout": "Logout"
+  },
+  "right_menu": {
+    "home": "Home",
+    "hrm": "Human Resource Management",
+    "hrm_label": "HRM",
+    "cis": "Clinical Information System",
+    "cis_label": "CIS",
+    "lis": "Laboratory Information System",
+    "lis_label": "LIS",
+    "ris": "Radiology Information System",
+    "ris_label": "RIS",
+    "prm": "Patient Relationship Management",
+    "prm_label": "PRM",
+    "vat_tu": "Pharmacy & Medical Supplies",
+    "vat_tu_label": "Supplies",
+    "kham_doan": "Health Checkup",
+    "kham_doan_label": "Checkup",
+    "bao_cao": "Reports",
+    "bao_cao_label": "Reports",
+    "ql_benh_nhan": "Patient Management",
+    "ql_benh_nhan_label": "Patients"
+  },
   "actions": {
     "reload": "Reload",
     "import_excel": "Import excel",
@@ -8,7 +35,19 @@
     "search": "Seach",
     "department": "Department",
     "room": "Room",
-    "status": "Status"
+    "status": "Status",
+    "explanation_type": "Explanation type",
+    "explanation_types": {
+      "LATE": "Late",
+      "EARLY_LEAVE": "Early leave",
+      "MISSING_CHECK_IN": "Missing check-in",
+      "MISSING_CHECK_OUT": "Missing check-out",
+      "ABSENT": "Absent",
+      "MISSING_HOURS": "Missing hours",
+      "BUSINESS_TRIP": "Business trip",
+      "SICK": "Sick",
+      "OTHER": "Other"
+    }
   },
 
   "layout": {
@@ -31,7 +70,12 @@
     "partner_staff": "Partner Staff",
     "contract_management": "Contract Management",
 
-    "recruitment_management": "Recruitment Management",
+    "recruitment_management": "Recruitment",
+    "recruitment_request": "Recruitment Request",
+    "candidate": "Candidate",
+    "interview_schedule": "Interview Schedule",
+    "probation_management": "Probation Management",
+    "recruitment_report": "Report",
     "management_report": "Management Report",
 
     "other_requests_management": "Other Requests Management",
@@ -126,7 +170,9 @@
     "rejected": "Rejected",
     "pending": "Pending",
     "working": "Working",
-    "off": "Off"
+    "off": "Off",
+    "confirmed": "Confirmed",
+    "pendingFeedback": "Pending Feedback"
   },
   "select": "Select",
   "table": {
@@ -200,6 +246,20 @@
       "EMINENT_PHYSICIAN": "Eminent Physician",
       "BACHELOR": "Bachelor",
       "ENGINEER": "Engineer"
+    },
+    "timeline": {
+      "WORK": "Work",
+      "BREAK": "Break",
+      "OT": "Overtime",
+      "LEAVE": "Leave",
+      "OTHER": "Other",
+      "LATE": "Late",
+      "EARLY": "Early",
+      "UNAUTHORIZED_LEAVE": "Unauthorized Leave",
+      "FORGOT_TO_CLOCK_TIME": "Forgot to Clock Time",
+      "WFH": "Work From Home",
+      "BUSINESS_TRIP": "Business Trip",
+      "VM": "Absent"
     }
   },
   "staff": "Staff",
@@ -360,5 +420,9 @@
     "BUSINESS_TRIP": "Business Trip",
     "SICK": "Sick Leave",
     "OTHER": "Other Reason"
+  },
+  "file_upload": {
+    "drag_drop_hint": "Drag & drop or click to select file",
+    "supported_formats": "Supported: docx, doc, pdf, xlsx, xls, csv (max 5MB/file)"
   }
 }

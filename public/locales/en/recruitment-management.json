@@ -1,0 +1,195 @@
+{
+  "form": {
+    "sections": {
+      "general_info": "General Information",
+      "recruitment_need": "Recruitment Need",
+      "job_description": "Job Description",
+      "candidate_requirements": "Candidate Requirements",
+      "salary_budget": "Proposed Salary & Budget",
+      "internal_note": "Internal Note"
+    },
+    "fields": {
+      "code": "Request Code",
+      "created_at": "Request Date",
+      "department": "Department",
+      "room": "Room",
+      "position": "Position",
+      "staff_type": "Staff Type",
+      "work_type": "Work Type",
+      "quantity": "Quantity",
+      "required_date": "Required Date",
+      "reason": "Recruitment Reason",
+      "description": "Job Description",
+      "education_level": "Education Level",
+      "required_certificates": "Required Certificates",
+      "experience_years": "Experience (years)",
+      "technical_skills": "Technical Skills",
+      "soft_skills": "Soft Skills",
+      "other_requirements": "Other Requirements",
+      "salary_expected": "Proposed Salary (VND/month)",
+      "salary_from": "Salary From",
+      "salary_to": "Salary To",
+      "note": "Note"
+    },
+    "placeholders": {
+      "auto_generated": "Auto-generated",
+      "select_department": "Select department",
+      "select_room": "Select room",
+      "select_position": "Select position",
+      "select_staff_type": "Select staff type",
+      "select_work_type": "Select work type",
+      "enter_quantity": "Enter quantity",
+      "enter_reason": "Enter reason",
+      "enter_description": "Job details, main responsibilities",
+      "enter_education_level": "Enter education level",
+      "enter_certificates": "Enter certificates",
+      "enter_experience_years": "Enter years of experience",
+      "enter_technical_skills": "Enter technical skills",
+      "enter_soft_skills": "Enter soft skills",
+      "enter_other_requirements": "IT, language, night shift, health...",
+      "from": "From",
+      "to": "To",
+      "enter_note": "Enter note",
+      "medical_position_note": "For medical positions (Doctor, Nurse, Technician), please specify the requirement for Practicing Certificate (PC) in the candidate requirements section."
+    },
+    "toast": {
+      "create_success": "Recruitment request created successfully.",
+      "create_error": "Failed to create recruitment request.",
+      "update_success": "Recruitment request updated successfully.",
+      "update_error": "Failed to update recruitment request.",
+      "submit_success": "Recruitment request submitted successfully.",
+      "submit_error": "Failed to submit recruitment request.",
+      "approve_success": "Recruitment request approved successfully.",
+      "approve_error": "Failed to approve recruitment request.",
+      "reject_success": "Recruitment request rejected successfully.",
+      "reject_error": "Failed to reject recruitment request.",
+      "close_success": "Recruitment request closed successfully.",
+      "close_error": "Failed to close recruitment request.",
+      "openRecruiting_success": "Recruitment request opened for recruiting successfully.",
+      "openRecruiting_error": "Failed to open recruitment request for recruiting.",
+      "pause_success": "Recruitment request paused successfully.",
+      "pause_error": "Failed to pause recruitment request.",
+      "resume_success": "Recruitment request resumed successfully.",
+      "resume_error": "Failed to resume recruitment request.",
+      "cancel_success": "Recruitment request cancelled successfully.",
+      "cancel_error": "Failed to cancel recruitment request."
+    },
+    "validation": {
+      "department_required": "Please select a department",
+      "room_required": "Please select a room",
+      "position_required": "Please select a position",
+      "staff_type_required": "Please select a staff type",
+      "work_type_required": "Please select a work type",
+      "quantity_required": "Please enter quantity",
+      "description_required": "Please enter job description",
+      "education_level_required": "Please enter education level",
+      "certificates_required": "Please enter certificates",
+      "experience_years_required": "Please enter years of experience",
+      "salary_from_required": "Please enter salary from",
+      "salary_to_required": "Please enter salary to"
+    },
+    "options": {
+      "position": {
+        "STAFF": "Staff",
+        "HEAD_OF_DEPARTMENT": "Head of Department",
+        "DEPUTY_HEAD_OF_DEPARTMENT": "Deputy Head of Department",
+        "CHIEF_NURSE": "Chief Nurse",
+        "MANAGER": "Manager",
+        "HEAD_OF_UNIT": "Head of Unit",
+        "DEPUTY_MANAGER": "Deputy Manager"
+      },
+      "staff_type": {
+        "DOCTOR": "Doctor",
+        "NURSE": "Nurse",
+        "TECHNICIAN": "Technician",
+        "PHARMACIST": "Pharmacist",
+        "ADMINISTRATIVE": "Administrative",
+        "OTHER": "Other"
+      },
+      "work_type": {
+        "FULL_TIME": "Full-time",
+        "PART_TIME": "Part-time"
+      }
+    }
+  },
+  "recruitment_request": {
+    "add": "Add new request",
+    "title": "Recruitment Request List",
+    "columns": {
+      "code": "Request Code",
+      "department": "Department",
+      "position": "Position",
+      "quantity": "Qty",
+      "salary_range": "Salary Range",
+      "required_date": "Required Date",
+      "status": "Status",
+      "created_by": "Created By",
+      "actions": "Actions"
+    },
+    "actions": {
+      "approve": "Approve",
+      "approve_title": "Approve Recruitment Request",
+      "approve_desc": "Are you sure you want to approve this recruitment request?",
+      "close": "Close Request",
+      "close_title": "Close Recruitment Request",
+      "close_desc": "Are you sure you want to close this recruitment request?",
+      "edit": "Edit",
+      "edit_request": "Edit Request",
+      "delete": "Delete",
+      "create": "New Request",
+      "import": "Import",
+      "pause": "Pause",
+      "resume": "Resume",
+      "submit_review": "Submit for Review",
+      "resubmit_review": "Resubmit for Review",
+      "start_recruiting": "Start Recruiting",
+      "view_detail": "View Detail",
+      "revoke": "Revoke",
+      "print": "Print Form",
+      "view_reason": "View Reason",
+      "edit_limited": "Edit (Limited)",
+      "view_candidates": "View Candidates",
+      "duplicate": "Duplicate",
+      "reject": "Reject"
+    },
+    "confirm": {
+      "reject_title": "Reject Recruitment Request",
+      "reject_description": "Are you sure you want to reject this recruitment request? Please provide a reason.",
+      "close_title": "Close Recruitment Request",
+      "close_description": "Are you sure you want to close this recruitment request? Please provide a reason."
+    },
+    "summary": {
+      "total": "Total Requests",
+      "recruiting": "Recruiting",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "approved": "Approved",
+      "cancelled": "Cancelled",
+      "paused": "Paused",
+      "closed": "Closed"
+    },
+    "status": {
+      "draft": "Draft",
+      "recruiting": "Recruiting",
+      "pending": "Pending",
+      "rejected": "Rejected",
+      "approved": "Approved",
+      "paused": "Paused",
+      "cancelled": "Cancelled",
+      "closed": "Closed"
+    },
+    "card": {
+      "candidates": "Candidates Applied",
+      "interviews": "Awaiting Interview",
+      "required_date": "Required:",
+      "days_remaining": "{{count}} days left",
+      "created_by": "Created by:",
+      "people_count": "{{count}} people"
+    },
+    "toast": {
+      "approve_success": "Recruitment request approved successfully.",
+      "reject_success": "Recruitment request rejected successfully.",
+      "close_success": "Recruitment request closed successfully."
+    }
+  }
+}

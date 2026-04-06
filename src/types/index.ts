@@ -32,6 +32,21 @@ export interface IApiResponseShiftDivision<T, TMeta = Record<string, unknown>> {
   metadata: TMeta | null;
   message: string;
 }
+export interface IApiSalaryAndBenefitResponse<T, TMeta = Record<string, unknown>> {
+  statusCode: number;
+  data: {
+    currentSummary: {
+      currentSalary: number
+      lastRaiseBy: string
+      lastRaiseDate: string
+      lastRaiseDelta: number
+    },
+    salary: T
+  };
+  pagination: PaginationMeta | null;
+  metadata: TMeta | null;
+  message: string;
+}
 interface ApiResponse<T, TMeta = Record<string, unknown>> {
   statusCode: number;
   data: T;

@@ -10,7 +10,7 @@ import { ShiftTypeEnum } from "@/types/shift-management.type";
 import { useParams } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 
-export const ShiftManagementContainer = ({ staffId }: { staffId?: string }) => {
+export const ShiftManagementContainer = ({ staffId, disabled }: { staffId?: string, disabled?: boolean }) => {
     const { id } = useParams({ strict: false })
     const { filters } = useQueryFilter<ShiftManagementParams>();
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
@@ -31,7 +31,7 @@ export const ShiftManagementContainer = ({ staffId }: { staffId?: string }) => {
 
     // 1. Định nghĩa cấu hình màu sắc/meta cho từng loại ca
     const SHIFT_CONFIG = {
-        [ShiftTypeEnum.FIXED]: { color: '#006FEE' },
+        [ShiftTypeEnum.FIXED]: { color: '#6576FF' },
         [ShiftTypeEnum.SPLIT]: { color: '#F5A524' },
         [ShiftTypeEnum.ON_DUTY]: { color: '#7828C8' },
         [ShiftTypeEnum.FLEXIBLE]: { color: '#17C964' },
@@ -68,7 +68,7 @@ export const ShiftManagementContainer = ({ staffId }: { staffId?: string }) => {
             <div className="flex bg-white mb-5 rounded-b-xl py-1.5">
                 {SHIFT_CA_LEGEND.map(item => <StatsSection stats={item} />)}
             </div>
-            <ShiftManagementGrid data={data?.data?.data} isLoading={isLoading} height={cn(staffId ? 'h-[calc(100vh-360px)]' : "h-[calc(100vh-480px)]", " bg-white")} />
+            <ShiftManagementGrid data={data?.data?.data} isLoading={isLoading} height={cn(staffId ? 'h-[calc(100vh-360px)]' : "h-[calc(100vh-480px)]", " bg-white")} disabled={disabled} />
         </>
     )
 }

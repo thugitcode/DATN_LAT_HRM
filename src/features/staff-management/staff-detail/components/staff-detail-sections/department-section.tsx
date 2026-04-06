@@ -21,10 +21,10 @@ export const DepartmentSection = () => {
     const { mutateAsync: updateStaff } = useUpdateStaff();
 
     // Logic mode
-    const { data, setMode, isCreate } = useControlMode();
+    const { data, setMode, isCreate, isView: view } = useControlMode();
 
     const isEditing = data === STAFF_SECTION_KEYS.DEPARTMENT || data === "ALL";
-    const isView = !isEditing;
+    const isView = !isEditing || view;
     const variant = isView ? "underlined" : "flat";
 
     // Logic lấy options
@@ -41,7 +41,7 @@ export const DepartmentSection = () => {
         "jobTitle",
         "position",
         "contractType",
-        "contractDuration"
+        "workingPeriod"
     ];
 
     const handleSave = async () => {
@@ -172,7 +172,7 @@ export const DepartmentSection = () => {
                 <div className="col-span-2">
                     <FormInput
                         control={control}
-                        name="contractDuration"
+                        name="workingPeriod"
                         label={t('staffForm.fields.contractDuration.label')}
                         placeholder={t('staffForm.fields.contractDuration.placeholder')}
                         readOnly={isView}

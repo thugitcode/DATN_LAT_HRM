@@ -51,6 +51,11 @@ export enum StaffStatusEnum {
   PENDING = 'PENDING', // Chờ nhận việc
 }
 
+export enum ActiveStatusEnum {
+  ACTIVE = 'ACTIVE',     // Đang hoạt động
+  INACTIVE = 'INACTIVE', // Ngừng hoạt động
+}
+
 export enum StaffQualificationEnum {
   INTERMEDIATE = 'INTERMEDIATE', // Trung cấp
   COLLEGE = 'COLLEGE', // Cao đẳng
@@ -81,6 +86,15 @@ export enum ContractTypeEnum {
   PROBATION = 'PROBATION', // Nhân viên thử việc
   INTERNSHIP = 'INTERNSHIP', // Nhân viên học việc
   EXPERT_COOPERATION = 'EXPERT_COOPERATION', // Chuyên gia hợp tác
+}
+
+export enum StaffTypeEnum {
+  DOCTOR = 'DOCTOR',
+  NURSE = 'NURSE',
+  TECHNICIAN = 'TECHNICIAN',
+  PHARMACIST = 'PHARMACIST',
+  ADMINISTRATIVE = 'ADMINISTRATIVE',
+  OTHER = 'OTHER',
 }
 
 export enum WorkingTypeTypeEnum {
@@ -118,7 +132,7 @@ export interface StaffWorkHistory {
   position: StaffPositionEnum;
   contractNumber: string;
   contractType: ContractTypeEnum;
-  workType: string;
+  workType: WorkingTypeTypeEnum;
   duration: number;
   durationUnit: DurationUnitEnum;
   startDate: string;
@@ -166,7 +180,7 @@ export interface StaffSalary {
 export interface StaffContract {
   id: string;
   contractType: ContractTypeEnum;
-  workType: string;
+  workType: WorkingTypeTypeEnum;
   contractNumber: string;
   startDate: string;
   endDate: string;
@@ -258,7 +272,7 @@ export interface Staff {
   contractExpiryDate?: string;
   endDate?: string;
   status?: Status;
-  activeStatus?: 'ACTIVE' | 'INACTIVE';
+  activeStatus?: ActiveStatusEnum;
   isExpiringSoon?: boolean;
   departments?: { id: string; name: string }[];
   rooms?: { id: string; name: string }[];

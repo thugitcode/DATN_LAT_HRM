@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import type { RequestsParams } from '@/types/global.type';
 import { icons } from '@/lib/icons';
-import { useColumnVisibility } from '@/hooks/use-column-visibility';
 import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { usePaginationConfig } from '@/hooks/use-pagination-config';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
@@ -15,7 +14,7 @@ import { useAttendanceTable } from '@/features/timekeeping-shift-scheduling/time
 
 import { useAttendanceDataColumns } from '../colums/use-attendance-data-columns';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-340px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-340px)] ' } as const;
 
 export const AttendanceData = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
@@ -26,9 +25,9 @@ export const AttendanceData = () => {
   const { departmentId, month, roomId, search, status, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
 
-  const { visibleColumns, handleApplyColumns } = useColumnVisibility({
-    columns,
-  });
+  // const { visibleColumns, handleApplyColumns } = useColumnVisibility({
+  //   columns,
+  // });
 
   const { data, isLoading } = useAttendanceTable({
     page: page ?? 1,

@@ -3,25 +3,21 @@ import { Status, type Options } from '@/types/global.type';
 export const statusKpiOptions: Options[] = [
   {
     label: 'Đã xác nhận',
-    key: Status.APPROVED,
+    key: Status.CONFIRMED,
   },
   {
-    label: 'Chờ xác nhận',
+    label: 'Chờ duyệt',
     key: Status.PENDING,
-  },
-  {
-    label: 'Từ chối',
-    key: Status.REJECTED,
   },
 ];
 
 export const statusRevenueOptions: Options[] = [
   {
     label: 'Đã xác nhận',
-    key: Status.APPROVED,
+    key: Status.CONFIRMED,
   },
   {
-    label: 'Chờ xác nhận',
+    label: 'Chờ duyệt',
     key: Status.PENDING,
   },
 ];

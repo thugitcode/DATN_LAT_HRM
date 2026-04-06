@@ -1,6 +1,7 @@
 {
   "payrollCalculation": {
-    "title": "Bảng công",
+    "title": "Danh sách tính lương",
+    "monthly_table_with_date": "Bảng lương tháng {{month}}/{{year}}",
     "columns": {
       "stt": "STT",
       "department": "Khoa/Phòng",
@@ -76,6 +77,22 @@
       "employerUnemploymentInsurance": "Bảo hiểm thất nghiệp",
       "employerUnionFee": "Kinh phí công đoàn",
       "totalEmployerCost": "Tổng chi phí NSDLD"
+    },
+    "sendPayslip": {
+      "title": "Gửi phiếu lương",
+      "bulkTitle": "Gửi phiếu lương hàng loạt",
+      "description": "Bạn có chắc muốn gửi phiếu lương cho tất cả nhân viên không?",
+      "descriptionStaff": "Bạn có chắc muốn gửi phiếu lương cho nhân viên {{name}} không?",
+      "confirmLabel": "Xác nhận",
+      "buttonLabel": "Gửi",
+      "bulkButtonLabel": "Gửi phiếu lương hàng loạt"
+    },
+    "confirmationStatus": {
+      "DRAFT": "Chưa xác nhận",
+      "PENDING": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "REJECTED": "Đã từ chối",
+      "AUTO_CONFIRMED": "Tự động xác nhận"
     }
   },
 
@@ -91,6 +108,36 @@
       "confirmed_at": "Thời gian xác nhận",
       "feedback": "Phản hồi",
       "action": "Thao tác"
+    },
+    "feedbackStatus": {
+      "PENDING": "Chờ phản hồi",
+      "CONFIRMED": "Đã xác nhận",
+      "REJECTED": "Từ chối"
+    },
+    "detail": {
+      "title": "Phiếu lương",
+      "payslip_period": "Phiếu lương {{period}}",
+      "status": {
+        "PENDING": "Chờ phản hồi",
+        "CONFIRMED": "Đã xác nhận",
+        "REJECTED": "Từ chối"
+      },
+      "from_date": "Từ ngày",
+      "to_date": "Đến ngày",
+      "standard_days": "Công chuẩn",
+      "actual_work_days": "Công thực tế",
+      "on_duty": "Công trực",
+      "overtime_hours": "Làm thêm",
+      "business_trip": "Công tác",
+      "total_gross": "Tổng Gross",
+      "insurance": "BH NV đóng",
+      "tax": "Thuế TNCN",
+      "advance": "Tạm ứng (Nếu có)",
+      "net_pay": "Tổng thực nhận:",
+      "unit_day": "ngày",
+      "unit_hour": "giờ",
+      "close": "Thoát",
+      "history": "Lịch sử phản hồi"
     }
   },
 
@@ -305,6 +352,11 @@
   },
 
   "salary-history": {
-    "title": "Lịch sử lương nhân viên"
+    "title": "Lịch sử lương nhân viên",
+    "current_salary": "Lương hiện tại",
+    "created_by": "Được tạo bởi",
+    "approved_by": "Phê duyệt bởi",
+    "no_salary_history": "Chưa có lịch sử lương",
+    "select_to_view_history": "Chọn nhân viên để xem lịch sử lương"
   }
 }

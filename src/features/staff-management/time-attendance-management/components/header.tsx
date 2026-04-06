@@ -7,10 +7,13 @@ import type { TAB_KEYS } from '../contants/data';
 import { useTimeAttendanceTabs } from '../hooks/use-time-attendance-tabs';
 import type { ShiftManagementParams } from '@/types';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 export const Header = () => {
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { tabs, activeKey, setActiveKey } = useTimeAttendanceTabs();
-  const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
+  const { filters, setFilter, clearFilters } = useQueryFilter<ShiftManagementParams>();
 
   const currentMonth = dayjs(filters?.month || dayjs().format("YYYY-MM"));
 
@@ -19,7 +22,7 @@ export const Header = () => {
 
   const handlePrevMonth = () => {
     const prev = currentMonth.subtract(1, "month").format("YYYY-MM");
-    
+
     setFilter("month", prev);
   };
 
@@ -38,10 +41,11 @@ export const Header = () => {
           selectedKey={activeKey}
           onSelectionChange={(key) => {
             setActiveKey(key as TAB_KEYS);
+            // clearFilters()
           }}
         >
           {tabs.map((tab) => (
-            <Tab key={tab.key} title={tab.label} />
+            <Tab key={tab.key} title={t(tab.label)} />
           ))}
         </Tabs>
 

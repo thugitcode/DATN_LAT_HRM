@@ -24,7 +24,7 @@ export const ExplanationSummaryCard: FC<Readonly<ExplanationSummaryCardProps>> =
             icon={icons.questionCircle}
             label="Tổng yêu cầu"
             count={summary.totalRequests}
-            color="#006FEE"
+            color="#6576FF"
             bgColor="#E6F1FE"
           />
           <div className="w-px h-8 bg-[#E4E4E7]" />
@@ -119,7 +119,7 @@ const ExplanationTypeRow: FC<Readonly<ExplanationTypeRowProps>> = ({ label, coun
         <div
           className="absolute inset-y-0 left-0 rounded-full"
           style={{
-            backgroundColor: '#006FEE',
+            backgroundColor: '#6576FF',
             width: `${percentage}%`,
           }}
         />

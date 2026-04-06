@@ -1,6 +1,7 @@
 {
   "payrollCalculation": {
-    "title": "Timesheet & Payroll",
+    "title": "Payroll List",
+    "monthly_table_with_date": "Payroll for {{month}}/{{year}}",
     "columns": {
       "stt": "No.",
       "department": "Department/Ward",
@@ -76,6 +77,22 @@
       "employerUnemploymentInsurance": "Employer Unemployment Insurance",
       "employerUnionFee": "Employer Union Fee",
       "totalEmployerCost": "Total Employer Cost"
+    },
+    "sendPayslip": {
+      "title": "Send Payslip",
+      "bulkTitle": "Send Bulk Payslips",
+      "description": "Are you sure you want to send payslips to all employees?",
+      "descriptionStaff": "Are you sure you want to send the payslip to {{name}}?",
+      "confirmLabel": "Confirm",
+      "buttonLabel": "Send",
+      "bulkButtonLabel": "Send Bulk Payslips"
+    },
+    "confirmationStatus": {
+      "DRAFT": "Draft",
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "REJECTED": "Rejected",
+      "AUTO_CONFIRMED": "Auto Confirmed"
     }
   },
 
@@ -91,6 +108,36 @@
       "confirmed_at": "Confirmation Time",
       "feedback": "Feedback",
       "action": "Action"
+    },
+    "feedbackStatus": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "REJECTED": "Rejected"
+    },
+    "detail": {
+      "title": "Payslip",
+      "payslip_period": "Payslip {{period}}",
+      "status": {
+        "PENDING": "Pending",
+        "CONFIRMED": "Confirmed",
+        "REJECTED": "Rejected"
+      },
+      "from_date": "From date",
+      "to_date": "To date",
+      "standard_days": "Standard days",
+      "actual_work_days": "Actual work days",
+      "on_duty": "On duty",
+      "overtime_hours": "Overtime",
+      "business_trip": "Business trip",
+      "total_gross": "Total gross",
+      "insurance": "Employee insurance",
+      "tax": "Personal income tax",
+      "advance": "Advance (if any)",
+      "net_pay": "Total net pay:",
+      "unit_day": "days",
+      "unit_hour": "hours",
+      "close": "Close",
+      "history": "Feedback history"
     }
   },
 
@@ -272,6 +319,11 @@
   },
 
   "salary-history": {
-    "title": "Employee Salary History"
+    "title": "Employee Salary History",
+    "current_salary": "Current Salary",
+    "created_by": "Created by",
+    "approved_by": "Approved by",
+    "no_salary_history": "No salary history",
+    "select_to_view_history": "Select staff to view salary history"
   }
 }

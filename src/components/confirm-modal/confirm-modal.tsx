@@ -13,6 +13,8 @@ import {
 import { IconAlertTriangle, IconCheck, IconX } from '@tabler/icons-react';
 
 import type { ConfirmConfig } from './type';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -38,7 +40,7 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
   const isOverLimit = reason.length > MAX_REASON_LENGTH;
   const isReasonEmpty = config.requireReason && reason.trim().length === 0;
   const isConfirmDisabled = isOverLimit || isReasonEmpty;
-
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
   return (
     <Modal
       isOpen={isOpen}
@@ -79,7 +81,7 @@ export const ConfirmModal: FC<ConfirmModalProps> = ({
 
         <ModalFooter>
           <Button variant="flat" isDisabled={isLoading} onPress={onClose}>
-            Hủy
+            {tc('button.cancel')}
           </Button>
           <Button
             color={config.confirmColor}

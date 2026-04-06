@@ -10,15 +10,17 @@ import { isWeekend } from '../../../helper';
 import { COL_W, ROW_H } from '../../constants/constants';
 import { SHIFT_CA_LEGEND } from '../../constants/data';
 import type { DayColumn } from '../../types/type';
+import { Button } from '@heroui/react';
 
 interface ShiftCellBlockProps {
   cell: Shift | null;
   day: DayColumn;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   record?: any;
+  disabled?: boolean;
 }
 
-export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record }) => {
+export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record, disabled }) => {
   const w = COL_W - 8;
   const h = ROW_H - 8;
   const { month, year } = useYearMonth();
@@ -54,22 +56,23 @@ export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record }) =
 
   if (!cell) {
     return (
-      <div
+      <Button
         className={cn(
           `flex items-center justify-center rounded-lg border border-dashed border-[#D4D4D8]
-          cursor-pointer hover:border-[#60A5FA] hover:bg-[#EFF6FF] transition-colors group`,
+          cursor-pointer hover:border-[#60A5FA] hover:bg-[#F0F1FF] transition-colors group`,
           isWeekend(day.dayOfWeek) ? 'bg-[#FAFAFA]' : 'bg-white',
         )}
         style={{ width: w, height: h, color }}
-        onClick={onCreate}
+        onPress={onCreate}
+        disabled={disabled}
       >
         {icons.plusCircle}
-      </div>
+      </Button>
     );
   }
 
   return (
-    <div
+    <Button
       className="flex relative overflow-hidden px-2 text-sm z-10 flex-col gap-1 items-stretch justify-center rounded-lg font-semibold cursor-pointer hover:opacity-80 transition-opacity select-none"
       style={{
         width: w,
@@ -78,7 +81,8 @@ export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record }) =
         backgroundColor: color + '20',
       }}
       title={cell.shiftTemplateName}
-      onClick={onOpenShiftDrawer}
+      onPress={onOpenShiftDrawer}
+      disabled={disabled}
     >
       <span className="tracking-wide truncate line-clamp-1 text-center" style={{ color }}>
         {cell.shiftTemplateName}
@@ -90,6 +94,6 @@ export const ShiftCellBlock: FC<ShiftCellBlockProps> = ({ cell, day, record }) =
         className="absolute right-0 bottom-0 border-0 w-full z-20 inline-block h-1"
         style={{ backgroundColor: color }}
       />
-    </div>
+    </Button>
   );
 };

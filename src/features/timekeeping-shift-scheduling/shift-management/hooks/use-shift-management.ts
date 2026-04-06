@@ -22,7 +22,7 @@ export function useShiftManagementGrid(params?: ShiftManagementParams) {
   return useQuery(shiftManagementQueryOptions.grid(params));
 }
 
-export function useStaffDailyAttendance(params?: ShiftManagementParams) {
+export function useStaffDailyAttendance(params?: ShiftManagementParams & { staffId: string }) {
   return useQuery(shiftManagementQueryOptions.staffDailyAttendance(params));
 }
 

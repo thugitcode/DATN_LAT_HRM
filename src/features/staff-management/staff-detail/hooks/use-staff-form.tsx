@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { useEffect } from "react";
 import { useForm, type FieldValues, type Resolver } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { useControlMode } from "../../salary-and-benefits/hooks/use-control-mode-handle";
+import { ControlMode, useControlMode } from "../../salary-and-benefits/hooks/use-control-mode-handle";
 import { staffSchema, type StaffFormValues } from "../../staff-list-management/schemas/staff.schema";
 import { STAFF_FORM_DEFAULT_VALUES } from "../constants/data";
 
@@ -26,7 +26,7 @@ export const useStaffForm = (
     const { isCreate, data: typeSubmit } = useControlMode()
     const { data: staffDetail } = useStaffDetail(editData?.id ?? "")
     const { handleSubmit, reset } = form;
-
+    const { setMode } = useControlMode()
     // Logic Reset Form khi đóng/mở hoặc chuyển mode Edit
     useEffect(() => {
         if (!isOpen) return;
@@ -78,6 +78,7 @@ export const useStaffForm = (
         try {
             if (staffDetail?.data?.id) {
                 await updateStaff({ id: staffDetail?.data?.id, data: payload as any });
+                setMode(ControlMode.view);
             } else {
                 await createStaff(payload as any);
             }

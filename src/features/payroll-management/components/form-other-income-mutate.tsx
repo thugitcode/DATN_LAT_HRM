@@ -1,32 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { NAMESPACES } from '@/i18n/constants';
+import { allowanceQueryOptions } from '@/services/query-options/allowance.query';
+import { uploadService } from '@/services/upload.service';
 import { useDrawer } from '@/store/useDrawer';
 import { Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
-import { useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
+import { AllowanceType } from '@/types/allowance.type';
+import { Status } from '@/types/global.type';
+import { useDepartmentOptions } from '@/hooks/options/use-department-options';
+import { useRoomOptions } from '@/hooks/options/use-room-options';
+import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { FormArea } from '@/components/form-fields/form-area';
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
+import { FormFileUploadInput } from '@/components/form-fields/form-file-upload-input';
+import { FormMonthYearPicker } from '@/components/form-fields/form-month-picker';
 import { FormNumberInput } from '@/components/form-fields/form-number-input';
 import { FormSelect } from '@/components/form-fields/form-select';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { WrapperBoxForm } from '@/components/wrapper-box-form';
-import { useDepartmentOptions } from '@/hooks/options/use-department-options';
-import { useRoomOptions } from '@/hooks/options/use-room-options';
-import { useStaffOptions } from '@/hooks/options/use-staff-options';
-import { Status } from '@/types/global.type';
 
-import { FormFileUploadInput } from '@/components/form-fields/form-file-upload-input';
-import { allowanceQueryOptions } from '@/services/query-options/allowance.query';
-import { uploadService } from '@/services/upload.service';
-import { AllowanceType } from '@/types/allowance.type';
-import { useQuery } from '@tanstack/react-query';
 import { OTHER_INCOME_TYPE_OPTIONS } from '../constants/other-income';
 import {
   useCreateOtherIncome,
@@ -57,7 +58,6 @@ export const FormOtherIncomeMutate = () => {
   const { options: departmentOptions } = useDepartmentOptions();
   const { options: roomOptions } = useRoomOptions();
 
-
   const { mutate: mutateCreate, isPending } = useCreateOtherIncome();
   const { mutate: mutateUpdate, isPending: isPendingUpdate } = useUpdateOtherIncome();
 
@@ -84,20 +84,20 @@ export const FormOtherIncomeMutate = () => {
       amount: '',
       date: '',
       description: '',
-      entryPersonId: '',
       source: KpiSourceEnum.WEB,
       status: Status.PENDING,
-      attachments: []
+      attachments: [],
     },
     mode: 'onSubmit',
   });
-  const { control, handleSubmit, setValue } = methods;
+  const { control, handleSubmit, setValue, clearErrors } = methods;
   const { data: allowanceData } = useQuery(allowanceQueryOptions.list());
-  const allowanceOptions = allowanceData?.data?.map((item) => ({
-    key: item.id,
-    label: item.name,
-    ...item
-  })) ?? [];
+  const allowanceOptions =
+    allowanceData?.data?.map((item) => ({
+      key: item.id,
+      label: item.name,
+      ...item,
+    })) ?? [];
 
   useEffect(() => {
     if (!dataDetail || staffOptions.length === 0 || hasAutofilled.current) return;
@@ -107,6 +107,11 @@ export const FormOtherIncomeMutate = () => {
       setSelectedStaff(emp);
     }
 
+    hasAutofilled.current = true;
+  }, [staffOptions, methods]);
+
+  useEffect(() => {
+    if (!dataDetail) return;
     methods.reset({
       staffCode: dataDetail.staff?.code || '',
       name: dataDetail.staff?.id || '',
@@ -118,23 +123,21 @@ export const FormOtherIncomeMutate = () => {
       amount: dataDetail.amount?.toString() || '',
       date: dataDetail.date || '',
       description: dataDetail.description || '',
-      entryPersonId: dataDetail.entryPerson?.id || '',
       source: dataDetail.source || KpiSourceEnum.WEB,
-      attachments: dataDetail.attachments?.map((item) => ({
-        name: item.fileName,
-        size: item.fileSize,
-        type: item.fileType,
-        url: item.fileUrl,
-        fileUrl: item.fileUrl,
-        filePath: item.filePath,
-        fileName: item.fileName,
-        fileType: item.fileType,
-        fileSize: item.fileSize,
-      })) || [],
+      attachments:
+        dataDetail.attachments?.map((item) => ({
+          name: item.fileName,
+          size: item.fileSize,
+          type: item.fileType,
+          url: item.fileUrl,
+          fileUrl: item.fileUrl,
+          filePath: item.filePath,
+          fileName: item.fileName,
+          fileType: item.fileType,
+          fileSize: item.fileSize,
+        })) || [],
     });
-
-    hasAutofilled.current = true;
-  }, [dataDetail, staffOptions, methods]);
+  }, [dataDetail, isLoading]);
 
   const applyStaffSelection = (emp: (typeof staffOptions)[0]) => {
     setSelectedStaff(emp);
@@ -179,36 +182,46 @@ export const FormOtherIncomeMutate = () => {
   }, [selectedStaff, roomOptions]);
 
   const onSubmit = async (values: OtherIncomeMutateFormValues) => {
+    let attachments: {
+      fileUrl: string;
+      filePath: string;
+      fileName: string;
+      fileType: string;
+      fileSize: number;
+    }[] = [];
 
     const fileToUpload = values?.attachments?.[0];
 
-    const uploadRes = await uploadService.upload(fileToUpload);
-    let attachments: { fileUrl: string; filePath: string; fileName: string; fileType: string; fileSize: number; }[] = [];
-    if (uploadRes.statusCode === 200) {
-      const fileData = uploadRes.data;
-      attachments = [{
-        fileUrl: fileData.url,
-        filePath: fileData.filePath,
-        fileName: fileData.fileName,
-        fileType: fileData.fileType,
-        fileSize: fileData.fileSize,
-      }];
+    if (fileToUpload && !fileToUpload.fileUrl) {
+      const uploadRes = await uploadService.upload(fileToUpload);
+
+      if (uploadRes.statusCode === 200) {
+        const fileData = uploadRes.data;
+        attachments = [
+          {
+            fileUrl: fileData.url,
+            filePath: fileData.filePath,
+            fileName: fileData.fileName,
+            fileType: fileData.fileType,
+            fileSize: fileData.fileSize,
+          },
+        ];
+      }
     }
 
     const payload: OtherIncomePayload = {
       staffId: values.staffId,
-      month: dayjs().format('YYYY-MM'),
+      month: dayjs(values.date).format('YYYY-MM'),
       type: values.type,
       description: values.description ?? '',
       amount: Number(values.amount),
       source: values.source,
-      entryPersonId: values.entryPersonId,
-      date: values.date,
+      // Fix cứng trước đã
+      entryPersonId: 'admin-manager-uuid',
+      date: dayjs(values.date).format('YYYY-MM-DD'),
       allowanceId: values.allowanceId,
       attachments: attachments ?? [],
     };
-
-    console.log(values, 'payload_________________', payload);
 
     if (!dataDetail) {
       mutateCreate(payload);
@@ -218,8 +231,8 @@ export const FormOtherIncomeMutate = () => {
   };
   const typeOptions = Object.values(AllowanceType).map((val) => ({
     label: t(`otherIncome.allowance_type.${val}`),
-    key: val
-  }))
+    key: val,
+  }));
   const isDisabledStaff = isPending || isPendingUpdate || !!dataDetail;
 
   return (
@@ -258,6 +271,7 @@ export const FormOtherIncomeMutate = () => {
                   isRequired={!isDisabledStaff}
                   options={filteredDepartmentOptions}
                   readOnly={isDisabledStaff}
+                  onSelect={() => clearErrors('departmentId')}
                 />
                 <FormSelect
                   control={control}
@@ -266,6 +280,7 @@ export const FormOtherIncomeMutate = () => {
                   isRequired={!isDisabledStaff}
                   options={filteredRoomOptions}
                   readOnly={isDisabledStaff}
+                  onSelect={() => clearErrors('roomId')}
                 />
               </div>
             </WrapperBoxForm>
@@ -301,22 +316,22 @@ export const FormOtherIncomeMutate = () => {
                   disabled={isPending || isPendingUpdate}
                 />
 
-                <FormDatePicker
+                {/* <FormDatePicker
                   control={control}
                   name="date"
                   label={t('otherIncome.form.date')}
                   isRequired
                   disabled={isPending || isPendingUpdate}
-                />
-                {/* <FormMonthYearPicker
-                  control={control}
-                  name="date"
-                  label={t('otherIncome.form.date')}
-                  disabled={isPending || isPendingUpdate}
-                  isRequired
                 /> */}
+                <FormMonthYearPicker
+                  control={control}
+                  name="date"
+                  label={t('otherIncome.form.date')}
+                  disabled={isPending || isPendingUpdate}
+                  isRequired
+                />
 
-                <div className="col-span-2">
+                {/* <div className="col-span-2">
                   <FormAutocomplete
                     control={control}
                     name="entryPersonId"
@@ -325,7 +340,7 @@ export const FormOtherIncomeMutate = () => {
                     options={staffOptions}
                     disabled={isPending || isPendingUpdate}
                   />
-                </div>
+                </div> */}
 
                 <div className="col-span-2">
                   <FormArea
@@ -354,7 +369,7 @@ export const FormOtherIncomeMutate = () => {
             <Button
               variant="light"
               onPress={onClose}
-              className="border border-[#006FEE] bg-white text-[14px] font-normal text-[#006FEE]"
+              className="border border-[#6576FF] bg-white text-[14px] font-normal text-[#6576FF]"
             >
               {tc('button.cancel')}
             </Button>

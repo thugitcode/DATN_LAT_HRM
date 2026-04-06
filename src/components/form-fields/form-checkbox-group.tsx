@@ -12,6 +12,7 @@ interface FormCheckboxGroupProps {
   options: Options[];
   disabled?: boolean;
   className?: string;
+  transform?: (key: string) => unknown;
 }
 
 export const FormCheckboxGroup: FC<FormCheckboxGroupProps> = ({
@@ -20,15 +21,19 @@ export const FormCheckboxGroup: FC<FormCheckboxGroupProps> = ({
   options,
   disabled,
   className,
+  transform,
 }) => {
   const { field } = useController({ control, name });
 
-  const handleChange = (value: string, checked: boolean) => {
+  const toValue = (key: string) => (transform ? transform(key) : key);
+
+  const handleChange = (key: string, checked: boolean) => {
+    const value = toValue(key);
     let current = Array.isArray(field.value) ? [...field.value] : [];
     if (checked) {
-      if (!current.includes(value)) current.push(value);
+      if (!current.some((v) => String(v) === String(value))) current.push(value);
     } else {
-      current = current.filter((v) => v !== value);
+      current = current.filter((v) => String(v) !== String(value));
     }
     field.onChange(current);
   };
@@ -38,7 +43,7 @@ export const FormCheckboxGroup: FC<FormCheckboxGroupProps> = ({
       {options.map((opt) => (
         <Checkbox
           key={opt.key}
-          isSelected={Array.isArray(field.value) && field.value.includes(opt.key)}
+          isSelected={Array.isArray(field.value) && field.value.some((v: unknown) => String(v) === String(toValue(opt.key)))}
           onValueChange={(checked) => handleChange(opt.key, checked)}
           isDisabled={disabled}
           classNames={{ label: 'text-[14px] text-[#3F3F46]' }}

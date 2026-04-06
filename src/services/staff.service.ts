@@ -1,13 +1,14 @@
 import { DEFAULT_PAGINATION } from '@/query-options/constants';
 
+import type { ApiResponse } from '@/types';
 import type { Staff } from '@/types/shift-management.type';
 import type { StaffParams } from '@/types/staff.type';
 import { hrmInstance } from '@/lib/axios';
+import type { SalaryFormValues } from '@/features/staff-management/salary-and-benefits/schemas';
+import type { SalaryAndBenefits } from '@/features/staff-management/types/salary-and-benefits';
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';
-import type { SalaryFormValues } from '@/features/staff-management/salary-and-benefits/schemas';
-import type { ApiResponse } from '@/types';
 
 class StaffService extends BaseApiService<Staff, StaffParams> {
   constructor() {
@@ -21,7 +22,7 @@ class StaffService extends BaseApiService<Staff, StaffParams> {
     });
   }
 
-  async getDetailsStaffSalary(id: string): Promise<ApiResponse<void>> {
+  async getDetailsStaffSalary(id: string): Promise<ApiResponse<SalaryAndBenefits>> {
     return this.request(async () => {
       const res = await this.instance.get(`/staff-salary/staff/${id}`);
       return res.data;

@@ -1,7 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router';
-
-import { RecruitmentManagement } from '@/features/recruitment-management/recruitment-management';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_private/admin/_dashboard/recruitment-management/')({
-  component: RecruitmentManagement,
+  beforeLoad: () => {
+    throw redirect({
+      to: '/admin/recruitment-management/recruitment-request',
+    });
+  },
 });

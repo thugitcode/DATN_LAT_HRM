@@ -34,6 +34,7 @@ export const useBusinessTripColumns = () => {
       key: 'staffName',
       title: t('columns.staffName'),
       minWidth: 180,
+      sticky: 'left',
       render: (_, row) => <span>{row.staffName || '-'}</span>,
     },
     {
@@ -93,6 +94,7 @@ export const useBusinessTripColumns = () => {
     {
       key: 'status',
       title: t('columns.status'),
+      // sticky: 'right',
       minWidth: 120,
       render: (_, row) => <StatusChip status={row?.status} />,
     },

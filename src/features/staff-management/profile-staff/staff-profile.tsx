@@ -33,11 +33,11 @@ export const StaffProfile = () => {
                         {...profile}
                         thumbnail={profile.thumbnail || ""}
                         uploadedBy={profile.uploadedBy || profile.createdByName}
-                        onMore={() => console.log("More", profile.id)}
+                        onMore={() => { }}
                     />
                 ))}
             </div> : (
-                <Card className="flex h-30 items-center justify-center p-6 text-default-400 shadow-none border border-default-200 bg-default-50/50">
+                <Card className="flex h-30 items-center justify-center p-6 text-default-400 shadow-none border border-default-200 bg-white">
                     <p className="text-sm">{t("table.empty")}</p>
                 </Card>
             )}

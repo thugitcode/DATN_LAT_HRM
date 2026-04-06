@@ -11,13 +11,13 @@ import { useUpdateStaff } from "@/query-options/staff";
 export const ContactSection = () => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { control, trigger, getValues } = useFormContext();
-    const { data, setMode } = useControlMode();
+    const { data, setMode, isView: view } = useControlMode();
 
     // Mutation để cập nhật dữ liệu
     const { mutateAsync: updateStaff, isPending: isUpdating } = useUpdateStaff();
 
     const isEditing = data === STAFF_SECTION_KEYS.CONTACT || data === "ALL";
-    const isView = !isEditing;
+    const isView = !isEditing || view;
     const variant = isView ? "underlined" : "flat";
 
     // Danh sách các fields cần quản lý trong section này

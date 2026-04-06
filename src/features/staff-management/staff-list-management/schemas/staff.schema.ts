@@ -130,6 +130,7 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
         contractType: requiredString(t("errors.contractType.required")),
 
         contractDuration: optionalString(),
+        workingPeriod: optionalString(),
 
         // --- Thông tin bổ sung ---
         taxCode: optionalRegex(/^\d{10}$/, t("errors.taxCode.format")),
