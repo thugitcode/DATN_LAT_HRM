@@ -8,6 +8,7 @@ export const Route = createFileRoute('/unauthenticated')({
     await idbPersister.removeClient();
 
     localStorage.removeItem('jwt');
+    localStorage.removeItem('partner_code');
   },
   component: () => <CommonErrorComponent type="auth" />,
 });
