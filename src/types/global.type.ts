@@ -5,6 +5,7 @@ import type { ContractTypeEnum, StaffPositionEnum } from './staff.type';
 
 export type GlobalSearchParams = {
   jwt?: string | null;
+  partner_code?: string | null;
 };
 
 export interface MenuItem {
