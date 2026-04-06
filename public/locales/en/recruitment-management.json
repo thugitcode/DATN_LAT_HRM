@@ -27,9 +27,11 @@
       "soft_skills": "Soft Skills",
       "other_requirements": "Other Requirements",
       "salary_expected": "Proposed Salary (VND/month)",
+      "salary_expected_short": "Proposed Salary",
       "salary_from": "Salary From",
       "salary_to": "Salary To",
-      "note": "Note"
+      "note": "Note",
+      "recruitment_information": "Recruitment Information"
     },
     "placeholders": {
       "auto_generated": "Auto-generated",
@@ -190,6 +192,68 @@
       "approve_success": "Recruitment request approved successfully.",
       "reject_success": "Recruitment request rejected successfully.",
       "close_success": "Recruitment request closed successfully."
+    },
+    "details": {
+      "candidate": "Candidate",
+      "request_info": "Request Info",
+      "interview_schedule": "Interview Schedule"
+    }
+  },
+  "interview_schedule": {
+    "view": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month"
+    },
+    "status": {
+      "PENDING_CONFIRMATION": "Pending Confirmation",
+      "CONFIRMED": "Confirmed",
+      "PENDING_EVALUATION": "Pending Evaluation",
+      "POSTPONED": "Postponed",
+      "CANCELLED": "Cancelled"
+    },
+    "method": {
+      "ONLINE": "Online",
+      "OFFLINE": "Offline"
+    },
+    "label": {
+      "interview": "Interview",
+      "no_events": "No interview schedules in this period."
+    },
+    "detail": {
+      "code": "Schedule Code",
+      "method": "Method",
+      "date": "Interview Date",
+      "time": "Time",
+      "position": "Position",
+      "department": "Department",
+      "room": "Room",
+      "interviewer": "Interviewer",
+      "content": "Content"
+    }
+  },
+  "candidate": {
+    "applied_date": "Applied date",
+    "position": "Position",
+    "department": "Department",
+    "status": {
+      "applied": "Applied",
+      "screened": "Screened",
+      "waiting_interview": "Waiting Interview",
+      "interviewing": "Interviewing",
+      "waiting_offer": "Waiting Offer",
+      "probation_proposed": "Probation Proposed",
+      "on_probation": "On Probation",
+      "rejected": "Rejected",
+      "offer_declined": "Offer Declined"
+    },
+    "actions": {
+      "screen": "Screen",
+      "schedule_interview": "Schedule Interview",
+      "view_schedule": "View Schedule",
+      "send_offer": "Send Offer",
+      "accept_official": "Accept Official",
+      "view_detail": "View Detail"
     }
   }
 }

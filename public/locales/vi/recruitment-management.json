@@ -27,9 +27,11 @@
       "soft_skills": "Kỹ năng mềm",
       "other_requirements": "Yêu cầu khác",
       "salary_expected": "Mức lương dự kiến (tr/tháng)",
+      "salary_expected_short": "Mức lương dự kiến",
       "salary_from": "Mức lương từ",
       "salary_to": "Mức lương đến",
-      "note": "Ghi chú"
+      "note": "Ghi chú",
+      "recruitment_information": "Thông tin tuyển dụng"
     },
     "placeholders": {
       "auto_generated": "Tự sinh",
@@ -190,6 +192,68 @@
       "approve_success": "Duyệt yêu cầu tuyển dụng thành công.",
       "reject_success": "Từ chối yêu cầu tuyển dụng thành công.",
       "close_success": "Đóng yêu cầu tuyển dụng thành công."
+    },
+    "details": {
+      "candidate": "Ứng viên",
+      "request_info": "Thông tin yêu cầu",
+      "interview_schedule": "Lịch phỏng vấn"
+    }
+  },
+  "interview_schedule": {
+    "view": {
+      "day": "Ngày",
+      "week": "Tuần",
+      "month": "Tháng"
+    },
+    "status": {
+      "PENDING_CONFIRMATION": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "PENDING_EVALUATION": "Chờ đánh giá",
+      "POSTPONED": "Hoãn",
+      "CANCELLED": "Hủy lịch"
+    },
+    "method": {
+      "ONLINE": "Online",
+      "OFFLINE": "Trực tiếp"
+    },
+    "label": {
+      "interview": "Phỏng vấn",
+      "no_events": "Không có lịch phỏng vấn trong khoảng thời gian này."
+    },
+    "detail": {
+      "code": "Mã lịch",
+      "method": "Hình thức",
+      "date": "Ngày phỏng vấn",
+      "time": "Thời gian",
+      "position": "Vị trí",
+      "department": "Khoa",
+      "room": "Phòng",
+      "interviewer": "Người phỏng vấn",
+      "content": "Nội dung"
+    }
+  },
+  "candidate": {
+    "applied_date": "Ngày ứng tuyển",
+    "position": "Vị trí",
+    "department": "Khoa",
+    "status": {
+      "applied": "Đã ứng tuyển",
+      "screened": "Đã sàng lọc",
+      "waiting_interview": "Chờ phỏng vấn",
+      "interviewing": "Đang phỏng vấn",
+      "waiting_offer": "Chờ offer",
+      "probation_proposed": "Đề xuất thử việc",
+      "on_probation": "Đang thử việc",
+      "rejected": "Từ chối",
+      "offer_declined": "Từ chối offer"
+    },
+    "actions": {
+      "screen": "Sàng lọc",
+      "schedule_interview": "Tạo lịch phỏng vấn",
+      "view_schedule": "Xem lịch PV",
+      "send_offer": "Gửi offer",
+      "accept_official": "Tiếp nhận chính thức",
+      "view_detail": "Xem chi tiết"
     }
   }
 }

@@ -11,8 +11,6 @@ interface MainLayoutProps {
 export const MainLayout: FC<Readonly<MainLayoutProps>> = ({ children }) => {
   return (
     <div className="h-full flex flex-col">
-
-
       <div className="flex flex-1 overflow-hidden">
         <MainSidebar />
         <div className="flex-1 flex flex-col min-w-0">

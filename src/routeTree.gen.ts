@@ -20,6 +20,7 @@ import { Route as PrivateLogoutRouteImport } from './routes/_private/logout'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as PrivateAdminIndexRouteImport } from './routes/_private/admin/index'
 import { Route as AuthTimekeepingShiftSchedulingIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/index'
+import { Route as PrivateAdminDetailRouteImport } from './routes/_private/admin/_detail'
 import { Route as PrivateAdminDashboardRouteImport } from './routes/_private/admin/_dashboard'
 import { Route as AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/timekeeping-management/index'
 import { Route as AuthTimekeepingShiftSchedulingShiftManagementIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/shift-management/index'
@@ -34,7 +35,6 @@ import { Route as PrivateAdminDashboardLeaveManagementIndexRouteImport } from '.
 import { Route as PrivateAdminDashboardContractManagementIndexRouteImport } from './routes/_private/admin/_dashboard/contract-management/index'
 import { Route as PrivateAdminDashboardStaffManagementTypeRouteImport } from './routes/_private/admin/_dashboard/staff-management/$type'
 import { Route as PrivateAdminDashboardRecruitmentManagementReportRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/report'
-import { Route as PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/recruitment-request'
 import { Route as PrivateAdminDashboardRecruitmentManagementProbationManagementRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/probation-management'
 import { Route as PrivateAdminDashboardRecruitmentManagementInterviewScheduleRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/interview-schedule'
 import { Route as PrivateAdminDashboardRecruitmentManagementCandidateRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/candidate'
@@ -51,9 +51,11 @@ import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingTimekeepingMana
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/index'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/index'
 import { Route as PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRouteImport } from './routes/_private/admin/_dashboard/staff-management/official-employee/index'
+import { Route as PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/recruitment-request.index'
 import { Route as PrivateAdminDashboardPayrollManagementPayrollCalculationIndexRouteImport } from './routes/_private/admin/_dashboard/payroll-management/payroll-calculation.index'
 import { Route as PrivateAdminDashboardPayrollManagementDataSummaryIndexRouteImport } from './routes/_private/admin/_dashboard/payroll-management/data-summary/index'
-import { Route as PrivateAdminDashboardStaffManagementDetailIdRouteImport } from './routes/_private/admin/_dashboard/staff-management/detail/$id'
+import { Route as PrivateAdminDetailStaffManagementDetailIdRouteImport } from './routes/_private/admin/_detail/staff-management/detail/$id'
+import { Route as PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRouteImport } from './routes/_private/admin/_detail/recruitment-management/recruitment-request.$id'
 import { Route as PrivateAdminDashboardPayrollManagementPayrollCalculationIdRouteImport } from './routes/_private/admin/_dashboard/payroll-management/payroll-calculation.$id'
 import { Route as PrivateAdminDashboardPayrollManagementDataSummarySummaryFinalizeIndexRouteImport } from './routes/_private/admin/_dashboard/payroll-management/data-summary/summary-finalize/index'
 import { Route as PrivateAdminDashboardPayrollManagementDataSummaryRevenueIndexRouteImport } from './routes/_private/admin/_dashboard/payroll-management/data-summary/revenue/index'
@@ -109,6 +111,11 @@ const AuthTimekeepingShiftSchedulingIndexRoute =
     path: '/timekeeping-shift-scheduling/',
     getParentRoute: () => AuthRoute,
   } as any)
+const PrivateAdminDetailRoute = PrivateAdminDetailRouteImport.update({
+  id: '/admin/_detail',
+  path: '/admin',
+  getParentRoute: () => PrivateRoute,
+} as any)
 const PrivateAdminDashboardRoute = PrivateAdminDashboardRouteImport.update({
   id: '/admin/_dashboard',
   path: '/admin',
@@ -202,14 +209,6 @@ const PrivateAdminDashboardRecruitmentManagementReportRoute =
     path: '/recruitment-management/report',
     getParentRoute: () => PrivateAdminDashboardRoute,
   } as any)
-const PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute =
-  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRouteImport.update(
-    {
-      id: '/recruitment-management/recruitment-request',
-      path: '/recruitment-management/recruitment-request',
-      getParentRoute: () => PrivateAdminDashboardRoute,
-    } as any,
-  )
 const PrivateAdminDashboardRecruitmentManagementProbationManagementRoute =
   PrivateAdminDashboardRecruitmentManagementProbationManagementRouteImport.update(
     {
@@ -324,6 +323,14 @@ const PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute =
     path: '/staff-management/official-employee/',
     getParentRoute: () => PrivateAdminDashboardRoute,
   } as any)
+const PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRoute =
+  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRouteImport.update(
+    {
+      id: '/recruitment-management/recruitment-request/',
+      path: '/recruitment-management/recruitment-request/',
+      getParentRoute: () => PrivateAdminDashboardRoute,
+    } as any,
+  )
 const PrivateAdminDashboardPayrollManagementPayrollCalculationIndexRoute =
   PrivateAdminDashboardPayrollManagementPayrollCalculationIndexRouteImport.update(
     {
@@ -340,12 +347,20 @@ const PrivateAdminDashboardPayrollManagementDataSummaryIndexRoute =
     getParentRoute: () =>
       PrivateAdminDashboardPayrollManagementDataSummaryRouteRoute,
   } as any)
-const PrivateAdminDashboardStaffManagementDetailIdRoute =
-  PrivateAdminDashboardStaffManagementDetailIdRouteImport.update({
+const PrivateAdminDetailStaffManagementDetailIdRoute =
+  PrivateAdminDetailStaffManagementDetailIdRouteImport.update({
     id: '/staff-management/detail/$id',
     path: '/staff-management/detail/$id',
-    getParentRoute: () => PrivateAdminDashboardRoute,
+    getParentRoute: () => PrivateAdminDetailRoute,
   } as any)
+const PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRoute =
+  PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRouteImport.update(
+    {
+      id: '/recruitment-management/recruitment-request/$id',
+      path: '/recruitment-management/recruitment-request/$id',
+      getParentRoute: () => PrivateAdminDetailRoute,
+    } as any,
+  )
 const PrivateAdminDashboardPayrollManagementPayrollCalculationIdRoute =
   PrivateAdminDashboardPayrollManagementPayrollCalculationIdRouteImport.update({
     id: '/$id',
@@ -403,7 +418,7 @@ export interface FileRoutesByFullPath {
   '/unauthenticated': typeof UnauthenticatedRoute
   '/login': typeof AuthLoginRoute
   '/logout': typeof PrivateLogoutRoute
-  '/admin': typeof PrivateAdminDashboardRouteWithChildren
+  '/admin': typeof PrivateAdminDetailRouteWithChildren
   '/timekeeping-shift-scheduling/': typeof AuthTimekeepingShiftSchedulingIndexRoute
   '/admin/': typeof PrivateAdminIndexRoute
   '/admin/dashboard': typeof PrivateAdminDashboardDashboardLazyRoute
@@ -422,7 +437,6 @@ export interface FileRoutesByFullPath {
   '/admin/recruitment-management/candidate': typeof PrivateAdminDashboardRecruitmentManagementCandidateRoute
   '/admin/recruitment-management/interview-schedule': typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute
   '/admin/recruitment-management/probation-management': typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRoute
-  '/admin/recruitment-management/recruitment-request': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute
   '/admin/recruitment-management/report': typeof PrivateAdminDashboardRecruitmentManagementReportRoute
   '/admin/staff-management/$type': typeof PrivateAdminDashboardStaffManagementTypeRoute
   '/admin/contract-management/': typeof PrivateAdminDashboardContractManagementIndexRoute
@@ -434,9 +448,11 @@ export interface FileRoutesByFullPath {
   '/admin/staff-management/': typeof PrivateAdminDashboardStaffManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   '/admin/payroll-management/payroll-calculation/$id': typeof PrivateAdminDashboardPayrollManagementPayrollCalculationIdRoute
-  '/admin/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
+  '/admin/recruitment-management/recruitment-request/$id': typeof PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRoute
+  '/admin/staff-management/detail/$id': typeof PrivateAdminDetailStaffManagementDetailIdRoute
   '/admin/payroll-management/data-summary/': typeof PrivateAdminDashboardPayrollManagementDataSummaryIndexRoute
   '/admin/payroll-management/payroll-calculation/': typeof PrivateAdminDashboardPayrollManagementPayrollCalculationIndexRoute
+  '/admin/recruitment-management/recruitment-request/': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRoute
   '/admin/staff-management/official-employee/': typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute
   '/admin/timekeeping-shift-scheduling/explanation-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/shift-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -469,7 +485,6 @@ export interface FileRoutesByTo {
   '/admin/recruitment-management/candidate': typeof PrivateAdminDashboardRecruitmentManagementCandidateRoute
   '/admin/recruitment-management/interview-schedule': typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute
   '/admin/recruitment-management/probation-management': typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRoute
-  '/admin/recruitment-management/recruitment-request': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute
   '/admin/recruitment-management/report': typeof PrivateAdminDashboardRecruitmentManagementReportRoute
   '/admin/staff-management/$type': typeof PrivateAdminDashboardStaffManagementTypeRoute
   '/admin/contract-management': typeof PrivateAdminDashboardContractManagementIndexRoute
@@ -481,9 +496,11 @@ export interface FileRoutesByTo {
   '/admin/staff-management': typeof PrivateAdminDashboardStaffManagementIndexRoute
   '/admin/timekeeping-shift-scheduling': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   '/admin/payroll-management/payroll-calculation/$id': typeof PrivateAdminDashboardPayrollManagementPayrollCalculationIdRoute
-  '/admin/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
+  '/admin/recruitment-management/recruitment-request/$id': typeof PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRoute
+  '/admin/staff-management/detail/$id': typeof PrivateAdminDetailStaffManagementDetailIdRoute
   '/admin/payroll-management/data-summary': typeof PrivateAdminDashboardPayrollManagementDataSummaryIndexRoute
   '/admin/payroll-management/payroll-calculation': typeof PrivateAdminDashboardPayrollManagementPayrollCalculationIndexRoute
+  '/admin/recruitment-management/recruitment-request': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRoute
   '/admin/staff-management/official-employee': typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute
   '/admin/timekeeping-shift-scheduling/explanation-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/admin/timekeeping-shift-scheduling/shift-management': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -504,6 +521,7 @@ export interface FileRoutesById {
   '/_auth/login': typeof AuthLoginRoute
   '/_private/logout': typeof PrivateLogoutRoute
   '/_private/admin/_dashboard': typeof PrivateAdminDashboardRouteWithChildren
+  '/_private/admin/_detail': typeof PrivateAdminDetailRouteWithChildren
   '/_auth/timekeeping-shift-scheduling/': typeof AuthTimekeepingShiftSchedulingIndexRoute
   '/_private/admin/': typeof PrivateAdminIndexRoute
   '/_private/admin/_dashboard/dashboard': typeof PrivateAdminDashboardDashboardLazyRoute
@@ -522,7 +540,6 @@ export interface FileRoutesById {
   '/_private/admin/_dashboard/recruitment-management/candidate': typeof PrivateAdminDashboardRecruitmentManagementCandidateRoute
   '/_private/admin/_dashboard/recruitment-management/interview-schedule': typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute
   '/_private/admin/_dashboard/recruitment-management/probation-management': typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRoute
-  '/_private/admin/_dashboard/recruitment-management/recruitment-request': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute
   '/_private/admin/_dashboard/recruitment-management/report': typeof PrivateAdminDashboardRecruitmentManagementReportRoute
   '/_private/admin/_dashboard/staff-management/$type': typeof PrivateAdminDashboardStaffManagementTypeRoute
   '/_private/admin/_dashboard/contract-management/': typeof PrivateAdminDashboardContractManagementIndexRoute
@@ -534,9 +551,11 @@ export interface FileRoutesById {
   '/_private/admin/_dashboard/staff-management/': typeof PrivateAdminDashboardStaffManagementIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
   '/_private/admin/_dashboard/payroll-management/payroll-calculation/$id': typeof PrivateAdminDashboardPayrollManagementPayrollCalculationIdRoute
-  '/_private/admin/_dashboard/staff-management/detail/$id': typeof PrivateAdminDashboardStaffManagementDetailIdRoute
+  '/_private/admin/_detail/recruitment-management/recruitment-request/$id': typeof PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRoute
+  '/_private/admin/_detail/staff-management/detail/$id': typeof PrivateAdminDetailStaffManagementDetailIdRoute
   '/_private/admin/_dashboard/payroll-management/data-summary/': typeof PrivateAdminDashboardPayrollManagementDataSummaryIndexRoute
   '/_private/admin/_dashboard/payroll-management/payroll-calculation/': typeof PrivateAdminDashboardPayrollManagementPayrollCalculationIndexRoute
+  '/_private/admin/_dashboard/recruitment-management/recruitment-request/': typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRoute
   '/_private/admin/_dashboard/staff-management/official-employee/': typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/': typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -574,7 +593,6 @@ export interface FileRouteTypes {
     | '/admin/recruitment-management/candidate'
     | '/admin/recruitment-management/interview-schedule'
     | '/admin/recruitment-management/probation-management'
-    | '/admin/recruitment-management/recruitment-request'
     | '/admin/recruitment-management/report'
     | '/admin/staff-management/$type'
     | '/admin/contract-management/'
@@ -586,9 +604,11 @@ export interface FileRouteTypes {
     | '/admin/staff-management/'
     | '/admin/timekeeping-shift-scheduling/'
     | '/admin/payroll-management/payroll-calculation/$id'
+    | '/admin/recruitment-management/recruitment-request/$id'
     | '/admin/staff-management/detail/$id'
     | '/admin/payroll-management/data-summary/'
     | '/admin/payroll-management/payroll-calculation/'
+    | '/admin/recruitment-management/recruitment-request/'
     | '/admin/staff-management/official-employee/'
     | '/admin/timekeeping-shift-scheduling/explanation-management/'
     | '/admin/timekeeping-shift-scheduling/shift-management/'
@@ -621,7 +641,6 @@ export interface FileRouteTypes {
     | '/admin/recruitment-management/candidate'
     | '/admin/recruitment-management/interview-schedule'
     | '/admin/recruitment-management/probation-management'
-    | '/admin/recruitment-management/recruitment-request'
     | '/admin/recruitment-management/report'
     | '/admin/staff-management/$type'
     | '/admin/contract-management'
@@ -633,9 +652,11 @@ export interface FileRouteTypes {
     | '/admin/staff-management'
     | '/admin/timekeeping-shift-scheduling'
     | '/admin/payroll-management/payroll-calculation/$id'
+    | '/admin/recruitment-management/recruitment-request/$id'
     | '/admin/staff-management/detail/$id'
     | '/admin/payroll-management/data-summary'
     | '/admin/payroll-management/payroll-calculation'
+    | '/admin/recruitment-management/recruitment-request'
     | '/admin/staff-management/official-employee'
     | '/admin/timekeeping-shift-scheduling/explanation-management'
     | '/admin/timekeeping-shift-scheduling/shift-management'
@@ -655,6 +676,7 @@ export interface FileRouteTypes {
     | '/_auth/login'
     | '/_private/logout'
     | '/_private/admin/_dashboard'
+    | '/_private/admin/_detail'
     | '/_auth/timekeeping-shift-scheduling/'
     | '/_private/admin/'
     | '/_private/admin/_dashboard/dashboard'
@@ -673,7 +695,6 @@ export interface FileRouteTypes {
     | '/_private/admin/_dashboard/recruitment-management/candidate'
     | '/_private/admin/_dashboard/recruitment-management/interview-schedule'
     | '/_private/admin/_dashboard/recruitment-management/probation-management'
-    | '/_private/admin/_dashboard/recruitment-management/recruitment-request'
     | '/_private/admin/_dashboard/recruitment-management/report'
     | '/_private/admin/_dashboard/staff-management/$type'
     | '/_private/admin/_dashboard/contract-management/'
@@ -685,9 +706,11 @@ export interface FileRouteTypes {
     | '/_private/admin/_dashboard/staff-management/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/'
     | '/_private/admin/_dashboard/payroll-management/payroll-calculation/$id'
-    | '/_private/admin/_dashboard/staff-management/detail/$id'
+    | '/_private/admin/_detail/recruitment-management/recruitment-request/$id'
+    | '/_private/admin/_detail/staff-management/detail/$id'
     | '/_private/admin/_dashboard/payroll-management/data-summary/'
     | '/_private/admin/_dashboard/payroll-management/payroll-calculation/'
+    | '/_private/admin/_dashboard/recruitment-management/recruitment-request/'
     | '/_private/admin/_dashboard/staff-management/official-employee/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/explanation-management/'
     | '/_private/admin/_dashboard/timekeeping-shift-scheduling/shift-management/'
@@ -771,6 +794,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/timekeeping-shift-scheduling/'
       preLoaderRoute: typeof AuthTimekeepingShiftSchedulingIndexRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_private/admin/_detail': {
+      id: '/_private/admin/_detail'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof PrivateAdminDetailRouteImport
+      parentRoute: typeof PrivateRoute
     }
     '/_private/admin/_dashboard': {
       id: '/_private/admin/_dashboard'
@@ -875,13 +905,6 @@ declare module '@tanstack/react-router' {
       path: '/recruitment-management/report'
       fullPath: '/admin/recruitment-management/report'
       preLoaderRoute: typeof PrivateAdminDashboardRecruitmentManagementReportRouteImport
-      parentRoute: typeof PrivateAdminDashboardRoute
-    }
-    '/_private/admin/_dashboard/recruitment-management/recruitment-request': {
-      id: '/_private/admin/_dashboard/recruitment-management/recruitment-request'
-      path: '/recruitment-management/recruitment-request'
-      fullPath: '/admin/recruitment-management/recruitment-request'
-      preLoaderRoute: typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
     '/_private/admin/_dashboard/recruitment-management/probation-management': {
@@ -996,6 +1019,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
     }
+    '/_private/admin/_dashboard/recruitment-management/recruitment-request/': {
+      id: '/_private/admin/_dashboard/recruitment-management/recruitment-request/'
+      path: '/recruitment-management/recruitment-request'
+      fullPath: '/admin/recruitment-management/recruitment-request/'
+      preLoaderRoute: typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRouteImport
+      parentRoute: typeof PrivateAdminDashboardRoute
+    }
     '/_private/admin/_dashboard/payroll-management/payroll-calculation/': {
       id: '/_private/admin/_dashboard/payroll-management/payroll-calculation/'
       path: '/'
@@ -1010,12 +1040,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivateAdminDashboardPayrollManagementDataSummaryIndexRouteImport
       parentRoute: typeof PrivateAdminDashboardPayrollManagementDataSummaryRouteRoute
     }
-    '/_private/admin/_dashboard/staff-management/detail/$id': {
-      id: '/_private/admin/_dashboard/staff-management/detail/$id'
+    '/_private/admin/_detail/staff-management/detail/$id': {
+      id: '/_private/admin/_detail/staff-management/detail/$id'
       path: '/staff-management/detail/$id'
       fullPath: '/admin/staff-management/detail/$id'
-      preLoaderRoute: typeof PrivateAdminDashboardStaffManagementDetailIdRouteImport
-      parentRoute: typeof PrivateAdminDashboardRoute
+      preLoaderRoute: typeof PrivateAdminDetailStaffManagementDetailIdRouteImport
+      parentRoute: typeof PrivateAdminDetailRoute
+    }
+    '/_private/admin/_detail/recruitment-management/recruitment-request/$id': {
+      id: '/_private/admin/_detail/recruitment-management/recruitment-request/$id'
+      path: '/recruitment-management/recruitment-request/$id'
+      fullPath: '/admin/recruitment-management/recruitment-request/$id'
+      preLoaderRoute: typeof PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRouteImport
+      parentRoute: typeof PrivateAdminDetailRoute
     }
     '/_private/admin/_dashboard/payroll-management/payroll-calculation/$id': {
       id: '/_private/admin/_dashboard/payroll-management/payroll-calculation/$id'
@@ -1146,7 +1183,6 @@ interface PrivateAdminDashboardRouteChildren {
   PrivateAdminDashboardRecruitmentManagementCandidateRoute: typeof PrivateAdminDashboardRecruitmentManagementCandidateRoute
   PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute: typeof PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute
   PrivateAdminDashboardRecruitmentManagementProbationManagementRoute: typeof PrivateAdminDashboardRecruitmentManagementProbationManagementRoute
-  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute: typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute
   PrivateAdminDashboardRecruitmentManagementReportRoute: typeof PrivateAdminDashboardRecruitmentManagementReportRoute
   PrivateAdminDashboardStaffManagementTypeRoute: typeof PrivateAdminDashboardStaffManagementTypeRoute
   PrivateAdminDashboardContractManagementIndexRoute: typeof PrivateAdminDashboardContractManagementIndexRoute
@@ -1157,7 +1193,7 @@ interface PrivateAdminDashboardRouteChildren {
   PrivateAdminDashboardRecruitmentManagementIndexRoute: typeof PrivateAdminDashboardRecruitmentManagementIndexRoute
   PrivateAdminDashboardStaffManagementIndexRoute: typeof PrivateAdminDashboardStaffManagementIndexRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute
-  PrivateAdminDashboardStaffManagementDetailIdRoute: typeof PrivateAdminDashboardStaffManagementDetailIdRoute
+  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRoute: typeof PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRoute
   PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute: typeof PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute
   PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute: typeof PrivateAdminDashboardTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -1191,8 +1227,6 @@ const PrivateAdminDashboardRouteChildren: PrivateAdminDashboardRouteChildren = {
     PrivateAdminDashboardRecruitmentManagementInterviewScheduleRoute,
   PrivateAdminDashboardRecruitmentManagementProbationManagementRoute:
     PrivateAdminDashboardRecruitmentManagementProbationManagementRoute,
-  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute:
-    PrivateAdminDashboardRecruitmentManagementRecruitmentRequestRoute,
   PrivateAdminDashboardRecruitmentManagementReportRoute:
     PrivateAdminDashboardRecruitmentManagementReportRoute,
   PrivateAdminDashboardStaffManagementTypeRoute:
@@ -1213,8 +1247,8 @@ const PrivateAdminDashboardRouteChildren: PrivateAdminDashboardRouteChildren = {
     PrivateAdminDashboardStaffManagementIndexRoute,
   PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute:
     PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute,
-  PrivateAdminDashboardStaffManagementDetailIdRoute:
-    PrivateAdminDashboardStaffManagementDetailIdRoute,
+  PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRoute:
+    PrivateAdminDashboardRecruitmentManagementRecruitmentRequestIndexRoute,
   PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute:
     PrivateAdminDashboardStaffManagementOfficialEmployeeIndexRoute,
   PrivateAdminDashboardTimekeepingShiftSchedulingExplanationManagementIndexRoute:
@@ -1230,15 +1264,32 @@ const PrivateAdminDashboardRouteWithChildren =
     PrivateAdminDashboardRouteChildren,
   )
 
+interface PrivateAdminDetailRouteChildren {
+  PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRoute: typeof PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRoute
+  PrivateAdminDetailStaffManagementDetailIdRoute: typeof PrivateAdminDetailStaffManagementDetailIdRoute
+}
+
+const PrivateAdminDetailRouteChildren: PrivateAdminDetailRouteChildren = {
+  PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRoute:
+    PrivateAdminDetailRecruitmentManagementRecruitmentRequestIdRoute,
+  PrivateAdminDetailStaffManagementDetailIdRoute:
+    PrivateAdminDetailStaffManagementDetailIdRoute,
+}
+
+const PrivateAdminDetailRouteWithChildren =
+  PrivateAdminDetailRoute._addFileChildren(PrivateAdminDetailRouteChildren)
+
 interface PrivateRouteChildren {
   PrivateLogoutRoute: typeof PrivateLogoutRoute
   PrivateAdminDashboardRoute: typeof PrivateAdminDashboardRouteWithChildren
+  PrivateAdminDetailRoute: typeof PrivateAdminDetailRouteWithChildren
   PrivateAdminIndexRoute: typeof PrivateAdminIndexRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateLogoutRoute: PrivateLogoutRoute,
   PrivateAdminDashboardRoute: PrivateAdminDashboardRouteWithChildren,
+  PrivateAdminDetailRoute: PrivateAdminDetailRouteWithChildren,
   PrivateAdminIndexRoute: PrivateAdminIndexRoute,
 }
 

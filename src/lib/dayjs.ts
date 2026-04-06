@@ -7,13 +7,13 @@ import 'dayjs/locale/vi';
 
 // Extend dayjs with plugins
 dayjs.extend(utc);
-dayjs.extend(timezone);
+// dayjs.extend(timezone);
 dayjs.extend(customParseFormat);
 
 // Set default locale to Vietnamese
 dayjs.locale('vi');
 
 // Set default timezone to Asia/Ho_Chi_Minh (UTC+7)
-dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
+// dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
 
 export default dayjs;
