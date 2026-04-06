@@ -1,7 +1,7 @@
 // import { useMemo } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useLayoutStore } from '@/store/useLayoutStore';
 
 import { LayoutSwitcherEnum } from '@/types/global.type';
@@ -29,6 +29,7 @@ import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 import { Button } from '@heroui/react';
 import { icons } from '@/lib/icons';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { ControlMode, useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 // import { useRecruitmentRequestList } from './hooks/use-recruitment-request';
 // import type { RecruitmentRequestFilters } from './type';
 
@@ -36,7 +37,7 @@ const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-420px)]' } as const;
 
 export const RecruitmentRequestList = () => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-
+  const navigate = useNavigate()
   const { pathname = '/' } = useLocation();
   const { getLayout } = useLayoutStore();
   const currentLayout = getLayout(pathname);
@@ -79,7 +80,9 @@ export const RecruitmentRequestList = () => {
     [page, limit, data?.pagination],
   );
   const { onOpen } = useDrawer()
+  const { setMode } = useControlMode()
   const handleAdd = () => {
+    setMode(ControlMode.create)
     onOpen(DrawerType.RECRUITMENT_REQUEST_MUTATE)
   }
   return (
@@ -116,6 +119,7 @@ export const RecruitmentRequestList = () => {
           selectionMode="single"
           classNames={TABLE_CLASS_NAMES}
           visibleColumns={visibleColumns}
+          onRowClick={(row) => navigate({ to: `/admin/recruitment-management/recruitment-request/${row.id}` })}
           // TODO: Bật lại khi có API
           loading={isLoading}
           pagination={paginationConfig}
