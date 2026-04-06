@@ -1,6 +1,15 @@
 import { heroui } from '@heroui/theme';
 
 export default heroui({
+  components: {
+    Button: {
+      variants: {
+        bordered: {
+          base: 'border-1',
+        },
+      },
+    },
+  },
   themes: {
     light: {
       colors: {

@@ -39,6 +39,8 @@ export const API_ENDPOINTS = {
 
     LEAVE_REQUEST: '/leave-request',
     RECRUITMENT_REQUEST: '/recruitment-request',
+    CANDIDATE: '/candidate',
+    INTERVIEW_SCHEDULE: '/interview-schedule',
     UPLOAD: '/upload',
 
     CONFIGURATION: '/configuration',

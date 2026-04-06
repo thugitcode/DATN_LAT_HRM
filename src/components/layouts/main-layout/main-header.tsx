@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Avatar,
   Dropdown,
@@ -6,23 +5,22 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from '@heroui/react';
-import { IconChevronRight, IconCheck } from '@tabler/icons-react';
+import { IconCheck, IconChevronRight } from '@tabler/icons-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LANGUAGE_OPTIONS } from '@/i18n/constants';
 import { cn } from '@/lib/utils';
 
 import { MainHeaderNav } from './main-header-nav';
-import { MainLogo } from './main-logo';
 import { useMenuSidebar } from './main-sidebar/use-menu-sidebar';
 
 export const MainHeader = () => {
   const { t, i18n } = useTranslation();
   const [langOpen, setLangOpen] = useState(false);
   const { activeMenu } = useMenuSidebar()
-
   return (
-    <div className="bg-whitetext-primary h-20 grid grid-cols-3 items-center ps-6 pe-5 py-3 border-b border-white/5 relative">
+    <div className="bg-white text-primary h-20 grid grid-cols-3 items-center ps-6 pe-5 py-3 border-b border-white/5 relative">
       <div className="flex justify-start">
         {/* <MainLogo /> */}
         <h1 className="text-2xl text-[#2C3782] font-medium">{activeMenu?.label}</h1>
