@@ -3,6 +3,8 @@ import { Spinner } from '@heroui/react';
 
 import type { RecruitmentRequest } from '../types/type';
 import { RecruitmentRequestCard } from './recruitment-request-card';
+import { useTranslation } from 'react-i18next';
+import { NAMESPACES } from '@/i18n/constants';
 
 interface RecruitmentRequestGridProps {
   data: RecruitmentRequest[];
@@ -10,9 +12,10 @@ interface RecruitmentRequestGridProps {
 }
 
 export const RecruitmentRequestGrid: FC<RecruitmentRequestGridProps> = ({ data, isLoading }) => {
+  const { t } = useTranslation(NAMESPACES.COMMON)
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-420px)]">
+      <div className="flex items-center justify-center h-[calc(100vh-396px)]">
         <Spinner size="lg" />
       </div>
     );
@@ -20,8 +23,8 @@ export const RecruitmentRequestGrid: FC<RecruitmentRequestGridProps> = ({ data, 
 
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-420px)] text-[#71717A] text-sm">
-        Không có dữ liệu
+      <div className="flex items-center justify-center h-[calc(100vh-396px)] text-[#71717A] text-sm">
+        {t("table.empty")}
       </div>
     );
   }

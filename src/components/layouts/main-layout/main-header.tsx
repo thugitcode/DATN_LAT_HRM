@@ -20,7 +20,7 @@ export const MainHeader = () => {
   const [langOpen, setLangOpen] = useState(false);
   const { activeMenu } = useMenuSidebar()
   return (
-    <div className="bg-white text-primary h-20 grid grid-cols-3 items-center ps-6 pe-5 py-3 border-b border-white/5 relative">
+    <div className="bg-white text-primary min-h-20 h-20 grid grid-cols-3 items-center ps-6 pe-5 py-3 border-b border-white/5 relative">
       <div className="flex justify-start">
         {/* <MainLogo /> */}
         <h1 className="text-2xl text-[#2C3782] font-medium">{activeMenu?.label}</h1>

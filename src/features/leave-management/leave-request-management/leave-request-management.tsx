@@ -22,7 +22,7 @@ import { useColumns } from './hooks/use-columns';
 import { useLeaveRequestManagementList } from './hooks/use-leave-request';
 import type { LeaveRequestManagementFilters } from './type';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-400px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-369px)]' } as const;
 
 export const LeaveRequestManagement = () => {
   const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);

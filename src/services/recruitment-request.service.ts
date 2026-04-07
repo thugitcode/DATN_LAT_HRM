@@ -106,6 +106,12 @@ class RecruitmentRequestService extends BaseApiService<
       return res.data;
     });
   }
+  async getSummary(params?: RecruitmentRequestFilters): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.get(`${this.url()}/summary`, { params });
+      return res.data;
+    });
+  }
 }
 
 export const recruitmentRequestService = new RecruitmentRequestService();

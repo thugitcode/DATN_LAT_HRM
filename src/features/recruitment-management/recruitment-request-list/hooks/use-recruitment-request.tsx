@@ -26,6 +26,10 @@ export function useRecruitmentRequestList(
   });
 }
 
+export function useRecruitmentRequestSummary(params?: RecruitmentRequestFilters) {
+  return useQuery(recruitmentRequestQueryOptions.summary(params));
+}
+
 export function useApproveRecruitmentRequest() {
   const queryClient = useQueryClient();
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);

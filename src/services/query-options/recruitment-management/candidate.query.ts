@@ -6,15 +6,25 @@ import { candidateService } from '@/services/recruitment-management/candidate.se
 export const candidateKeys = {
   all: ['candidate'] as const,
   lists: () => [...candidateKeys.all, 'list'] as const,
-  list: (recruitmentRequestId: string, params?: CandidateFilters) =>
-    [...candidateKeys.lists(), recruitmentRequestId, params] as const,
+  list: (params?: CandidateFilters) =>
+    [...candidateKeys.lists(), params] as const,
+  allLists: (params?: CandidateFilters) => [...candidateKeys.lists(), 'all', params] as const,
 } as const;
 
 export const candidateQueryOptions = {
-  list: (recruitmentRequestId: string, params?: CandidateFilters) =>
-    queryOptions({
-      queryKey: candidateKeys.list(recruitmentRequestId, params),
+  list: (recruitmentRequestId: string | undefined, params?: CandidateFilters) => {
+    console.log(candidateKeys.list(params), 2222);
+
+    return queryOptions({
+      queryKey: candidateKeys.list(params),
       queryFn: () => candidateService.getByRecruitmentRequest(recruitmentRequestId, params),
-      enabled: !!recruitmentRequestId,
+      // enabled: !!recruitmentRequestId,
+    })
+  }
+  ,
+  getAll: (params?: CandidateFilters) =>
+    queryOptions({
+      queryKey: candidateKeys.allLists(params),
+      queryFn: () => candidateService.getAll(params),
     }),
 } as const;

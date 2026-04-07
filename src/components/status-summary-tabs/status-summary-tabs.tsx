@@ -12,6 +12,6 @@ export const StatusSummaryTabs: FC<Readonly<StatusSummaryTabsProps>> = ({
   children,
 }) => {
   return (
-    <div className={cn('px-6 py-7 rounded-xl bg-white shadow-sm', className)}>{children}</div>
+    <div className={cn('p-3 rounded-xl bg-white shadow-sm', className)}>{children}</div>
   );
 };

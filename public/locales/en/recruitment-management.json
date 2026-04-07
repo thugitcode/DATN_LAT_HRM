@@ -52,7 +52,9 @@
       "from": "From",
       "to": "To",
       "enter_note": "Enter note",
-      "medical_position_note": "For medical positions (Doctor, Nurse, Technician), please specify the requirement for Practicing Certificate (PC) in the candidate requirements section."
+      "medical_position_note": "For medical positions (Doctor, Nurse, Technician), please specify the requirement for Practicing Certificate (PC) in the candidate requirements section.",
+      "status": "Status",
+      "source": "Source"
     },
     "toast": {
       "create_success": "Recruitment request created successfully.",
@@ -229,13 +231,34 @@
       "department": "Department",
       "room": "Room",
       "interviewer": "Interviewer",
-      "content": "Content"
+      "content": "Content",
+      "candidate": "Candidate"
+    },
+    "actions": {
+      "resend_invitation": "Resend Invitation",
+      "reschedule": "Reschedule",
+      "cancel": "Cancel Schedule",
+      "postpone": "Postpone",
+      "edit": "Edit Schedule",
+      "evaluate": "Evaluate",
+      "create_new": "Create New Schedule",
+      "resend": "Resend",
+      "resend_mail": "Resend Mail"
     }
   },
   "candidate": {
     "applied_date": "Applied date",
     "position": "Position",
     "department": "Department",
+    "validation": {
+      "name_required": "Full name is required",
+      "gender_required": "Please select gender",
+      "phone_required": "Phone number is required",
+      "email_invalid": "Invalid email address",
+      "department_required": "Please select department",
+      "position_required": "Please select position",
+      "staff_type_required": "Please select staff type"
+    },
     "status": {
       "applied": "Applied",
       "screened": "Screened",
@@ -253,7 +276,84 @@
       "view_schedule": "View Schedule",
       "send_offer": "Send Offer",
       "accept_official": "Accept Official",
-      "view_detail": "View Detail"
+      "view_detail": "View Detail",
+      "add_candidate": "Add Candidate"
+    },
+    "source": {
+      "WEBSITE": "Website",
+      "REFERRAL": "Referral",
+      "JOB_PORTAL": "Job Portal"
+    },
+    "form": {
+      "title": {
+        "create": "Add Candidate",
+        "edit": "Edit Candidate"
+      },
+      "tabs": {
+        "personal_info": "Personal Info",
+        "application": "Application",
+        "qualifications": "Qualifications & Certifications",
+        "attachments": "Attachments"
+      },
+      "btn_continue": "Continue",
+      "sections": {
+        "personal_info": "Personal Info",
+        "job_position": "Job Position",
+        "professional_degree": "Professional Degree",
+        "note": "Note",
+        "documents": "Attachments",
+        "documents_description": "Upload attached files (CV, degrees, certificates...)",
+        "practice_certificate": "Practice Certificate",
+        "practice_certificate_note": "For medical positions (Doctor, Nurse, Technician), please specify the Practice Certificate requirement in the candidate requirements section."
+      },
+      "fields": {
+        "name": "Full Name",
+        "date_of_birth": "Date of Birth",
+        "gender": "Gender",
+        "phone": "Phone",
+        "email": "Email",
+        "identity_card": "Identity Card",
+        "address": "Address",
+        "department": "Department",
+        "room": "Room",
+        "position": "Recruitment Position",
+        "staff_type": "Staff Type",
+        "expected_salary": "Expected Salary(VND/month)",
+        "source": "Source",
+        "practice_number": "Practice Certificate No.",
+        "practice_issue_date": "Issue Date",
+        "practice_issue_place": "Issued By",
+        "practice_scope": "Practice Scope",
+        "practice_file": "Certificate File",
+        "school": "Training Institution",
+        "major": "Major",
+        "education_level": "Education Level",
+        "academic_title": "Academic Title",
+        "experience_years": "Years of Experience",
+        "note": "Note",
+        "practice_file_hint": "Format: PDF - Max size: 1MB",
+        "education_level_options": {
+          "HIGH_SCHOOL": "High School",
+          "COLLEGE": "College",
+          "UNIVERSITY": "University",
+          "MASTER": "Master",
+          "DOCTOR": "Doctor"
+        },
+        "academic_title_options": {
+          "NONE": "None",
+          "ASSOCIATE_PROFESSOR": "Associate Professor",
+          "PROFESSOR": "Professor"
+        },
+        "documents": "Upload Files",
+        "documents_hint": "Format: PDF - Max size: 1MB",
+        "experience_years_options": {
+          "UNDER_1": "Under 1 year",
+          "FROM_1_TO_3": "1 - 3 years",
+          "FROM_3_TO_5": "3 - 5 years",
+          "FROM_5_TO_10": "5 - 10 years",
+          "OVER_10": "Over 10 years"
+        }
+      }
     }
   }
 }

@@ -11,6 +11,7 @@ export const recruitmentRequestKeys = {
     [...recruitmentRequestKeys.lists(), params] as const,
   details: () => [...recruitmentRequestKeys.all, 'detail'] as const,
   detail: (id: string) => [...recruitmentRequestKeys.details(), id] as const,
+  summary: () => [...recruitmentRequestKeys.all, 'summary'] as const,
 } as const;
 
 export const recruitmentRequestQueryOptions = {
@@ -24,5 +25,10 @@ export const recruitmentRequestQueryOptions = {
       queryKey: recruitmentRequestKeys.detail(id),
       queryFn: () => recruitmentRequestService.getById(id),
       enabled: !!id,
+    }),
+  summary: (params?: RecruitmentRequestFilters) =>
+    queryOptions({
+      queryKey: recruitmentRequestKeys.summary(),
+      queryFn: () => recruitmentRequestService.getSummary(params),
     }),
 } as const;

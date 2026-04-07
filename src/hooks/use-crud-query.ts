@@ -8,11 +8,15 @@ import {
 import type { BaseApiService } from '@/services/base-api.service';
 
 import type { ApiResponse, PaginationParams } from '@/types';
-
+export const QUERY_KEY = {
+  CANDIDATE: "candidate"
+}
 export function createCrudHooks<
   T,
   TParams extends Partial<PaginationParams> = Record<string, unknown>,
->(queryKey: string[], service: BaseApiService<T, TParams>) {
+  TCreate = Partial<T>,
+  TUpdate = Partial<T>,
+>(queryKey: string[], service: BaseApiService<T, TCreate, TUpdate, TParams>) {
   function useList(
     params?: TParams,
     options?: Omit<UseQueryOptions<ApiResponse<T[]>, Error>, 'queryKey' | 'queryFn'>,
@@ -36,10 +40,10 @@ export function createCrudHooks<
     });
   }
 
-  function useCreate(options?: UseMutationOptions<ApiResponse<T>, Error, Partial<T>>) {
+  function useCreate(options?: UseMutationOptions<ApiResponse<T>, Error, TCreate>) {
     const queryClient = useQueryClient();
 
-    return useMutation<ApiResponse<T>, Error, Partial<T>>({
+    return useMutation<ApiResponse<T>, Error, TCreate>({
       ...options,
       mutationFn: (data) => service.create(data),
       onSuccess: async (...args) => {
@@ -50,11 +54,11 @@ export function createCrudHooks<
   }
 
   function useUpdate(
-    options?: UseMutationOptions<ApiResponse<T>, Error, { id: string | number; data: Partial<T> }>,
+    options?: UseMutationOptions<ApiResponse<T>, Error, { id: string | number; data: TUpdate }>,
   ) {
     const queryClient = useQueryClient();
 
-    return useMutation<ApiResponse<T>, Error, { id: string | number; data: Partial<T> }>({
+    return useMutation<ApiResponse<T>, Error, { id: string | number; data: TUpdate }>({
       ...options,
       mutationFn: ({ id, data }) => service.update(id, data),
       onSuccess: async (data, variables, ...rest) => {

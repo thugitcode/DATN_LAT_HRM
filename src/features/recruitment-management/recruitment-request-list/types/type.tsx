@@ -56,14 +56,15 @@ export enum RecruitmentRequestStatusEnum {
 }
 
 export interface MetadataRecruitmentRequest {
-  totalAll: number;
-  totalRecruiting: number;
-  totalPending: number;
-  totalRejected: number;
-  totalApproved: number;
-  totalCancelled: number;
-  totalPaused: number;
-  totalClosed: number;
+  total: number;
+  DRAFT: number;
+  PENDING: number;
+  APPROVED: number;
+  REJECTED: number;
+  RECRUITING: number;
+  PAUSED: number;
+  CLOSED: number;
+  CANCELLED: number;
   [key: string]: unknown;
 }
 
