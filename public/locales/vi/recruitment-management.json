@@ -52,7 +52,9 @@
       "from": "Từ",
       "to": "Đến",
       "enter_note": "Nhập ghi chú",
-      "medical_position_note": "Với vị trí y tế (Bác sĩ, Điều dưỡng, KTV), vui lòng nêu rõ yêu cầu Chứng chỉ hành nghề (CCHN) trong phần yêu cầu ứng viên."
+      "medical_position_note": "Với vị trí y tế (Bác sĩ, Điều dưỡng, KTV), vui lòng nêu rõ yêu cầu Chứng chỉ hành nghề (CCHN) trong phần yêu cầu ứng viên.",
+      "status": "Trạng thái",
+      "source": "Nguồn"
     },
     "toast": {
       "create_success": "Tạo yêu cầu tuyển dụng thành công.",
@@ -229,13 +231,47 @@
       "department": "Khoa",
       "room": "Phòng",
       "interviewer": "Người phỏng vấn",
-      "content": "Nội dung"
+      "content": "Nội dung",
+      "candidate": "Ứng viên"
+    },
+    "actions": {
+      "resend_invitation": "Gửi lại thư mời",
+      "reschedule": "Đổi lịch",
+      "cancel": "Hủy lịch",
+      "postpone": "Hoãn",
+      "edit": "Sửa lịch",
+      "evaluate": "Đánh giá",
+      "create_new": "Tạo lịch mới",
+      "resend": "Gửi lại",
+      "resend_mail": "Gửi lại mail"
     }
   },
   "candidate": {
     "applied_date": "Ngày ứng tuyển",
     "position": "Vị trí",
     "department": "Khoa",
+    "validation": {
+      "name_required": "Họ và tên không được để trống",
+      "gender_required": "Vui lòng chọn giới tính",
+      "phone_required": "Số điện thoại không được để trống",
+      "email_invalid": "Email không hợp lệ",
+      "department_required": "Vui lòng chọn khoa",
+      "position_required": "Vui lòng chọn vị trí",
+      "staff_type_required": "Vui lòng chọn loại nhân sự"
+    },
+    "columns": {
+      "code": "Mã ứng viên",
+      "name": "Tên ứng viên",
+      "phone": "Số điện thoại",
+      "email": "Email",
+      "position": "Vị trí ứng tuyển",
+      "departmentName": "Phòng ban",
+      "roomName": "Phòng",
+      "source": "Nguồn",
+      "status": "Trạng thái",
+      "createdAt": "Ngày ứng tuyển",
+      "actions": "Thao tác"
+    },
     "status": {
       "applied": "Đã ứng tuyển",
       "screened": "Đã sàng lọc",
@@ -253,7 +289,84 @@
       "view_schedule": "Xem lịch PV",
       "send_offer": "Gửi offer",
       "accept_official": "Tiếp nhận chính thức",
-      "view_detail": "Xem chi tiết"
+      "view_detail": "Xem chi tiết",
+      "add_candidate": "Thêm ứng viên"
+    },
+    "source": {
+      "WEBSITE": "Website",
+      "REFERRAL": "Giới thiệu",
+      "JOB_PORTAL": "Job Portal"
+    },
+    "form": {
+      "title": {
+        "create": "Thêm ứng viên",
+        "edit": "Chỉnh sửa ứng viên"
+      },
+      "tabs": {
+        "personal_info": "Thông tin cá nhân",
+        "application": "Ứng tuyển",
+        "qualifications": "Trình độ & CCHN",
+        "attachments": "Hồ sơ đi kèm"
+      },
+      "btn_continue": "Tiếp tục",
+      "sections": {
+        "personal_info": "Thông tin cá nhân",
+        "job_position": "Vị trí ứng tuyển",
+        "professional_degree": "Bằng cấp chuyên môn",
+        "note": "Ghi chú",
+        "documents": "Hồ sơ đính kèm",
+        "documents_description": "Tải lên các file hồ sơ đính kèm (CV, bằng cấp, chứng chỉ...)",
+        "practice_certificate": "Chứng chỉ hành nghề",
+        "practice_certificate_note": "Với vị trí y tế (Bác sĩ, Điều dưỡng, KTV), vui lòng nêu rõ yêu cầu Chứng chỉ hành nghề (CCHN) trong phần yêu cầu ứng viên."
+      },
+      "fields": {
+        "name": "Họ và tên",
+        "date_of_birth": "Ngày sinh",
+        "gender": "Giới tính",
+        "phone": "Số điện thoại",
+        "email": "Email",
+        "identity_card": "Số CCCD",
+        "address": "Địa chỉ",
+        "department": "Khoa",
+        "room": "Phòng",
+        "position": "Vị trí tuyển dụng",
+        "staff_type": "Loại nhân sự",
+        "expected_salary": "Mức lương mong muốn(tr/tháng)",
+        "source": "Nguồn",
+        "school": "Trường đào tạo",
+        "major": "Chuyên ngành chính",
+        "education_level": "Trình độ chuyên môn",
+        "academic_title": "Học hàm học vị",
+        "experience_years": "Số năm kinh nghiệm",
+        "note": "Ghi chú",
+        "practice_number": "Số CCHN",
+        "practice_issue_date": "Ngày cấp",
+        "practice_issue_place": "Nơi cấp",
+        "practice_scope": "Phạm vi hành nghề",
+        "practice_file": "File CCHN đính kèm",
+        "practice_file_hint": "Định dạng: PDF - Kích thước: <1MB",
+        "education_level_options": {
+          "HIGH_SCHOOL": "THPT",
+          "COLLEGE": "Cao đẳng",
+          "UNIVERSITY": "Đại học",
+          "MASTER": "Thạc sĩ",
+          "DOCTOR": "Tiến sĩ"
+        },
+        "academic_title_options": {
+          "NONE": "Không có",
+          "ASSOCIATE_PROFESSOR": "Phó giáo sư",
+          "PROFESSOR": "Giáo sư"
+        },
+        "documents": "Tải file",
+        "documents_hint": "Định dạng: PDF - Kích thước: <1MB",
+        "experience_years_options": {
+          "UNDER_1": "Dưới 1 năm",
+          "FROM_1_TO_3": "1 - 3 năm",
+          "FROM_3_TO_5": "3 - 5 năm",
+          "FROM_5_TO_10": "5 - 10 năm",
+          "OVER_10": "Trên 10 năm"
+        }
+      }
     }
   }
 }

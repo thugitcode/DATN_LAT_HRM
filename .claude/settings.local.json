@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"/c/Users/tungn/AppData/Roaming/Code/User/History\" -name \"entries.json\" -exec grep -l \"hrm-web-ui.*recruitment-request-grid\\\\|hrm-web-ui.*recruitment-request-list\" {} \\\\;)"
+    ]
+  }
+}

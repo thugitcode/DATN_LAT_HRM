@@ -23,9 +23,11 @@ export interface InterviewSchedule {
   candidateName: string;
   source: string;
   interviewerName: string;
+  interviewerAvatar: string;
   position: string;
   departmentName: string;
   roomName: string;
+  onlineLink: string;
   createdAt: string;
 }
 

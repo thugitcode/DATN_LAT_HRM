@@ -1,8 +1,8 @@
 // import { useMemo } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
-import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useLayoutStore } from '@/store/useLayoutStore';
+import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 import { LayoutSwitcherEnum } from '@/types/global.type';
 // import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
@@ -15,25 +15,25 @@ import DataTable from '@/components/data-table/data-table';
 import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
 
+import { ControlMode, useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { useMonthDateRange } from '@/hooks/use-month-date-range';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { icons } from '@/lib/icons';
+import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { Button } from '@heroui/react';
+import { useMemo } from 'react';
 import { RecruitmentRequestFilterBar } from './components/recruitment-request-filters';
 import { RecruitmentRequestGrid } from './components/recruitment-request-grid';
 import { SummaryBadges } from './components/summary-badges';
-import { MOCK_METADATA, MOCK_RECRUITMENT_REQUESTS } from './constants/mock-data';
 import { useColumns } from './hooks/use-columns';
-import { useMonthDateRange } from '@/hooks/use-month-date-range';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { useRecruitmentRequestList, useRecruitmentRequestSummary } from './hooks/use-recruitment-request';
 import type { RecruitmentRequestFilters } from './types/type';
-import { useRecruitmentRequestList } from './hooks/use-recruitment-request';
-import { useMemo } from 'react';
-import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
-import { Button } from '@heroui/react';
-import { icons } from '@/lib/icons';
-import { DrawerType, useDrawer } from '@/store/useDrawer';
-import { ControlMode, useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { DEFAULT_SUMMARY } from './constants/data';
 // import { useRecruitmentRequestList } from './hooks/use-recruitment-request';
 // import type { RecruitmentRequestFilters } from './type';
 
-const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-420px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'rounded-[14px] h-[calc(100vh-396px)]' } as const;
 
 export const RecruitmentRequestList = () => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
@@ -67,7 +67,7 @@ export const RecruitmentRequestList = () => {
     departmentIds,
     roomIds,
   });
-
+  const { data: summary } = useRecruitmentRequestSummary()
   const paginationConfig = useMemo(
     () => ({
       current: Number(page),
@@ -106,12 +106,12 @@ export const RecruitmentRequestList = () => {
         </div>
       </div>
 
-      <SummaryBadges summary={MOCK_METADATA} />
+      <SummaryBadges summary={summary?.data ?? DEFAULT_SUMMARY} />
 
       <RecruitmentRequestFilterBar />
 
       {isGridView ? (
-        <RecruitmentRequestGrid data={MOCK_RECRUITMENT_REQUESTS} />
+        <RecruitmentRequestGrid data={data?.data ?? []} />
       ) : (
         <DataTable
           dataSource={data?.data ?? []}

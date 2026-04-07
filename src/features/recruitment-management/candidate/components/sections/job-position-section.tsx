@@ -1,0 +1,113 @@
+import { useFormContext } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
+
+import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
+import { FormNumberInput } from '@/components/form-fields/form-number-input';
+import { FormSelect } from '@/components/form-fields/form-select';
+import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
+import { useRoomOptions } from '@/hooks/select-options/use-room-options';
+import { NAMESPACES } from '@/i18n/constants';
+import { CandidateSourceEnum } from '@/features/recruitment-management/types/candidate.type';
+import { useRecruitmentRequestList } from '@/features/recruitment-management/recruitment-request-list/hooks/use-recruitment-request';
+import { icons } from '@/lib/icons';
+
+const STAFF_TYPE_OPTIONS = [
+  { key: 'FULL_TIME', label: 'Toàn thời gian' },
+  { key: 'PART_TIME', label: 'Bán thời gian' },
+  { key: 'CONTRACT', label: 'Hợp đồng' },
+  { key: 'INTERN', label: 'Thực tập' },
+];
+
+export function JobPositionSection() {
+  const { control, watch } = useFormContext();
+  const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+
+  const selectedDept = watch('departmentId');
+  const { options: departmentOptions } = useDepartmentOptions();
+  const { options: roomOptions } = useRoomOptions(selectedDept);
+  const sourceOptions = Object.values(CandidateSourceEnum).map((source) => ({
+    key: source,
+    label: t(`candidate.source.${source}` as any),
+  }));
+
+  const { data: recruitmentRequestData } = useRecruitmentRequestList();
+  const recruitmentRequestOptions =
+    recruitmentRequestData?.data?.map((r) => ({
+      key: r.id,
+      label: `${r.code} - ${r.position}`,
+    })) ?? [];
+
+  return (
+    <>
+      <h3 className="text-base flex font-semibold text-[#11181C] gap-3">
+        {icons.case}{t('candidate.form.sections.job_position')}
+      </h3>
+
+      <div className="grid grid-cols-2 gap-4">
+        <FormSelect
+          control={control}
+          name="departmentId"
+          label={t('candidate.form.fields.department')}
+          placeholder="Chọn"
+          isRequired
+          options={departmentOptions.map((o) => ({ key: o.value, label: o.label }))}
+        />
+
+        <FormSelect
+          control={control}
+          name="roomId"
+          label={t('candidate.form.fields.room')}
+          placeholder="Chọn"
+          options={roomOptions.map((o) => ({ key: o.value, label: o.label }))}
+        />
+
+        <FormAutocomplete
+          control={control}
+          name="recruitmentRequestId"
+          label={t('candidate.form.fields.position')}
+          isRequired
+          options={recruitmentRequestOptions}
+        />
+
+        <FormSelect
+          control={control}
+          name="staffType"
+          label={t('candidate.form.fields.staff_type')}
+          placeholder="Chọn"
+          isRequired
+          options={STAFF_TYPE_OPTIONS}
+        />
+
+        {/* Mức lương mong muốn */}
+        <div className="col-span-1 flex flex-col gap-1">
+          <span className="text-base text-[#52525B]">
+            {t('candidate.form.fields.expected_salary')}
+          </span>
+          <div className="flex items-center gap-2">
+            <FormNumberInput
+              control={control}
+              name="expectedSalaryFrom"
+              placeholder="Từ"
+              suffix=" VND"
+            />
+            <span className="text-[#71717A] shrink-0">—</span>
+            <FormNumberInput
+              control={control}
+              name="expectedSalaryTo"
+              placeholder="Đến"
+              suffix=" VND"
+            />
+          </div>
+        </div>
+
+        <FormSelect
+          control={control}
+          name="source"
+          label={t('candidate.form.fields.source')}
+          placeholder="Chọn"
+          options={sourceOptions}
+        />
+      </div>
+    </>
+  );
+}

@@ -3,18 +3,19 @@ import { hrmInstance } from '@/lib/axios';
 import type {
   Candidate,
   CandidateFilters,
+  CandidatePayload,
 } from '@/features/recruitment-management/recruitment-request-details/types/type';
 import { BaseApiService } from '../base-api.service';
 import { API_ENDPOINTS } from '../constants/endpoints';
 
 
-class CandidateService extends BaseApiService<Candidate, Partial<Candidate>, Partial<Candidate>, CandidateFilters> {
+class CandidateService extends BaseApiService<Candidate, CandidatePayload, CandidatePayload, CandidateFilters> {
   constructor() {
     super(hrmInstance, API_ENDPOINTS.HRM.CANDIDATE);
   }
 
   async getByRecruitmentRequest(
-    recruitmentRequestId: string,
+    recruitmentRequestId?: string,
     params?: CandidateFilters,
   ): Promise<ApiResponse<Candidate[]>> {
     return this.request(async () => {

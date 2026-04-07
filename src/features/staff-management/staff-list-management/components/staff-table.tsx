@@ -10,6 +10,7 @@ import { useUpdateStaff } from '@/query-options/staff';
 import { useConfirmStore } from '@/store/useConfirmStore';
 
 import { useStaffColumns } from '../hooks/use-staff-columns';
+import { LoadingWrapper } from '@/components/loading-wrapper';
 
 interface StaffTableProps {
   data: Staff[];
@@ -93,37 +94,31 @@ export const StaffTable: FC<StaffTableProps> = ({
     return col;
   });
 
-  if (loading) {
-    return (
-      <div className="flex-1 h-[calc(100vh-315px)] flex flex-col min-h-0 bg-white shadow-sm border border-[#E4E4E7] rounded-xl overflow-hidden mt-4 items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[#6576FF] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
   return (
     // <div className="p-4 bg-white flex-1 overflow-auto">
-    <DataTable
-      selectionMode="single"
-      columns={columnsWithHandlers}
-      dataSource={data}
-      loading={loading}
-      emptyContent={tc('table.empty')}
-      pagination={{
-        current: page,
-        pageSize: limit,
-        total: total,
-        totalPage: totalPages,
-        showSizeChanger: true,
-        pageSizeOptions: [10, 25, 50, 100],
-        onChange: (page, pageSize) => {
-          onPageChange(page);
-          onLimitChange(pageSize);
-        },
-      }}
-      classNames={{ wrapper: 'h-[calc(100vh-315px)]' }}
-      onRowClick={(record) => onViewDetail?.(record.id)}
-    />
+    <LoadingWrapper isLoading={!!loading} height='50vh'>
+      <DataTable
+        selectionMode="single"
+        columns={columnsWithHandlers}
+        dataSource={data}
+        loading={loading}
+        emptyContent={tc('table.empty')}
+        pagination={{
+          current: page,
+          pageSize: limit,
+          total: total,
+          totalPage: totalPages,
+          showSizeChanger: true,
+          pageSizeOptions: [10, 25, 50, 100],
+          onChange: (page, pageSize) => {
+            onPageChange(page);
+            onLimitChange(pageSize);
+          },
+        }}
+        classNames={{ wrapper: 'h-[calc(100vh-327px)]' }}
+        onRowClick={(record) => onViewDetail?.(record.id)}
+      />
+    </LoadingWrapper>
     // </div>
   );
 };

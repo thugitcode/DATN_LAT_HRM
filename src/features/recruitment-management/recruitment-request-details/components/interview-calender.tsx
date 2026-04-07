@@ -1,18 +1,34 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Calendar, dayjsLocalizer } from 'react-big-calendar';
-import type { View, EventProps, Components } from 'react-big-calendar';
+import type { Components, EventProps, View } from 'react-big-calendar';
+
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+
 import dayjs from 'dayjs';
+
 import 'dayjs/locale/vi';
-import { Button, ButtonGroup, Card, Chip, Spinner } from '@heroui/react';
+
+import { NAMESPACES } from '@/i18n/constants';
+import {
+    Button,
+    Card,
+    Chip,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+    Spinner,
+    Tab,
+    Tabs,
+} from '@heroui/react';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
-import { NAMESPACES } from '@/i18n/constants';
-import { type InterviewSchedule } from '../types/interview.type';
-import { useInterviewSchedule } from '../hooks/use-interview-schedule';
+import { cn } from '@/lib/utils';
+
 import { STATUS_CONFIG } from '../constants/data';
-import { InterviewDetailPopup } from './interview-detail-popup';
+import { useInterviewSchedule } from '../hooks/use-interview-schedule';
+import { type InterviewSchedule } from '../types/interview.type';
+import { InterviewDetailCard } from './interview-detail-popup';
 
 dayjs.locale('vi');
 const localizer = dayjsLocalizer(dayjs);
@@ -29,7 +45,6 @@ const getFixedDate = (hours: number) => {
     return new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, 0, 0, 0);
 };
 
-
 function toCalendarEvents(data: InterviewSchedule[]): InterviewEvent[] {
     return data.map((item) => {
         const dateStr = dayjs(item.interviewDate).format('YYYY-MM-DD');
@@ -43,31 +58,65 @@ function toCalendarEvents(data: InterviewSchedule[]): InterviewEvent[] {
     });
 }
 
+function EventPopoverWrapper({
+    interview,
+    children,
+}: {
+    interview: InterviewSchedule;
+    children: React.ReactNode;
+}) {
+    return (
+        <Popover
+            placement="right"
+            showArrow
+            classNames={{
+                base: 'w-[498px]',
+                content: cn('rounded-none! border-t-4', STATUS_CONFIG[interview.status].borderTColor),
+            }}
+        >
+            <PopoverTrigger>
+                <div className="h-full w-full cursor-pointer">{children}</div>
+            </PopoverTrigger>
+            <PopoverContent className="p-0 rounded-2xl overflow-hidden shadow-lg">
+                <InterviewDetailCard interview={interview} />
+            </PopoverContent>
+        </Popover>
+    );
+}
+
 function CustomEvent({ event }: EventProps<InterviewEvent>) {
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
     const interview = event.resource;
     const config = STATUS_CONFIG[interview.status];
 
     return (
-        <Card
-            className={`h-full p-2 border-l-4 ${config.borderColor} ${config.bgColor} w-fit shadow-none rounded-r-xl rounded-l-none overflow-hidden`}
-        >
-            <Chip size="sm" color={config.chipColor} variant="flat" className="mb-1 text-sm font-nomal">
-                {t(`interview_schedule.status.${interview.status}` as any)}
-            </Chip>
-            <div className="space-y-0.5">
-                <p className="font-medium text-base text-gray-900 truncate">{interview.candidateName}</p>
-                <div className="flex items-center flex-wrap">
-                    <p className="text-sm font-nomal text-black leading-5 truncate">
-                        {t('interview_schedule.label.interview')}:&nbsp;
+        <EventPopoverWrapper interview={interview}>
+            <Card
+                className={`h-full p-2 border-l-4 ${config.borderLColor} ${config.bgColor} w-fit shadow-none rounded-r-xl rounded-l-none overflow-hidden`}
+            >
+                <Chip
+                    size="sm"
+                    color={config.chipColor}
+                    variant="flat"
+                    classNames={{ content: 'w-full flex justify-center' }}
+                    className="mb-1 text-sm font-nomal w-full max-w-full"
+                >
+                    {t(`interview_schedule.status.${interview.status}` as any)}
+                </Chip>
+                <div className="space-y-0.5">
+                    <p className="font-medium text-base text-gray-900 truncate">{interview.candidateName}</p>
+                    <div className="flex items-center flex-wrap">
+                        <p className="text-sm font-nomal text-black leading-5 truncate">
+                            {t('interview_schedule.label.interview')}:&nbsp;
+                        </p>
+                        <p className="text-sm font-nomal text-black leading-5 truncate">{interview.position}</p>
+                    </div>
+                    <p className="text-[10px] bg-white rounded-lg text-black font-medium w-fit px-3.5 py-1.25">
+                        {interview.startTime} - {interview.endTime}
                     </p>
-                    <p className="text-sm font-nomal text-black leading-5 truncate">{interview.position}</p>
                 </div>
-                <p className="text-[10px] bg-white rounded-lg text-black font-medium w-fit px-3.5 py-1.25">
-                    {interview.startTime} - {interview.endTime}
-                </p>
-            </div>
-        </Card>
+            </Card>
+        </EventPopoverWrapper>
     );
 }
 
@@ -76,14 +125,16 @@ function MonthEvent({ event }: EventProps<InterviewEvent>) {
     const config = STATUS_CONFIG[interview.status];
 
     return (
-        <Chip
-            size="sm"
-            color={config.chipColor}
-            variant="flat"
-            className="w-full max-w-full text-xs truncate rounded-md cursor-pointer"
-        >
-            {interview.startTime} {interview.candidateName}
-        </Chip>
+        <EventPopoverWrapper interview={interview}>
+            <Chip
+                size="sm"
+                color={config.chipColor}
+                variant="flat"
+                className="w-full max-w-full text-xs truncate rounded-md cursor-pointer"
+            >
+                {interview.startTime} {interview.candidateName}
+            </Chip>
+        </EventPopoverWrapper>
     );
 }
 
@@ -100,8 +151,6 @@ export function InterviewCalendar({ recruitmentRequestId }: InterviewCalendarPro
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
     const [view, setView] = useState<View>('week');
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [selectedInterview, setSelectedInterview] = useState<InterviewSchedule | null>(null);
-
     const { data, isLoading } = useInterviewSchedule(recruitmentRequestId);
     const interviews = data?.data ?? [];
 
@@ -158,17 +207,17 @@ export function InterviewCalendar({ recruitmentRequestId }: InterviewCalendarPro
     return (
         <div className="flex flex-col h-full bg-white rounded-lg">
             <div className="flex items-center justify-between p-4 border-b border-[#11111126]">
-                <ButtonGroup size="sm" variant="flat">
+                <Tabs
+                    size="sm"
+                    selectedKey={view}
+                    onSelectionChange={(key) => setView(key as View)}
+                    variant="solid"
+                    color="primary"
+                >
                     {(['day', 'week', 'month'] as View[]).map((v) => (
-                        <Button
-                            key={v}
-                            className={view === v ? 'bg-gray-900 text-white' : ''}
-                            onPress={() => setView(v)}
-                        >
-                            {t(`interview_schedule.view.${v}` as any)}
-                        </Button>
+                        <Tab key={v} title={t(`interview_schedule.view.${v}` as any)} />
                     ))}
-                </ButtonGroup>
+                </Tabs>
 
                 <h2 className="text-lg font-semibold capitalize">{formattedDate}</h2>
 
@@ -182,7 +231,7 @@ export function InterviewCalendar({ recruitmentRequestId }: InterviewCalendarPro
                 </div>
             </div>
 
-            <div className="p-4" style={{ height: 'calc(100vh - 220px)' }}>
+            <div className="p-4" style={{ height: 'calc(100vh - 230px)' }}>
                 {isLoading ? (
                     <div className="flex items-center justify-center h-full">
                         <Spinner size="lg" color="secondary" />
@@ -211,15 +260,9 @@ export function InterviewCalendar({ recruitmentRequestId }: InterviewCalendarPro
                         style={{ height: '100%', minHeight: 500 }}
                         popup
                         popupOffset={10}
-                        onSelectEvent={(event) => setSelectedInterview(event.resource)}
                     />
                 )}
             </div>
-
-            <InterviewDetailPopup
-                interview={selectedInterview}
-                onClose={() => setSelectedInterview(null)}
-            />
 
             <style>{`
         .interview-calendar { height: 100%; min-height: 500px; }
