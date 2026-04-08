@@ -2,6 +2,7 @@ import { icons } from '@/lib/icons';
 
 import type { MetadataRecruitmentRequest } from '../recruitment-request-list/types/type';
 import type { CandidateFormValues } from '../candidate/schemas/schema';
+import { CandidateStatusEnum, type ICandidate } from '../recruitment-request-details/types/type';
 
 type SummaryKey = keyof MetadataRecruitmentRequest;
 
@@ -94,7 +95,7 @@ export const DEFAULT_VALUES: Partial<CandidateFormValues> = {
   address: '',
   departmentId: '',
   roomId: null,
-  positionId: '',
+  recruitmentRequestId: '',
   staffType: '',
   expectedSalaryFrom: null,
   expectedSalaryTo: null,
@@ -112,3 +113,64 @@ export const DEFAULT_VALUES: Partial<CandidateFormValues> = {
   practiceFileUrl: undefined,
   documents: undefined,
 };
+
+export const STATUS_CHIP: Record<
+  CandidateStatusEnum,
+  { label: string; color: 'primary' | 'secondary' | 'warning' | 'success' | 'danger' | 'default' }
+> = {
+  [CandidateStatusEnum.APPLIED]: { label: 'candidate.status.applied', color: 'primary' },
+  [CandidateStatusEnum.SCREENED]: { label: 'candidate.status.screened', color: 'secondary' },
+  [CandidateStatusEnum.WAITING_INTERVIEW]: { label: 'candidate.status.waiting_interview', color: 'warning' },
+  [CandidateStatusEnum.INTERVIEWING]: { label: 'candidate.status.interviewing', color: 'success' },
+  [CandidateStatusEnum.WAITING_OFFER]: { label: 'candidate.status.waiting_offer', color: 'success' },
+  [CandidateStatusEnum.PROBATION_PROPOSED]: { label: 'candidate.status.probation_proposed', color: 'primary' },
+  [CandidateStatusEnum.ON_PROBATION]: { label: 'candidate.status.on_probation', color: 'default' },
+  [CandidateStatusEnum.REJECTED]: { label: 'candidate.status.rejected', color: 'danger' },
+  [CandidateStatusEnum.OFFER_DECLINED]: { label: 'candidate.status.offer_declined', color: 'danger' },
+};
+
+export const NEXT_STATUS: Partial<Record<CandidateStatusEnum, CandidateStatusEnum>> = {
+  [CandidateStatusEnum.APPLIED]: CandidateStatusEnum.SCREENED,
+  [CandidateStatusEnum.SCREENED]: CandidateStatusEnum.WAITING_INTERVIEW,
+  [CandidateStatusEnum.WAITING_OFFER]: CandidateStatusEnum.PROBATION_PROPOSED,
+  [CandidateStatusEnum.PROBATION_PROPOSED]: CandidateStatusEnum.ON_PROBATION,
+};
+
+export const ACTION_LABEL: Record<CandidateStatusEnum, string> = {
+  [CandidateStatusEnum.APPLIED]: 'candidate.actions.screen',
+  [CandidateStatusEnum.SCREENED]: 'candidate.actions.schedule_interview',
+  [CandidateStatusEnum.WAITING_INTERVIEW]: 'candidate.actions.view_schedule',
+  [CandidateStatusEnum.INTERVIEWING]: 'candidate.actions.view_schedule',
+  [CandidateStatusEnum.WAITING_OFFER]: 'candidate.actions.send_offer',
+  [CandidateStatusEnum.PROBATION_PROPOSED]: 'candidate.actions.send_offer',
+  [CandidateStatusEnum.ON_PROBATION]: 'candidate.actions.accept_official',
+  [CandidateStatusEnum.REJECTED]: 'candidate.actions.view_detail',
+  [CandidateStatusEnum.OFFER_DECLINED]: 'candidate.actions.view_detail',
+};
+
+export const criteria = (candidate: ICandidate, t: any) => [
+  {
+    labelKey: t('candidate.detail.evaluation.professional_knowledge'),
+    score: candidate.professionalScore,
+    evaluation: candidate.professionalEvaluation,
+    comment: candidate.professionalComment,
+  },
+  {
+    labelKey: t('candidate.detail.evaluation.attitude'),
+    score: candidate.attitudeScore,
+    evaluation: candidate.attitudeEvaluation,
+    comment: candidate.attitudeComment,
+  },
+  {
+    labelKey: t('candidate.detail.evaluation.communication'),
+    score: candidate.communicationScore,
+    evaluation: candidate.communicationEvaluation,
+    comment: candidate.communicationComment,
+  },
+  {
+    labelKey: t('candidate.detail.evaluation.experience'),
+    score: candidate.experienceScore,
+    evaluation: candidate.experienceEvaluation,
+    comment: candidate.experienceComment,
+  },
+];

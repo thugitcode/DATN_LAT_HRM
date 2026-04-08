@@ -63,7 +63,7 @@ export const AdditionalInfoSection = () => {
         <div className="space-y-6">
             <div className="bg-white p-5 rounded-2xl border border-[#E4E4E7] shadow-sm">
                 <SectionHeader
-                    icon={icons.fileText}
+                    icon={icons.fileTextFill}
                     title={t('staffForm.sections.additional')}
                     sectionKey={STAFF_SECTION_KEYS.ADDITIONAL}
                     onSave={handleSave}

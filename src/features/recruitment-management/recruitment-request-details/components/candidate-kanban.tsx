@@ -2,7 +2,7 @@ import { Listbox, ListboxItem } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
-import { CandidateStatusEnum, type Candidate } from '../types/type';
+import { CandidateStatusEnum, type ICandidate } from '../types/type';
 import { CandidateCard } from './candidate-card';
 
 interface KanbanColumn {
@@ -13,25 +13,25 @@ interface KanbanColumn {
 }
 
 const COLUMNS: KanbanColumn[] = [
-  { status: CandidateStatusEnum.APPLIED, labelKey: 'candidate.status.applied', color: 'text-[#006FEE]', bgColor: 'bg-[#EEF5FF]' },
+  { status: CandidateStatusEnum.APPLIED, labelKey: 'candidate.status.applied', color: 'text-primary', bgColor: 'bg-[#EEF5FF]' },
   { status: CandidateStatusEnum.SCREENED, labelKey: 'candidate.status.screened', color: 'text-[#7828C8]', bgColor: 'bg-[#F3EFFE]' },
   { status: CandidateStatusEnum.WAITING_INTERVIEW, labelKey: 'candidate.status.waiting_interview', color: 'text-[#C4841D]', bgColor: 'bg-[#FEF3CD]' },
   { status: CandidateStatusEnum.INTERVIEWING, labelKey: 'candidate.status.interviewing', color: 'text-[#0E793C]', bgColor: 'bg-[#E8FAF0]' },
   { status: CandidateStatusEnum.WAITING_OFFER, labelKey: 'candidate.status.waiting_offer', color: 'text-[#0E793C]', bgColor: 'bg-[#E8FAF0]' },
-  { status: CandidateStatusEnum.PROBATION_PROPOSED, labelKey: 'candidate.status.probation_proposed', color: 'text-[#006FEE]', bgColor: 'bg-[#EEF5FF]' },
+  { status: CandidateStatusEnum.PROBATION_PROPOSED, labelKey: 'candidate.status.probation_proposed', color: 'text-primary', bgColor: 'bg-[#EEF5FF]' },
   { status: CandidateStatusEnum.ON_PROBATION, labelKey: 'candidate.status.on_probation', color: 'text-[#11181C]', bgColor: 'bg-[#F4F4F5]' },
   { status: CandidateStatusEnum.REJECTED, labelKey: 'candidate.status.rejected', color: 'text-[#F31260]', bgColor: 'bg-[#FEE7EF]' },
   { status: CandidateStatusEnum.OFFER_DECLINED, labelKey: 'candidate.status.offer_declined', color: 'text-[#F31260]', bgColor: 'bg-[#FEE7EF]' },
 ];
 
 interface CandidateKanbanProps {
-  candidates: Candidate[];
+  candidates: ICandidate[];
 }
 
 export const CandidateKanban = ({ candidates }: CandidateKanbanProps) => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
-  const grouped = candidates.reduce<Record<string, Candidate[]>>((acc, c) => {
+  const grouped = candidates.reduce<Record<string, ICandidate[]>>((acc, c) => {
     if (!acc[c.status]) acc[c.status] = [];
     acc?.[c?.status]?.push(c);
     return acc;

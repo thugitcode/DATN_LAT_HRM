@@ -1,7 +1,7 @@
 import { candidateService } from '@/services/recruitment-management/candidate.service';
 
 import type {
-  Candidate,
+  ICandidate,
   CandidateFilters,
   CandidatePayload,
 } from '@/features/recruitment-management/recruitment-request-details/types/type';
@@ -14,7 +14,7 @@ export const {
   useCreate: useCreateCandidate,
   useUpdate: useUpdateCandidate,
   useDelete: useDeleteCandidate,
-} = createCrudHooks<Candidate, CandidateFilters, CandidatePayload, CandidatePayload>(
+} = createCrudHooks<ICandidate, CandidateFilters, CandidatePayload, CandidatePayload>(
   [QUERY_KEY.CANDIDATE],
   candidateService,
 );

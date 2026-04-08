@@ -28,7 +28,7 @@ export const candidateSchema = (t: TFunction<typeof NAMESPACES.RECRUITMENT_MANAG
     departmentId: requiredString(t('candidate.validation.department_required')),
     roomId: optionalString().nullable(),
     recruitmentRequestId: requiredString(t('candidate.validation.position_required')),
-    staffType: requiredString(t('candidate.validation.staff_type_required')),
+    staffType: requiredString(t('candidate.validation.work_type_required')),
     expectedSalaryFrom: optionalString().nullable(),
     expectedSalaryTo: optionalString().nullable(),
     source: optionalString().nullable(),

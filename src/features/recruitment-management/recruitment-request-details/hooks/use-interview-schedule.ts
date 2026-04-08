@@ -1,8 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
-
-import { interviewScheduleQueryOptions } from '@/services/query-options/recruitment-management/interview-schedule.query';
+import { useInterviewScheduleList } from '@/hooks/queries/use-interview-schedule-query';
 import type { InterviewScheduleFilters } from '../types/interview.type';
 
 export function useInterviewSchedule(recruitmentRequestId: string, params?: InterviewScheduleFilters) {
-  return useQuery(interviewScheduleQueryOptions.list(recruitmentRequestId, params));
+  return useInterviewScheduleList(
+    { ...params, recruitmentRequestId },
+    { enabled: !!recruitmentRequestId },
+  );
+}
+export function useHistoryInterviewed(candidateId: string, params?: InterviewScheduleFilters) {
+  return useInterviewScheduleList(
+    { ...params, candidateId },
+    { enabled: !!candidateId },
+  );
 }

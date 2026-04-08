@@ -9,7 +9,9 @@ import type { BaseApiService } from '@/services/base-api.service';
 
 import type { ApiResponse, PaginationParams } from '@/types';
 export const QUERY_KEY = {
-  CANDIDATE: "candidate"
+  CANDIDATE: "candidate",
+  INTERVIEW_SCHEDULE: "interview-schedule",
+  OFFER_LETTER: "offer-letter",
 }
 export function createCrudHooks<
   T,

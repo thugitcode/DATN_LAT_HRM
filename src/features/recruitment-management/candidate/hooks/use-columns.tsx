@@ -1,55 +1,23 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from '@tanstack/react-router';
 
+import type { ColumnDef } from '@/components/data-table/data-table';
 import { NAMESPACES } from '@/i18n/constants';
 import { formatDate } from '@/lib/utils';
-import type { ColumnDef } from '@/components/data-table/data-table';
 import { Button, Chip } from '@heroui/react';
 
-import { useCandidateUpdateStatus } from '../../recruitment-request-details/hooks/use-candidate-update-status';
-import { CandidateStatusEnum, type Candidate } from '../../recruitment-request-details/types/type';
-import { useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEY } from '@/hooks/use-crud-query';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCandidateUpdateStatus } from '../../recruitment-request-details/hooks/use-candidate-update-status';
+import { type ICandidate } from '../../recruitment-request-details/types/type';
+import { ACTION_LABEL, NEXT_STATUS, STATUS_CHIP } from '../../constants/constants';
+import dayjs from 'dayjs';
+import type { InterviewSchedule } from '../../recruitment-request-details/types/interview.type';
+import { INTERVIEW_STATUS_CONFIG } from '../../recruitment-request-details/constants/data';
 
-const STATUS_CHIP: Record<
-  CandidateStatusEnum,
-  { label: string; color: 'primary' | 'secondary' | 'warning' | 'success' | 'danger' | 'default' }
-> = {
-  [CandidateStatusEnum.APPLIED]: { label: 'candidate.status.applied', color: 'primary' },
-  [CandidateStatusEnum.SCREENED]: { label: 'candidate.status.screened', color: 'secondary' },
-  [CandidateStatusEnum.WAITING_INTERVIEW]: { label: 'candidate.status.waiting_interview', color: 'warning' },
-  [CandidateStatusEnum.INTERVIEWING]: { label: 'candidate.status.interviewing', color: 'success' },
-  [CandidateStatusEnum.WAITING_OFFER]: { label: 'candidate.status.waiting_offer', color: 'success' },
-  [CandidateStatusEnum.PROBATION_PROPOSED]: { label: 'candidate.status.probation_proposed', color: 'primary' },
-  [CandidateStatusEnum.ON_PROBATION]: { label: 'candidate.status.on_probation', color: 'default' },
-  [CandidateStatusEnum.REJECTED]: { label: 'candidate.status.rejected', color: 'danger' },
-  [CandidateStatusEnum.OFFER_DECLINED]: { label: 'candidate.status.offer_declined', color: 'danger' },
-};
-
-const NEXT_STATUS: Partial<Record<CandidateStatusEnum, CandidateStatusEnum>> = {
-  [CandidateStatusEnum.APPLIED]: CandidateStatusEnum.SCREENED,
-  [CandidateStatusEnum.SCREENED]: CandidateStatusEnum.WAITING_INTERVIEW,
-  [CandidateStatusEnum.WAITING_OFFER]: CandidateStatusEnum.PROBATION_PROPOSED,
-  [CandidateStatusEnum.PROBATION_PROPOSED]: CandidateStatusEnum.ON_PROBATION,
-};
-
-const ACTION_LABEL: Record<CandidateStatusEnum, string> = {
-  [CandidateStatusEnum.APPLIED]: 'candidate.actions.screen',
-  [CandidateStatusEnum.SCREENED]: 'candidate.actions.schedule_interview',
-  [CandidateStatusEnum.WAITING_INTERVIEW]: 'candidate.actions.view_schedule',
-  [CandidateStatusEnum.INTERVIEWING]: 'candidate.actions.view_schedule',
-  [CandidateStatusEnum.WAITING_OFFER]: 'candidate.actions.send_offer',
-  [CandidateStatusEnum.PROBATION_PROPOSED]: 'candidate.actions.send_offer',
-  [CandidateStatusEnum.ON_PROBATION]: 'candidate.actions.accept_official',
-  [CandidateStatusEnum.REJECTED]: 'candidate.actions.view_detail',
-  [CandidateStatusEnum.OFFER_DECLINED]: 'candidate.actions.view_detail',
-};
-
-function ActionsCell({ candidate }: { candidate: Candidate }) {
+function ActionsCell({ candidate }: { candidate: ICandidate }) {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-  const { id } = useParams({ strict: false });
-  const { mutate: updateStatus, isPending } = useCandidateUpdateStatus(id as string);
+  const { mutate: updateStatus, isPending } = useCandidateUpdateStatus();
   const queryClient = useQueryClient()
   return (
     <div className='flex flex-end justify-end'>
@@ -77,7 +45,7 @@ function ActionsCell({ candidate }: { candidate: Candidate }) {
 export const useCandidateColumns = () => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
-  const columns: ColumnDef<Candidate>[] = useMemo(
+  const columns: ColumnDef<ICandidate>[] = useMemo(
     () => [
       {
         key: 'code',
@@ -161,5 +129,66 @@ export const useCandidateColumns = () => {
     [t],
   );
 
-  return { columns };
+  const columnsHistory: ColumnDef<InterviewSchedule>[] = useMemo(
+    () => [
+      {
+        key: 'stt',
+        title: 'STT', // Hoặc t('interview_schedule.detail.stt')
+        minWidth: 60,
+        render: (_, __, index) => (
+          <span className="text-sm text-[#11181C]">{index + 1}</span>
+        ),
+      },
+      {
+        key: 'interviewTime',
+        title: t('interview_schedule.detail.time'), // THỜI GIAN
+        minWidth: 160,
+        render: (_, row) => (
+          <span className="text-sm text-[#11181C]">
+            {/* Giả sử bạn dùng format: HH:mm DD/MM/YYYY */}
+            {dayjs(row.interviewDate).format('HH:mm DD/MM/YYYY')}
+          </span>
+        ),
+      },
+      {
+        key: 'interviewer',
+        title: t('interview_schedule.detail.interviewer'), // NGƯỜI PHỎNG VẤN
+        minWidth: 200,
+        render: (_, row) => (
+          <span className="text-sm text-[#11181C]">
+            {row.interviewerName || '—'}
+          </span>
+        ),
+      },
+      {
+        key: 'method',
+        title: t('interview_schedule.detail.method'), // HÌNH THỨC
+        minWidth: 120,
+        render: (_, row) => (
+          <span className="text-sm text-[#11181C]">
+            {row.interviewMethod || 'Online'}
+          </span>
+        ),
+      },
+      {
+        key: 'status',
+        title: t('interview_schedule.detail.status'), // TRẠNG THÁI
+        minWidth: 150,
+        render: (_, row) => {
+          const chip = INTERVIEW_STATUS_CONFIG[row.status];
+          return (
+            <Chip
+              size="sm"
+              variant="flat"
+              color={chip?.chipColor || "default"}
+            >
+              {t(`interview_schedule.status.${row.status}`)}
+            </Chip>
+          );
+        },
+      },
+    ],
+    [t]
+  );
+  return { columns, columnsHistory };
 };

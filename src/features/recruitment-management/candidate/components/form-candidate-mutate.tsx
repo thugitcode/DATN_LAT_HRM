@@ -116,8 +116,8 @@ export const FormCandidateMutate = () => {
                         )}
                         {activeTab === CandidateTabEnum.QUALIFICATIONS && (
                             <>
-                                <PracticeCertificateSection />
                                 <ProfessionalInfoSection />
+                                <PracticeCertificateSection />
                             </>
                         )}
                         {activeTab === CandidateTabEnum.ATTACHMENTS && <DocumentsSection />}

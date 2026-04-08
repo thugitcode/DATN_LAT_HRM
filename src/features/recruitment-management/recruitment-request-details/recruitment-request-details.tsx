@@ -33,7 +33,7 @@ const STATUS_COLOR: Record<RecruitmentRequestStatusEnum, { text: string; bg: str
     [RecruitmentRequestStatusEnum.DRAFT]: { text: 'text-[#71717A]', bg: 'bg-[#F4F4F5]' },
     [RecruitmentRequestStatusEnum.PENDING]: { text: 'text-[#C4841D]', bg: 'bg-[#FEF3CD]' },
     [RecruitmentRequestStatusEnum.APPROVED]: { text: 'text-[#0E793C]', bg: 'bg-[#E8FAF0]' },
-    [RecruitmentRequestStatusEnum.RECRUITING]: { text: 'text-[#006FEE]', bg: 'bg-[#EEF5FF]' },
+    [RecruitmentRequestStatusEnum.RECRUITING]: { text: 'text-primary', bg: 'bg-[#EEF5FF]' },
     [RecruitmentRequestStatusEnum.PAUSED]: { text: 'text-[#C4841D]', bg: 'bg-[#FEF3CD]' },
     [RecruitmentRequestStatusEnum.REJECTED]: { text: 'text-[#F31260]', bg: 'bg-[#FEE7EF]' },
     [RecruitmentRequestStatusEnum.CANCELLED]: { text: 'text-[#F31260]', bg: 'bg-[#FEE7EF]' },

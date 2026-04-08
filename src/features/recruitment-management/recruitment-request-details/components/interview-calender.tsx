@@ -25,7 +25,7 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/utils';
 
-import { STATUS_CONFIG } from '../constants/data';
+import { INTERVIEW_STATUS_CONFIG } from '../constants/data';
 import { useInterviewSchedule } from '../hooks/use-interview-schedule';
 import { type InterviewSchedule } from '../types/interview.type';
 import { InterviewDetailCard } from './interview-detail-popup';
@@ -71,7 +71,7 @@ function EventPopoverWrapper({
             showArrow
             classNames={{
                 base: 'w-[498px]',
-                content: cn('rounded-none! border-t-4', STATUS_CONFIG[interview.status].borderTColor),
+                content: cn('rounded-none! border-t-4', INTERVIEW_STATUS_CONFIG[interview.status].borderTColor),
             }}
         >
             <PopoverTrigger>
@@ -87,7 +87,7 @@ function EventPopoverWrapper({
 function CustomEvent({ event }: EventProps<InterviewEvent>) {
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
     const interview = event.resource;
-    const config = STATUS_CONFIG[interview.status];
+    const config = INTERVIEW_STATUS_CONFIG[interview.status];
 
     return (
         <EventPopoverWrapper interview={interview}>
@@ -122,7 +122,7 @@ function CustomEvent({ event }: EventProps<InterviewEvent>) {
 
 function MonthEvent({ event }: EventProps<InterviewEvent>) {
     const interview = event.resource;
-    const config = STATUS_CONFIG[interview.status];
+    const config = INTERVIEW_STATUS_CONFIG[interview.status];
 
     return (
         <EventPopoverWrapper interview={interview}>

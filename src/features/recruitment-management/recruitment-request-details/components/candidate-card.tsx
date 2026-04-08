@@ -5,12 +5,12 @@ import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
 import { formatDate } from '@/lib/utils';
-import { CandidateStatusEnum, type Candidate } from '../types/type';
+import { CandidateStatusEnum, type ICandidate } from '../types/type';
 import { useCandidateUpdateStatus } from '../hooks/use-candidate-update-status';
 import { useParams } from '@tanstack/react-router';
 
 interface CandidateCardProps {
-  candidate: Candidate;
+  candidate: ICandidate;
 }
 
 const NEXT_STATUS: Partial<Record<CandidateStatusEnum, CandidateStatusEnum>> = {
@@ -34,8 +34,7 @@ const ACTION_LABEL: Record<CandidateStatusEnum, string> = {
 
 export const CandidateCard: FC<CandidateCardProps> = ({ candidate }) => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-  const { id } = useParams({ strict: false })
-  const { mutate: updateStatus, isPending } = useCandidateUpdateStatus(id as string);
+  const { mutate: updateStatus, isPending } = useCandidateUpdateStatus();
 
   return (
     <div className="bg-white rounded-2xl border border-[#E4E4E7] p-4 flex flex-col gap-3">
