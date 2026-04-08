@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -29,7 +29,7 @@ export function useFormCandidate({ id, onSuccess }: UseFormCandidateParams) {
   const { mutateAsync: updateCandidate } = useUpdateCandidate();
 
   const methods = useForm<CandidateFormValues>({
-    resolver: zodResolver(candidateSchema(t)),
+    resolver: zodResolver(candidateSchema(t)) as Resolver<CandidateFormValues>,
     defaultValues: DEFAULT_VALUES,
     mode: 'onChange',
   });

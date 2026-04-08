@@ -41,6 +41,7 @@ export const API_ENDPOINTS = {
     RECRUITMENT_REQUEST: '/recruitment-request',
     CANDIDATE: '/candidate',
     INTERVIEW_SCHEDULE: '/interview-schedule',
+    OFFER_LETTER: '/offer-letter',
     UPLOAD: '/upload',
 
     CONFIGURATION: '/configuration',

@@ -49,12 +49,10 @@
       "OTHER": "Other"
     }
   },
-
   "layout": {
     "list": "List",
     "grid": "Grid"
   },
-
   "sidebar": {
     "dashboard": "Dashboard",
     "timekeeping_shift_scheduling": "Timekeeping & Shift",
@@ -69,7 +67,6 @@
     "apprentice_staff": "Apprentice Staff",
     "partner_staff": "Partner Staff",
     "contract_management": "Contract Management",
-
     "recruitment_management": "Recruitment",
     "recruitment_request": "Recruitment Request",
     "candidate": "Candidate",
@@ -77,20 +74,17 @@
     "probation_management": "Probation Management",
     "recruitment_report": "Report",
     "management_report": "Management Report",
-
     "other_requests_management": "Other Requests Management",
     "business_trip_management": "Business Trip Management",
     "overtime_management": "Overtime Management",
     "remote_work_management": "Remote Work Management",
     "training_registration_management": "Training Registration Management",
-
     "payroll_management": "Payroll Management",
     "payroll_data_summary": "Payroll Data Summary",
     "payroll_calculation": "Payroll Calculation",
     "payslip_feedback": "Payslip Feedback",
     "employee_salary_history": "Employee Salary History"
   },
-
   "drawer": {
     "work_shifts": "Work Shift Assignment",
     "change_shift_division": "Change Shift Division",
@@ -102,7 +96,6 @@
     "revenueDetails": "Enter sales",
     "additionalArisingAmounts": "Additional arising amounts"
   },
-
   "button": {
     "cancel": "Cancel",
     "update": "Update",
@@ -116,7 +109,6 @@
     "delete": "Delete",
     "download": "Download"
   },
-
   "weekdays": {
     "0": "Sunday",
     "1": "Monday",
@@ -127,7 +119,6 @@
     "6": "Saturday"
   },
   "date_format": "{{date}}",
-
   "month_filter": {
     "prev_month": "Previous month",
     "next_month": "Next month",
@@ -164,7 +155,6 @@
       "11": "Dec"
     }
   },
-
   "status": {
     "approved": "Approved",
     "rejected": "Rejected",
@@ -273,7 +263,6 @@
     "month_prefix": "M"
   },
   "locale": "en",
-
   "error": {
     "code_label": "Error Code {{code}}",
     "helpdesk": "Need help? Contact IT Helpdesk",
@@ -289,7 +278,6 @@
       "home": "Go to Home"
     }
   },
-
   "errors": {
     "UNAUTHORIZED": "Unauthorized access",
     "INVALID_ACCESS_TOKEN": "Invalid access token",
@@ -424,5 +412,10 @@
   "file_upload": {
     "drag_drop_hint": "Drag & drop or click to select file",
     "supported_formats": "Supported: docx, doc, pdf, xlsx, xls, csv (max 5MB/file)"
+  },
+  "candidate": {
+    "columns": {
+      "status": "Status"
+    }
   }
 }

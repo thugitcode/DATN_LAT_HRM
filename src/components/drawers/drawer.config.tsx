@@ -18,6 +18,7 @@ import { WorkShiftsForm } from '@/features/timekeeping-shift-scheduling/shift-ma
 import { ShiftDetailsDrawer } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-drawer';
 import { FormRecruitmentRequestMutate } from '@/features/recruitment-management/recruitment-request-list/components/form-recruitment-request-mutate';
 import { FormCandidateMutate } from '@/features/recruitment-management/candidate/components/form-candidate-mutate';
+import { FormOfferMutate } from '@/features/recruitment-management/candidate/components/details/form-offer-mutate';
 
 type DrawerConfig = {
   title: string;
@@ -163,6 +164,16 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
     [DrawerType.CANDIDATE_MUTATE]: {
       title: '',
       component: <FormCandidateMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.OFFER_MUTATE]: {
+      title: '',
+      component: <FormOfferMutate />,
       drawerProps: {
         placement: 'right',
         size: '3xl',

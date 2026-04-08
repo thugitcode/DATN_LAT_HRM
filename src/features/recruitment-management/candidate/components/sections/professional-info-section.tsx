@@ -79,21 +79,6 @@ export function ProfessionalInfoSection() {
           </div>
         </div>
       </div>
-
-      {/* Ghi chú */}
-      <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
-        <h3 className="text-base gap-3 flex font-semibold text-[#11181C]">
-          <span className='font-bold'>#</span>{t('candidate.form.sections.note')}
-        </h3>
-
-        <FormArea
-          control={control}
-          name="note"
-          label={t('candidate.form.fields.note')}
-          placeholder="Nhập ghi chú"
-          minRows={4}
-        />
-      </div>
     </>
   );
 }

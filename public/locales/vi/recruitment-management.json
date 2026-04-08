@@ -232,7 +232,8 @@
       "room": "Phòng",
       "interviewer": "Người phỏng vấn",
       "content": "Nội dung",
-      "candidate": "Ứng viên"
+      "candidate": "Ứng viên",
+      "status": "Trạng thái"
     },
     "actions": {
       "resend_invitation": "Gửi lại thư mời",
@@ -257,7 +258,32 @@
       "email_invalid": "Email không hợp lệ",
       "department_required": "Vui lòng chọn khoa",
       "position_required": "Vui lòng chọn vị trí",
-      "staff_type_required": "Vui lòng chọn loại nhân sự"
+      "work_type_required": "Vui lòng chọn hình thức làm việc"
+    },
+    "offer": {
+      "title": "Gửi offer",
+      "save_draft": "Lưu nháp",
+      "send": "Gửi ngay",
+      "validation": {
+        "position_required": "Vui lòng chọn vị trí chính thức",
+        "department_required": "Vui lòng chọn khoa/phòng",
+        "base_salary_required": "Vui lòng nhập lương cơ bản",
+        "start_date_required": "Vui lòng chọn ngày bắt đầu làm việc",
+        "approver_required": "Vui lòng chọn người duyệt offer"
+      },
+      "fields": {
+        "position": "Vị trí chính thức",
+        "department": "Khoa/Phòng",
+        "base_salary": "Lương cơ bản (VND)",
+        "allowance": "Phụ cấp trực (VND)",
+        "special_allowance": "Phụ cấp đặc thù y tế (VND)",
+        "total_income": "Tổng thu nhập (VND)",
+        "start_date": "Ngày bắt đầu làm việc",
+        "probation_months": "Thời gian thử việc (tháng)",
+        "approver": "Người duyệt offer",
+        "document": "File CCHN đính kèm",
+        "notes": "Ghi chú"
+      }
     },
     "columns": {
       "code": "Mã ứng viên",
@@ -281,7 +307,8 @@
       "probation_proposed": "Đề xuất thử việc",
       "on_probation": "Đang thử việc",
       "rejected": "Từ chối",
-      "offer_declined": "Từ chối offer"
+      "offer_declined": "Từ chối offer",
+      "update_error": "Cập nhật trạng thái thất bại"
     },
     "actions": {
       "screen": "Sàng lọc",
@@ -330,7 +357,7 @@
         "department": "Khoa",
         "room": "Phòng",
         "position": "Vị trí tuyển dụng",
-        "staff_type": "Loại nhân sự",
+        "work_type": "Hình thức làm việc",
         "expected_salary": "Mức lương mong muốn(tr/tháng)",
         "source": "Nguồn",
         "school": "Trường đào tạo",
@@ -365,6 +392,69 @@
           "FROM_3_TO_5": "3 - 5 năm",
           "FROM_5_TO_10": "5 - 10 năm",
           "OVER_10": "Trên 10 năm"
+        },
+        "staff_type": "Loại nhân sự"
+      }
+    },
+    "detail": {
+      "applied_date": "Ngày ứng tuyển",
+      "expected_salary": "Mức lương kỳ vọng",
+      "schedule_interview": "Đặt lịch hẹn",
+      "send_email": "Gửi email",
+      "pipeline": "Tiến trình tuyển dụng",
+      "advance": "Chuyển vòng",
+      "reject": "Loại",
+      "view_jd": "Xem chi tiết",
+      "salary": "Mức lương",
+      "no_attachments": "Chưa có hồ sơ đính kèm",
+      "no_data": "Chưa có dữ liệu",
+      "download_file": "Tải xuống",
+      "personal_info": "Thông tin cá nhân",
+      "practice_certificate": "Chứng chỉ hành nghề",
+      "education": "Bằng cấp chuyên môn",
+      "note": "Ghi chú",
+      "note_placeholder": "Nhập ghi chú...",
+      "interview_history": "Lịch sử phỏng vấn",
+      "tabs": {
+        "application": "Thông tin ứng tuyển",
+        "attachments": "Hồ sơ đính kèm",
+        "interview_history": "Lịch sử PV",
+        "evaluation": "Đánh giá PV",
+        "offer": "Offer"
+      },
+      "evaluation": {
+        "title": "Đánh giá chi tiết",
+        "reviewer": "Người đánh giá",
+        "interview_date": "Ngày phỏng vấn",
+        "general_comment": "Nhận xét của người phỏng vấn",
+        "professional_knowledge": "Chuyên môn",
+        "attitude": "Thái độ",
+        "communication": "Giao tiếp",
+        "experience": "Kinh nghiệm"
+      },
+      "offer": {
+        "create_offer": "Tạo offer",
+        "no_offer": "Ứng viên chưa có offer",
+        "offer_letter": "Offer letter",
+        "position": "Vị trí chính thức",
+        "department_room": "Khoa/Phòng",
+        "basic_salary": "Lương cơ bản",
+        "allowance": "Phụ cấp",
+        "medical_allowance": "Phụ cấp đặc thù y tế",
+        "total_income": "Tổng thu nhập",
+        "month": "tháng",
+        "start_date": "Ngày bắt đầu làm việc",
+        "probation_period": "Thời gian thử việc",
+        "months": "tháng",
+        "salary": "lương",
+        "approver": "Người duyệt offer",
+        "attachment": "File đính kèm",
+        "status": {
+          "draft": "Nháp",
+          "sent": "Đã gửi",
+          "accepted": "Đã chấp nhận",
+          "declined": "Từ chối",
+          "expired": "Hết hạn"
         }
       }
     }

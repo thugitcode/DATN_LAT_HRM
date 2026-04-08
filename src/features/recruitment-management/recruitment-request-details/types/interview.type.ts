@@ -1,3 +1,5 @@
+import type { PaginationParams } from '@/types';
+
 export enum InterviewMethodEnum {
   ONLINE = 'ONLINE',
   OFFLINE = 'OFFLINE',
@@ -31,7 +33,8 @@ export interface InterviewSchedule {
   createdAt: string;
 }
 
-export interface InterviewScheduleFilters {
+export interface InterviewScheduleFilters extends Partial<PaginationParams> {
+  candidateId?: string;
   recruitmentRequestId?: string;
   [key: string]: unknown;
 }

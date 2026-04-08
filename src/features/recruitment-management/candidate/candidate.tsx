@@ -20,8 +20,9 @@ export const Candidate = () => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
   const page = Number(filters.page) || DEFAULT_PAGE;
   const limit = Number(filters.limit) || 10;
+  const search = filters.search || '';
 
-  const { data } = useCandidateList({ page, limit });
+  const { data } = useCandidateList({ page, limit, search });
   const candidates = data?.data ?? [];
   const pagination = data?.pagination;
   const { onOpen } = useDrawer()

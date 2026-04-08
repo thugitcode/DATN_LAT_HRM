@@ -232,7 +232,8 @@
       "room": "Room",
       "interviewer": "Interviewer",
       "content": "Content",
-      "candidate": "Candidate"
+      "candidate": "Candidate",
+      "status": "Status"
     },
     "actions": {
       "resend_invitation": "Resend Invitation",
@@ -257,7 +258,45 @@
       "email_invalid": "Invalid email address",
       "department_required": "Please select department",
       "position_required": "Please select position",
-      "staff_type_required": "Please select staff type"
+      "work_type_required": "Please select work type"
+    },
+    "offer": {
+      "title": "Send Offer",
+      "save_draft": "Save Draft",
+      "send": "Send Now",
+      "validation": {
+        "position_required": "Please select official position",
+        "department_required": "Please select department/room",
+        "base_salary_required": "Please enter base salary",
+        "start_date_required": "Please select start date",
+        "approver_required": "Please select offer approver"
+      },
+      "fields": {
+        "position": "Official Position",
+        "department": "Department/Room",
+        "base_salary": "Basic Salary (VND)",
+        "allowance": "Allowance (VND)",
+        "special_allowance": "Medical Allowance (VND)",
+        "total_income": "Total Income (VND)",
+        "start_date": "Start Date",
+        "probation_months": "Probation Period (months)",
+        "approver": "Offer Approver",
+        "document": "Attached Document",
+        "notes": "Notes"
+      }
+    },
+    "columns": {
+      "code": "Candidate Code",
+      "name": "Candidate Name",
+      "phone": "Phone Number",
+      "email": "Email",
+      "position": "Position Applied",
+      "departmentName": "Department",
+      "roomName": "Room",
+      "source": "Source",
+      "status": "Status",
+      "createdAt": "Applied Date",
+      "actions": "Actions"
     },
     "status": {
       "applied": "Applied",
@@ -268,7 +307,8 @@
       "probation_proposed": "Probation Proposed",
       "on_probation": "On Probation",
       "rejected": "Rejected",
-      "offer_declined": "Offer Declined"
+      "offer_declined": "Offer Declined",
+      "update_error": "Failed to update status"
     },
     "actions": {
       "screen": "Screen",
@@ -317,7 +357,7 @@
         "department": "Department",
         "room": "Room",
         "position": "Recruitment Position",
-        "staff_type": "Staff Type",
+        "work_type": "Work Type",
         "expected_salary": "Expected Salary(VND/month)",
         "source": "Source",
         "practice_number": "Practice Certificate No.",
@@ -352,6 +392,69 @@
           "FROM_3_TO_5": "3 - 5 years",
           "FROM_5_TO_10": "5 - 10 years",
           "OVER_10": "Over 10 years"
+        },
+        "staff_type": "Staff Type"
+      }
+    },
+    "detail": {
+      "applied_date": "Applied Date",
+      "expected_salary": "Expected Salary",
+      "schedule_interview": "Schedule Interview",
+      "send_email": "Send Email",
+      "pipeline": "Recruitment Pipeline",
+      "advance": "Advance",
+      "reject": "Reject",
+      "view_jd": "View detail",
+      "salary": "Salary",
+      "no_attachments": "No attachments",
+      "no_data": "No data",
+      "download_file": "Download",
+      "personal_info": "Personal Information",
+      "practice_certificate": "Practice Certificate",
+      "education": "Professional Degree",
+      "note": "Note",
+      "note_placeholder": "Enter note...",
+      "interview_history": "Interview History",
+      "tabs": {
+        "application": "Application Info",
+        "attachments": "Attachments",
+        "interview_history": "Interview History",
+        "evaluation": "Evaluation",
+        "offer": "Offer"
+      },
+      "evaluation": {
+        "title": "Detailed Evaluation",
+        "reviewer": "Reviewer",
+        "interview_date": "Interview Date",
+        "general_comment": "Interviewer's Comment",
+        "professional_knowledge": "Professional Knowledge",
+        "attitude": "Attitude",
+        "communication": "Communication",
+        "experience": "Experience"
+      },
+      "offer": {
+        "create_offer": "Create Offer",
+        "no_offer": "No offer",
+        "offer_letter": "Offer letter",
+        "position": "Official Position",
+        "department_room": "Department/Room",
+        "basic_salary": "Basic Salary",
+        "allowance": "Allowance",
+        "medical_allowance": "Medical Allowance",
+        "total_income": "Total Income",
+        "month": "month",
+        "start_date": "Start Date",
+        "probation_period": "Probation Period",
+        "months": "months",
+        "salary": "salary",
+        "approver": "Offer Approver",
+        "attachment": "Attachment",
+        "status": {
+          "draft": "Draft",
+          "sent": "Sent",
+          "accepted": "Accepted",
+          "declined": "Declined",
+          "expired": "Expired"
         }
       }
     }

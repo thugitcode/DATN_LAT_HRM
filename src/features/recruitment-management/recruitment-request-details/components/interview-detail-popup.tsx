@@ -1,5 +1,6 @@
 import { NAMESPACES } from '@/i18n/constants';
-import { Button, Chip, Select, SelectItem } from '@heroui/react';
+import { Button, Chip } from '@heroui/react';
+import { StatusChipSelect } from '@/components/status-chip-select';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   IconChevronDown,
@@ -16,15 +17,15 @@ import { useTranslation } from 'react-i18next';
 import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
 import { cn } from '@/lib/utils';
 import { interviewScheduleService } from '@/services/recruitment-management/interview-schedule.service';
-import { interviewScheduleKeys } from '@/services/query-options/recruitment-management/interview-schedule.query';
 
-import { STATUS_CONFIG } from '../constants/data';
+import { INTERVIEW_STATUS_CONFIG } from '../constants/data';
 import { copyToClipboard } from '../helpers/helpers';
 import {
   InterviewMethodEnum,
   InterviewStatusEnum,
   type InterviewSchedule,
 } from '../types/interview.type';
+import { QUERY_KEY } from '@/hooks/use-crud-query';
 
 interface ActionDef {
   key: string;
@@ -82,7 +83,6 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
   const queryClient = useQueryClient();
 
-  const config = STATUS_CONFIG[interview.status];
   const actions = STATUS_ACTIONS[interview.status];
   const isOnline = interview.interviewMethod === InterviewMethodEnum.ONLINE;
 
@@ -90,7 +90,7 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
     mutationFn: (status: InterviewStatusEnum) =>
       interviewScheduleService.patch(interview.id, { status }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: interviewScheduleKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.INTERVIEW_SCHEDULE, 'list'] });
     },
   });
 
@@ -107,31 +107,17 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
         <span className="text-xl leading-7 font-medium text-[#11181C] truncate flex-1 mr-2">
           {t('interview_schedule.label.interview')}: {interview.position}
         </span>
-        <Select
-          size="lg"
-          color={config.chipColor}
-          variant="flat"
-          isDisabled={isPending}
-          selectedKeys={[interview.status]}
-          onSelectionChange={(keys) => {
-            const status = Array.from(keys)[0] as InterviewStatusEnum;
-            if (status && status !== interview.status) updateStatus(status);
-          }}
-          aria-label="Change interview status"
-          className="shrink-0 w-35 min-w-[120px]"
-          classNames={{
-            trigger: 'h-7 min-h-7 rounded-full px-2 border-none shadow-none',
-            value: 'text-xs font-medium',
-            selectorIcon: 'text-current'
-          }}
-        // disabledKeys={[interview.status]}
-        >
-          {Object.values(InterviewStatusEnum).map((status) => (
-            <SelectItem key={status}>
-              {t(`interview_schedule.status.${status}` as any)}
-            </SelectItem>
-          ))}
-        </Select>
+        <StatusChipSelect
+          value={interview.status}
+          isPending={isPending}
+          options={Object.values(InterviewStatusEnum).map((s) => ({
+            key: s,
+            label: t(`interview_schedule.status.${s}` as any),
+            color: INTERVIEW_STATUS_CONFIG[s].color,
+            bg: INTERVIEW_STATUS_CONFIG[s].bg,
+          }))}
+          onSelect={(key) => updateStatus(key as InterviewStatusEnum)}
+        />
       </div>
 
       {/* Body */}

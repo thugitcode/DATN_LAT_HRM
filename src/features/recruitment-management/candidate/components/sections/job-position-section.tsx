@@ -72,7 +72,7 @@ export function JobPositionSection() {
         <FormSelect
           control={control}
           name="staffType"
-          label={t('candidate.form.fields.staff_type')}
+          label={t('candidate.form.fields.work_type')}
           placeholder="Chọn"
           isRequired
           options={STAFF_TYPE_OPTIONS}
