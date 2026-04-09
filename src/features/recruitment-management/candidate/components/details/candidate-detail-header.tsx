@@ -20,6 +20,7 @@ export function CandidateDetailHeader({ candidate }: CandidateDetailHeaderProps)
   const navigate = useNavigate();
   const { onOpen } = useDrawer()
   const rr = candidate.recruitmentRequest;
+  console.log(candidate, 232323);
 
   return (
     <div className="bg-transparent px-6 py-4 shrink-0">
@@ -60,7 +61,17 @@ export function CandidateDetailHeader({ candidate }: CandidateDetailHeaderProps)
             </div>
           )}
           <div className="flex items-center gap-2">
-            <Button color="primary" size="sm" className="rounded-xl font-medium" onPress={() => onOpen(DrawerType.OFFER_MUTATE, {
+            <Button color='primary' className="rounded-xl font-medium" onPress={() => onOpen(DrawerType.EVALUATION_MUTATE, {
+              candidate,
+              candidateId: candidate.id,
+              candidateName: candidate.name,
+              candidatePosition: candidate.recruitmentRequest?.position,
+              candidateDepartment: candidate.recruitmentRequest?.department?.name,
+              candidateStatus: candidate.status,
+            })}>
+              {t('candidate.detail.evaluation.btn_evaluate')}
+            </Button>
+            <Button color="primary" className="rounded-xl font-medium" onPress={() => onOpen(DrawerType.OFFER_MUTATE, {
               candidateId: candidate.id,
               candidateName: candidate.name,
               candidatePosition: candidate.recruitmentRequest?.position,
@@ -69,12 +80,8 @@ export function CandidateDetailHeader({ candidate }: CandidateDetailHeaderProps)
             })}>
               Offer
             </Button>
-            <Button variant="bordered" size="sm" className="rounded-xl font-medium">
-              {t('candidate.detail.schedule_interview')}
-            </Button>
             <Button
-              variant="bordered"
-              size="sm"
+              color='primary'
               className="rounded-xl font-medium"
               startContent={<IconMail size={16} />}
             >

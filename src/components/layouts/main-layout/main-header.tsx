@@ -23,7 +23,7 @@ export const MainHeader = () => {
     <div className="bg-white text-primary min-h-20 h-20 grid grid-cols-3 items-center ps-6 pe-5 py-3 border-b border-white/5 relative">
       <div className="flex justify-start">
         {/* <MainLogo /> */}
-        <h1 className="text-2xl text-[#2C3782] font-medium">{activeMenu?.label}</h1>
+        <h1 className="max-lg:hidden text-2xl text-[#2C3782] font-medium">{activeMenu?.label}</h1>
       </div>
 
       <div className="flex justify-center">

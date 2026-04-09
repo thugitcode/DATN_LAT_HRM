@@ -8,14 +8,14 @@ import { BtnSave } from '@/components/btn-save';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
-import type { CandidateFormValues } from '../schemas/schema';
+import type { CandidateFormValues } from '../../schemas/schema';
 
-import { useFormCandidate } from '../hooks/use-form-candidate';
-import { JobPositionSection } from './sections/job-position-section';
-import { PersonalInfoSection } from './sections/personal-info-section';
-import { PracticeCertificateSection } from './sections/practice-certificate-section';
-import { DocumentsSection } from './sections/documents-section';
-import { ProfessionalInfoSection } from './sections/professional-info-section';
+import { useFormCandidate } from '../../hooks/use-form-candidate';
+import { JobPositionSection } from '../sections/job-position-section';
+import { PersonalInfoSection } from '../sections/personal-info-section';
+import { PracticeCertificateSection } from '../sections/practice-certificate-section';
+import { DocumentsSection } from '../sections/documents-section';
+import { ProfessionalInfoSection } from '../sections/professional-info-section';
 
 interface DrawerData {
     id?: string;

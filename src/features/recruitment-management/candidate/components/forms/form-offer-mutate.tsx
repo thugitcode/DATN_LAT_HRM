@@ -15,7 +15,7 @@ import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { formatVND } from '@/lib/helpers';
 
 import { useFormOffer } from '../../hooks/use-form-offer';
-import { CandidateStatusSelect } from './candidate-status-select';
+import { CandidateStatusSelect } from '../details/candidate-status-select';
 import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/type';
 import { useState } from 'react';
 import { FormInput } from '@/components/form-fields/form-input';

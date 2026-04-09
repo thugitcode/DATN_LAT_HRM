@@ -54,7 +54,7 @@ export interface ICandidate {
   identityCard: string | null;
   address: string | null;
   status: CandidateStatusEnum;
-  source: string | null;
+  source: CandidateSourceEnum;
   position?: string;
   departmentName?: string;
   roomName?: string;

@@ -114,9 +114,20 @@ export const DEFAULT_VALUES: Partial<CandidateFormValues> = {
   documents: undefined,
 };
 
+type CandidateStatusLabel =
+  | 'candidate.status.applied'
+  | 'candidate.status.screened'
+  | 'candidate.status.waiting_interview'
+  | 'candidate.status.interviewing'
+  | 'candidate.status.waiting_offer'
+  | 'candidate.status.probation_proposed'
+  | 'candidate.status.on_probation'
+  | 'candidate.status.rejected'
+  | 'candidate.status.offer_declined';
+
 export const STATUS_CHIP: Record<
   CandidateStatusEnum,
-  { label: string; color: 'primary' | 'secondary' | 'warning' | 'success' | 'danger' | 'default' }
+  { label: CandidateStatusLabel; color: 'primary' | 'secondary' | 'warning' | 'success' | 'danger' | 'default' }
 > = {
   [CandidateStatusEnum.APPLIED]: { label: 'candidate.status.applied', color: 'primary' },
   [CandidateStatusEnum.SCREENED]: { label: 'candidate.status.screened', color: 'secondary' },

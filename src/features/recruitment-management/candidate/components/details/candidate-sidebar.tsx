@@ -107,8 +107,8 @@ export function CandidateSidebar({ candidate }: CandidateSidebarProps) {
           value={candidate.practiceScope}
         />
         {candidate.practiceFileUrl && (
-          <div className="py-1.5 flex justify-between items-center">
-            <span className="text-sm text-[#71717A]">
+          <div className="py-1.5 flex justify-start gap-3 items-center">
+            <span className="text-sm min-w-37.5 text-[#71717A]">
               {t('candidate.form.fields.practice_file')}
             </span>
             <a
@@ -117,7 +117,7 @@ export function CandidateSidebar({ candidate }: CandidateSidebarProps) {
               rel="noreferrer"
               className="flex items-center gap-1 text-sm text-primary hover:underline"
             >
-              <IconDownload size={14} />
+              {icons.fileText}
               {t('candidate.detail.download_file')}
             </a>
           </div>

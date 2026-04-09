@@ -12,7 +12,6 @@ interface ApplicationTabProps {
 
 export function ApplicationTab({ candidate }: ApplicationTabProps) {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-  const { t: tc } = useTranslation(NAMESPACES.COMMON)
   const rr = candidate.recruitmentRequest;
 
   if (!rr) return <p className="text-sm text-[#71717A]">{t('candidate.detail.no_data')}</p>;
