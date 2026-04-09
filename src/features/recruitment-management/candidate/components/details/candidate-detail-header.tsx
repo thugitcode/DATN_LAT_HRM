@@ -20,7 +20,6 @@ export function CandidateDetailHeader({ candidate }: CandidateDetailHeaderProps)
   const navigate = useNavigate();
   const { onOpen } = useDrawer()
   const rr = candidate.recruitmentRequest;
-  console.log(candidate, 232323);
 
   return (
     <div className="bg-transparent px-6 py-4 shrink-0">

@@ -56,7 +56,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
 
   if (!staff) {
     return (
-      <div className="flex h-full items-center justify-center bg-[#F8F9FA]">
+      <div className="flex h-full items-center justify-center bg-[#f5f5f5]">
         <p className="text-[#71717A]">{t('no_staff_found')}</p>
       </div>
     );
@@ -68,7 +68,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
   };
 
   return (
-    <PageContainer className="p-6 bg-[#F8F9FA] min-h-full space-y-4">
+    <PageContainer className="p-6 bg-[#f5f5f5] min-h-full space-y-4">
       <StaffDetailHeader staff={staff} />
 
       <div className="w-full">
@@ -117,7 +117,7 @@ export const StaffDetail = ({ id }: StaffDetailProps) => {
                     ))}
                   </div>
                 </div>
-                <div className="overflow-auto h-[calc(100vh-310px)]">
+                <div className="overflow-auto h-[calc(100vh-230px)]">
                   <StaffDetailInfo />
                 </div>
               </Form>

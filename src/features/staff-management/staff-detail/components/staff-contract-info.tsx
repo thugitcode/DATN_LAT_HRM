@@ -56,6 +56,7 @@ import { departmentQueryOptions } from '@/services/query-options/department.quer
 import { roomQueryOptions } from '@/services/query-options/room.query';
 import { shiftTemplateQueryOptions } from '@/services/query-options/shift-template.query';
 import { normalizeAxiosError } from '@/lib/axios';
+import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
 import StaffContractEmptyState from './staff-contract-empty-state';
 import { ControlMode, useControlMode } from '../../salary-and-benefits/hooks/use-control-mode-handle';
 
@@ -63,14 +64,6 @@ interface StaffContractInfoProps {
     staffId: string;
 }
 
-const JOB_TITLE_OPTIONS = [
-    { key: 'DOCTOR', label: 'Bác sĩ' },
-    { key: 'NURSE', label: 'Điều dưỡng' },
-    { key: 'TECHNICIAN', label: 'Kỹ thuật viên' },
-    { key: 'MIDWIFE', label: 'Hộ sinh' },
-    { key: 'PHYSICIAN_ASSISTANT', label: 'Y sĩ' },
-    { key: 'OFFICE_STAFF', label: 'Nhân viên văn phòng' },
-];
 
 const POSITION_OPTIONS = [
     { key: 'STAFF', label: 'Nhân viên' },
@@ -116,9 +109,6 @@ const translateWorkType = (type: string) => {
     return types[type] || type || '—';
 };
 
-const translateJobTitle = (title: string) => {
-    return JOB_TITLE_OPTIONS.find((o) => o.key === title)?.label || title || '—';
-};
 
 const translatePosition = (position: string) => {
     return POSITION_OPTIONS.find((o) => o.key === position)?.label || position || '—';
@@ -161,7 +151,7 @@ interface WorkingArea {
 }
 
 interface EditFormData {
-    jobTitle: string;
+    jobTitleId: string;
     position: string;
     duration: number;
     durationUnit: string;
@@ -186,7 +176,7 @@ const initFormFromContract = (contract: StaffContract | undefined): EditFormData
     });
 
     return {
-        jobTitle: contract?.jobTitle || '',
+        jobTitleId: contract?.jobTitle?.id || '',
         position: contract?.position || '',
         duration: contract?.duration || 1,
         durationUnit: contract?.durationUnit || 'YEAR',
@@ -203,6 +193,7 @@ const initFormFromContract = (contract: StaffContract | undefined): EditFormData
 export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
     const onOpenDrawer = useDrawer((state) => state.onOpen);
     const { setMode } = useControlMode()
+    const { options: jobTitleOptions } = useJobTitleOptions();
     const { data: response, isLoading } = useStaffContracts(staffId);
     const contracts = response?.data || [];
     const currentContract = contracts.find((c) => c.status === ContractStatusEnum.SIGNED) || contracts[0];
@@ -273,7 +264,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
 
     const validateForm = useCallback(() => {
         const newErrors: Record<string, string> = {};
-        if (!formData.jobTitle) newErrors.jobTitle = 'Chức danh không được để trống.';
+        if (!formData.jobTitleId) newErrors.jobTitleId = 'Chức danh không được để trống.';
         if (!formData.position) newErrors.position = 'Cấp bậc không được để trống.';
         if (!formData.duration || formData.duration <= 0) newErrors.duration = 'Thời gian hợp đồng không được để trống.';
         if (!formData.departmentId) newErrors.departmentId = 'Khoa quản lý không được để trống.';
@@ -296,7 +287,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
             await updateMutation.mutateAsync({
                 id: currentContract.id,
                 data: {
-                    jobTitle: formData.jobTitle,
+                    jobTitleId: formData.jobTitleId,
                     position: formData.position,
                     duration: formData.duration,
                     durationUnit: formData.durationUnit,
@@ -450,16 +441,16 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                     isRequired
                                     labelPlacement="outside"
                                     placeholder="Chọn chức danh"
-                                    selectedKeys={formData.jobTitle ? [formData.jobTitle] : []}
+                                    selectedKeys={formData.jobTitleId ? [formData.jobTitleId] : []}
                                     onSelectionChange={(keys) => {
                                         const val = Array.from(keys)[0] as string;
-                                        setFormData((p) => ({ ...p, jobTitle: val }));
+                                        setFormData((p) => ({ ...p, jobTitleId: val }));
                                     }}
                                     classNames={selectClassNames}
-                                    isInvalid={!!errors.jobTitle}
-                                    errorMessage={errors.jobTitle}
+                                    isInvalid={!!errors.jobTitleId}
+                                    errorMessage={errors.jobTitleId}
                                 >
-                                    {JOB_TITLE_OPTIONS.map((o) => <SelectItem key={o.key}>{o.label}</SelectItem>)}
+                                    {jobTitleOptions.map((jt) => <SelectItem key={jt.value}>{jt.label}</SelectItem>)}
                                 </Select>
                                 <Select
                                     label="Cấp bậc"
@@ -694,7 +685,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
                             <InfoRow label="Loại hợp đồng" value={translateContractType(currentContract?.contractType as string)} />
                             <InfoRow label="Loại hình" value={translateWorkType(currentContract?.workType as string)} />
-                            <InfoRow label="Chức danh" value={translateJobTitle(currentContract?.jobTitle as string)} />
+                            <InfoRow label="Chức danh" value={currentContract?.jobTitle?.name ?? '—'} />
                             <InfoRow label="Cấp bậc" value={translatePosition(currentContract?.position as string)} />
                             <InfoRow label="Thời hạn hợp đồng" value={currentContract ? `${currentContract.duration} ${currentContract.durationUnit === 'YEAR' ? 'năm' : 'tháng'}` : ''} />
                             <InfoRow label="Ngày bắt đầu" value={currentContract?.startDate ? dayjs(currentContract.startDate).format('DD/MM/YYYY') : ''} />
@@ -764,7 +755,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 <TableRow key={history.id}>
                                     <TableCell>#{history._staffCode || '—'}</TableCell>
                                     <TableCell>{history._staffName || '—'}</TableCell>
-                                    <TableCell>{translateJobTitle(history.jobTitle)}</TableCell>
+                                    <TableCell>{history.jobTitle?.name ?? '—'}</TableCell>
                                     <TableCell>{translatePosition(history.position)}</TableCell>
                                     <TableCell>{history._departmentName || '—'}</TableCell>
                                     <TableCell>{translateContractType(history.contractType)}</TableCell>

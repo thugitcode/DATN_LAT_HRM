@@ -15,6 +15,7 @@ import { InterviewCalendar } from './components/interview-calender';
 import { RecruitmentInformationSection } from './components/recruitment-information-section';
 import { RecruitmentRequestTabEnum } from './constants/data';
 import { useCandidateList } from './hooks/use-candidate-list';
+import { LoadingWrapper } from '@/components/loading-wrapper';
 
 type TabKey = RecruitmentRequestTabEnum;
 
@@ -176,13 +177,9 @@ export const RecruitmentRequestDetails = ({
                     }}
                 >
                     <Tab key={RecruitmentRequestTabEnum.CANDIDATES} title={t('recruitment_request.details.candidate')}>
-                        {isCandidatesLoading ? (
-                            <div className="flex items-center justify-center h-40">
-                                <Spinner />
-                            </div>
-                        ) : (
-                            <CandidateKanban candidates={candidates} />
-                        )}
+                        <LoadingWrapper isLoading={isCandidatesLoading} height='50vh'>
+                            <CandidateKanban candidates={candidates} recruitmentRequestId={id} />
+                        </LoadingWrapper>
                     </Tab>
                     <Tab key={RecruitmentRequestTabEnum.INFO} title={t('recruitment_request.details.request_info')}>
                         {/* TODO: Thông tin yêu cầu */}

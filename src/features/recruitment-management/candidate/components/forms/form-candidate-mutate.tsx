@@ -8,7 +8,7 @@ import { BtnSave } from '@/components/btn-save';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
-import type { CandidateFormValues } from '../../schemas/schema';
+import type { CandidateFormValues } from '../../schemas/candidate.schema';
 
 import { useFormCandidate } from '../../hooks/use-form-candidate';
 import { JobPositionSection } from '../sections/job-position-section';
@@ -19,6 +19,7 @@ import { ProfessionalInfoSection } from '../sections/professional-info-section';
 
 interface DrawerData {
     id?: string;
+    recruitmentRequestId?: string;
 }
 
 export enum CandidateTabEnum {
@@ -51,12 +52,14 @@ export const FormCandidateMutate = () => {
     const onClose = useDrawer((s) => s.onClose);
     const drawerData = useDrawer((s) => s.data) as DrawerData | undefined;
     const id = drawerData?.id;
+    const recruitmentRequestId = drawerData?.recruitmentRequestId;
     const isEditMode = !!id;
 
     const [activeTab, setActiveTab] = useState<TabKey>(CandidateTabEnum.PERSONAL);
 
     const { methods, isDetailLoading, isSubmitting, onSubmit } = useFormCandidate({
         id,
+        recruitmentRequestId,
         onSuccess: onClose,
     });
 
@@ -111,7 +114,7 @@ export const FormCandidateMutate = () => {
                         {activeTab === CandidateTabEnum.PERSONAL && <PersonalInfoSection />}
                         {activeTab === CandidateTabEnum.APPLICATION && (
                             <div className="bg-white flex flex-col gap-4 p-5 rounded-2xl shadow-sm border border-[#E4E4E7] text-sm text-[#71717A]">
-                                <JobPositionSection />
+                                <JobPositionSection recruitmentRequestId={recruitmentRequestId} />
                             </div>
                         )}
                         {activeTab === CandidateTabEnum.QUALIFICATIONS && (

@@ -49,7 +49,7 @@ export interface Staff {
   phone: string;
   email: string;
   avatar: string;
-  jobTitle: string;
+  jobTitle: { id: string; name: string };
   position: StaffPosition;
   currentWorkType: string | null;
   contractExpiryDate: string | null;

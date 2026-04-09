@@ -2,11 +2,12 @@ import { FormInput } from "@/components/form-fields/form-input";
 import { FormSelect } from "@/components/form-fields/form-select";
 import { ControlMode, useControlMode } from "@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle";
 import { useDepartmentOptions } from "@/hooks/select-options/use-department-options";
+import { useJobTitleOptions } from "@/hooks/select-options/use-job-title-options";
 import { useRoomOptions } from "@/hooks/select-options/use-room-options";
 import { NAMESPACES } from "@/i18n/constants";
 import { icons } from "@/lib/icons";
 import { useUpdateStaff } from "@/query-options/staff";
-import { ContractTypeEnum, StaffJobTitleEnum, StaffPositionEnum, WorkingTypeTypeEnum } from "@/types/staff.type";
+import { ContractTypeEnum, StaffPositionEnum, WorkingTypeTypeEnum } from "@/types/staff.type";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { STAFF_SECTION_KEYS } from "../../constants/data";
@@ -29,6 +30,7 @@ export const DepartmentSection = () => {
 
     // Logic lấy options
     const { options: departmentOptions } = useDepartmentOptions();
+    const { options: jobTitleOptions } = useJobTitleOptions();
     const selectedDepts = watch("managedDepartmentId");
     const { options: roomOptions } = useRoomOptions(selectedDepts);
 
@@ -38,7 +40,7 @@ export const DepartmentSection = () => {
         "managedDepartmentId",
         "managedRoomId",
         "workType",
-        "jobTitle",
+        "jobTitleId",
         "position",
         "contractType",
         "workingPeriod"
@@ -129,15 +131,12 @@ export const DepartmentSection = () => {
                 {/* Chức danh */}
                 <FormSelect
                     control={control}
-                    name="jobTitle"
+                    name="jobTitleId"
                     label={t('staffForm.fields.jobTitle.label')}
                     isRequired
                     readOnly={isView}
                     variant={variant}
-                    options={Object.values(StaffJobTitleEnum).map((val) => ({
-                        label: t(`options.job_title.${val}`),
-                        key: val
-                    }))}
+                    options={jobTitleOptions.map((jt) => ({ key: jt.value, label: jt.label }))}
                 />
 
                 {/* Cấp bậc/Chức vụ */}

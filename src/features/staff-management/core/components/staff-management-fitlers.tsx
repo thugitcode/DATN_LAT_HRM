@@ -3,9 +3,10 @@ import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
 import type { RequestsParams } from '@/types/global.type';
-import { StaffJobTitleEnum, StaffPositionEnum, StaffStatusEnum } from '@/types/staff.type';
+import { StaffPositionEnum, StaffStatusEnum } from '@/types/staff.type';
 import { icons } from '@/lib/icons';
 import { useDepartmentOptions } from '@/hooks/options/use-department-options';
+import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
 import { useRoomOptions } from '@/hooks/options/use-room-options';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { FilterSelect } from '@/components/filters/filter-select';
@@ -28,7 +29,7 @@ export const StaffManagementFilters = () => {
 
   const handleJobTitleChange = useCallback(
     (value: string | undefined) => {
-      setFilter('jobTitle', value);
+      setFilter('jobTitleId', value);
     },
     [setFilter],
   );
@@ -62,10 +63,8 @@ export const StaffManagementFilters = () => {
     [setFilter],
   );
 
-  const jobTitleOptions = Object.values(StaffJobTitleEnum).map((val) => ({
-    key: val,
-    label: t(`options.job_title.${val}`),
-  }));
+  const { options: jobTitleApiOptions } = useJobTitleOptions();
+  const jobTitleOptions = jobTitleApiOptions.map((jt) => ({ key: jt.value, label: jt.label }));
 
   const positionOptions = Object.values(StaffPositionEnum).map((val) => ({
     key: val,
@@ -83,7 +82,7 @@ export const StaffManagementFilters = () => {
 
       <FilterSelect
         options={jobTitleOptions}
-        value={filters.jobTitle as string}
+        value={filters.jobTitleId as string}
         onChange={handleJobTitleChange}
         placeholder={t('options.job_title.ALL')}
       />

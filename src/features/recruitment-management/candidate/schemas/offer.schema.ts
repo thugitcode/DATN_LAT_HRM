@@ -1,8 +1,8 @@
-import { z } from 'zod';
-import type { TFunction } from 'i18next';
 import type { NAMESPACES } from '@/i18n/constants';
+import type { TFunction } from 'i18next';
+import { z } from 'zod';
 
-import { normalizeString, optionalString, requiredString } from './schema';
+import { optionalString, requiredString } from './candidate.schema';
 
 export const offerSchema = (t: TFunction<typeof NAMESPACES.RECRUITMENT_MANAGEMENT>) =>
   z.object({

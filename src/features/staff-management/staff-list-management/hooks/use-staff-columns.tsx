@@ -81,7 +81,7 @@ export const useStaffColumns = () => {
               {renderStatusChip(record.status as any, t)}
             </div>
             <div className="text-xs text-[#71717A] mt-0.5">
-              {record.jobTitle ? t(`options.job_title.${record.jobTitle}` as any) : ''} -
+              {record.jobTitle?.name ?? ''} -
               {record.code}
             </div>
           </div>
@@ -129,7 +129,7 @@ export const useStaffColumns = () => {
       title: t('staff_table.columns.job_title'),
       render: (_, record) => (
         <span className="text-sm text-[#11181C]">
-          {t(`options.job_title.${record.jobTitle}` as any)}
+          {record.jobTitle?.name ?? '—'}
         </span>
       ),
     },

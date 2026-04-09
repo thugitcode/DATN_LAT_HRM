@@ -42,7 +42,7 @@ export const TimeAttendanceManagementTab = () => {
       {TAB_KEYS.WORKSHEET_BY_SHIFT === activeKey && (
         <div className="space-y-4">
           <AttendanceSummary data={data?.data?.[0]?.summary} />
-          <div className="overflow-auto space-y-4 py-2 h-[calc(100vh-503px)]">
+          <div className="overflow-auto space-y-4 py-2 h-[calc(100vh-405px)]">
             {data?.data?.[0]?.days?.map((shift, idx) => (
               <ShiftEntry key={idx} {...shift} />
             ))}

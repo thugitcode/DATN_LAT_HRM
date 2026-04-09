@@ -52,6 +52,7 @@ export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentR
       departmentId: d.departmentId ?? d.department?.id ?? '',
       roomId: d.roomId ?? d.room?.id ?? '',
       position: d.position ?? '',
+      jobTitleId: d.jobTitleId ?? d.jobTitle?.id ?? '',
       staffType: (d as any).staffType ?? '',
       workType: d.workType ?? '',
       quantity: d.quantity ?? 1,

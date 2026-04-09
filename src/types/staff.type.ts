@@ -128,7 +128,7 @@ export enum WorkingTimeUnitEnum {
 
 export interface StaffWorkHistory {
   id: string;
-  jobTitle: StaffJobTitleEnum;
+  jobTitle: { id: string; name: string };
   position: StaffPositionEnum;
   contractNumber: string;
   contractType: ContractTypeEnum;
@@ -188,7 +188,7 @@ export interface StaffContract {
   durationUnit: DurationUnitEnum;
   workingTime: number;
   workingTimeUnit: WorkingTimeUnitEnum;
-  jobTitle: StaffJobTitleEnum;
+  jobTitle: { id: string; name: string };
   position: StaffPositionEnum;
   staff?: Staff;
   department?: { id: string; name: string };
@@ -215,7 +215,7 @@ export interface StaffParams {
   limit?: number;
   search?: string;
   status?: string;
-  jobTitle?: string;
+  jobTitleId?: string;
   positions?: StaffPositionEnum[];
   departmentIds?: string[];
   roomIds?: string[];
@@ -265,7 +265,7 @@ export interface Staff {
   phone?: string;
   email?: string;
   avatar?: string;
-  jobTitle?: StaffJobTitleEnum;
+  jobTitle?: { id: string; name: string };
   position?: StaffPosition;
   currentWorkType?: string;
   workType?: WorkingTypeTypeEnum;

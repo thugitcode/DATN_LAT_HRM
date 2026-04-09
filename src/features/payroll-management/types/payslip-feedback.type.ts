@@ -109,7 +109,7 @@ export interface StaffPayslipFeedback {
   certificateNumber: string;
   certificateIssuePlace: string;
   certificateExpiryDate: string;
-  jobTitle: string;
+  jobTitle: { id: string; name: string };
   position: string;
   role: string;
   taxCode: string;

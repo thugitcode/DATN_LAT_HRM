@@ -46,7 +46,7 @@ const DEFAULT_SALARY = {
 const DEFAULT_VALUES: StaffContractFormValues = {
   contractType: '',
   workType: '',
-  jobTitle: '',
+  jobTitleId: '',
   position: '',
   workingTime: '',
   workingTimeUnit: 'MONTH',
@@ -72,7 +72,7 @@ export function getContractDefaultValues(contract: NonNullable<ReturnType<typeof
   return {
     contractType: contract?.contractType || '',
     workType: contract?.workType || '',
-    jobTitle: contract?.jobTitle || '',
+    jobTitleId: contract?.jobTitle?.id || '',
     position: contract?.position || '',
     duration: contract?.duration?.toString() || '',
     durationUnit: contract?.durationUnit || 'YEAR',

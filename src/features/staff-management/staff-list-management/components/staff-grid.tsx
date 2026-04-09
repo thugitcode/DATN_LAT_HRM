@@ -118,7 +118,7 @@ export const StaffGrid: FC<StaffGridProps> = ({
                       {staff.name}
                     </h3>
                     <p className="text-[14px] text-[#71717A] line-clamp-1">
-                      {t(`options.job_title.${staff.jobTitle}` as any)} -{' '}
+                      {staff.jobTitle?.name ?? '—'} -{' '}
                       {staff.departments?.map((d: any) => d.name).join(', ') || '—'}
                     </p>
                   </div>

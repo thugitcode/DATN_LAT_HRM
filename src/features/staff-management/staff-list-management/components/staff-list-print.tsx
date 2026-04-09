@@ -1,6 +1,6 @@
 import { forwardRef, type CSSProperties } from 'react';
 import dayjs from 'dayjs';
-import { translateJobTitle, translatePosition } from '../../time-attendance-management/helpers';
+import { translatePosition } from '../../time-attendance-management/helpers';
 
 interface Staff {
   id: string;
@@ -11,7 +11,7 @@ interface Staff {
   gender?: string;
   email?: string;
   phone?: string;
-  jobTitle?: string;
+  jobTitle?: { id: string; name: string };
   position?: string;
   departments?: { id: string; name: string }[];
   workType?: string;
@@ -96,7 +96,7 @@ export const StaffListPrint = forwardRef<HTMLDivElement, StaffListPrintProps>(
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <div>
                         <div style={{ fontWeight: 'bold' }}>{record.name}</div>
-                        <div style={{ fontSize: '8px', color: '#666' }}>{translateJobTitle(record.jobTitle || '')} - {record.code}</div>
+                        <div style={{ fontSize: '8px', color: '#666' }}>{record.jobTitle?.name || ''} - {record.code}</div>
                       </div>
                     </div>
                   </td>

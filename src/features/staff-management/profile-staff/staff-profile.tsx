@@ -26,16 +26,18 @@ export const StaffProfile = () => {
         <div className="flex flex-col gap-3.75">
             <Header />
             <PageFilter />
-            {data?.data?.data?.length ? <div className="grid grid-cols-[repeat(auto-fill,minmax(246px,1fr))] gap-6">
-                {data?.data?.data.map((profile: IStaffDocument) => (
-                    <FileCard
-                        key={profile.id}
-                        {...profile}
-                        thumbnail={profile.thumbnail || ""}
-                        uploadedBy={profile.uploadedBy || profile.createdByName}
-                        onMore={() => { }}
-                    />
-                ))}
+            {data?.data?.data?.length ? <div className="overflow-auto h-[calc(100vh-281px)]">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(246px,1fr))] gap-6">
+                    {data?.data?.data?.map((profile: IStaffDocument) => (
+                        <FileCard
+                            key={profile.id}
+                            {...profile}
+                            thumbnail={profile.thumbnail || ""}
+                            uploadedBy={profile.uploadedBy || profile.createdByName}
+                            onMore={() => { }}
+                        />
+                    ))}
+                </div>
             </div> : (
                 <Card className="flex h-30 items-center justify-center p-6 text-default-400 shadow-none border border-default-200 bg-white">
                     <p className="text-sm">{t("table.empty")}</p>

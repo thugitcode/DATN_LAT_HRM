@@ -13,9 +13,10 @@ import { roomQueryOptions } from '@/services/query-options/room.query';
 import { useQuery } from '@tanstack/react-query';
 import type { FC } from 'react';
 import { cn } from '@/lib/utils';
+import { NAMESPACES } from '@/i18n/constants';
 
 export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bordered" | "faded" | "underlined" }> = ({ isView = false, variant = "flat" }) => {
-    const { t } = useTranslation(['staff-management', 'common']);
+    const { t } = useTranslation([NAMESPACES.STAFF_MANAGEMENT, NAMESPACES.COMMON]);
     const { control, watch, formState: { isSubmitting }, resetField } = useFormContext();
 
     const { fields, append, remove } = useFieldArray({
@@ -63,7 +64,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
 
                     return (
                         <div key={field.id} className="relative flex gap-4">
-                            <div className='w-1/2 min-w-[49%]'>
+                            <div className='w-[49%] min-w-[49%]'>
                                 <FormSelect
                                     control={control}
                                     name={`workingAreas.${index}.departmentId`}
@@ -78,7 +79,7 @@ export const WorkingAreaSection: FC<{ isView?: boolean; variant?: "flat" | "bord
                                 />
                             </div>
 
-                            <div className={cn('flex-1', fields.length !== 1 ? 'max-w-[40%]' : 'max-w-[48%]')}>
+                            <div className={cn('flex-1', fields.length !== 1 ? 'max-w-[45%]' : 'max-w-[49.5%]')}>
                                 <FormSelect
                                     selectionMode='multiple'
                                     control={control}

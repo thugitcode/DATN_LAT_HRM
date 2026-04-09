@@ -18,7 +18,7 @@ const STAFF_TYPE_OPTIONS = [
   { key: 'INTERN', label: 'Thực tập' },
 ];
 
-export function JobPositionSection() {
+export function JobPositionSection({ recruitmentRequestId }: { recruitmentRequestId?: string }) {
   const { control, watch } = useFormContext();
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
@@ -67,6 +67,7 @@ export function JobPositionSection() {
           label={t('candidate.form.fields.position')}
           isRequired
           options={recruitmentRequestOptions}
+          readOnly={!!recruitmentRequestId}
         />
 
         <FormSelect
@@ -89,6 +90,8 @@ export function JobPositionSection() {
               name="expectedSalaryFrom"
               placeholder="Từ"
               suffix=" VND"
+              allowNegative={false}
+              decimalScale={0}
             />
             <span className="text-[#71717A] shrink-0">—</span>
             <FormNumberInput
@@ -96,6 +99,8 @@ export function JobPositionSection() {
               name="expectedSalaryTo"
               placeholder="Đến"
               suffix=" VND"
+              allowNegative={false}
+              decimalScale={0}
             />
           </div>
         </div>

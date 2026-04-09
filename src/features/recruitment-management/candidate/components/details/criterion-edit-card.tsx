@@ -1,7 +1,7 @@
 import { NAMESPACES } from "@/i18n/constants";
 import { useController, useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import type { EvaluationFormValues } from "../../schemas/evaluation-schema";
+import type { EvaluationFormValues } from "../../schemas/evaluation.schema";
 import { Button } from "@heroui/react";
 import type { CriterionConfig } from "@/features/recruitment-management/types/candidate.type";
 import { icons } from "@/lib/icons";

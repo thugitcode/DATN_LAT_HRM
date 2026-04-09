@@ -6,7 +6,7 @@ import { requiredString } from '../staff-list-management/schemas/staff.schema';
 export const staffContractSchema = (t: TFunction<'staff-management'>) => z.object({
     contractType: z.string().min(1, t('contract_info.validation.contract_type_required')),
     workType: z.string().min(1, t('contract_info.validation.work_type_required')).nullable(),
-    jobTitle: z.string().min(1, t('contract_info.validation.job_title_required')),
+    jobTitleId: z.string().min(1, t('contract_info.validation.job_title_required')),
     position: z.string().min(1, t('contract_info.validation.position_required')),
     workingTime: z.string().min(1, t('contract_info.validation.working_time_required')).refine(
         (val) => !isNaN(Number(val)) && Number(val) > 0,

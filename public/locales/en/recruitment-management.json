@@ -14,6 +14,7 @@
       "department": "Department",
       "room": "Room",
       "position": "Position",
+      "job_title": "Job Title",
       "staff_type": "Staff Type",
       "work_type": "Work Type",
       "quantity": "Quantity",
@@ -38,6 +39,7 @@
       "select_department": "Select department",
       "select_room": "Select room",
       "select_position": "Select position",
+      "select_job_title": "Select job title",
       "select_staff_type": "Select staff type",
       "select_work_type": "Select work type",
       "enter_quantity": "Enter quantity",
@@ -90,7 +92,8 @@
       "certificates_required": "Please enter certificates",
       "experience_years_required": "Please enter years of experience",
       "salary_from_required": "Please enter salary from",
-      "salary_to_required": "Please enter salary to"
+      "salary_to_required": "Please enter salary to",
+      "job_title_required": "Please select a job title"
     },
     "options": {
       "position": {
@@ -256,7 +259,9 @@
       "name_required": "Full name is required",
       "gender_required": "Please select gender",
       "phone_required": "Phone number is required",
-      "email_invalid": "Invalid email address",
+      "phone_format": "Phone number must be 10 digits",
+      "email_required": "Email is required",
+      "email_format": "Invalid email address",
       "department_required": "Please select department",
       "position_required": "Please select position",
       "work_type_required": "Please select work type"
@@ -310,6 +315,10 @@
       "rejected": "Rejected",
       "offer_declined": "Offer Declined",
       "update_error": "Failed to update status"
+    },
+    "empty": {
+      "title": "No candidates yet",
+      "description": "Start by adding the first candidate for this recruitment request."
     },
     "actions": {
       "screen": "Screen",

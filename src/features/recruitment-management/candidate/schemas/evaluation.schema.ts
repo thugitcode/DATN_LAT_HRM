@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { TFunction } from 'i18next';
 import type { NAMESPACES } from '@/i18n/constants';
 
-import { optionalString, requiredString } from './schema';
+import { optionalString, requiredString } from './candidate.schema';
 import { CandidateStatusEnum } from '../../recruitment-request-details/types/type';
 
 const scoreField = z.preprocess(
