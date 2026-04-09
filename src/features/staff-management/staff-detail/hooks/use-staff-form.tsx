@@ -53,6 +53,7 @@ export const useStaffForm = (
                 })) ?? [{ departmentId: '', roomId: [] }],
                 workType: staffDetail?.data?.currentWorkType || staffDetail?.data?.workType || null,
                 contractType: staffDetail?.data?.currentContractType ?? "",
+                jobTitleId: staffDetail?.data?.jobTitle?.id ?? "",
             });
         } else {
             reset(STAFF_FORM_DEFAULT_VALUES);

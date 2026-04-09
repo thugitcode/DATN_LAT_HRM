@@ -5,6 +5,7 @@ import { FormDatePicker } from '@/components/form-fields/form-date-picker';
 import { FormInput } from '@/components/form-fields/form-input';
 import { FormSelect } from '@/components/form-fields/form-select';
 import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
+import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
 import { useRoomOptions } from '@/hooks/select-options/use-room-options';
 import { NAMESPACES } from '@/i18n/constants';
 import { StaffTypeEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
@@ -15,10 +16,11 @@ interface GeneralInfoSectionProps {
 }
 
 export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionProps) => {
-  const { control, watch } = useFormContext();
+  const { control, watch, getValues } = useFormContext();
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
   const { options: departmentOptions } = useDepartmentOptions();
+  const { options: jobTitleOptions } = useJobTitleOptions();
   const selectedDept = watch('departmentId');
   const { options: roomOptions } = useRoomOptions(selectedDept);
 
@@ -90,6 +92,17 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
 
         <FormSelect
           control={control}
+          name="jobTitleId"
+          label={t('form.fields.job_title')}
+          isRequired
+          placeholder={t('form.placeholders.select_job_title')}
+          options={jobTitleOptions.map((jt) => ({ key: jt.value, label: jt.label }))}
+          readOnly={isReadOnly}
+          variant={variant}
+        />
+
+        <FormSelect
+          control={control}
           name="staffType"
           label={t('form.fields.staff_type')}
           isRequired
@@ -99,18 +112,18 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
           variant={variant}
         />
 
-        <div className='col-span-2'>
-          <FormSelect
-            control={control}
-            name="workType"
-            label={t('form.fields.work_type')}
-            isRequired
-            placeholder={t('form.placeholders.select_work_type')}
-            options={workTypeOptions}
-            readOnly={isReadOnly}
-            variant={variant}
-          />
-        </div>
+        {/* <div className='col-span-2'> */}
+        <FormSelect
+          control={control}
+          name="workType"
+          label={t('form.fields.work_type')}
+          isRequired
+          placeholder={t('form.placeholders.select_work_type')}
+          options={workTypeOptions}
+          readOnly={isReadOnly}
+          variant={variant}
+        />
+        {/* </div> */}
       </div>
     </div>
   );

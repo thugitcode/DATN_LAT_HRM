@@ -17,7 +17,7 @@ export const OfficialEmployee = () => {
 
   const { columns } = useOfficialEmployeeColumns();
 
-  const { search, status, page, limit, departmentId, jobTitle, positions, roomId, handlePrint } =
+  const { search, status, page, limit, departmentId, jobTitleId, positions, roomId, handlePrint } =
     useStaffManagementPage();
 
   const { data: response, isLoading } = useStaffList({
@@ -25,7 +25,7 @@ export const OfficialEmployee = () => {
     limit,
     search: search,
     status: status,
-    jobTitle: jobTitle,
+    jobTitleId: jobTitleId,
     positions: positions,
     departmentIds: departmentId ? [departmentId] : undefined,
     roomIds: roomId ? [roomId] : undefined,

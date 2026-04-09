@@ -12,15 +12,16 @@ import { NAMESPACES } from '@/i18n/constants';
 import type { CandidatePayload } from '@/features/recruitment-management/recruitment-request-details/types/type';
 
 import { addToast } from '@heroui/react';
-import { candidateSchema, DEFAULT_VALUES, type CandidateFormValues } from '../schemas/schema';
+import { candidateSchema, DEFAULT_VALUES, type CandidateFormValues } from '../schemas/candidate.schema';
 import { uploadService } from '@/services/upload.service';
 
 interface UseFormCandidateParams {
   id?: string;
+  recruitmentRequestId?: string;
   onSuccess?: () => void;
 }
 
-export function useFormCandidate({ id, onSuccess }: UseFormCandidateParams) {
+export function useFormCandidate({ id, recruitmentRequestId, onSuccess }: UseFormCandidateParams) {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
   const isEditMode = !!id;
 
@@ -40,9 +41,9 @@ export function useFormCandidate({ id, onSuccess }: UseFormCandidateParams) {
     if (isEditMode && detailData?.data) {
       reset({ ...DEFAULT_VALUES, ...detailData.data });
     } else {
-      reset(DEFAULT_VALUES);
+      reset({ ...DEFAULT_VALUES, ...(recruitmentRequestId ? { recruitmentRequestId } : {}) });
     }
-  }, [isEditMode, detailData?.data, reset]);
+  }, [isEditMode, detailData?.data, recruitmentRequestId, reset]);
 
   const onSubmit = handleSubmit(async (data) => {
     let documents: {

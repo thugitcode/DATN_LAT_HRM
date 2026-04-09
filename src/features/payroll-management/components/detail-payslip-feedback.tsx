@@ -52,7 +52,7 @@ export const DetailPayslipFeedback = () => {
   const isResolved = status === 'CONFIRMED';
   const staffSubtitle = [
     staff?.code,
-    staff?.jobTitle ? tCommon(`options.job_title.${staff.jobTitle}`, { defaultValue: staff.jobTitle }) : null,
+    staff?.jobTitle?.name ?? null,
   ]
     .filter(Boolean)
     .join(' · ');

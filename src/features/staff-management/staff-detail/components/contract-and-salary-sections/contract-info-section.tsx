@@ -4,7 +4,8 @@ import type { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { useStaffList } from '@/query-options/staff';
-import { StaffJobTitleEnum, StaffPositionEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
+import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
+import { StaffPositionEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
 
 // Các custom component bạn đã có
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
@@ -31,6 +32,7 @@ export const ContractInfoSection: FC = () => {
   const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
   const { options: departmentOptions } = useDepartmentOptions();
+  const { options: jobTitleOptions } = useJobTitleOptions();
   const selectedDepts = watch("managedDepartmentId");
   const { options: roomOptions } = useRoomOptions(selectedDepts);
   const { data: taxRateRes } = useQuery(taxOptions.getTaxRate());
@@ -120,13 +122,10 @@ export const ContractInfoSection: FC = () => {
 
           <FormSelect
             control={control}
-            name="jobTitle"
+            name="jobTitleId"
             label={t('contract_info.job_title')}
             isRequired
-            options={Object.values(StaffJobTitleEnum).map((val) => ({
-              label: t(`options.job_title.${val}`),
-              key: val
-            }))}
+            options={jobTitleOptions.map((jt) => ({ key: jt.value, label: jt.label }))}
             readOnly={isSubmitting || isView}
             variant={variant}
           />

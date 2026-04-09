@@ -11,7 +11,7 @@ export interface ContractDetailResponse {
   endDate: string;
   duration: number;
   durationUnit: 'YEAR' | 'MONTH';
-  jobTitle: string;
+  jobTitle: { id: string; name: string };
   position: string;
   department: { id: string; name: string } | null;
   room: { id: string; name: string } | null;
@@ -79,7 +79,7 @@ export interface ContractDetailResponse {
     contractNumber: string;
     contractType: string;
     workType: string;
-    jobTitle: string;
+    jobTitle: { id: string; name: string };
     position: string;
     startDate: string;
     endDate: string;
@@ -94,7 +94,7 @@ export interface ContractDetailResponse {
 export interface ContractFormValues {
   contractType: string;
   workType: string;
-  jobTitle: string;
+  jobTitleId: string;
   position: string;
   duration: string;
   durationUnit: 'YEAR' | 'MONTH';

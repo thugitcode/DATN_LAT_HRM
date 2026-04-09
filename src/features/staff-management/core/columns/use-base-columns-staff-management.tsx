@@ -21,7 +21,7 @@ export const useBaseColumnsStaffManagement = () => {
         render: (_, record) => (
           <StaffNameCell
             record={record}
-            jobTitle={record.jobTitle ? t(`options.job_title.${record.jobTitle}`) : ''}
+            jobTitle={record.jobTitle?.name ?? ''}
             status={record.status}
           />
         ),
@@ -52,7 +52,7 @@ export const useBaseColumnsStaffManagement = () => {
         title: t('staff_table.columns.job_title'),
         render: (_, record) => (
           <span className="text-sm text-primary">
-            {record.jobTitle ? t(`options.job_title.${record.jobTitle}`) : '-'}
+            {record.jobTitle?.name ?? '-'}
           </span>
         ),
       },

@@ -8,7 +8,7 @@ import { NAMESPACES } from '@/i18n/constants';
 import { uploadService } from '@/services/upload.service';
 import { hrmInstance } from '@/lib/axios';
 
-import { offerSchema, OFFER_DEFAULT_VALUES, type OfferFormValues } from '../schemas/offer-schema';
+import { offerSchema, OFFER_DEFAULT_VALUES, type OfferFormValues } from '../schemas/offer.schema';
 import { useCreateOfferCandidate } from './use-candidate-offer';
 
 interface UseFormOfferParams {

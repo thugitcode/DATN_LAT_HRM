@@ -44,7 +44,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const filters = {
     search: searchParams.search,
     status: searchParams.status,
-    jobTitle: searchParams.jobTitle,
+    jobTitleId: searchParams.jobTitleId,
     positions: searchParams.positions,
     departmentId: searchParams.departmentId,
     roomId: searchParams.roomId,
@@ -68,7 +68,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
     limit,
     search: filters.search,
     status: filters.status,
-    jobTitle: filters.jobTitle,
+    jobTitleId: filters.jobTitleId,
     positions: filters.positions,
     departmentIds: filters.departmentId ? [filters.departmentId] : undefined,
     roomIds: filters.roomId ? [filters.roomId] : undefined,

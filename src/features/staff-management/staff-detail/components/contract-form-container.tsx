@@ -20,7 +20,7 @@ import StaffContractEmptyState from "./staff-contract-empty-state";
 import type { StaffContractFormValues } from "../schemas";
 
 const CONTRACT_SECTION_FIELDS: (keyof StaffContractFormValues)[] = [
-    'contractType', 'workType', 'jobTitle', 'position',
+    'contractType', 'workType', 'jobTitleId', 'position',
     'duration', 'durationUnit', 'contractNumber',
     'startDate', 'endDate',
     'managedDepartmentId', 'managedRoomId', 'workingAreas',
@@ -91,7 +91,7 @@ export const ContractFormContainer = () => {
                         {!isReadOnly && <Button onPress={() => handleNewContract()} color="primary">{t('contract_info.add_contract')}</Button>}
                     </div>
                 </div>
-                <div className="overflow-auto h-[calc(100vh-305px)] flex flex-col gap-6">
+                <div className="overflow-auto h-[calc(100vh-227px)] flex flex-col gap-6">
                     <ContractInfoSection />
                     <WorkHistoryTable staffId={staffId ?? ""} />
                 </div>

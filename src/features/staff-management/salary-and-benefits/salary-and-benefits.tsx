@@ -146,8 +146,8 @@ export const SalaryAndBenefits = () => {
               ))}
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full overflow-auto h-[calc(100vh-306px)]">
-              <div className="flex flex-col gap-6 pb-18">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full overflow-auto h-[calc(100vh-229px)]">
+              <div className="flex flex-col gap-6">
                 <SalaryInfoSection />
                 <SalaryStructureSection />
                 <PersonalIncomeTaxSection />

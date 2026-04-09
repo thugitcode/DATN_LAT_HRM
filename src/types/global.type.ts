@@ -75,7 +75,7 @@ export interface RequestsParams {
   fromDate?: string;
   toDate?: string;
 
-  jobTitle?: string;
+  jobTitleId?: string;
   positions?: StaffPositionEnum[];
   departmentIds?: string[];
   roomIds?: string[];

@@ -4,14 +4,15 @@ import { Input, Select, SelectItem } from '@heroui/react';
 import { IconSearch } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
-import { StaffJobTitleEnum, StaffPositionEnum, StaffStatusEnum } from '@/types/staff.type';
+import { StaffPositionEnum, StaffStatusEnum } from '@/types/staff.type';
+import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
 
 import { positionOptions } from '../constants/constants';
 
 interface StaffFiltersProps {
   filters: {
     search?: string;
-    jobTitle?: string;
+    jobTitleId?: string;
     positions?: string[];
     status?: string;
     departmentId?: string;
@@ -35,6 +36,7 @@ export const StaffFilters: React.FC<StaffFiltersProps> = ({
   const baseClass = 'bg-white border-1 border-[#E4E4E7] shadow-sm rounded-xl h-10';
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
+  const { options: jobTitleOptions } = useJobTitleOptions();
   const handleSelectChange = (
     key: keyof StaffFiltersProps['filters'],
     val: string,
@@ -63,14 +65,13 @@ export const StaffFilters: React.FC<StaffFiltersProps> = ({
       <Select
         placeholder={t('options.job_title.ALL')}
         classNames={{ trigger: baseClass }}
-        selectedKeys={filters.jobTitle ? [filters.jobTitle] : ['ALL']}
-        onSelectionChange={(keys) => handleSelectChange('jobTitle', Array.from(keys)[0] as string)}
-        // isClearable
+        selectedKeys={filters.jobTitleId ? [filters.jobTitleId] : ['ALL']}
+        onSelectionChange={(keys) => handleSelectChange('jobTitleId', Array.from(keys)[0] as string)}
       >
         {[
           <SelectItem key="ALL">{t('options.job_title.ALL')}</SelectItem>,
-          ...Object.values(StaffJobTitleEnum).map((status) => (
-            <SelectItem key={status}>{t(`options.job_title.${status}`)}</SelectItem>
+          ...jobTitleOptions.map((jt) => (
+            <SelectItem key={jt.value}>{jt.label}</SelectItem>
           )),
         ]}
       </Select>

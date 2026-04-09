@@ -77,7 +77,7 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
                 <Button
                     isIconOnly
                     variant="flat"
-                    className="bg-white border border-[#E4E4E7] rounded-full min-w-10 w-10 h-10 shadow-sm"
+                    className="bg-white rounded-full min-w-10 w-10 h-10"
                     onPress={handleBack}
                 >
                     <IconArrowLeft size={20} className="text-[#71717A]" />
@@ -99,35 +99,35 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
             </div>
 
             <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-white border border-[#E4E4E7] rounded-xl px-3 h-10 shadow-sm mr-2">
+                <div className="flex items-center gap-2 rounded-xl px-3 h-10 mr-2">
                     <Button
                         isIconOnly
                         variant="light"
-                        size="sm"
-                        className="min-w-6 w-6 h-6"
+                        className="rounded-full bg-white"
                         isDisabled={!hasPrev}
                         onPress={handlePrev}
                     >
                         <IconChevronLeft size={18} className={hasPrev ? "text-[#11181C]" : "text-[#D4D4D8]"} />
                     </Button>
-                    <span className="text-sm font-medium text-[#11181C] min-w-[100px] text-center">
-                        {displayIndex} / {totalStaff} {tc("staff")}
-                    </span>
+
                     <Button
                         isIconOnly
                         variant="light"
-                        size="sm"
-                        className="min-w-6 w-6 h-6"
+                        className="rounded-full bg-white"
                         isDisabled={!hasNext}
                         onPress={handleNext}
                     >
                         <IconChevronRight size={18} className={hasNext ? "text-[#11181C]" : "text-[#D4D4D8]"} />
                     </Button>
+                    <span className="text-sm font-medium text-[#11181C] min-w-[100px] text-center">
+                        {displayIndex} / {totalStaff} {tc("staff")}
+                    </span>
                 </div>
 
                 <Button
                     variant="bordered"
-                    className="bg-white border-[#E4E4E7] text-[#11181C] font-semibold h-10 rounded-xl shadow-sm px-4"
+                    color='primary'
+                    className="border-1 font-semibold h-10 rounded-xl px-4"
                     startContent={<IconScan size={18} className="text-[#6576FF]" />}
                 >
                     {t('actions.reset_faceid')}
@@ -135,7 +135,7 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
 
                 <Button
                     color="primary"
-                    className="h-10 px-4 font-semibold rounded-xl shadow-sm bg-[#6576FF]"
+                    className="h-10 px-4 font-semibold rounded-xl bg-[#6576FF]"
                     startContent={<IconMail size={18} />}
                 >
                     {t('actions.send_email')}

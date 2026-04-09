@@ -14,6 +14,7 @@
       "department": "Khoa",
       "room": "Phòng",
       "position": "Vị trí tuyển dụng",
+      "job_title": "Chức danh",
       "staff_type": "Loại nhân sự",
       "work_type": "Hình thức làm việc",
       "quantity": "Số lượng",
@@ -38,6 +39,7 @@
       "select_department": "Chọn khoa",
       "select_room": "Chọn phòng",
       "select_position": "Chọn vị trí",
+      "select_job_title": "Chọn chức danh",
       "select_staff_type": "Chọn loại nhân sự",
       "select_work_type": "Chọn hình thức",
       "enter_quantity": "Nhập số lượng",
@@ -90,7 +92,8 @@
       "certificates_required": "Vui lòng nhập bằng cấp/chứng chỉ",
       "experience_years_required": "Vui lòng nhập số năm kinh nghiệm",
       "salary_from_required": "Vui lòng nhập mức lương từ",
-      "salary_to_required": "Vui lòng nhập mức lương đến"
+      "salary_to_required": "Vui lòng nhập mức lương đến",
+      "job_title_required": "Vui lòng chọn chức danh"
     },
     "options": {
       "position": {
@@ -256,7 +259,9 @@
       "name_required": "Họ và tên không được để trống",
       "gender_required": "Vui lòng chọn giới tính",
       "phone_required": "Số điện thoại không được để trống",
-      "email_invalid": "Email không hợp lệ",
+      "phone_format": "Số điện thoại không hợp lệ",
+      "email_required": "Email không được để trống",
+      "email_format": "Email không hợp lệ",
       "department_required": "Vui lòng chọn khoa",
       "position_required": "Vui lòng chọn vị trí",
       "work_type_required": "Vui lòng chọn hình thức làm việc"
@@ -310,6 +315,10 @@
       "rejected": "Từ chối",
       "offer_declined": "Từ chối offer",
       "update_error": "Cập nhật trạng thái thất bại"
+    },
+    "empty": {
+      "title": "Chưa có ứng viên nào",
+      "description": "Bắt đầu bằng cách thêm ứng viên đầu tiên cho yêu cầu tuyển dụng này."
     },
     "actions": {
       "screen": "Sàng lọc",

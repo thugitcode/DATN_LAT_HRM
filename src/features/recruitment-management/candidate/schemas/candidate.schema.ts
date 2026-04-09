@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import type { TFunction } from 'i18next';
 import type { NAMESPACES } from '@/i18n/constants';
+import { requiredEmail } from '@/features/staff-management/staff-list-management/schemas/staff.schema';
 
 export const normalizeString = (v: unknown) => (v === null || v === undefined ? '' : String(v));
 
@@ -20,8 +21,15 @@ export const candidateSchema = (t: TFunction<typeof NAMESPACES.RECRUITMENT_MANAG
         error: t('candidate.validation.gender_required') as string,
       }),
     ),
-    phone: requiredString(t('candidate.validation.phone_required')),
-    email: z.preprocess(normalizeString, z.string().email(t('candidate.validation.email_invalid'))),
+    phone: requiredString(t("candidate.validation.phone_required")).refine(
+      (val) => /^\d{10}$/.test(val),
+      t("candidate.validation.phone_format"),
+    ),
+
+    email: requiredEmail(
+      t("candidate.validation.email_required"),
+      t("candidate.validation.email_format")
+    ),
     identityCard: optionalString().nullable(),
     address: optionalString().nullable(),
     // Ứng tuyển

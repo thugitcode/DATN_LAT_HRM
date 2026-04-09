@@ -12,7 +12,7 @@ export const STAFF_FORM_DEFAULT_VALUES = {
     departmentIds: "",
     roomIds: "",
     workType: "",
-    jobTitle: "",
+    jobTitleId: "",
     position: "",
     contractType: "",
     contractDuration: "",

@@ -11,7 +11,7 @@ import {
   evaluationSchema,
   EVALUATION_DEFAULT_VALUES,
   type EvaluationFormValues,
-} from '../schemas/evaluation-schema';
+} from '../schemas/evaluation.schema';
 import type { ICandidate } from '../../recruitment-request-details/types/type';
 import { QUERY_KEY } from '@/hooks/use-crud-query';
 

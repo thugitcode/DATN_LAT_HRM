@@ -9,7 +9,7 @@ import { ActionButton } from '@/components/action-button';
 import { icons } from '@/lib/icons';
 import { useConfirmStore } from '@/store/useConfirmStore';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
-import { ContractStatusEnum, ContractTypeEnum, StaffJobTitleEnum, StaffPositionEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
+import { ContractStatusEnum, ContractTypeEnum, StaffPositionEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
 import {
   useApproveContract,
   useDeleteContract,
@@ -31,7 +31,7 @@ export interface WorkHistoryRow {
   _departmentName?: string;
   departments?: { id: string; name: string }[];
   rooms?: { id: string; name: string }[];
-  jobTitle: StaffJobTitleEnum;
+  jobTitle: { id: string; name: string };
   position: StaffPositionEnum;
   contractType: ContractTypeEnum;
   workType: WorkingTypeTypeEnum;
@@ -141,7 +141,7 @@ export const useWorkHistoryColumns = (staffId: string) => {
         title: t('work_history.columns.job_title'),
         minWidth: 120,
         render: (_, row) => (
-          <span className="whitespace-nowrap">{tc(`options.job_title.${row.jobTitle}`) || '—'}</span>
+          <span className="whitespace-nowrap">{row.jobTitle?.name || '—'}</span>
         ),
       },
       {

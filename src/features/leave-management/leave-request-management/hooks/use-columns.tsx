@@ -125,6 +125,7 @@ export const useColumns = () => {
     {
       key: 'actions',
       title: '',
+      sticky: "right",
       minWidth: 160,
       hideable: false,
       render: (_, row) => <RowLeaveRequestActions dataRow={row} />,

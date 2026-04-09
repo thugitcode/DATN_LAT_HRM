@@ -66,7 +66,7 @@ interface Staff extends BaseEntity {
   certificateNumber: string;
   certificateIssuePlace: string;
   certificateExpiryDate: string | null;
-  jobTitle: string;
+  jobTitle: { id: string; name: string };
   position: StaffPosition;
   role: string;
   taxCode: string;

@@ -18,7 +18,7 @@ const optionalRegex = (regex: RegExp, message: string) =>
         z.string().refine((v) => !v || regex.test(v), message),
     );
 
-const requiredEmail = (requiredMsg: string, formatMsg: string) =>
+export const requiredEmail = (requiredMsg: string, formatMsg: string) =>
     z.preprocess(
         normalizeString,
         z.string()
@@ -125,7 +125,7 @@ export const staffSchema = (t: TFunction<"staff-management", undefined>) =>
             ),
         workType: optionalString().nullable(),
 
-        jobTitle: requiredString(t("errors.jobTitle.required")),
+        jobTitleId: requiredString(t("errors.jobTitle.required")),
         position: requiredString(t("errors.position.required")),
         contractType: requiredString(t("errors.contractType.required")),
 

@@ -10,7 +10,7 @@ export const mapContractToFormValues = (contract: ContractDetailResponse): Contr
     // Thông tin hợp đồng
     contractType: contract.contractType || '',
     workType: contract.workType || '',
-    jobTitle: contract.jobTitle || '',
+    jobTitleId: contract.jobTitle?.id || '',
     position: contract.position || '',
     duration: contract.duration?.toString() || '',
     durationUnit: contract.durationUnit || 'YEAR',

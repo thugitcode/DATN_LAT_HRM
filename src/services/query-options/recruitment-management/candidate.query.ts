@@ -6,8 +6,8 @@ import { candidateService } from '@/services/recruitment-management/candidate.se
 export const candidateKeys = {
   all: ['candidate'] as const,
   lists: () => [...candidateKeys.all, 'list'] as const,
-  list: (params?: CandidateFilters) =>
-    [...candidateKeys.lists(), params] as const,
+  list: (params?: CandidateFilters, recruitmentRequestId?: string) =>
+    [...candidateKeys.lists(), params, recruitmentRequestId] as const,
   allLists: (params?: CandidateFilters) => [...candidateKeys.lists(), 'all', params] as const,
   detailsOffer: (candidateId: string) => ["offer", candidateId],
   createOffer: (candidateId: string, payload: OfferLetterPayload) => ["offer", candidateId, payload],
@@ -16,7 +16,7 @@ export const candidateKeys = {
 export const candidateQueryOptions = {
   list: (recruitmentRequestId: string | undefined, params?: CandidateFilters) => {
     return queryOptions({
-      queryKey: candidateKeys.list(params),
+      queryKey: candidateKeys.list(params, recruitmentRequestId),
       queryFn: () => candidateService.getByRecruitmentRequest(recruitmentRequestId, params),
       // enabled: !!recruitmentRequestId,
     })

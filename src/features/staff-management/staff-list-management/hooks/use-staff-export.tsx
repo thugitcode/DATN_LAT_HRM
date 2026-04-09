@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import * as XLSX from 'xlsx-js-style';
 
 import type { Staff } from '@/types/staff.type';
-import { translateJobTitle, translatePosition } from '../../time-attendance-management/helpers';
+import { translatePosition } from '../../time-attendance-management/helpers';
 import { buildSheet, writeWorkbook, type SheetData } from '@/features/timekeeping-shift-scheduling/timekeeping-management/export-engine/export.engine';
 
 // ─── Column Definitions ───────────────────────────────────────────────────────
@@ -36,7 +36,7 @@ function buildStaffRows(data: Staff[]): SheetData['rows'] {
       staff.gender === 'MALE' ? 'Nam' : staff.gender === 'FEMALE' ? 'Nữ' : '',
       staff.phone ?? '',
       staff.email ?? '',
-      translateJobTitle(staff.jobTitle ?? ''),
+      staff.jobTitle?.name ?? '',
       translatePosition(staff.position ?? ''),
       staff.departments?.map(d => d.name).filter(Boolean).join(', ') ?? '',
       staff.rooms?.map(r => r.name).filter(Boolean).join(', ') ?? '',
@@ -164,7 +164,7 @@ export const exportStaffTemplate = (data: any[]) => {
       item.departments?.map((d: any) => d.code).join(', ') || '',
       item.rooms?.map((r: any) => r.code).join(', ') || '',
       item.workType || '',
-      item.jobTitle || '',
+      item.jobTitle?.name || '',
       item.position || '',
       item.contractType || '',
       item.workingPeriod || '',

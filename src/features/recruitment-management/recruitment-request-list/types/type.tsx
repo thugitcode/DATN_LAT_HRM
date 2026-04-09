@@ -27,6 +27,8 @@ export interface RecruitmentRequest {
   roomId: string;
   roomName: string;
   position: string;
+  jobTitleId?: string;
+  jobTitle?: { id: string; name: string };
   quantity: number;
   salaryRange: string;
   requiredDate: string;

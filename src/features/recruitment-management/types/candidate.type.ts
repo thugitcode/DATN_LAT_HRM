@@ -1,5 +1,5 @@
 import type { Item } from "@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info";
-import type { EvaluationFormValues } from "../candidate/schemas/evaluation-schema";
+import type { EvaluationFormValues } from "../candidate/schemas/evaluation.schema";
 
 export enum CandidateSourceEnum {
     WEBSITE = 'WEBSITE',
