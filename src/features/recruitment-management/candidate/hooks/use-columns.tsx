@@ -93,10 +93,7 @@ export const useCandidateColumns = () => {
         key: 'source',
         title: t('candidate.columns.source'),
         minWidth: 100,
-        render: (_, row) =>
-          row.source ? (
-            <Chip size="sm" variant="flat" color="default">{row.source}</Chip>
-          ) : '—',
+        render: (_, row) => <span className="text-sm text-[#11181C] whitespace-nowrap">{t(`candidate.source.${row.source}`)}</span>
       },
       {
         key: 'status',
@@ -106,7 +103,7 @@ export const useCandidateColumns = () => {
           const chip = STATUS_CHIP[row.status];
           return (
             <Chip size="sm" variant="flat" color={chip.color}>
-              {t(chip.label as any)}
+              {t(chip.label)}
             </Chip>
           );
         },
@@ -133,7 +130,7 @@ export const useCandidateColumns = () => {
     () => [
       {
         key: 'stt',
-        title: 'STT', // Hoặc t('interview_schedule.detail.stt')
+        title: t('interview_schedule.detail.stt'),
         minWidth: 60,
         render: (_, __, index) => (
           <span className="text-sm text-[#11181C]">{index + 1}</span>

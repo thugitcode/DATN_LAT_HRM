@@ -1,30 +1,41 @@
+import { useState } from 'react';
+import { FormProvider } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@heroui/react';
 
-import { criteria } from '@/features/recruitment-management/constants/constants';
+import { FormDatePicker } from '@/components/form-fields/form-date-picker';
+import { FormSelect } from '@/components/form-fields/form-select';
+import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import { CRITERIA_EVALUATION } from '@/features/recruitment-management/constants/details';
+import type { CriterionKey } from '@/features/recruitment-management/types/candidate.type';
 import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
-import { formatDate } from '@/lib/utils';
-import { CriterionCard, ScoreBar } from '../criterion-card';
+
+import { useFormEvaluation } from '@/features/recruitment-management/candidate/hooks/use-form-evaluation';
+import { useUpdateEvaluation } from '@/features/recruitment-management/candidate/hooks/use-update-evaluation';
+import { CriterionEditCard } from '../criterion-edit-card';
+import { ScoreBar } from '../criterion-card';
+import { SummaryScoreCard } from '../summary-score-card';
 
 interface EvaluationTabProps {
     candidate: ICandidate;
 }
 
-interface CriterionConfig {
-    labelKey: string;
-    score: string | null;
-    evaluation: string | null;
-    comment: string | null;
-}
-
-
-
 export function EvaluationTab({ candidate }: EvaluationTabProps) {
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-    const scores = criteria(candidate, t)
-        .map((c) => (c.score ? parseFloat(c.score) : null))
-        .filter((s): s is number => s !== null);
+    const { options: staffOptions } = useStaffOptions();
+    const [editingKey, setEditingKey] = useState<CriterionKey | null>(null);
+
+    const { methods, onSubmit } = useFormEvaluation({ candidateId: candidate.id, candidate });
+    const { control, watch } = methods;
+
+    const { handleNext, handleWatchMore, handleReject, isPending } = useUpdateEvaluation(candidate.id);
+
+    const scores = CRITERIA_EVALUATION.map((c) => {
+        const v = watch(c.scoreField as any) as number | null;
+        return v !== null ? v : null;
+    }).filter((s): s is number => s !== null);
 
     const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
 
@@ -35,82 +46,120 @@ export function EvaluationTab({ candidate }: EvaluationTabProps) {
         scores.length > 0;
 
     if (!hasEvaluation) {
-        return <p className="text-sm text-[#71717A]">{t('candidate.detail.no_data')}</p>;
+        return (
+            <div className="flex h-1/2 flex-col items-center gap-3 justify-center">
+                <h3>{t('candidate.detail.evaluation.no_evaluation')}</h3>
+                <FormProvider {...methods}>
+                    <Button
+                        color="primary"
+                        onPress={() => {
+                            setEditingKey('professional');
+                        }}
+                    >
+                        {t('candidate.evaluation.btn_evaluate')}
+                    </Button>
+                </FormProvider>
+            </div>
+        );
     }
 
     return (
-        <div className="flex flex-col gap-5">
-            {/* Summary Score Card */}
-            <div className="bg-[#F4F4F5] rounded-xl p-4 flex flex-col gap-4">
-                <div className="flex items-center gap-6">
-                    {/* Average score */}
-                    <div className="flex items-end gap-1 shrink-0">
-                        <span className="text-5xl font-bold text-primary leading-none">
-                            {avgScore !== null ? avgScore.toFixed(1) : '—'}
-                        </span>
-                        <span className="text-lg text-[#71717A] mb-1">/10</span>
-                    </div>
-
-                    {/* Score bars */}
-                    <div className="flex-1 flex flex-col gap-2">
-                        {criteria(candidate, t)?.map((c) => {
-                            const s = c.score ? parseFloat(c.score) : null;
-                            return (
-                                <div key={c.labelKey} className="flex items-center gap-3">
-                                    <span className="text-sm text-[#3F3F46] w-24 shrink-0">{c.labelKey}</span>
-                                    <ScoreBar score={s ?? 0} />
-                                    <span className="text-sm font-medium text-[#11181C] w-8 text-right">
-                                        {s !== null ? s : '—'}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Reviewer + Interview date */}
-                <div className="flex gap-8 border-t border-[#E4E4E7] pt-3">
-                    <div className="flex flex-col gap-0.5">
-                        <span className="text-xs text-[#71717A]">{t('candidate.detail.evaluation.reviewer')}</span>
-                        <span className="text-sm font-medium text-[#11181C]">
-                            {candidate.reviewer?.name ?? '—'}
+        <>
+            <FormProvider {...methods}>
+                <div className="flex flex-col gap-5">
+                    {/* Score board header */}
+                    <div className="flex items-center gap-2">
+                        {icons.stars}
+                        <span className="font-medium text-lg leading-7">
+                            {t('candidate.detail.evaluation.score_board')}
                         </span>
                     </div>
-                    <div className="flex flex-col gap-0.5">
-                        <span className="text-xs text-[#71717A]">{t('candidate.detail.evaluation.interview_date')}</span>
-                        <span className="text-sm font-medium text-[#11181C]">
-                            {candidate.interviewDate ? formatDate(candidate.interviewDate) : '—'}
-                        </span>
-                    </div>
-                </div>
-            </div>
 
-            {/* General comment */}
-            {candidate.interviewComment && (
-                <div className="flex flex-col gap-1">
-                    <span className="text-xs text-[#71717A]">{t('candidate.detail.evaluation.general_comment')}</span>
-                    <p className="text-sm text-[#11181C] leading-relaxed">{candidate.interviewComment}</p>
-                </div>
-            )}
+                    {/* Summary score card */}
+                    <SummaryScoreCard avgScore={avgScore} watch={watch} />
 
-            {/* Detailed evaluation */}
-            <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                    {icons.medalRibonStar}
-                    <span className="font-medium text-lg leading-7">{t('candidate.detail.evaluation.title')}</span>
-                </div>
-                <div className="flex flex-col gap-3">
-                    {criteria(candidate, t)?.map((c) => (
-                        <CriterionCard
-                            key={c.labelKey}
-                            label={c.labelKey}
-                            score={c.score}
-                            evaluation={c.evaluation}
-                            comment={c.comment}
+                    {/* Reviewer + interview date */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormSelect
+                            control={control}
+                            name="reviewerId"
+                            label={t('candidate.detail.evaluation.reviewer')}
+                            options={staffOptions.map((s) => ({ key: s.key, label: s.label }))}
+                            placeholder={t('candidate.detail.evaluation.reviewer')}
+                            onSelect={() => onSubmit()}
                         />
-                    ))}
-                </div>
+                        <FormDatePicker
+                            control={control}
+                            name="interviewDate"
+                            label={t('candidate.detail.evaluation.interview_date')}
+                            onTrigger={() => onSubmit()}
+                        />
+                    </div>
+
+                    {/* Criterion cards */}
+                    <div className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2">
+                            {icons.medalRibonStar}
+                            <span className="font-medium text-lg leading-7">
+                                {t('candidate.detail.evaluation.title')}
+                            </span>
+                        </div>
+                        {CRITERIA_EVALUATION.map((c) => (
+                            <CriterionEditCard
+                                key={c.key}
+                                config={c}
+                                isEditing={editingKey === c.key}
+                                onEdit={() => setEditingKey(c.key)}
+                                onCancel={() => setEditingKey(null)}
+                                onSave={async () => { await onSubmit(); setEditingKey(null); }}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Save button */}
+                    {/* {isDirty && (
+                    <div className="flex justify-end">
+                        <Button
+                            color="primary"
+                            className="font-medium rounded-xl"
+                            isLoading={isSubmitting}
+                            onPress={() => onSubmit()}
+                        >
+                            {t('candidate.evaluation.btn_save')}
+                        </Button>
+                    </div>
+                )} */}
+                </div >
+            </FormProvider>
+
+            <div className="flex justify-start gap-3 mt-3">
+                <Button
+                    color="primary"
+                    className="font-medium rounded-xl"
+                    isLoading={isPending}
+                    onPress={handleNext}
+                >
+                    {t('candidate.detail.evaluation.next_interview')}
+                </Button>
+                <Button
+                    color="primary"
+                    variant='bordered'
+                    className="font-medium rounded-xl border-1"
+                    isLoading={isPending}
+                    onPress={handleWatchMore}
+                >
+                    {t('candidate.detail.evaluation.wait_for_more_evaluation')}
+                </Button>
+                <Button
+                    color="danger"
+                    variant='bordered'
+                    className="font-medium rounded-xl border-1"
+                    isLoading={isPending}
+                    onPress={handleReject}
+                >
+                    {t('candidate.detail.evaluation.rejected')}
+                </Button>
             </div>
-        </div>
+        </>
     );
 }

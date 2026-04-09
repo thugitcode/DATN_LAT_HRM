@@ -1,6 +1,7 @@
 import { CandidateStatusEnum } from "../recruitment-request-details/types/type";
+import type { CriterionConfig } from "../types/candidate.type";
 
-export enum DetailTabEnum {
+export enum DetailCandidateTabEnum {
     APPLICATION = 'application',
     ATTACHMENTS = 'attachments',
     INTERVIEW_HISTORY = 'interview_history',
@@ -41,3 +42,35 @@ export const formatSalary = (value: string | null) => {
     const num = parseFloat(value);
     return isNaN(num) ? '—' : `${num.toLocaleString('vi-VN')} VND`;
 };
+
+
+export const CRITERIA_EVALUATION: CriterionConfig[] = [
+    {
+        key: 'professional',
+        labelKey: 'candidate.detail.evaluation.professional_knowledge',
+        scoreField: 'professionalScore',
+        evaluationField: 'professionalEvaluation',
+        commentField: 'professionalComment',
+    },
+    {
+        key: 'attitude',
+        labelKey: 'candidate.detail.evaluation.attitude',
+        scoreField: 'attitudeScore',
+        evaluationField: 'attitudeEvaluation',
+        commentField: 'attitudeComment',
+    },
+    {
+        key: 'communication',
+        labelKey: 'candidate.detail.evaluation.communication',
+        scoreField: 'communicationScore',
+        evaluationField: 'communicationEvaluation',
+        commentField: 'communicationComment',
+    },
+    {
+        key: 'experience',
+        labelKey: 'candidate.detail.evaluation.experience',
+        scoreField: 'experienceScore',
+        evaluationField: 'experienceEvaluation',
+        commentField: 'experienceComment',
+    },
+];

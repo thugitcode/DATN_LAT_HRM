@@ -1,4 +1,5 @@
 import type { Item } from "@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info";
+import type { EvaluationFormValues } from "../candidate/schemas/evaluation-schema";
 
 export enum CandidateSourceEnum {
     WEBSITE = 'WEBSITE',
@@ -35,3 +36,19 @@ export enum OfferStatus {
     EXPIRED = "EXPIRED",
     CANCELLED = "CANCELLED"
 }
+
+export type CriterionKey = 'professional' | 'attitude' | 'communication' | 'experience';
+
+export interface CriterionConfig {
+    key: CriterionKey;
+    labelKey: EvaluationLabelKey;
+    scoreField: keyof EvaluationFormValues;
+    evaluationField: keyof EvaluationFormValues;
+    commentField: keyof EvaluationFormValues;
+}
+
+export type EvaluationLabelKey =
+    | 'candidate.detail.evaluation.professional_knowledge'
+    | 'candidate.detail.evaluation.attitude'
+    | 'candidate.detail.evaluation.communication'
+    | 'candidate.detail.evaluation.experience';

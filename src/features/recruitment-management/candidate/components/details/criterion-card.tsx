@@ -8,11 +8,12 @@ function ScoreBar({ score }: { score: number }) {
         </div>
     );
 }
-function CriterionCard({ label, score, evaluation, comment }: {
+function CriterionCard({ label, score, evaluation, comment, onEdit }: {
     label: string;
     score: string | null;
     evaluation: string | null;
     comment: string | null;
+    onEdit?: () => void;
 }) {
     const scoreNum = score ? parseFloat(score) : null;
 
@@ -27,6 +28,7 @@ function CriterionCard({ label, score, evaluation, comment }: {
                     type="button"
                     isIconOnly
                     variant='bordered'
+                    onPress={onEdit}
                 >
                     <icons.edit />
                 </Button>

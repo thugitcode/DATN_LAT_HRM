@@ -1,19 +1,18 @@
-import { useState } from 'react';
 
 import { useCandidateDetail } from '@/hooks/queries/use-candidate-query';
 
+import { DetailCandidateTabEnum } from '@/features/recruitment-management/constants/details';
 import { CandidateDetailHeader } from './candidate-detail-header';
-import { CandidatePipeline } from './candidate-pipeline';
 import { CandidateDetailTabs } from './candidate-detail-tabs';
 import { CandidateSidebar } from './candidate-sidebar';
-import { DetailTabEnum } from '@/features/recruitment-management/constants/details';
 
 interface CandidateDetailsProps {
     id: string;
+    tab: DetailCandidateTabEnum;
+    onTabChange: (tab: DetailCandidateTabEnum) => void;
 }
 
-export function CandidateDetails({ id }: CandidateDetailsProps) {
-    const [activeTab, setActiveTab] = useState(DetailTabEnum.APPLICATION);
+export function CandidateDetails({ id, tab, onTabChange }: CandidateDetailsProps) {
     const { data: res, isLoading } = useCandidateDetail(id);
     const candidate = res?.data;
 
@@ -36,8 +35,8 @@ export function CandidateDetails({ id }: CandidateDetailsProps) {
                     {/* <CandidatePipeline candidate={candidate} /> */}
                     <CandidateDetailTabs
                         candidate={candidate}
-                        activeTab={activeTab}
-                        onTabChange={setActiveTab}
+                        activeTab={tab}
+                        onTabChange={onTabChange}
                     />
                 </div>
 

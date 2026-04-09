@@ -223,6 +223,7 @@
       "no_events": "Không có lịch phỏng vấn trong khoảng thời gian này."
     },
     "detail": {
+      "stt": "STT",
       "code": "Mã lịch",
       "method": "Hình thức",
       "date": "Ngày phỏng vấn",
@@ -396,6 +397,27 @@
         "staff_type": "Loại nhân sự"
       }
     },
+    "evaluation": {
+      "title": "Đánh giá phỏng vấn",
+      "btn_cancel": "Hủy",
+      "btn_save": "Lưu đánh giá",
+      "btn_save_criterion": "Lưu",
+      "btn_evaluate": "Đánh giá",
+      "fields": {
+        "evaluation": "Mô tả tiêu chí",
+        "evaluation_placeholder": "Nhập mô tả tiêu chí...",
+        "comment": "Nhận xét",
+        "comment_placeholder": "Nhập nhận xét..."
+      },
+      "validation": {
+        "reviewer_required": "Vui lòng chọn người đánh giá",
+        "interview_date_required": "Vui lòng chọn ngày phỏng vấn"
+      },
+      "toast": {
+        "save_success": "Lưu đánh giá thành công.",
+        "save_error": "Lưu đánh giá thất bại."
+      }
+    },
     "detail": {
       "applied_date": "Ngày ứng tuyển",
       "expected_salary": "Mức lương kỳ vọng",
@@ -430,7 +452,13 @@
         "professional_knowledge": "Chuyên môn",
         "attitude": "Thái độ",
         "communication": "Giao tiếp",
-        "experience": "Kinh nghiệm"
+        "experience": "Kinh nghiệm",
+        "no_evaluation": "Ứng viên chưa có đánh giá",
+        "score_board": "Bảng điểm đánh giá",
+        "btn_evaluate": "Đánh giá",
+        "next_interview": "Nhận vào tiếp theo",
+        "wait_for_more_evaluation": "Chờ theo dõi thêm",
+        "rejected": "Trượt"
       },
       "offer": {
         "create_offer": "Tạo offer",

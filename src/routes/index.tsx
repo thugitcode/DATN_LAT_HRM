@@ -1,9 +1,15 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import type { GlobalSearchParams } from '@/types/global.type';
+import { z } from 'zod';
+
+const searchSchema = z.object({
+  jwt: z.string().optional().catch(undefined),
+  partner_code: z.string().optional().catch(undefined),
+});
 
 export const Route = createFileRoute('/')({
+  validateSearch: searchSchema,
   beforeLoad: ({ context: { auth }, search }) => {
-    const { jwt, partner_code } = search as GlobalSearchParams;
+    const { jwt, partner_code } = search;
 
     if (partner_code) {
       localStorage.setItem('partner_code', partner_code);

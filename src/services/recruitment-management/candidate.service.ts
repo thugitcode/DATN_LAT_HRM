@@ -4,6 +4,7 @@ import type {
   ICandidate,
   ICreateOfferLetterPayload
 } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { EvaluationFormValues } from '@/features/recruitment-management/candidate/schemas/evaluation-schema';
 import type { ICandidateOffer } from '@/features/recruitment-management/types/candidate.type';
 import { hrmInstance } from '@/lib/axios';
 import type { ApiResponse } from '@/types';
@@ -38,6 +39,13 @@ class CandidateService extends BaseApiService<ICandidate, CandidatePayload, Cand
   async createOffer(candidateId: string, payload: ICreateOfferLetterPayload): Promise<ApiResponse<ICandidateOffer>> {
     return this.request(async () => {
       const res = await this.instance.post(`${this.url()}/${candidateId}/offer`, payload);
+      return res.data;
+    });
+  }
+
+  async updateEvaluation(candidateId: string, payload: Partial<EvaluationFormValues>): Promise<ApiResponse<ICandidate>> {
+    return this.request(async () => {
+      const res = await this.instance.patch(`${this.url()}/${candidateId}/evaluation`, payload);
       return res.data;
     });
   }
