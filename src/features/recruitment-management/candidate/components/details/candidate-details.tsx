@@ -31,7 +31,7 @@ export function CandidateDetails({ id, tab, onTabChange }: CandidateDetailsProps
             <CandidateDetailHeader candidate={candidate} />
 
             <div className="flex flex-1 overflow-hidden">
-                <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+                <div className="flex-1 overflow-y-auto px-6 pb-6 flex flex-col gap-4">
                     {/* <CandidatePipeline candidate={candidate} /> */}
                     <CandidateDetailTabs
                         candidate={candidate}

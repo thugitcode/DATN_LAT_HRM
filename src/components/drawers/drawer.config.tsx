@@ -20,6 +20,7 @@ import { FormRecruitmentRequestMutate } from '@/features/recruitment-management/
 import { FormCandidateMutate } from '@/features/recruitment-management/candidate/components/forms/form-candidate-mutate';
 import { FormOfferMutate } from '@/features/recruitment-management/candidate/components/forms/form-offer-mutate';
 import { FormEvaluationMutate } from '@/features/recruitment-management/candidate/components/forms/form-evaluation-mutate';
+import { FormInterviewScheduleMutate } from '@/features/recruitment-management/interview-schedule/forms/form-interview-schedule-mutate';
 
 type DrawerConfig = {
   title: string;
@@ -185,6 +186,16 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
     [DrawerType.EVALUATION_MUTATE]: {
       title: '',
       component: <FormEvaluationMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.INTERVIEW_SCHEDULE_MUTATE]: {
+      title: '',
+      component: <FormInterviewScheduleMutate />,
       drawerProps: {
         placement: 'right',
         size: '3xl',

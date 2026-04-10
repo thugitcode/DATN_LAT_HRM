@@ -1,5 +1,6 @@
 
 import { InterviewStatusEnum } from "../types/interview.type";
+import { CandidateStatusEnum } from "../types/type";
 type StatusConfig = {
     chipColor: 'default' | 'success' | 'warning' | 'danger' | 'secondary';
     bgColor: string;
@@ -57,3 +58,23 @@ export enum RecruitmentRequestTabEnum {
     INFO = 'info',
     INTERVIEWS = 'interviews',
 }
+
+
+export const NEXT_CANDIDATE_STATUS: Partial<Record<CandidateStatusEnum, CandidateStatusEnum>> = {
+    [CandidateStatusEnum.APPLIED]: CandidateStatusEnum.SCREENED,
+    [CandidateStatusEnum.SCREENED]: CandidateStatusEnum.WAITING_INTERVIEW,
+    [CandidateStatusEnum.WAITING_OFFER]: CandidateStatusEnum.PROBATION_PROPOSED,
+    [CandidateStatusEnum.PROBATION_PROPOSED]: CandidateStatusEnum.ON_PROBATION,
+};
+
+export const ACTION_CANDIDATE_LABEL: Record<CandidateStatusEnum, string> = {
+    [CandidateStatusEnum.APPLIED]: 'candidate.actions.screen',
+    [CandidateStatusEnum.SCREENED]: 'candidate.actions.schedule_interview',
+    [CandidateStatusEnum.WAITING_INTERVIEW]: 'candidate.actions.view_schedule',
+    [CandidateStatusEnum.INTERVIEWING]: 'candidate.actions.view_schedule',
+    [CandidateStatusEnum.WAITING_OFFER]: 'candidate.actions.send_offer',
+    [CandidateStatusEnum.PROBATION_PROPOSED]: 'candidate.actions.send_offer',
+    [CandidateStatusEnum.ON_PROBATION]: 'candidate.actions.accept_official',
+    [CandidateStatusEnum.REJECTED]: 'candidate.actions.view_detail',
+    [CandidateStatusEnum.OFFER_DECLINED]: 'candidate.actions.view_detail',
+};

@@ -6,6 +6,7 @@ import type { AuthContext } from '@/types/auth.type';
 import { CommonErrorComponent } from '@/components/common-error-component';
 import { MainConfirmModal } from '@/components/confirm-modal/main-confirm-modal';
 import { MainDrawer } from '@/components/drawers/main-drawer';
+import { MainModal } from '@/components/modals/main-modal';
 import ModalViewFile from '@/components/modal-view-file';
 
 import i18n from '../i18n';
@@ -45,6 +46,7 @@ function RootComponent() {
     <>
       <Outlet />
       <MainDrawer />
+      <MainModal />
       <MainConfirmModal />
       <ModalViewFile />
       {/* <TanStackDevtools

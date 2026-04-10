@@ -30,7 +30,8 @@ export interface RecruitmentRequest {
   jobTitleId?: string;
   jobTitle?: { id: string; name: string };
   quantity: number;
-  salaryRange: string;
+  salaryFrom: number;
+  salaryTo: number;
   requiredDate: string;
   status: RecruitmentRequestStatusEnum;
   workType: string;

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useTranslation } from 'react-i18next';
 
-import { formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 import type { ColumnDef } from '@/components/data-table/data-table';
 
 import { RowRecruitmentRequestActions } from '../components/row-recruitment-request-actions';
@@ -51,7 +51,7 @@ export const useColumns = () => {
         title: t('recruitment_request.columns.salary_range'),
         minWidth: 140,
         render: (_, row) => (
-          <span className="text-sm text-[#11181C] whitespace-nowrap">{row.salaryRange}</span>
+          <span className="text-sm text-[#11181C] whitespace-nowrap">{row.salaryFrom ? formatCurrency(row.salaryFrom) : '-'} - {row.salaryTo ? formatCurrency(row.salaryTo) : '-'}</span>
         ),
       },
       {

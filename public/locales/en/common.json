@@ -107,7 +107,8 @@
     "moreIncome": "More income",
     "edit": "Edit",
     "delete": "Delete",
-    "download": "Download"
+    "download": "Download",
+    "set_schedule": "Set schedule"
   },
   "weekdays": {
     "0": "Sunday",

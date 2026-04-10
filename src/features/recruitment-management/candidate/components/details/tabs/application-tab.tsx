@@ -60,7 +60,7 @@ export function ApplicationTab({ candidate }: ApplicationTabProps) {
           label={t('candidate.form.fields.experience_years')}
           labelPlacement="outside"
           variant="underlined"
-          value={t(`candidate.form.fields.experience_years_options.${candidate.experienceYears}`) ?? '—'}
+          value={candidate.experienceYears ? t(`candidate.form.fields.experience_years_options.${candidate.experienceYears}`) : '—'}
         />
         <Input
           isReadOnly

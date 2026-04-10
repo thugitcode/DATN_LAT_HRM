@@ -1,4 +1,7 @@
 import type { PaginationParams } from '@/types';
+import type { IStaff } from '@/types/shift-details.type';
+import type { ICandidate } from './type';
+import type { Staff } from '@/types/staff.type';
 
 export enum InterviewMethodEnum {
   ONLINE = 'ONLINE',
@@ -31,6 +34,8 @@ export interface InterviewSchedule {
   roomName: string;
   onlineLink: string;
   createdAt: string;
+  interviewer: Staff
+  candidate: ICandidate
 }
 
 export interface InterviewScheduleFilters extends Partial<PaginationParams> {

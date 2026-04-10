@@ -23,6 +23,7 @@ export function createCrudHooks<
     params?: TParams,
     options?: Omit<UseQueryOptions<ApiResponse<T[]>, Error>, 'queryKey' | 'queryFn'>,
   ) {
+
     return useQuery<ApiResponse<T[]>, Error>({
       queryKey: [...queryKey, 'list', params],
       queryFn: () => service.getAll(params),

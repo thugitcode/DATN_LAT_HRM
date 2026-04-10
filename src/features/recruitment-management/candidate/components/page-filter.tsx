@@ -6,12 +6,11 @@ import { FilterSelect } from '@/components/filters/filter-select';
 import { SearchInput } from '@/components/filters/search-input';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { icons } from '@/lib/icons';
-import type { ShiftManagementParams } from '@/types';
-import { CandidateStatusEnum } from '../../recruitment-request-details/types/type';
+import { CandidateStatusEnum, type CandidateFilters } from '../../recruitment-request-details/types/type';
 import { CandidateSourceEnum } from '../../types/candidate.type';
 
 export const PageFilter = ({ extraFilters }: { extraFilters?: React.ReactNode }) => {
-    const { filters, setFilter } = useQueryFilter<ShiftManagementParams>();
+    const { filters, setFilter } = useQueryFilter<CandidateFilters>();
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
     const handleSearchChange = useCallback(
         (value: string | undefined) => {
@@ -29,20 +28,20 @@ export const PageFilter = ({ extraFilters }: { extraFilters?: React.ReactNode })
     }));
     const handleStatusChange = useCallback(
         (value: string | undefined) => {
-            setFilter('status', value);
+            setFilter('status', value as CandidateStatusEnum);
         },
         [setFilter],
     );
     const handleSourceChange = useCallback(
         (value: string | undefined) => {
-            setFilter('source', value);
+            setFilter('source', value as CandidateSourceEnum);
         },
         [setFilter],
     );
 
     return (
         <div className="flex items-center gap-3 justify-between">
-            <SearchInput value={filters.search} onChange={handleSearchChange} startIcon={icons.search} />
+            <SearchInput value={filters.search as string} onChange={handleSearchChange} startIcon={icons.search} />
 
             <FilterSelect
                 options={statusOptions}

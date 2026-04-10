@@ -50,7 +50,7 @@ export function CandidateSidebar({ candidate }: CandidateSidebarProps) {
   const { t: tc } = useTranslation(NAMESPACES.COMMON);
 
   return (
-    <div className="w-[511px] shrink-0 overflow-y-auto p-6 pl-0 flex flex-col">
+    <div className="w-[511px] shrink-0 overflow-y-auto pe-6 h-[calc(100vh-104px)] pl-0 flex flex-col">
       {/* Personal info */}
       <SideCard
         title={t('candidate.detail.personal_info')}
@@ -168,7 +168,7 @@ export function CandidateSidebar({ candidate }: CandidateSidebarProps) {
           placeholder={t('candidate.detail.note_placeholder')}
           minRows={3}
           classNames={{
-            inputWrapper: 'border border-[#F4F4F5] bg-white shadow-none rounded-xl',
+            inputWrapper: 'border border-[#F4F4F5] shadow-none rounded-xl',
           }}
         />
       </div>

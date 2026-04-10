@@ -205,6 +205,54 @@
     }
   },
   "interview_schedule": {
+    "form": {
+      "title": "Tạo lịch phỏng vấn",
+      "sections": {
+        "general_info": "Thông tin chung",
+        "message": "Message"
+      },
+      "fields": {
+        "candidate": "Ứng viên",
+        "interviewer": "Người phỏng vấn",
+        "content": "Nội dung phỏng vấn",
+        "method": "Hình thức phỏng vấn",
+        "online_link": "Đường link phỏng vấn online",
+        "address": "Địa điểm phỏng vấn",
+        "date": "Ngày phỏng vấn",
+        "time": "Giờ",
+        "note": "Ghi chú",
+        "email_to": "To",
+        "email_subject": "Chủ đề",
+        "email_content": "Nội dung"
+      },
+      "placeholders": {
+        "select": "Chọn",
+        "enter": "Nhập",
+        "from": "Từ",
+        "to": "Đến"
+      },
+      "validation": {
+        "candidate_required": "Vui lòng chọn ứng viên",
+        "interviewer_required": "Vui lòng chọn người phỏng vấn",
+        "content_required": "Vui lòng nhập nội dung phỏng vấn",
+        "date_required": "Vui lòng chọn ngày phỏng vấn",
+        "date_past": "Ngày phỏng vấn không được nhỏ hơn ngày hiện tại",
+        "start_time_required": "Vui lòng chọn giờ bắt đầu",
+        "start_time_past": "Giờ bắt đầu phải lớn hơn giờ hiện tại",
+        "end_time_required": "Vui lòng chọn giờ kết thúc",
+        "end_time_invalid": "Giờ kết thúc phải lớn hơn giờ bắt đầu",
+        "online_link_required": "Vui lòng nhập đường link phỏng vấn online",
+        "email_to_required": "Vui lòng nhập email người nhận",
+        "email_subject_required": "Vui lòng nhập chủ đề email",
+        "email_content_required": "Vui lòng nhập nội dung email"
+      },
+      "toast": {
+        "create_success": "Tạo lịch phỏng vấn thành công.",
+        "create_error": "Tạo lịch phỏng vấn thất bại."
+      },
+      "btn_save": "Lưu",
+      "btn_save_and_send_mail": "Lưu và Gửi mail"
+    },
     "view": {
       "day": "Ngày",
       "week": "Tuần",
@@ -218,7 +266,7 @@
       "CANCELLED": "Hủy lịch"
     },
     "method": {
-      "ONLINE": "Online",
+      "ONLINE": "Trực tuyến",
       "OFFLINE": "Trực tiếp"
     },
     "label": {
@@ -248,7 +296,9 @@
       "evaluate": "Đánh giá",
       "create_new": "Tạo lịch mới",
       "resend": "Gửi lại",
-      "resend_mail": "Gửi lại mail"
+      "resend_mail": "Gửi lại mail",
+      "resend_mail_success": "Gửi mail thành công",
+      "resend_mail_error": "Gửi mail thất bại"
     }
   },
   "candidate": {

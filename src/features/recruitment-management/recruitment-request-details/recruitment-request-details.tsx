@@ -11,7 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { RecruitmentRequestStatusEnum } from '../recruitment-request-list/types/type';
 import { CandidateKanban } from './components/candidate-kanban';
-import { InterviewCalendar } from './components/interview-calender';
+import { InterviewCalendar } from '../interview-schedule/components/interview-calender';
 import { RecruitmentInformationSection } from './components/recruitment-information-section';
 import { RecruitmentRequestTabEnum } from './constants/data';
 import { useCandidateList } from './hooks/use-candidate-list';
