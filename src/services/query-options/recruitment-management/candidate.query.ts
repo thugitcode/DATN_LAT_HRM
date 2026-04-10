@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import type { CandidateFilters, OfferLetterPayload } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { CandidateFilters, OfferLetterPayload } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { candidateService } from '@/services/recruitment-management/candidate.service';
 
 export const candidateKeys = {

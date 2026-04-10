@@ -64,8 +64,8 @@ export const RecruitmentRequestList = () => {
     status,
     page,
     limit,
-    departmentIds,
-    roomIds,
+    // departmentIds,
+    // roomIds,
   });
   const { data: summary } = useRecruitmentRequestSummary()
   const paginationConfig = useMemo(

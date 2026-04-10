@@ -1,4 +1,4 @@
-import { CandidateStatusEnum } from "../recruitment-request-details/types/type";
+import { CandidateStatusEnum } from "../recruitment-request-details/types/candidate.type";
 import type { CriterionConfig } from "../types/candidate.type";
 
 export enum DetailCandidateTabEnum {

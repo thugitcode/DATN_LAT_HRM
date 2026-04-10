@@ -50,14 +50,14 @@ export const RecruitmentRequestFilterBar = () => {
 
   const handleDepartmentChange = useCallback(
     (value: string | undefined) => {
-      setFilter('departmentIds', value);
+      setFilter('departmentId', value);
     },
     [setFilter],
   );
 
   const handleRoomChange = useCallback(
     (value: string | undefined) => {
-      setFilter('roomIds', value);
+      setFilter('roomId', value);
     },
     [setFilter],
   );
@@ -77,14 +77,14 @@ export const RecruitmentRequestFilterBar = () => {
 
       <FilterSelect
         options={departmentOptions}
-        value={filters.departmentIds as string}
+        value={filters.departmentId as string}
         onChange={handleDepartmentChange}
         placeholder={t('actions.department')}
       />
 
       <FilterSelect
         options={roomOptions}
-        value={filters.roomIds as string}
+        value={filters.roomId as string}
         onChange={handleRoomChange}
         placeholder={t('actions.room')}
       />

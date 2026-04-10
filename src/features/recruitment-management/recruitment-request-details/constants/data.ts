@@ -1,6 +1,6 @@
 
 import { InterviewStatusEnum } from "../types/interview.type";
-import { CandidateStatusEnum } from "../types/type";
+import { CandidateStatusEnum, type CandidateStatusLabelKey, type KanbanColumn } from "../types/candidate.type";
 type StatusConfig = {
     chipColor: 'default' | 'success' | 'warning' | 'danger' | 'secondary';
     bgColor: string;
@@ -27,14 +27,14 @@ export const INTERVIEW_STATUS_CONFIG: Record<InterviewStatusEnum, StatusConfig> 
         color: 'text-[#0E793C]',
         bg: 'bg-[#E8FAF0]',
     },
-    [InterviewStatusEnum.PENDING_EVALUATION]: {
-        chipColor: 'warning',
-        bgColor: 'bg-[#FEFCE8]',
-        borderLColor: 'border-l-[#F5A524]',
-        borderTColor: 'border-t-[#F5A524]',
-        color: 'text-[#C4841D]',
-        bg: 'bg-[#FEFCE8]',
-    },
+    // [InterviewStatusEnum.PENDING_EVALUATION]: {
+    //     chipColor: 'warning',
+    //     bgColor: 'bg-[#FEFCE8]',
+    //     borderLColor: 'border-l-[#F5A524]',
+    //     borderTColor: 'border-t-[#F5A524]',
+    //     color: 'text-[#C4841D]',
+    //     bg: 'bg-[#FEFCE8]',
+    // },
     [InterviewStatusEnum.POSTPONED]: {
         chipColor: 'secondary',
         bgColor: 'bg-[#F2EAFA]',
@@ -78,3 +78,17 @@ export const ACTION_CANDIDATE_LABEL: Record<CandidateStatusEnum, string> = {
     [CandidateStatusEnum.REJECTED]: 'candidate.actions.view_detail',
     [CandidateStatusEnum.OFFER_DECLINED]: 'candidate.actions.view_detail',
 };
+
+
+
+export const CANDIDATE_KANBAN_COLUMNS: KanbanColumn[] = [
+    { status: CandidateStatusEnum.APPLIED, labelKey: 'candidate.status.applied', color: 'text-primary', bgColor: 'bg-[#EEF5FF]' },
+    { status: CandidateStatusEnum.SCREENED, labelKey: 'candidate.status.screened', color: 'text-[#7828C8]', bgColor: 'bg-[#F3EFFE]' },
+    { status: CandidateStatusEnum.WAITING_INTERVIEW, labelKey: 'candidate.status.waiting_interview', color: 'text-[#C4841D]', bgColor: 'bg-[#FEF3CD]' },
+    { status: CandidateStatusEnum.INTERVIEWING, labelKey: 'candidate.status.interviewing', color: 'text-[#0E793C]', bgColor: 'bg-[#E8FAF0]' },
+    { status: CandidateStatusEnum.WAITING_OFFER, labelKey: 'candidate.status.waiting_offer', color: 'text-[#0E793C]', bgColor: 'bg-[#E8FAF0]' },
+    { status: CandidateStatusEnum.PROBATION_PROPOSED, labelKey: 'candidate.status.probation_proposed', color: 'text-primary', bgColor: 'bg-[#EEF5FF]' },
+    { status: CandidateStatusEnum.ON_PROBATION, labelKey: 'candidate.status.on_probation', color: 'text-[#11181C]', bgColor: 'bg-[#F4F4F5]' },
+    { status: CandidateStatusEnum.REJECTED, labelKey: 'candidate.status.rejected', color: 'text-[#F31260]', bgColor: 'bg-[#FEE7EF]' },
+    { status: CandidateStatusEnum.OFFER_DECLINED, labelKey: 'candidate.status.offer_declined', color: 'text-[#F31260]', bgColor: 'bg-[#FEE7EF]' },
+];

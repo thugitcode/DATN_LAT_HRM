@@ -16,7 +16,7 @@ import { formatVND } from '@/lib/helpers';
 
 import { useFormOffer } from '../../hooks/use-form-offer';
 import { CandidateStatusSelect } from '../details/candidate-status-select';
-import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { useState } from 'react';
 import { FormInput } from '@/components/form-fields/form-input';
 

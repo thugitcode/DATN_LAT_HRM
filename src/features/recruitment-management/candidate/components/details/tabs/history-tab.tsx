@@ -1,6 +1,6 @@
 import DataTable from "@/components/data-table/data-table";
 import { useHistoryInterviewed } from "@/features/recruitment-management/recruitment-request-details/hooks/use-interview-schedule";
-import type { ICandidate } from "@/features/recruitment-management/recruitment-request-details/types/type";
+import type { ICandidate } from "@/features/recruitment-management/recruitment-request-details/types/candidate.type";
 import { NAMESPACES } from "@/i18n/constants";
 import { IconClockFilled } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";

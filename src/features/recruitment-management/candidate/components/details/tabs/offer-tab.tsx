@@ -8,7 +8,7 @@ import { formatVND } from '@/lib/helpers';
 import { icons } from '@/lib/icons';
 import { OfferStatus } from '@/features/recruitment-management/types/candidate.type';
 import type { ICandidateOffer } from '@/features/recruitment-management/types/candidate.type';
-import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { useDetailsOfferCandidate } from '../../../hooks/use-candidate-offer';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { DrawerType, useDrawer } from '@/store/useDrawer';

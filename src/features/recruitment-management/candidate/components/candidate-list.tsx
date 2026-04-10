@@ -1,7 +1,7 @@
 import { DataTable } from '@/components/data-table/data-table';
 import type { PaginationConfig } from '@/components/table/types';
 
-import { type ICandidate } from '../../recruitment-request-details/types/type';
+import { type ICandidate } from '../../recruitment-request-details/types/candidate.type';
 import { useCandidateColumns } from '../hooks/use-columns';
 import { useNavigate } from '@tanstack/react-router';
 

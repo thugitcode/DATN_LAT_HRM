@@ -3,7 +3,7 @@ import type {
   CandidatePayload,
   ICandidate,
   ICreateOfferLetterPayload
-} from '@/features/recruitment-management/recruitment-request-details/types/type';
+} from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import type { EvaluationFormValues } from '@/features/recruitment-management/candidate/schemas/evaluation.schema';
 import type { ICandidateOffer } from '@/features/recruitment-management/types/candidate.type';
 import { hrmInstance } from '@/lib/axios';

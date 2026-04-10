@@ -5,7 +5,7 @@ import { NAMESPACES } from '@/i18n/constants';
 import {
   CandidateStatusEnum,
   type ICandidate,
-} from '@/features/recruitment-management/recruitment-request-details/types/type';
+} from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { useCandidateUpdateStatus } from '@/features/recruitment-management/recruitment-request-details/hooks/use-candidate-update-status';
 
 import { PIPELINE_STEPS } from '@/features/recruitment-management/constants/details';

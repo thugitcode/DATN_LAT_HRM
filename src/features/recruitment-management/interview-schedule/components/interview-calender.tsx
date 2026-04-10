@@ -71,7 +71,7 @@ function EventPopoverWrapper({
             showArrow
             classNames={{
                 base: 'w-[498px]',
-                content: cn('rounded-none! border-t-4', INTERVIEW_STATUS_CONFIG[interview.status].borderTColor),
+                content: cn('rounded-none! border-t-4', INTERVIEW_STATUS_CONFIG[interview.status]?.borderTColor),
             }}
         >
             <PopoverTrigger>
@@ -92,11 +92,11 @@ function CustomEvent({ event }: EventProps<InterviewEvent>) {
     return (
         <EventPopoverWrapper interview={interview}>
             <Card
-                className={`h-full p-2 border-l-4 ${config.borderLColor} ${config.bgColor} w-fit shadow-none rounded-r-xl rounded-l-none overflow-hidden`}
+                className={`h-full p-2 border-l-4 ${config?.borderLColor} ${config?.bgColor} w-fit shadow-none rounded-r-xl rounded-l-none overflow-hidden`}
             >
                 <Chip
                     size="sm"
-                    color={config.chipColor}
+                    color={config?.chipColor}
                     variant="flat"
                     classNames={{ content: 'w-full flex justify-center' }}
                     className="mb-1 text-sm font-nomal w-full max-w-full"

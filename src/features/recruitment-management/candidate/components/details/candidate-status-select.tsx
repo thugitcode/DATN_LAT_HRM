@@ -3,7 +3,7 @@ import { addToast } from '@heroui/react';
 
 import { NAMESPACES } from '@/i18n/constants';
 import { StatusChipSelect } from '@/components/status-chip-select';
-import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { STATUS_BADGE } from '@/features/recruitment-management/constants/details';
 import { useCandidateUpdateStatus } from '@/features/recruitment-management/recruitment-request-details/hooks/use-candidate-update-status';
 

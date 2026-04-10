@@ -96,9 +96,9 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
     if (action === 'resend') {
       updateStatus(InterviewStatusEnum.PENDING_CONFIRMATION);
     }
-    if (action === 'evaluate') {
-      onOpen(DrawerType.EVALUATION_MUTATE, { candidate: interviewDetail?.data?.candidate, candidateId: interviewDetail?.data?.candidate?.id });
-    }
+    // if (action === 'evaluate') {
+    //   onOpen(DrawerType.EVALUATION_MUTATE, { candidate: interviewDetail?.data?.candidate, candidateId: interviewDetail?.data?.candidate?.id });
+    // }
     if (action === 'create_new') {
       onOpen(DrawerType.INTERVIEW_SCHEDULE_MUTATE);
     }
@@ -156,7 +156,7 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
         </div>
 
         {/* Location */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justify-between gap-2 border-y border-divider py-3">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             {interview.interviewMethod === InterviewMethodEnum.OFFLINE ? (
               <IconMapPin size={20} stroke={1.5} color="black" className="shrink-0" />

@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Card, Button, CardBody } from '@heroui/react'
+import { Card, Button, CardBody, addToast } from '@heroui/react'
 import { IconAlertCircle, IconFile, IconUpload } from '@tabler/icons-react'
 import { useViewFile } from '@/hooks/common/use-view-file'
 import { Controller, type Control, type FieldValues, type Path } from 'react-hook-form'
@@ -20,6 +20,7 @@ interface FileUploadInputProps {
   error?: string
   label?: string | React.ReactNode
   isRequired?: boolean
+  description?: string | React.ReactNode
 }
 
 export function FileUploadInput({
@@ -33,18 +34,37 @@ export function FileUploadInput({
   label,
   isRequired,
   onRemoveFile,
+  description
 }: FileUploadInputProps) {
   const { t } = useTranslation(NAMESPACES.COMMON)
   const [dragActive, setDragActive] = React.useState(false)
   const inputRef = React.useRef<HTMLInputElement>(null)
   const { onOpen } = useViewFile()
   const validateFile = (file: File) => {
-    if (file.size > maxSize) return false
+    if (file.size > maxSize) {
+      const maxSizeMB = Math.round(maxSize / (1024 * 1024))
+      addToast({
+        title: t('errors.FILE_SIZE_EXCEEDED', { size: maxSizeMB }),
+        color: 'warning',
+        classNames: {
+          title: 'whitespace-pre-line break-words',
+        },
+      })
+      return false
+    }
 
     const acceptedTypes = accept.split(',').map((t) => t.trim())
     const fileExt = '.' + file.name.split('.').pop()?.toLowerCase()
 
-    return acceptedTypes.includes(fileExt)
+    const isValid = acceptedTypes.includes(fileExt)
+    if (!isValid) {
+      addToast({
+        title: t('errors.DOCUMENT_INVALID'),
+        color: 'warning',
+      })
+    }
+
+    return isValid
   }
 
   const handleFiles = (fileList: FileList) => {
@@ -142,7 +162,7 @@ export function FileUploadInput({
               {t('file_upload.drag_drop_hint')}
             </p>
             <p className="text-xs text-default-400">
-              {t('file_upload.supported_formats')}
+              {description ? description : t('file_upload.supported_formats')}
             </p>
           </div>
         </Card>

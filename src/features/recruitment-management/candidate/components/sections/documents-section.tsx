@@ -27,6 +27,7 @@ export function DocumentsSection() {
         accept=".pdf"
         maxSize={1048576}
         multiple
+        description={t('candidate.form.fields.documents_hint')}
       />
       {/* <p className="text-xs text-[#71717A] -mt-2">
         {t('candidate.form.fields.documents_hint')}

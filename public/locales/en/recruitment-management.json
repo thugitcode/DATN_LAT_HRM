@@ -305,6 +305,12 @@
     "applied_date": "Applied date",
     "position": "Position",
     "department": "Department",
+    "toast": {
+      "create_success": "Candidate created successfully.",
+      "create_error": "Failed to create candidate.",
+      "update_success": "Candidate updated successfully.",
+      "update_error": "Failed to update candidate."
+    },
     "validation": {
       "name_required": "Full name is required",
       "gender_required": "Please select gender",
@@ -314,7 +320,10 @@
       "email_format": "Invalid email address",
       "department_required": "Please select department",
       "position_required": "Please select position",
-      "work_type_required": "Please select work type"
+      "work_type_required": "Please select work type",
+      "max_practice_issue_date": "Practice license issue date cannot be later than today",
+      "birthday_underage": "Candidate must be at least 18 years old",
+      "salary_invalid": "Maximum salary must be greater than or equal to minimum salary"
     },
     "offer": {
       "title": "Send Offer",

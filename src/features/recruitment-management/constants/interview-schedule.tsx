@@ -23,9 +23,9 @@ export const STATUS_INTERVIEW_SCHEDULE_ACTIONS: Partial<Record<InterviewStatusEn
         ],
         primary: { key: 'postpone', color: 'primary', variant: 'solid' },
     },
-    [InterviewStatusEnum.PENDING_EVALUATION]: {
-        primary: { key: 'evaluate', color: 'primary', variant: 'solid' },
-    },
+    // [InterviewStatusEnum.PENDING_EVALUATION]: {
+    //     primary: { key: 'evaluate', color: 'primary', variant: 'solid' },
+    // },
     [InterviewStatusEnum.POSTPONED]: {
         secondary: [
             { key: 'cancel', color: 'danger', variant: 'bordered' },

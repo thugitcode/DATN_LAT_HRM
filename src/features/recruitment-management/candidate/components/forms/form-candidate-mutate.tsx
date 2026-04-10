@@ -101,7 +101,7 @@ export const FormCandidateMutate = () => {
                             }}
                         >
                             {TABS.map((tab) => (
-                                <Tab key={tab.key} title={t(tab.labelKey as any)} />
+                                <Tab key={tab.key} title={t(tab.labelKey)} />
                             ))}
                         </Tabs>
                     </div>
