@@ -12,7 +12,7 @@ import {
   EVALUATION_DEFAULT_VALUES,
   type EvaluationFormValues,
 } from '../schemas/evaluation.schema';
-import type { ICandidate } from '../../recruitment-request-details/types/type';
+import type { ICandidate } from '../../recruitment-request-details/types/candidate.type';
 import { QUERY_KEY } from '@/hooks/use-crud-query';
 
 interface UseFormEvaluationParams {

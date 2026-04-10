@@ -2,7 +2,7 @@ import { IconDownload } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
-import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { icons } from '@/lib/icons';
 
 interface AttachmentsTabProps {

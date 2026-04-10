@@ -1,4 +1,4 @@
-import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { QUERY_KEY } from '@/hooks/use-crud-query';
 import { candidateService } from '@/services/recruitment-management/candidate.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';

@@ -4,7 +4,7 @@ import type {
   ICandidate,
   CandidateFilters,
   CandidatePayload,
-} from '@/features/recruitment-management/recruitment-request-details/types/type';
+} from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 
 import { createCrudHooks, QUERY_KEY } from '../use-crud-query';
 

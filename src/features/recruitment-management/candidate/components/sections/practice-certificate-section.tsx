@@ -1,3 +1,4 @@
+import { today, getLocalTimeZone } from '@internationalized/date';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -40,6 +41,7 @@ export function PracticeCertificateSection() {
             control={control}
             name="practiceIssueDate"
             label={t('candidate.form.fields.practice_issue_date')}
+            maxValue={today(getLocalTimeZone())}
           />
 
           <FormInput
@@ -64,6 +66,7 @@ export function PracticeCertificateSection() {
               accept=".pdf"
               maxSize={1048576}
               multiple={false}
+              description={t('candidate.form.fields.practice_file_hint')}
             />
             {/* <p className="text-xs text-[#71717A] mt-1">
             {t('candidate.form.fields.practice_file_hint')}

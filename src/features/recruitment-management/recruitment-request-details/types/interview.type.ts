@@ -1,7 +1,6 @@
 import type { PaginationParams } from '@/types';
-import type { IStaff } from '@/types/shift-details.type';
-import type { ICandidate } from './type';
 import type { Staff } from '@/types/staff.type';
+import type { ICandidate } from './candidate.type';
 
 export enum InterviewMethodEnum {
   ONLINE = 'ONLINE',
@@ -11,7 +10,7 @@ export enum InterviewMethodEnum {
 export enum InterviewStatusEnum {
   PENDING_CONFIRMATION = 'PENDING_CONFIRMATION',
   CONFIRMED = 'CONFIRMED',
-  PENDING_EVALUATION = 'PENDING_EVALUATION',
+  // PENDING_EVALUATION = 'PENDING_EVALUATION',
   POSTPONED = 'POSTPONED',
   CANCELLED = 'CANCELLED',
 }

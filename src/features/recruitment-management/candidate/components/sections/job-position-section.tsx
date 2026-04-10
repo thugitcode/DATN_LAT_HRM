@@ -10,6 +10,7 @@ import { NAMESPACES } from '@/i18n/constants';
 import { CandidateSourceEnum } from '@/features/recruitment-management/types/candidate.type';
 import { useRecruitmentRequestList } from '@/features/recruitment-management/recruitment-request-list/hooks/use-recruitment-request';
 import { icons } from '@/lib/icons';
+import { RecruitmentRequestStatusEnum } from '@/features/recruitment-management/recruitment-request-list/types/type';
 
 const STAFF_TYPE_OPTIONS = [
   { key: 'FULL_TIME', label: 'Toàn thời gian' },
@@ -19,10 +20,11 @@ const STAFF_TYPE_OPTIONS = [
 ];
 
 export function JobPositionSection({ recruitmentRequestId }: { recruitmentRequestId?: string }) {
-  const { control, watch } = useFormContext();
+  const { control, watch, setValue } = useFormContext();
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
   const selectedDept = watch('departmentId');
+  const selectedRoom = watch('roomId');
   const { options: departmentOptions } = useDepartmentOptions();
   const { options: roomOptions } = useRoomOptions(selectedDept);
   const sourceOptions = Object.values(CandidateSourceEnum).map((source) => ({
@@ -30,7 +32,7 @@ export function JobPositionSection({ recruitmentRequestId }: { recruitmentReques
     label: t(`candidate.source.${source}` as any),
   }));
 
-  const { data: recruitmentRequestData } = useRecruitmentRequestList();
+  const { data: recruitmentRequestData } = useRecruitmentRequestList({ status: RecruitmentRequestStatusEnum.RECRUITING, departmentId: selectedDept, roomId: selectedRoom });
   const recruitmentRequestOptions =
     recruitmentRequestData?.data?.map((r) => ({
       key: r.id,
@@ -44,23 +46,6 @@ export function JobPositionSection({ recruitmentRequestId }: { recruitmentReques
       </h3>
 
       <div className="grid grid-cols-2 gap-4">
-        <FormSelect
-          control={control}
-          name="departmentId"
-          label={t('candidate.form.fields.department')}
-          placeholder="Chọn"
-          isRequired
-          options={departmentOptions.map((o) => ({ key: o.value, label: o.label }))}
-        />
-
-        <FormSelect
-          control={control}
-          name="roomId"
-          label={t('candidate.form.fields.room')}
-          placeholder="Chọn"
-          options={roomOptions.map((o) => ({ key: o.value, label: o.label }))}
-        />
-
         <FormAutocomplete
           control={control}
           name="recruitmentRequestId"
@@ -68,6 +53,13 @@ export function JobPositionSection({ recruitmentRequestId }: { recruitmentReques
           isRequired
           options={recruitmentRequestOptions}
           readOnly={!!recruitmentRequestId}
+          onSelect={(value) => {
+            const selectedRecruitmentRequest = recruitmentRequestData?.data?.find((r) => r.id === value);
+            if (selectedRecruitmentRequest) {
+              setValue('departmentId', selectedRecruitmentRequest.departmentId);
+              setValue('roomId', selectedRecruitmentRequest.roomId);
+            }
+          }}
         />
 
         <FormSelect
@@ -78,6 +70,31 @@ export function JobPositionSection({ recruitmentRequestId }: { recruitmentReques
           isRequired
           options={STAFF_TYPE_OPTIONS}
         />
+
+        <FormSelect
+          control={control}
+          name="departmentId"
+          label={t('candidate.form.fields.department')}
+          placeholder="Chọn"
+          isRequired
+          options={departmentOptions.map((o) => ({ key: o.value, label: o.label }))}
+          onSelect={() => {
+            setValue('roomId', null);
+            setValue('recruitmentRequestId', '');
+          }}
+        />
+
+        <FormSelect
+          control={control}
+          name="roomId"
+          label={t('candidate.form.fields.room')}
+          placeholder="Chọn"
+          options={roomOptions.map((o) => ({ key: o.value, label: o.label }))}
+          onSelect={() => {
+            setValue('recruitmentRequestId', '');
+          }}
+        />
+
 
         {/* Mức lương mong muốn */}
         <div className="col-span-1 flex flex-col gap-1">

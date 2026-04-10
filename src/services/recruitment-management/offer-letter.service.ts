@@ -3,7 +3,7 @@ import type {
   OfferLetter,
   OfferLetterFilters,
   OfferLetterPayload,
-} from '@/features/recruitment-management/recruitment-request-details/types/type';
+} from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { BaseApiService } from '../base-api.service';
 import { API_ENDPOINTS } from '../constants/endpoints';
 

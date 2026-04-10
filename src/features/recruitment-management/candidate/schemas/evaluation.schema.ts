@@ -3,7 +3,7 @@ import type { TFunction } from 'i18next';
 import type { NAMESPACES } from '@/i18n/constants';
 
 import { optionalString, requiredString } from './candidate.schema';
-import { CandidateStatusEnum } from '../../recruitment-request-details/types/type';
+import { CandidateStatusEnum } from '../../recruitment-request-details/types/candidate.type';
 
 const scoreField = z.preprocess(
   (v) => (v === '' || v === null || v === undefined ? null : Number(v)),

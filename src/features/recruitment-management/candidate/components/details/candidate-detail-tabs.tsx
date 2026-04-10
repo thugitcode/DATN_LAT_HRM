@@ -2,7 +2,7 @@ import { Tab, Tabs } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
-import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { DetailCandidateTabEnum } from '@/features/recruitment-management/constants/details';
 
 import { ApplicationTab } from './tabs/application-tab';

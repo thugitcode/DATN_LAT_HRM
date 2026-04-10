@@ -325,7 +325,7 @@
     "UPLOAD_FAILED": "Tải lên thất bại",
     "DELETE_FAILED": "Xóa thất bại",
     "FILE_NOT_FOUND": "Không tìm thấy tệp",
-    "FILE_SIZE_EXCEEDED": "Dung lượng tệp vượt quá giới hạn",
+    "FILE_SIZE_EXCEEDED": "Dung lượng tệp vượt quá giới hạn (tối đa {{size}}MB)",
     "AVATAR_INVALID": "Ảnh đại diện không hợp lệ",
     "DOCUMENT_INVALID": "Tài liệu không hợp lệ",
     "EXCEL_INVALID": "Tệp Excel không hợp lệ",

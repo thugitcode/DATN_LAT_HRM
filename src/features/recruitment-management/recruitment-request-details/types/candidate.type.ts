@@ -195,3 +195,21 @@ export interface CandidatePayload {
   practiceFileUrl?: string;
   documents?: CandidateDocument[];
 }
+
+export type CandidateStatusLabelKey =
+  | 'candidate.status.applied'
+  | 'candidate.status.screened'
+  | 'candidate.status.waiting_interview'
+  | 'candidate.status.interviewing'
+  | 'candidate.status.waiting_offer'
+  | 'candidate.status.probation_proposed'
+  | 'candidate.status.on_probation'
+  | 'candidate.status.rejected'
+  | 'candidate.status.offer_declined';
+
+export interface KanbanColumn {
+  status: CandidateStatusEnum;
+  labelKey: CandidateStatusLabelKey;
+  color: string;
+  bgColor: string;
+}

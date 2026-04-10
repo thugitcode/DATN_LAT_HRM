@@ -314,7 +314,7 @@
     "UPLOAD_FAILED": "Upload failed",
     "DELETE_FAILED": "Delete failed",
     "FILE_NOT_FOUND": "File not found",
-    "FILE_SIZE_EXCEEDED": "File size exceeded",
+    "FILE_SIZE_EXCEEDED": "File size exceeds limit (maximum {{size}}MB)",
     "AVATAR_INVALID": "Invalid avatar",
     "DOCUMENT_INVALID": "Invalid document",
     "EXCEL_INVALID": "Invalid Excel file",

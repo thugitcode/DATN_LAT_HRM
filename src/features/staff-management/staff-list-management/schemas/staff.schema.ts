@@ -17,7 +17,22 @@ const optionalRegex = (regex: RegExp, message: string) =>
         normalizeString,
         z.string().refine((v) => !v || regex.test(v), message),
     );
+export const dateOfBirthSchema = (t: any) => {
+    return z
+        .preprocess(normalizeString, z.string().min(1, t("errors.birthday.required")))
+        .refine((val) => new Date(val) < new Date(), t("errors.birthday.future"))
+        .refine((val) => {
+            const date = new Date(val);
+            const now = new Date();
 
+            let age = now.getFullYear() - date.getFullYear();
+            const m = now.getMonth() - date.getMonth();
+
+            if (m < 0 || (m === 0 && now.getDate() < date.getDate())) age--;
+
+            return age >= 18;
+        }, t("errors.birthday.underage"))
+}
 export const requiredEmail = (requiredMsg: string, formatMsg: string) =>
     z.preprocess(
         normalizeString,

@@ -1,7 +1,7 @@
 import { candidateQueryOptions } from "@/services/query-options/recruitment-management/candidate.query";
 import { candidateService } from "@/services/recruitment-management/candidate.service";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { ICreateOfferLetterPayload } from "../../recruitment-request-details/types/type";
+import type { ICreateOfferLetterPayload } from "../../recruitment-request-details/types/candidate.type";
 
 export const useDetailsOfferCandidate = (candidateId: string) => {
     return useQuery(candidateQueryOptions.detailsOffer(candidateId));

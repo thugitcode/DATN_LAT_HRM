@@ -6,7 +6,7 @@ import { Button } from '@heroui/react';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
 import { FormSelect } from '@/components/form-fields/form-select';
 import { useStaffOptions } from '@/hooks/options/use-staff-options';
-import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { CRITERIA_EVALUATION } from '@/features/recruitment-management/constants/details';
 import type { CriterionKey } from '@/features/recruitment-management/types/candidate.type';
 import { NAMESPACES } from '@/i18n/constants';

@@ -305,6 +305,12 @@
     "applied_date": "Ngày ứng tuyển",
     "position": "Vị trí",
     "department": "Khoa",
+    "toast": {
+      "create_success": "Thêm ứng viên thành công.",
+      "create_error": "Thêm ứng viên thất bại.",
+      "update_success": "Cập nhật ứng viên thành công.",
+      "update_error": "Cập nhật ứng viên thất bại."
+    },
     "validation": {
       "name_required": "Họ và tên không được để trống",
       "gender_required": "Vui lòng chọn giới tính",
@@ -314,7 +320,10 @@
       "email_format": "Email không hợp lệ",
       "department_required": "Vui lòng chọn khoa",
       "position_required": "Vui lòng chọn vị trí",
-      "work_type_required": "Vui lòng chọn hình thức làm việc"
+      "work_type_required": "Vui lòng chọn hình thức làm việc",
+      "max_practice_issue_date": "Ngày cấp không được lớn hơn ngày hiện tại",
+      "birthday_underage": "Ứng viên phải đủ 18 tuổi",
+      "salary_invalid": "Mức lương tối đa phải lớn hơn mức lương tối thiểu"
     },
     "offer": {
       "title": "Gửi offer",
@@ -382,7 +391,7 @@
     "source": {
       "WEBSITE": "Website",
       "REFERRAL": "Giới thiệu",
-      "JOB_PORTAL": "Job Portal"
+      "JOB_PORTAL": "Cổng thông tin việc làm"
     },
     "form": {
       "title": {

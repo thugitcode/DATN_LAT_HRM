@@ -10,7 +10,7 @@ import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 
-import type { CandidateStatusEnum, ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { CandidateStatusEnum, ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import type { CriterionKey } from '@/features/recruitment-management/types/candidate.type';
 import { useFormEvaluation } from '../../hooks/use-form-evaluation';
 import { CandidateStatusSelect } from '../details/candidate-status-select';

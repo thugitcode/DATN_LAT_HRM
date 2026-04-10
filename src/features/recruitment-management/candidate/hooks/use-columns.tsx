@@ -9,7 +9,7 @@ import { Button, Chip } from '@heroui/react';
 import { QUERY_KEY } from '@/hooks/use-crud-query';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCandidateUpdateStatus } from '../../recruitment-request-details/hooks/use-candidate-update-status';
-import { type ICandidate } from '../../recruitment-request-details/types/type';
+import { type ICandidate } from '../../recruitment-request-details/types/candidate.type';
 import { ACTION_LABEL, NEXT_STATUS, STATUS_CHIP } from '../../constants/constants';
 import dayjs from 'dayjs';
 import type { InterviewSchedule } from '../../recruitment-request-details/types/interview.type';

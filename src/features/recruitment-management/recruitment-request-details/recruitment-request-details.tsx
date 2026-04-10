@@ -178,7 +178,7 @@ export const RecruitmentRequestDetails = ({
                 >
                     <Tab key={RecruitmentRequestTabEnum.CANDIDATES} title={t('recruitment_request.details.candidate')}>
                         <LoadingWrapper isLoading={isCandidatesLoading} height='50vh'>
-                            <CandidateKanban candidates={candidates} recruitmentRequestId={id} />
+                            <CandidateKanban candidates={candidates} recruitmentRequestId={id} maxListboxHeight={720} />
                         </LoadingWrapper>
                     </Tab>
                     <Tab key={RecruitmentRequestTabEnum.INFO} title={t('recruitment_request.details.request_info')}>

@@ -9,7 +9,7 @@ import {
   useUpdateCandidate,
 } from '@/hooks/queries/use-candidate-query';
 import { NAMESPACES } from '@/i18n/constants';
-import type { CandidatePayload } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { CandidatePayload } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 
 import { addToast } from '@heroui/react';
 import { candidateSchema, DEFAULT_VALUES, type CandidateFormValues } from '../schemas/candidate.schema';
@@ -85,12 +85,17 @@ export function useFormCandidate({ id, recruitmentRequestId, onSuccess }: UseFor
     try {
       if (isEditMode && id) {
         await updateCandidate({ id, data: payload });
+        addToast({ title: t('candidate.toast.update_success'), color: 'success' });
       } else {
         await createCandidate(payload);
+        addToast({ title: t('candidate.toast.create_success'), color: 'success' });
       }
       onSuccess?.();
     } catch {
-      addToast({ title: t('candidate.validation.name_required'), color: 'danger' });
+      addToast({
+        title: t(isEditMode ? 'candidate.toast.update_error' : 'candidate.toast.create_error'),
+        color: 'danger',
+      });
     }
   });
 

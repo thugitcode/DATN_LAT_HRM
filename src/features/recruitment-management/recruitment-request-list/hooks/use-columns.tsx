@@ -27,7 +27,14 @@ export const useColumns = () => {
         title: t('recruitment_request.columns.department'),
         minWidth: 200,
         render: (_, row) => (
-          <span className="text-sm text-[#11181C] whitespace-nowrap">{row.departmentName}</span>
+          <div>
+            <div className="text-sm text-[#11181C] whitespace-nowrap">
+              {row.departmentName}
+            </div>
+            <div className="truncate max-w-40 text-xs text-[#A1A1AA]">
+              {row.roomName}
+            </div>
+          </div>
         ),
       },
       {

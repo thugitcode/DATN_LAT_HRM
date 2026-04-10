@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
 import { cn, formatDate } from '@/lib/utils';
-import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 
 import { GENDER_LABEL } from '@/features/recruitment-management/constants/details';
 import { icons } from '@/lib/icons';

@@ -2,7 +2,7 @@ import { icons } from '@/lib/icons';
 
 import type { MetadataRecruitmentRequest } from '../recruitment-request-list/types/type';
 import type { CandidateFormValues } from '../candidate/schemas/candidate.schema';
-import { CandidateStatusEnum, type ICandidate } from '../recruitment-request-details/types/type';
+import { CandidateStatusEnum, type ICandidate } from '../recruitment-request-details/types/candidate.type';
 
 type SummaryKey = keyof MetadataRecruitmentRequest;
 

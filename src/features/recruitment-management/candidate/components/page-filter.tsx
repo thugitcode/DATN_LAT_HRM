@@ -6,7 +6,7 @@ import { FilterSelect } from '@/components/filters/filter-select';
 import { SearchInput } from '@/components/filters/search-input';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import { icons } from '@/lib/icons';
-import { CandidateStatusEnum, type CandidateFilters } from '../../recruitment-request-details/types/type';
+import { CandidateStatusEnum, type CandidateFilters } from '../../recruitment-request-details/types/candidate.type';
 import { CandidateSourceEnum } from '../../types/candidate.type';
 
 export const PageFilter = ({ extraFilters }: { extraFilters?: React.ReactNode }) => {

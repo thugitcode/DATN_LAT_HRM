@@ -5,7 +5,7 @@ import { useNavigate } from '@tanstack/react-router';
 
 import { NAMESPACES } from '@/i18n/constants';
 import { formatDate } from '@/lib/utils';
-import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/type';
+import type { ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 
 import { formatSalary } from '@/features/recruitment-management/constants/details';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
