@@ -15,9 +15,14 @@ interface StatusChipSelectProps {
   options: StatusOption[];
   onSelect: (key: string) => void;
   isPending?: boolean;
+  classNames?: {
+    trigger?: string;
+    dropdown?: string;
+    option?: string;
+  }
 }
 
-export function StatusChipSelect({ value, options, onSelect, isPending = false }: StatusChipSelectProps) {
+export function StatusChipSelect({ value, options, onSelect, isPending = false, classNames }: StatusChipSelectProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -49,6 +54,7 @@ export function StatusChipSelect({ value, options, onSelect, isPending = false }
           cursor-pointer select-none transition-opacity
           ${current.bg} ${current.color}
           ${isPending ? 'opacity-60 cursor-wait' : 'hover:opacity-80'}
+          ${classNames?.trigger}
         `}
       >
         {current.label}
@@ -57,7 +63,7 @@ export function StatusChipSelect({ value, options, onSelect, isPending = false }
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute left-0 top-full mt-1 z-50 bg-white rounded-xl shadow-lg border border-[#E4E4E7] py-1 min-w-[180px]">
+        <div className={`absolute right-0 top-full mt-1 z-50 bg-white rounded-xl shadow-lg border border-[#E4E4E7] py-1 min-w-[180px] ${classNames?.dropdown}`}>
           {options.map((opt) => (
             <button
               key={opt.key}
@@ -68,6 +74,7 @@ export function StatusChipSelect({ value, options, onSelect, isPending = false }
                 w-full flex items-center gap-2 px-3 py-2 text-left text-sm
                 hover:bg-[#F4F4F5] transition-colors
                 ${opt.key === value ? 'bg-[#F4F4F5]' : ''}
+                ${classNames?.option}
               `}
             >
               <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${opt.bg} ${opt.color}`}>

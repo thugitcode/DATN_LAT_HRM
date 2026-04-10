@@ -45,7 +45,7 @@ export function CandidateDetailTabs({ candidate, activeTab, onTabChange }: Candi
         </Tabs>
       </div>
 
-      <div className="overflow-auto h-[calc(100vh-195px)]">
+      <div className="overflow-auto h-[calc(100vh-180px)]">
         {activeTab === DetailCandidateTabEnum.APPLICATION &&
           <div className='p-5'>
             <ApplicationTab candidate={candidate} />

@@ -74,7 +74,7 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
           control={control}
           name="roomId"
           label={t('form.fields.room')}
-          isRequired
+          // isRequired
           placeholder={t('form.placeholders.select_room')}
           options={roomOptions.map((o) => ({ key: o.value, label: o.label }))}
           readOnly={isReadOnly}

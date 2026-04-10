@@ -205,6 +205,54 @@
     }
   },
   "interview_schedule": {
+    "form": {
+      "title": "Create Interview Schedule",
+      "sections": {
+        "general_info": "General Information",
+        "message": "Message"
+      },
+      "fields": {
+        "candidate": "Candidate",
+        "interviewer": "Interviewer",
+        "content": "Interview Content",
+        "method": "Interview Method",
+        "online_link": "Online Interview Link",
+        "address": "Interview Location",
+        "date": "Interview Date",
+        "time": "Time",
+        "note": "Note",
+        "email_to": "To",
+        "email_subject": "Subject",
+        "email_content": "Content"
+      },
+      "placeholders": {
+        "select": "Select",
+        "enter": "Enter",
+        "from": "From",
+        "to": "To"
+      },
+      "validation": {
+        "candidate_required": "Please select a candidate",
+        "interviewer_required": "Please select an interviewer",
+        "content_required": "Please enter interview content",
+        "date_required": "Please select an interview date",
+        "date_past": "Interview date cannot be in the past",
+        "start_time_required": "Please select start time",
+        "start_time_past": "Start time must be later than the current time",
+        "end_time_required": "Please select end time",
+        "end_time_invalid": "End time must be later than start time",
+        "online_link_required": "Please enter the online interview link",
+        "email_to_required": "Please enter recipient email",
+        "email_subject_required": "Please enter email subject",
+        "email_content_required": "Please enter email content"
+      },
+      "toast": {
+        "create_success": "Interview schedule created successfully.",
+        "create_error": "Failed to create interview schedule."
+      },
+      "btn_save": "Save",
+      "btn_save_and_send_mail": "Save & Send Mail"
+    },
     "view": {
       "day": "Day",
       "week": "Week",
@@ -248,7 +296,9 @@
       "evaluate": "Evaluate",
       "create_new": "Create New Schedule",
       "resend": "Resend",
-      "resend_mail": "Resend Mail"
+      "resend_mail": "Resend Mail",
+      "resend_mail_success": "Mail sent successfully",
+      "resend_mail_error": "Failed to send mail"
     }
   },
   "candidate": {

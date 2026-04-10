@@ -6,7 +6,7 @@ import { NAMESPACES } from "@/i18n/constants";
 export const SummaryScoreCard = ({ avgScore, watch }: { avgScore: number | null, watch: (name: string) => number | null }) => {
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
-    return <div className="bg-[#F4F4F5] rounded-xl p-4 flex items-center gap-6">
+    return <div className="bg-[#F4F4F5] w-full rounded-xl p-4 flex items-center gap-6">
         <div className="flex items-center gap-1 shrink-0 ">
             <span className="font-medium text-5xl text-primary leading-none">
                 {avgScore !== null ? avgScore.toFixed(1) : '—'}

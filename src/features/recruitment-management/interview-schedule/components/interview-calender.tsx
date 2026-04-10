@@ -25,9 +25,9 @@ import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/utils';
 
-import { INTERVIEW_STATUS_CONFIG } from '../constants/data';
-import { useInterviewSchedule } from '../hooks/use-interview-schedule';
-import { type InterviewSchedule } from '../types/interview.type';
+import { INTERVIEW_STATUS_CONFIG } from '../../recruitment-request-details/constants/data';
+import { useInterviewSchedule } from '../../recruitment-request-details/hooks/use-interview-schedule';
+import { type InterviewSchedule } from '../../recruitment-request-details/types/interview.type';
 import { InterviewDetailCard } from './interview-detail-popup';
 
 dayjs.locale('vi');
@@ -144,7 +144,7 @@ const components: Components<InterviewEvent> = {
 };
 
 interface InterviewCalendarProps {
-    recruitmentRequestId: string;
+    recruitmentRequestId?: string;
 }
 
 export function InterviewCalendar({ recruitmentRequestId }: InterviewCalendarProps) {

@@ -55,7 +55,7 @@ export function CandidateDetailHeader({ candidate }: CandidateDetailHeaderProps)
             <div className="text-sm text-[#71717A]">
               {t('candidate.detail.expected_salary')}:{' '}
               <span className="text-primary font-semibold">
-                {formatSalary(candidate.expectedSalaryFrom)}–{formatSalary(candidate.expectedSalaryTo)}/tháng
+                {formatSalary(candidate.expectedSalaryFrom)}–{formatSalary(candidate.expectedSalaryTo)}/{t('interview_schedule.view.month')}
               </span>
             </div>
           )}

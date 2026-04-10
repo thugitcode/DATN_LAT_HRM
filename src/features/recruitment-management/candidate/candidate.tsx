@@ -9,6 +9,11 @@ import { CandidateKanban } from '../recruitment-request-details/components/candi
 import { useCandidateList } from '@/hooks/queries/use-candidate-query';
 import { CandidateList } from './components/candidate-list';
 import { PageFilter } from './components/page-filter';
+import type {
+  CandidateFilters,
+  CandidateStatusEnum,
+} from '../recruitment-request-details/types/type';
+import type { CandidateSourceEnum } from '../types/candidate.type';
 import { Button } from '@heroui/react';
 import { icons } from '@/lib/icons';
 import { useTranslation } from 'react-i18next';
@@ -16,13 +21,15 @@ import { NAMESPACES } from '@/i18n/constants';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 export const Candidate = () => {
-  const { filters } = useQueryFilter()
+  const { filters } = useQueryFilter<CandidateFilters>()
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
   const page = Number(filters.page) || DEFAULT_PAGE;
   const limit = Number(filters.limit) || 10;
-  const search = filters.search || '';
+  const search = (filters.search as string) || '';
+  const status = filters.status as CandidateStatusEnum | undefined;
+  const source = filters.source as CandidateSourceEnum | undefined;
 
-  const { data } = useCandidateList({ page, limit, search });
+  const { data } = useCandidateList({ page, limit, search, status, source });
   const candidates = data?.data ?? [];
   const pagination = data?.pagination;
   const { onOpen } = useDrawer()

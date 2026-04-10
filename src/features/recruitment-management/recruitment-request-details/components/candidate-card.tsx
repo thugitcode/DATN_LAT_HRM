@@ -1,36 +1,17 @@
-import type { FC } from 'react';
-import { Button } from '@heroui/react';
+import { Button, Tooltip } from '@heroui/react';
 import { IconDots } from '@tabler/icons-react';
+import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
 import { formatDate } from '@/lib/utils';
-import { CandidateStatusEnum, type ICandidate } from '../types/type';
+import { ACTION_CANDIDATE_LABEL, NEXT_CANDIDATE_STATUS } from '../constants/data';
 import { useCandidateUpdateStatus } from '../hooks/use-candidate-update-status';
-import { useParams } from '@tanstack/react-router';
+import { type ICandidate } from '../types/type';
 
 interface CandidateCardProps {
   candidate: ICandidate;
 }
-
-const NEXT_STATUS: Partial<Record<CandidateStatusEnum, CandidateStatusEnum>> = {
-  [CandidateStatusEnum.APPLIED]: CandidateStatusEnum.SCREENED,
-  [CandidateStatusEnum.SCREENED]: CandidateStatusEnum.WAITING_INTERVIEW,
-  [CandidateStatusEnum.WAITING_OFFER]: CandidateStatusEnum.PROBATION_PROPOSED,
-  [CandidateStatusEnum.PROBATION_PROPOSED]: CandidateStatusEnum.ON_PROBATION,
-};
-
-const ACTION_LABEL: Record<CandidateStatusEnum, string> = {
-  [CandidateStatusEnum.APPLIED]: 'candidate.actions.screen',
-  [CandidateStatusEnum.SCREENED]: 'candidate.actions.schedule_interview',
-  [CandidateStatusEnum.WAITING_INTERVIEW]: 'candidate.actions.view_schedule',
-  [CandidateStatusEnum.INTERVIEWING]: 'candidate.actions.view_schedule',
-  [CandidateStatusEnum.WAITING_OFFER]: 'candidate.actions.send_offer',
-  [CandidateStatusEnum.PROBATION_PROPOSED]: 'candidate.actions.send_offer',
-  [CandidateStatusEnum.ON_PROBATION]: 'candidate.actions.accept_official',
-  [CandidateStatusEnum.REJECTED]: 'candidate.actions.view_detail',
-  [CandidateStatusEnum.OFFER_DECLINED]: 'candidate.actions.view_detail',
-};
 
 export const CandidateCard: FC<CandidateCardProps> = ({ candidate }) => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
@@ -53,11 +34,15 @@ export const CandidateCard: FC<CandidateCardProps> = ({ candidate }) => {
       <div className="grid grid-cols-2 gap-1 text-xs">
         <div>
           <div className="text-[#71717A]">{t('candidate.position')}: </div>
-          <div className="text-[#11181C] font-medium">{candidate.position}</div>
+          <Tooltip content={candidate.position}>
+            <div className="text-[#11181C] font-medium truncate">{candidate.position}</div>
+          </Tooltip>
         </div>
         <div>
           <div className="text-[#71717A]">{t('candidate.department')}: </div>
-          <div className="text-[#11181C] font-medium">{candidate.departmentName}</div>
+          <Tooltip content={candidate.departmentName}>
+            <div className="text-[#11181C] font-medium truncate">{candidate.departmentName}</div>
+          </Tooltip>
         </div>
       </div>
 
@@ -66,13 +51,13 @@ export const CandidateCard: FC<CandidateCardProps> = ({ candidate }) => {
         variant="bordered"
         color="primary"
         className="w-full rounded-xl text-sm font-medium border-1"
-        isDisabled={!NEXT_STATUS[candidate.status]}
+        isDisabled={!NEXT_CANDIDATE_STATUS[candidate.status]}
         onPress={() => {
-          const nextStatus = NEXT_STATUS[candidate.status];
+          const nextStatus = NEXT_CANDIDATE_STATUS[candidate.status];
           if (nextStatus) updateStatus({ id: candidate.id, status: nextStatus });
         }}
       >
-        {t(ACTION_LABEL[candidate.status] as any)}
+        {t(ACTION_CANDIDATE_LABEL[candidate.status] as any)}
       </Button>
     </div>
   );
