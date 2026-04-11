@@ -39,6 +39,7 @@ export function useApproveRecruitmentRequest() {
       recruitmentRequestService.approve(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.summary() });
 
       addToast({
         description: t('recruitment_request.toast.approve_success'),
@@ -64,6 +65,7 @@ export function useRejectRecruitmentRequest() {
       recruitmentRequestService.reject(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.summary() });
       addToast({
         description: t('recruitment_request.toast.reject_success'),
         color: 'success',
@@ -87,6 +89,7 @@ export function useCloseRecruitmentRequest() {
     mutationFn: (id: string) => recruitmentRequestService.close(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.summary() });
       addToast({
         description: t('recruitment_request.toast.close_success'),
         color: 'success',
