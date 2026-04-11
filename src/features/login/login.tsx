@@ -10,7 +10,8 @@ import { useEventListener } from '@/hooks/common/use-event-listener';
 import { WINDOW_LOGIN_SUCCESS_MESSAGE } from './libs/constants';
 
 export const Login = () => {
-  const { keycloak } = useKeycloak();
+  // const { keycloak } = useKeycloak();
+  const keycloak = {} as any;
   const keycloakWindowRef = useRef<Window | null>(null);
 
   useEventListener('message', handleMessage, window, true);

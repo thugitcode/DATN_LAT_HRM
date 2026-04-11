@@ -95,13 +95,21 @@ declare module '@tanstack/react-router' {
 }
 
 export function App() {
-  const { keycloak } = useKeycloak();
+  // const { keycloak } = useKeycloak();
+  // const auth: AuthContext = {
+  //   isLoggedIn: keycloak.authenticated ?? false,
+  //   tokenPayload: keycloak.tokenParsed,
+  //   accessToken: keycloak.token,
+  //   refreshToken: keycloak.refreshToken,
+  //   logout: () => keycloak.logout(),
+  // };
+
   const auth: AuthContext = {
-    isLoggedIn: keycloak.authenticated ?? false,
-    tokenPayload: keycloak.tokenParsed,
-    accessToken: keycloak.token,
-    refreshToken: keycloak.refreshToken,
-    logout: () => keycloak.logout(),
+    isLoggedIn: true,
+    tokenPayload: {},
+    accessToken: 'mock-token',
+    refreshToken: 'mock-refresh-token',
+    logout: () => console.log('Mock logout'),
   };
 
   return (
