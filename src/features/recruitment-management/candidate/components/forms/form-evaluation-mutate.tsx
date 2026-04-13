@@ -13,6 +13,7 @@ import { useDrawer } from '@/store/useDrawer';
 import type { CandidateStatusEnum, ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import type { CriterionKey } from '@/features/recruitment-management/types/candidate.type';
 import { useFormEvaluation } from '../../hooks/use-form-evaluation';
+import { useDirtyDrawer } from '@/hooks/use-dirty-drawer';
 import { CandidateStatusSelect } from '../details/candidate-status-select';
 import { ScoreBar } from '../details/criterion-card';
 import { CriterionEditCard } from '../details/criterion-edit-card';
@@ -38,6 +39,7 @@ export function FormEvaluationMutate() {
         candidate,
         onSuccess: onClose,
     });
+    useDirtyDrawer(methods.formState.isDirty);
 
     const { control, watch } = methods;
     const { options: staffOptions } = useStaffOptions();

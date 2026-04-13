@@ -20,6 +20,7 @@ export const RowPayslipActions: FC<RowPayslipActionsProps> = ({ dataRow }) => {
       color="primary"
       variant="bordered"
       onPress={() => onOpen(DrawerType.DETAIL_PAYSLIP_FEEDBACK, dataRow)}
+      className='border-1'
     >
       {t('attendance_data.viewDetail')}
     </Button>

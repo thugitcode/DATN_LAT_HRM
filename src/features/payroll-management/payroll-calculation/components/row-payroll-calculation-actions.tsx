@@ -73,7 +73,7 @@ export const RowPayrollCalculationActions: FC<RowPayrollCalculationActionsProps>
         {t('payrollCalculation.sendPayslip.buttonLabel')}
       </Button>
       <Button
-        className="h-9 px-3 gap-2"
+        className="h-9 px-3 gap-2 border-1"
         color="primary"
         variant="bordered"
         onPress={() =>

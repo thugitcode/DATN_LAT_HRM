@@ -476,7 +476,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                     label="Thời hạn hợp đồng"
                                     isRequired
                                     labelPlacement="outside"
-                                    placeholder="Nhập"
+
                                     type="number"
                                     value={String(formData.duration)}
                                     onValueChange={(v) => setFormData((p) => ({ ...p, duration: Number(v) || 0 }))}
@@ -608,7 +608,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                 <Select
                                     label="Quản lý trực tiếp"
                                     labelPlacement="outside"
-                                    placeholder="Chọn"
+
                                     isRequired
                                     selectedKeys={new Set(formData.directManagerIds)}
                                     onSelectionChange={(keys) => {
@@ -629,7 +629,7 @@ export const StaffContractInfo: FC<StaffContractInfoProps> = ({ staffId }) => {
                                     label="Loại hình làm việc theo ca"
                                     isRequired
                                     labelPlacement="outside"
-                                    placeholder="Chọn"
+
                                     selectedKeys={formData.shiftType ? [formData.shiftType] : []}
                                     onSelectionChange={(keys) => {
                                         const val = Array.from(keys)[0] as string;

@@ -16,7 +16,7 @@ import {
   recruitmentRequestSchema,
   DEFAULT_VALUES,
   type RecruitmentRequestFormValues,
-} from '../schemas/schema';
+} from '../schemas/recruitment-request.schema';
 import dayjs from 'dayjs';
 
 interface UseFormRecruitmentRequestParams {
@@ -75,6 +75,7 @@ export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentR
     mutationFn: (data: RecruitmentRequestFormValues) => recruitmentRequestService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.summary() });
       addToast({ description: t('form.toast.create_success'), color: 'success' });
       onSuccess?.();
     },
@@ -88,6 +89,7 @@ export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentR
       recruitmentRequestService.update(id!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.summary() });
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.detail(id!) });
       addToast({ description: t('form.toast.update_success'), color: 'success' });
       onSuccess?.();

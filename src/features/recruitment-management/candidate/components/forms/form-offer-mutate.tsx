@@ -15,6 +15,7 @@ import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { formatVND } from '@/lib/helpers';
 
 import { useFormOffer } from '../../hooks/use-form-offer';
+import { useDirtyDrawer } from '@/hooks/use-dirty-drawer';
 import { CandidateStatusSelect } from '../details/candidate-status-select';
 import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { useState } from 'react';
@@ -39,6 +40,7 @@ export function FormOfferMutate() {
         candidateId,
         onSuccess: onClose,
     });
+    useDirtyDrawer(methods.formState.isDirty);
 
     const { control } = methods;
     const { options: departmentOptions } = useDepartmentOptions();
@@ -112,13 +114,13 @@ export function FormOfferMutate() {
                                 name="baseSalary"
                                 label={t('candidate.offer.fields.base_salary')}
                                 isRequired
-                                placeholder="Nhập"
+
                             />
                             <FormNumberInput
                                 control={control}
                                 name="allowance"
                                 label={t('candidate.offer.fields.allowance')}
-                                placeholder="Nhập"
+
                             />
                         </div>
 
@@ -128,7 +130,7 @@ export function FormOfferMutate() {
                                 control={control}
                                 name="specialAllowance"
                                 label={t('candidate.offer.fields.special_allowance')}
-                                placeholder="Nhập"
+
                             />
                             <Input
                                 isReadOnly
@@ -152,7 +154,7 @@ export function FormOfferMutate() {
                                 control={control}
                                 name="probationMonths"
                                 label={t('candidate.offer.fields.probation_months')}
-                                placeholder="Nhập"
+
                             />
                         </div>
 

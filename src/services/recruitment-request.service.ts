@@ -9,7 +9,7 @@ import type {
   MetadataRecruitmentRequest,
   RejectRecruitmentRequestPayload,
 } from '@/features/recruitment-management/recruitment-request-list/types/type';
-import type { RecruitmentRequestFormValues } from '@/features/recruitment-management/recruitment-request-list/schemas/schema';
+import type { RecruitmentRequestFormValues } from '@/features/recruitment-management/recruitment-request-list/schemas/recruitment-request.schema';
 
 import { BaseApiService } from './base-api.service';
 import { API_ENDPOINTS } from './constants/endpoints';

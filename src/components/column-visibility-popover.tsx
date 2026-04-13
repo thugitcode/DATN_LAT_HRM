@@ -125,7 +125,7 @@ export function ColumnVisibilityPopover<T extends object>({
           <div className="flex items-center gap-2">
             <Button
               variant="bordered"
-              className="rounded-lg border-[#E4E4E7] text-[#3F3F46] min-w-16"
+              className="rounded-lg border-1 border-[#E4E4E7] text-[#3F3F46] min-w-16"
               onPress={() => setIsOpen(false)}
             >
               {tc('button.cancel')}

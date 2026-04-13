@@ -94,7 +94,12 @@
     "timekeepingDetails": "Timekeeping details",
     "enter_kpi": "Enter KPI",
     "revenueDetails": "Enter sales",
-    "additionalArisingAmounts": "Additional arising amounts"
+    "additionalArisingAmounts": "Additional arising amounts",
+    "confirm_close": {
+      "title": "Discard changes?",
+      "description": "The data you entered will not be saved. Are you sure you want to close?",
+      "confirm": "Discard changes"
+    }
   },
   "button": {
     "cancel": "Cancel",
@@ -251,6 +256,11 @@
       "WFH": "Work From Home",
       "BUSINESS_TRIP": "Business Trip",
       "VM": "Absent"
+    },
+    "gender": {
+      "MALE": "Male",
+      "FEMALE": "Female",
+      "OTHER": "Other"
     }
   },
   "staff": "Staff",

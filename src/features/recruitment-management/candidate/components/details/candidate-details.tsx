@@ -5,6 +5,7 @@ import { DetailCandidateTabEnum } from '@/features/recruitment-management/consta
 import { CandidateDetailHeader } from './candidate-detail-header';
 import { CandidateDetailTabs } from './candidate-detail-tabs';
 import { CandidateSidebar } from './candidate-sidebar';
+import { LoadingWrapper } from '@/components/loading-wrapper';
 
 interface CandidateDetailsProps {
     id: string;
@@ -18,9 +19,9 @@ export function CandidateDetails({ id, tab, onTabChange }: CandidateDetailsProps
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center h-full">
-                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-            </div>
+            <LoadingWrapper isLoading={isLoading} height='50vh'>
+                <></>
+            </LoadingWrapper>
         );
     }
 

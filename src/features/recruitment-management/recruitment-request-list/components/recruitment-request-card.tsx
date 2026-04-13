@@ -1,30 +1,19 @@
 import type { FC } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
   Progress,
 } from '@heroui/react';
 import {
   IconCalendar,
-  IconCopy,
-  IconDots,
-  IconEdit,
-  IconEye,
-  IconPrinter,
-  IconTrash,
-  IconUsers,
-  IconX,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
 import { formatDate } from '@/lib/utils';
 
-import { RecruitmentRequestStatusEnum, type RecruitmentRequest } from '../types/type';
+import { type RecruitmentRequest } from '../types/type';
 import { RecruitmentRequestStatusChip } from './recruitment-request-status-chip';
+import { RecruitmentRequestActionButtons, RecruitmentRequestActionDropdown } from './row-recruitment-request-actions';
+import { useNavigate } from '@tanstack/react-router';
 
 interface RecruitmentRequestCardProps {
   data: RecruitmentRequest;
@@ -49,139 +38,24 @@ const getProgress = (requiredDate: string, createdAt: string): number => {
 
 export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }) => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+  const navigate = useNavigate();
 
   const daysRemaining = getDaysRemaining(data.requiredDate);
   const progress = getProgress(data.requiredDate, data.createdAt);
 
-  const renderActionButton = () => {
-    switch (data.status) {
-      case RecruitmentRequestStatusEnum.DRAFT:
-        return (
-          <Button size="sm" color="primary" className="rounded-xl font-normal h-9 flex-1 text-sm">
-            {t('recruitment_request.actions.submit_review')}
-          </Button>
-        );
-      case RecruitmentRequestStatusEnum.PENDING:
-        return (
-          <Button size="sm" color="primary" className="rounded-xl font-normal h-9 flex-1 text-sm">
-            {t('recruitment_request.actions.approve')}
-          </Button>
-        );
-      case RecruitmentRequestStatusEnum.REJECTED:
-        return (
-          <Button size="sm" color="primary" className="rounded-xl font-normal h-9 flex-1 text-sm">
-            {t('recruitment_request.actions.resubmit_review')}
-          </Button>
-        );
-      case RecruitmentRequestStatusEnum.APPROVED:
-        return (
-          <Button size="sm" color="primary" className="rounded-xl font-normal h-9 flex-1 text-sm">
-            {t('recruitment_request.actions.start_recruiting')}
-          </Button>
-        );
-      case RecruitmentRequestStatusEnum.RECRUITING:
-        return (
-          <Button
-            size="sm"
-            variant="bordered"
-            color="primary"
-            className="rounded-xl font-normal h-9 flex-1 text-sm"
-          >
-            {t('recruitment_request.actions.pause')}
-          </Button>
-        );
-      case RecruitmentRequestStatusEnum.PAUSED:
-        return (
-          <Button size="sm" color="primary" className="rounded-xl font-normal h-9 flex-1 text-sm">
-            {t('recruitment_request.actions.resume')}
-          </Button>
-        );
-      default:
-        return null;
-    }
+  const handleCardClick = () => {
+    navigate({ to: `/admin/recruitment-management/recruitment-request/${data.id}` });
   };
-
-  const getDropdownItems = () => {
-    const items: { key: string; label: string; icon: React.ReactNode; color?: 'danger' }[] = [];
-
-    switch (data.status) {
-      case RecruitmentRequestStatusEnum.DRAFT:
-        items.push(
-          { key: 'edit', label: t('recruitment_request.actions.edit'), icon: <IconEdit size={16} /> },
-          { key: 'delete', label: t('recruitment_request.actions.delete'), icon: <IconTrash size={16} />, color: 'danger' },
-        );
-        break;
-      case RecruitmentRequestStatusEnum.PENDING:
-        items.push(
-          { key: 'revoke', label: t('recruitment_request.actions.revoke'), icon: <IconX size={16} /> },
-          { key: 'print', label: t('recruitment_request.actions.print'), icon: <IconPrinter size={16} /> },
-        );
-        break;
-      case RecruitmentRequestStatusEnum.REJECTED:
-        items.push(
-          { key: 'view_reason', label: t('recruitment_request.actions.view_reason'), icon: <IconEye size={16} /> },
-          { key: 'edit', label: t('recruitment_request.actions.edit'), icon: <IconEdit size={16} /> },
-        );
-        break;
-      case RecruitmentRequestStatusEnum.APPROVED:
-        items.push(
-          { key: 'edit_limited', label: t('recruitment_request.actions.edit_limited'), icon: <IconEdit size={16} /> },
-        );
-        break;
-      case RecruitmentRequestStatusEnum.RECRUITING:
-        items.push(
-          { key: 'close', label: t('recruitment_request.actions.close'), icon: <IconX size={16} /> },
-          { key: 'view_candidates', label: t('recruitment_request.actions.view_candidates'), icon: <IconUsers size={16} /> },
-        );
-        break;
-      case RecruitmentRequestStatusEnum.PAUSED:
-        items.push(
-          { key: 'close', label: t('recruitment_request.actions.close'), icon: <IconX size={16} /> },
-        );
-        break;
-      case RecruitmentRequestStatusEnum.CLOSED:
-      case RecruitmentRequestStatusEnum.CANCELLED:
-        items.push(
-          { key: 'duplicate', label: t('recruitment_request.actions.duplicate'), icon: <IconCopy size={16} /> },
-        );
-        break;
-    }
-
-    items.push({
-      key: 'view_detail',
-      label: t('recruitment_request.actions.view_detail'),
-      icon: <IconEye size={16} />,
-    });
-
-    return items;
-  };
-
-  const dropdownItems = getDropdownItems();
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-3 flex flex-col gap-3">
+    <div
+      className="bg-white rounded-xl shadow-sm p-3 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow"
+      onClick={handleCardClick}
+    >
       {/* Header: Status + Menu */}
       <div className="flex items-center justify-between">
         <RecruitmentRequestStatusChip status={data.status} />
-        <Dropdown>
-          <DropdownTrigger>
-            <Button isIconOnly size="sm" variant="light" className="rounded-lg h-8 w-8 min-w-8">
-              <IconDots size={18} color="#71717A" />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu aria-label="actions">
-            {dropdownItems.map((item) => (
-              <DropdownItem
-                key={item.key}
-                startContent={item.icon}
-                color={item.color}
-                className={item.color === 'danger' ? 'text-danger' : ''}
-              >
-                {item.label}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </Dropdown>
+        <RecruitmentRequestActionDropdown dataRow={data} />
       </div>
 
       {/* Position Info */}
@@ -190,7 +64,7 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
         <div className="flex items-center gap-2 text-sm text-[#71717A] leading-5">
           <span>{data.workType}</span>
           <span className="size-1 rounded-full bg-[#71717A]" />
-          <span>{data.salaryRange}</span>
+          <span>{data?.salaryFrom ?? '-'} - {data?.salaryTo ?? '-'}</span>
           <span className="size-1 rounded-full bg-[#71717A]" />
           <span>{t('recruitment_request.card.people_count', { count: data.quantity })}</span>
         </div>
@@ -239,8 +113,9 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
       <div className="flex items-center gap-2">
         <span className="text-xs text-[#A1A1AA]">{t('recruitment_request.card.created_by')}</span>
         <span className="text-xs text-black flex-1">{data.createdByName}</span>
-        {renderActionButton()}
+        <RecruitmentRequestActionButtons dataRow={data} size="sm" className="flex-1" />
       </div>
     </div>
   );
 };
+

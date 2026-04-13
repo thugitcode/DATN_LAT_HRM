@@ -15,10 +15,10 @@ if (rootEl) {
   const root = ReactDOM.createRoot(rootEl);
 
   root.render(
-    <KeycloakProvider>
+    // <KeycloakProvider>
       <React.StrictMode>
         <App />
       </React.StrictMode>
-    </KeycloakProvider>,
+    // </KeycloakProvider>,
   );
 }

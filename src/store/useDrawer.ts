@@ -19,21 +19,26 @@ export enum DrawerType {
   OFFER_MUTATE = 'OFFER_MUTATE',
   EVALUATION_MUTATE = 'EVALUATION_MUTATE',
   INTERVIEW_SCHEDULE_MUTATE = 'INTERVIEW_SCHEDULE_MUTATE',
+  PROBATION_ACCEPT = 'PROBATION_ACCEPT',
+  CANDIDATE_PROBATION_CREATE = 'CANDIDATE_PROBATION_CREATE',
 }
 
 interface DrawerState {
   isOpen: boolean;
   type: DrawerType | null;
   data: unknown;
+  isDirty: boolean;
 
   onOpen: <D = unknown>(type: DrawerType, data?: D) => void;
   onClose: () => void;
+  setDirty: (v: boolean) => void;
 }
 
 export const useDrawer = create<DrawerState>((set) => ({
   isOpen: false,
   type: null,
   data: undefined,
+  isDirty: false,
 
   onOpen: (type, data) =>
     set({
@@ -47,5 +52,8 @@ export const useDrawer = create<DrawerState>((set) => ({
       isOpen: false,
       type: null,
       data: undefined,
+      isDirty: false,
     }),
+
+  setDirty: (v) => set({ isDirty: v }),
 }));

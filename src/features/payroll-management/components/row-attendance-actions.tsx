@@ -20,6 +20,7 @@ export const RowAttendanceActions: FC<RowAttendanceActionsProps> = ({ dataRow })
       color="primary"
       variant="bordered"
       onPress={() => onOpen(DrawerType.TIMEKEEPING_DETAILS, dataRow?.id)}
+      className='border-1'
     >
       {t('attendance_data.viewDetail')}
     </Button>

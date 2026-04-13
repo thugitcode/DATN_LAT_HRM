@@ -37,6 +37,7 @@ export function useRecruitmentRequestAction<A extends RecruitmentRequestActionEn
     mutationFn: (payload: ActionPayload[A]) => ACTION_FN[action](id, payload as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.summary() });
       addToast({ description: t(`form.toast.${action}_success` as any), color: 'success' });
     },
     onError: () => {

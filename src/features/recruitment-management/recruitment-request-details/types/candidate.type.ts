@@ -1,7 +1,8 @@
 import type { PaginationParams } from '@/types';
 import type { CandidateSourceEnum } from '../../types/candidate.type';
 import type { AcademicTitleEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
-import type { EducationLevelEnum, ExperienceYearsEnum } from '../../constants/constants';
+import type { EducationLevelEnum, ExperienceYearsEnum } from '../../constants/candidate.constants';
+import type { DrawerType } from '@/store/useDrawer';
 
 export enum CandidateStatusEnum {
   APPLIED = 'APPLIED',
@@ -213,3 +214,27 @@ export interface KanbanColumn {
   color: string;
   bgColor: string;
 }
+
+export type CandidateRowSecondaryAction = {
+  key: string;
+  labelKey: string;
+  icon: React.ReactNode;
+  color?: 'danger';
+  statusTo?: CandidateStatusEnum;       // quick status update
+  drawer?: DrawerType;                  // open a drawer
+  navigate?: 'detail';                  // navigate to detail page
+};
+
+export type CandidateRowActionConfig = {
+  mainLabelKey: string;
+  mainIcon: React.ReactNode;
+  mainVariant?: 'solid' | 'bordered';
+  mainColor?: 'primary' | 'danger';
+  /** If set, main action updates status to this value */
+  mainStatusTo?: CandidateStatusEnum;
+  /** If set, main action opens this drawer */
+  mainDrawer?: DrawerType;
+  /** If set, main action navigates to detail */
+  mainNavigate?: 'detail';
+  secondary: CandidateRowSecondaryAction[];
+};

@@ -44,9 +44,9 @@ export const CandidateKanban = ({ candidates, recruitmentRequestId, maxListboxHe
             {t('candidate.empty.description')}
           </p>
         </div>
-        <Button color="primary" startContent={<IconUserPlus size={16} />} onPress={handleAddCandidate}>
+        {/* <Button color="primary" startContent={<IconUserPlus size={16} />} onPress={handleAddCandidate}>
           {t('candidate.actions.add_candidate')}
-        </Button>
+        </Button> */}
       </div>
     );
   }

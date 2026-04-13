@@ -31,6 +31,7 @@ export interface InterviewSchedule {
   position: string;
   departmentName: string;
   roomName: string;
+  address: string;
   onlineLink: string;
   createdAt: string;
   interviewer: Staff

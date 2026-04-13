@@ -16,6 +16,7 @@ import { candidateQueryOptions } from '@/services/query-options/recruitment-mana
 import { InterviewMethodEnum } from '@/features/recruitment-management/recruitment-request-details/types/interview.type';
 
 import { useFormInterviewSchedule } from '../hooks/use-form-interview-schedule';
+import { useDirtyDrawer } from '@/hooks/use-dirty-drawer';
 import { FormTimePicker } from '@/components/form-fields/form-time-picker';
 import { EmailSection } from '../components/email-section';
 
@@ -42,6 +43,7 @@ export function FormInterviewScheduleMutate() {
         onSuccess: onClose,
         onSuccessAndSendMail: onClose,
     });
+    useDirtyDrawer(methods.formState.isDirty);
 
     const { control, watch } = methods;
     const interviewMethod = watch('interviewMethod');

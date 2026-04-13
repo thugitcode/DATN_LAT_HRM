@@ -20,19 +20,21 @@ import { useRecruitmentRequestAction } from '../hooks/use-recruitment-request-ac
 import { useConfirmStore } from '@/store/useConfirmStore';
 import { useIsFetching } from '@tanstack/react-query';
 import { recruitmentRequestKeys } from '@/services/query-options/recruitment-request.query';
+import { cn } from '@/lib/utils';
 
-const BTN_BASE = 'rounded-xl font-medium h-9 w-[120px] text-sm';
+const BTN_BASE = 'rounded-xl font-medium h-9 min-w-[120px] text-sm border-1';
 
 interface RowRecruitmentRequestActionsProps {
   dataRow?: RecruitmentRequest;
 }
 
-export const RowRecruitmentRequestActions: FC<RowRecruitmentRequestActionsProps> = ({
-  dataRow,
-}) => {
+export const useRecruitmentRequestActions = (dataRow?: RecruitmentRequest) => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-  const { onOpen } = useDrawer()
-  const { setMode } = useControlMode()
+  const { onOpen } = useDrawer();
+  const { setMode } = useControlMode();
+  const openConfirm = useConfirmStore((s) => s.open);
+  const isFetchingList = useIsFetching({ queryKey: recruitmentRequestKeys.lists() }) > 0;
+
   const { mutate: submit, isPending: isSubmitting } = useRecruitmentRequestAction(RecruitmentRequestActionEnum.SUBMIT, dataRow?.id ?? '');
   const { mutate: approve, isPending: isApproving } = useRecruitmentRequestAction(RecruitmentRequestActionEnum.APPROVE, dataRow?.id ?? '');
   const { mutate: openRecruiting, isPending: isOpeningRecruiting } = useRecruitmentRequestAction(RecruitmentRequestActionEnum.OPEN_RECRUITING, dataRow?.id ?? '');
@@ -40,88 +42,8 @@ export const RowRecruitmentRequestActions: FC<RowRecruitmentRequestActionsProps>
   const { mutate: resume, isPending: isResuming } = useRecruitmentRequestAction(RecruitmentRequestActionEnum.RESUME, dataRow?.id ?? '');
   const { mutate: reject, isPending: isRejecting } = useRecruitmentRequestAction(RecruitmentRequestActionEnum.REJECT, dataRow?.id ?? '');
   const { mutate: closeRequest } = useRecruitmentRequestAction(RecruitmentRequestActionEnum.CLOSE, dataRow?.id ?? '');
-  const openConfirm = useConfirmStore((s) => s.open);
-  const isFetchingList = useIsFetching({ queryKey: recruitmentRequestKeys.lists() }) > 0;
+  const { mutate: cancelRequest, isPending: isCancelling } = useRecruitmentRequestAction(RecruitmentRequestActionEnum.CANCEL, dataRow?.id ?? '');
 
-  if (!dataRow) return null;
-
-  const renderActions = () => {
-    switch (dataRow.status) {
-      // Chờ duyệt: nút X đỏ (reject) + "Duyệt" filled blue
-      case RecruitmentRequestStatusEnum.PENDING:
-        return (
-          <>
-            <Button
-              isIconOnly
-
-              variant="flat"
-              className="rounded-lg h-8 w-8 min-w-8"
-              isLoading={isRejecting || isFetchingList}
-              onPress={() => openConfirm(
-                {
-                  title: t('recruitment_request.confirm.reject_title'),
-                  description: t('recruitment_request.confirm.reject_description'),
-                  confirmLabel: t('recruitment_request.actions.reject'),
-                  confirmColor: 'danger',
-                  requireReason: true,
-                },
-                async (reason) => reject({ rejectionReason: reason ?? '' }),
-              )}
-            >
-              <IconX size={16} color="#F31260" />
-            </Button>
-            <Button color="primary" className={BTN_BASE} isLoading={isApproving || isFetchingList} onPress={() => approve(undefined)}>
-              {t('recruitment_request.actions.approve')}
-            </Button>
-          </>
-        );
-      // Nháp: "Gửi duyệt" filled blue
-      case RecruitmentRequestStatusEnum.DRAFT:
-        return (
-          <Button color="primary" className={BTN_BASE} isLoading={isSubmitting || isFetchingList} onPress={() => submit(undefined)}>
-            {t('recruitment_request.actions.submit_review')}
-          </Button>
-        );
-      // Từ chối duyệt: "Gửi duyệt lại" filled primary
-      case RecruitmentRequestStatusEnum.REJECTED:
-        return (
-          <Button color="primary" className={BTN_BASE} isLoading={isSubmitting || isFetchingList} onPress={() => submit(undefined)}>
-            {t('recruitment_request.actions.resubmit_review')}
-          </Button>
-        );
-      // Đã duyệt: "Mở tuyển" filled primary
-      case RecruitmentRequestStatusEnum.APPROVED:
-        return (
-          <Button color="primary" className={BTN_BASE} isLoading={isOpeningRecruiting || isFetchingList} onPress={() => openRecruiting(undefined)}>
-            {t('recruitment_request.actions.start_recruiting')}
-          </Button>
-        );
-      // Đang tuyển: "Tạm dừng" bordered primary
-      case RecruitmentRequestStatusEnum.RECRUITING:
-        return (
-          <Button variant="bordered" color="primary" className={BTN_BASE} isLoading={isPausing || isFetchingList} onPress={() => pause(undefined)}>
-            {t('recruitment_request.actions.pause')}
-          </Button>
-        );
-      // Tạm dừng: "Mở lại" bordered primary
-      case RecruitmentRequestStatusEnum.PAUSED:
-        return (
-          <Button variant="bordered" color="primary" className={BTN_BASE} isLoading={isResuming || isFetchingList} onPress={() => resume(undefined)}>
-            {t('recruitment_request.actions.resume')}
-          </Button>
-        );
-      // Đã đóng / Hủy: "Xem chi tiết" bordered primary
-      case RecruitmentRequestStatusEnum.CLOSED:
-      case RecruitmentRequestStatusEnum.CANCELLED:
-        return (
-          <Button variant="bordered" color="primary" className={BTN_BASE}>
-            {t('recruitment_request.actions.view_detail')}
-          </Button>
-        );
-      default:
-        return null;
-    }
-  };
   const handleCloseRequest = () => {
     openConfirm(
       {
@@ -131,9 +53,138 @@ export const RowRecruitmentRequestActions: FC<RowRecruitmentRequestActionsProps>
         confirmColor: 'danger',
         requireReason: true,
       },
-      async (reason) => closeRequest(undefined),
-    )
-  }
+      async () => closeRequest(undefined),
+    );
+  };
+
+  const handleReject = () => {
+    openConfirm(
+      {
+        title: t('recruitment_request.confirm.reject_title'),
+        description: t('recruitment_request.confirm.reject_description'),
+        confirmLabel: t('recruitment_request.actions.reject'),
+        confirmColor: 'danger',
+        requireReason: true,
+      },
+      async (reason) => reject({ rejectionReason: reason ?? '' }),
+    );
+  };
+
+  const handleCancelRequest = () => {
+    openConfirm(
+      {
+        title: t('recruitment_request.confirm.cancel_title'),
+        description: t('recruitment_request.confirm.cancel_description'),
+        confirmLabel: t('recruitment_request.actions.delete'),
+        confirmColor: 'danger',
+      },
+      async () => cancelRequest(undefined),
+    );
+  };
+
+  return {
+    t,
+    onOpen,
+    setMode,
+    openConfirm,
+    isFetchingList,
+    actions: {
+      submit, isSubmitting,
+      approve, isApproving,
+      openRecruiting, isOpeningRecruiting,
+      pause, isPausing,
+      resume, isResuming,
+      reject, isRejecting,
+      closeRequest,
+      cancelRequest,
+      handleCloseRequest,
+      handleReject,
+      handleCancelRequest,
+      isCancelling,
+    }
+  };
+};
+
+export const RecruitmentRequestActionButtons: FC<{ dataRow: RecruitmentRequest; className?: string; size?: 'sm' | 'md' | 'lg' }> = ({ dataRow, className, size = 'md' }) => {
+  const { t, isFetchingList, actions } = useRecruitmentRequestActions(dataRow);
+  const { submit, isSubmitting, approve, isApproving, openRecruiting, isOpeningRecruiting, pause, isPausing, resume, isResuming, isRejecting, handleReject } = actions;
+
+  const btnClass = cn(BTN_BASE, className);
+
+  const renderButtons = () => {
+    switch (dataRow.status) {
+      case RecruitmentRequestStatusEnum.PENDING:
+        return (
+          <div className="flex items-center gap-2">
+            <Button
+              isIconOnly
+              variant="flat"
+              className="rounded-lg h-8 w-8 min-w-8"
+              isLoading={isRejecting || isFetchingList}
+              onPress={handleReject}
+            >
+              <IconX size={16} color="#F31260" />
+            </Button>
+            <Button color="primary" className={btnClass} size={size} isLoading={isApproving || isFetchingList} onPress={() => approve(undefined)}>
+              {t('recruitment_request.actions.approve')}
+            </Button>
+          </div>
+        );
+      case RecruitmentRequestStatusEnum.DRAFT:
+        return (
+          <Button color="primary" className={btnClass} size={size} isLoading={isSubmitting || isFetchingList} onPress={() => submit(undefined)}>
+            {t('recruitment_request.actions.submit_review')}
+          </Button>
+        );
+      case RecruitmentRequestStatusEnum.REJECTED:
+        return (
+          <Button color="primary" className={btnClass} size={size} isLoading={isSubmitting || isFetchingList} onPress={() => submit(undefined)}>
+            {t('recruitment_request.actions.resubmit_review')}
+          </Button>
+        );
+      case RecruitmentRequestStatusEnum.APPROVED:
+        return (
+          <Button color="primary" className={btnClass} size={size} isLoading={isOpeningRecruiting || isFetchingList} onPress={() => openRecruiting(undefined)}>
+            {t('recruitment_request.actions.start_recruiting')}
+          </Button>
+        );
+      case RecruitmentRequestStatusEnum.RECRUITING:
+        return (
+          <Button variant="bordered" color="primary" className={btnClass} size={size} isLoading={isPausing || isFetchingList} onPress={() => pause(undefined)}>
+            {t('recruitment_request.actions.pause')}
+          </Button>
+        );
+      case RecruitmentRequestStatusEnum.PAUSED:
+        return (
+          <Button variant="bordered" color="primary" className={btnClass} size={size} isLoading={isResuming || isFetchingList} onPress={() => resume(undefined)}>
+            {t('recruitment_request.actions.resume')}
+          </Button>
+        );
+      case RecruitmentRequestStatusEnum.CLOSED:
+      case RecruitmentRequestStatusEnum.CANCELLED:
+        return (
+          <Button variant="bordered" color="primary" className={btnClass} size={size}>
+            {t('recruitment_request.actions.view_detail')}
+          </Button>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div onClick={(e) => e.stopPropagation()} className={className}>
+      {renderButtons()}
+    </div>
+  );
+};
+
+
+
+export const RecruitmentRequestActionDropdown: FC<{ dataRow: RecruitmentRequest }> = ({ dataRow }) => {
+  const { t, onOpen, setMode, actions } = useRecruitmentRequestActions(dataRow);
+  const { handleCloseRequest, handleCancelRequest } = actions;
+
   const getDropdownItems = () => {
     const items: { key: string; label: string; icon: React.ReactNode; color?: 'danger'; onClick?: () => void }[] = [];
 
@@ -146,13 +197,15 @@ export const RowRecruitmentRequestActions: FC<RowRecruitmentRequestActionsProps>
             icon: <IconEdit size={16} />,
             onClick: () => {
               setMode(ControlMode.edit);
-              onOpen(DrawerType.RECRUITMENT_REQUEST_MUTATE,
-                { id: dataRow?.id })
+              onOpen(DrawerType.RECRUITMENT_REQUEST_MUTATE, { id: dataRow?.id });
             }
           },
           {
             key: 'delete',
-            label: t('recruitment_request.actions.delete'), icon: <IconTrash size={16} />, color: 'danger'
+            label: t('recruitment_request.actions.delete'),
+            icon: <IconTrash size={16} />,
+            color: 'danger',
+            onClick: handleCancelRequest
           },
         );
         break;
@@ -231,7 +284,7 @@ export const RowRecruitmentRequestActions: FC<RowRecruitmentRequestActionsProps>
       key: 'view_detail',
       label: t('recruitment_request.actions.view_detail'),
       icon: <IconEye size={16} />,
-      onClick: () => { setMode(ControlMode.view); onOpen(DrawerType.RECRUITMENT_REQUEST_MUTATE, { id: dataRow?.id }) }
+      onClick: () => { setMode(ControlMode.view); onOpen(DrawerType.RECRUITMENT_REQUEST_MUTATE, { id: dataRow?.id }); }
     });
 
     return items;
@@ -240,28 +293,39 @@ export const RowRecruitmentRequestActions: FC<RowRecruitmentRequestActionsProps>
   const dropdownItems = getDropdownItems();
 
   return (
+    <Dropdown>
+      <DropdownTrigger>
+        <Button isIconOnly variant="light" className="rounded-lg h-8 w-8 min-w-8" onClick={(e) => e.stopPropagation()}>
+          <IconDots size={18} color="#71717A" />
+        </Button>
+      </DropdownTrigger>
+      <DropdownMenu aria-label="actions">
+        {dropdownItems.map((item) => (
+          <DropdownItem
+            key={item.key}
+            startContent={item.icon}
+            color={item.color}
+            className={item.color === 'danger' ? 'text-danger' : ''}
+            onClick={() => item.onClick?.()}
+          >
+            {item.label}
+          </DropdownItem>
+        ))}
+      </DropdownMenu>
+    </Dropdown>
+  );
+};
+
+export const RowRecruitmentRequestActions: FC<RowRecruitmentRequestActionsProps> = ({
+  dataRow,
+}) => {
+  if (!dataRow) return null;
+
+  return (
     <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
-      {renderActions()}
-      <Dropdown>
-        <DropdownTrigger>
-          <Button isIconOnly variant="light" className="rounded-lg h-8 w-8 min-w-8">
-            <IconDots size={18} color="#71717A" />
-          </Button>
-        </DropdownTrigger>
-        <DropdownMenu aria-label="actions">
-          {dropdownItems.map((item) => (
-            <DropdownItem
-              key={item.key}
-              startContent={item.icon}
-              color={item.color}
-              className={item.color === 'danger' ? 'text-danger' : ''}
-              onClick={() => item.onClick?.()}
-            >
-              {item.label}
-            </DropdownItem>
-          ))}
-        </DropdownMenu>
-      </Dropdown>
+      <RecruitmentRequestActionButtons dataRow={dataRow} />
+      <RecruitmentRequestActionDropdown dataRow={dataRow} />
     </div>
   );
 };
+

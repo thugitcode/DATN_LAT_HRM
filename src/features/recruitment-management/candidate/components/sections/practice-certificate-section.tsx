@@ -34,7 +34,7 @@ export function PracticeCertificateSection() {
             control={control}
             name="practiceNumber"
             label={t('candidate.form.fields.practice_number')}
-            placeholder="Nhập"
+
           />
 
           <FormDatePicker
@@ -48,14 +48,14 @@ export function PracticeCertificateSection() {
             control={control}
             name="practiceIssuePlace"
             label={t('candidate.form.fields.practice_issue_place')}
-            placeholder="Nhập"
+
           />
 
           <FormInput
             control={control}
             name="practiceScope"
             label={t('candidate.form.fields.practice_scope')}
-            placeholder="Nhập"
+
           />
 
           <div className="col-span-2">

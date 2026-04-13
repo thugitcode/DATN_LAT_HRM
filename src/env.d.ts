@@ -9,3 +9,16 @@ declare module "*.svg?react" {
   const ReactComponent: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
   export default ReactComponent;
 }
+
+/**
+ * Allows importing CSS files as side-effect imports.
+ */
+declare module "*.css" {
+  const content: { [className: string]: string };
+  export default content;
+}
+
+/**
+ * Specific declaration for react-big-calendar CSS.
+ */
+declare module 'react-big-calendar/lib/css/react-big-calendar.css';

@@ -100,7 +100,12 @@
     "timekeepingDetails": "Chi tiết chấm công",
     "enter_kpi": "Nhập KPI",
     "revenueDetails": "Nhập doanh số",
-    "additionalArisingAmounts": "Thêm khoản phát sinh"
+    "additionalArisingAmounts": "Thêm khoản phát sinh",
+    "confirm_close": {
+      "title": "Hủy thay đổi?",
+      "description": "Dữ liệu bạn vừa nhập sẽ không được lưu. Bạn có chắc chắn muốn đóng?",
+      "confirm": "Hủy thay đổi"
+    }
   },
 
   "button": {
@@ -261,6 +266,11 @@
       "WFH": "Làm việc tại nhà",
       "BUSINESS_TRIP": "Công tác",
       "VM": "Vắng mặt"
+    },
+    "gender": {
+      "MALE": "Nam",
+      "FEMALE": "Nữ",
+      "OTHER": "Khác"
     }
   },
   "staff": "Nhân viên",
