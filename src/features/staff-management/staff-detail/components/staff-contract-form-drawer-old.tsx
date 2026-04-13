@@ -417,7 +417,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     <Select
                                                         label="Loại hợp đồng"
                                                         labelPlacement="outside"
-                                                        placeholder="Chọn"
+
                                                         classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                         isRequired
                                                         selectedKeys={contractType ? [contractType] : []}
@@ -431,7 +431,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     <Select
                                                         label="Loại hình"
                                                         labelPlacement="outside"
-                                                        placeholder="Chọn"
+
                                                         classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                         isRequired
                                                         selectedKeys={workType ? [workType] : []}
@@ -444,7 +444,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     <Select
                                                         label="Chức danh"
                                                         labelPlacement="outside"
-                                                        placeholder="Chọn"
+
                                                         classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                         isRequired
                                                         selectedKeys={jobTitle ? [jobTitle] : []}
@@ -459,7 +459,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     <Select
                                                         label="Cấp bậc"
                                                         labelPlacement="outside"
-                                                        placeholder="Chọn"
+
                                                         classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                         isRequired
                                                         selectedKeys={position ? [position] : []}
@@ -475,7 +475,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     <Input
                                                         label="Thời hạn hợp đồng"
                                                         labelPlacement="outside"
-                                                        placeholder="Nhập"
+
                                                         classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                         isRequired
                                                         value={duration}
@@ -598,7 +598,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     <Select
                                                         label="Quản lý trực tiếp"
                                                         labelPlacement="outside"
-                                                        placeholder="Chọn"
+
                                                         classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                         isRequired
                                                         selectionMode="multiple"
@@ -614,7 +614,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     <Select
                                                         label="Loại hình làm việc theo ca"
                                                         labelPlacement="outside"
-                                                        placeholder="Chọn"
+
                                                         classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                         isRequired
                                                         selectedKeys={shiftType ? [shiftType] : []}
@@ -680,20 +680,20 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             <div className="grid grid-cols-2 gap-6">
                                                 <div className="flex flex-col gap-2">
                                                     <Checkbox isSelected={hasHealthInsurance} onValueChange={setHasHealthInsurance} size="sm" classNames={{ label: "text-sm font-semibold text-[#11181C]" }}>Bảo hiểm y tế</Checkbox>
-                                                    <Input label="Tỷ lệ đóng" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">%</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={healthInsuranceRate} onValueChange={setHealthInsuranceRate} />
+                                                    <Input label="Tỷ lệ đóng" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">%</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={healthInsuranceRate} onValueChange={setHealthInsuranceRate} />
                                                 </div>
                                                 <div className="flex flex-col gap-2">
                                                     <Checkbox isSelected={hasSocialInsurance} onValueChange={setHasSocialInsurance} size="sm" classNames={{ label: "text-sm font-semibold text-[#11181C]" }}>Bảo hiểm xã hội</Checkbox>
-                                                    <Input label="Tỷ lệ đóng" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">%</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={socialInsuranceRate} onValueChange={setSocialInsuranceRate} />
+                                                    <Input label="Tỷ lệ đóng" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">%</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={socialInsuranceRate} onValueChange={setSocialInsuranceRate} />
                                                 </div>
 
                                                 <div className="flex flex-col gap-2">
                                                     <Checkbox isSelected={hasUnemploymentInsurance} onValueChange={setHasUnemploymentInsurance} size="sm" classNames={{ label: "text-sm font-semibold text-[#11181C]" }}>Bảo hiểm thất nghiệp</Checkbox>
-                                                    <Input label="Tỷ lệ đóng" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">%</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={unemploymentInsuranceRate} onValueChange={setUnemploymentInsuranceRate} />
+                                                    <Input label="Tỷ lệ đóng" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">%</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={unemploymentInsuranceRate} onValueChange={setUnemploymentInsuranceRate} />
                                                 </div>
                                                 <div className="flex flex-col gap-2">
                                                     <Checkbox isSelected={hasUnionFee} onValueChange={setHasUnionFee} size="sm" classNames={{ label: "text-sm font-semibold text-[#11181C]" }}>Công đoàn</Checkbox>
-                                                    <Input label="Mức đóng" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={unionFee} onValueChange={(v) => setUnionFee(formatNumber(v))} />
+                                                    <Input label="Mức đóng" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={unionFee} onValueChange={(v) => setUnionFee(formatNumber(v))} />
                                                 </div>
                                             </div>
                                         </div>
@@ -707,11 +707,11 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
 
                                             <Checkbox isSelected={hasHealthCareInsurance} onValueChange={setHasHealthCareInsurance} size="sm" classNames={{ label: "text-sm font-semibold text-[#11181C]" }}>Sử dụng bảo hiểm sức khỏe</Checkbox>
 
-                                            <Input label="Tên công ty bảo hiểm" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={healthCareInsuranceCompany} onValueChange={setHealthCareInsuranceCompany} isDisabled={!hasHealthCareInsurance} />
+                                            <Input label="Tên công ty bảo hiểm" labelPlacement="outside" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={healthCareInsuranceCompany} onValueChange={setHealthCareInsuranceCompany} isDisabled={!hasHealthCareInsurance} />
 
                                             <div className="grid grid-cols-2 gap-4 mt-2">
-                                                <Input label="Mức hưởng" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={healthCareInsuranceBenefit} onValueChange={(v) => setHealthCareInsuranceBenefit(formatNumber(v))} isDisabled={!hasHealthCareInsurance} />
-                                                <Input label="Mức đóng (%)" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">%</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={healthCareInsuranceRate} onValueChange={setHealthCareInsuranceRate} isDisabled={!hasHealthCareInsurance} />
+                                                <Input label="Mức hưởng" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={healthCareInsuranceBenefit} onValueChange={(v) => setHealthCareInsuranceBenefit(formatNumber(v))} isDisabled={!hasHealthCareInsurance} />
+                                                <Input label="Mức đóng (%)" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">%</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={healthCareInsuranceRate} onValueChange={setHealthCareInsuranceRate} isDisabled={!hasHealthCareInsurance} />
                                             </div>
                                         </div>
                                     </div>
@@ -726,17 +726,17 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
-                                                <Input label="Lương cơ bản" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired value={basicSalary} onValueChange={(v) => setBasicSalary(formatNumber(v))} />
-                                                <Input label="Lương đóng BHXH" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={insuranceSalary} onValueChange={(v) => setInsuranceSalary(formatNumber(v))} />
+                                                <Input label="Lương cơ bản" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} isRequired value={basicSalary} onValueChange={(v) => setBasicSalary(formatNumber(v))} />
+                                                <Input label="Lương đóng BHXH" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={insuranceSalary} onValueChange={(v) => setInsuranceSalary(formatNumber(v))} />
 
-                                                <Input label="Phụ cấp trách nhiệm" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={responsibilityAllowance} onValueChange={(v) => setResponsibilityAllowance(formatNumber(v))} />
-                                                <Input label="Phụ cấp chức vụ" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={positionAllowance} onValueChange={(v) => setPositionAllowance(formatNumber(v))} />
+                                                <Input label="Phụ cấp trách nhiệm" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={responsibilityAllowance} onValueChange={(v) => setResponsibilityAllowance(formatNumber(v))} />
+                                                <Input label="Phụ cấp chức vụ" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={positionAllowance} onValueChange={(v) => setPositionAllowance(formatNumber(v))} />
 
-                                                <Input label="Phụ cấp độc hại, nguy hiểm" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={hazardAllowance} onValueChange={(v) => setHazardAllowance(formatNumber(v))} />
+                                                <Input label="Phụ cấp độc hại, nguy hiểm" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={hazardAllowance} onValueChange={(v) => setHazardAllowance(formatNumber(v))} />
                                                 <Input
                                                     label="Phụ cấp ăn ca"
                                                     labelPlacement="outside"
-                                                    placeholder="Nhập"
+
                                                     endContent={
                                                         <div className="flex items-center gap-2">
                                                             <span className="text-[#a1a1aa] text-sm">VNĐ</span>
@@ -768,11 +768,11 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     onValueChange={(v) => setMealAllowance(formatNumber(v))}
                                                 />
 
-                                                <Input label="Phụ cấp xăng xe" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={fuelAllowance} onValueChange={(v) => setFuelAllowance(formatNumber(v))} />
-                                                <Input label="Phụ cấp điện thoại" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={phoneAllowance} onValueChange={(v) => setPhoneAllowance(formatNumber(v))} />
+                                                <Input label="Phụ cấp xăng xe" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={fuelAllowance} onValueChange={(v) => setFuelAllowance(formatNumber(v))} />
+                                                <Input label="Phụ cấp điện thoại" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={phoneAllowance} onValueChange={(v) => setPhoneAllowance(formatNumber(v))} />
 
-                                                <Input label="Phụ cấp công tác" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={businessTripAllowance} onValueChange={(v) => setBusinessTripAllowance(formatNumber(v))} />
-                                                <Input label="Phụ cấp khác" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={otherAllowance} onValueChange={(v) => setOtherAllowance(formatNumber(v))} />
+                                                <Input label="Phụ cấp công tác" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={businessTripAllowance} onValueChange={(v) => setBusinessTripAllowance(formatNumber(v))} />
+                                                <Input label="Phụ cấp khác" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={otherAllowance} onValueChange={(v) => setOtherAllowance(formatNumber(v))} />
                                             </div>
                                         </div>
 
@@ -786,7 +786,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             <Select
                                                 label="Loại lương"
                                                 labelPlacement="outside"
-                                                placeholder="Chọn"
+
                                                 classNames={{ trigger: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                 isRequired
                                                 selectedKeys={salaryType ? [salaryType] : []}
@@ -797,8 +797,8 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             </Select>
 
                                             <div className="grid grid-cols-2 gap-x-4 gap-y-10 mt-8">
-                                                <Input label="Lương net" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={netSalary} onValueChange={(v) => setNetSalary(formatNumber(v))} />
-                                                <Input label="Lương gross" labelPlacement="outside" placeholder="Nhập" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={grossSalary} onValueChange={(v) => setGrossSalary(formatNumber(v))} />
+                                                <Input label="Lương net" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={netSalary} onValueChange={(v) => setNetSalary(formatNumber(v))} />
+                                                <Input label="Lương gross" labelPlacement="outside" endContent={<span className="text-[#a1a1aa] text-sm">VNĐ</span>} classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={grossSalary} onValueChange={(v) => setGrossSalary(formatNumber(v))} />
                                             </div>
                                         </div>
 
@@ -826,7 +826,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                             <div className="grid grid-cols-2 gap-6 mt-2">
                                                 <div className="flex flex-col gap-2">
                                                     <Checkbox isSelected={hasFamilyDeduction} onValueChange={setHasFamilyDeduction} size="sm" classNames={{ label: "text-sm font-semibold text-[#11181C]" }}>Giảm trừ gia cảnh</Checkbox>
-                                                    <Input label="Số người phụ thuộc" labelPlacement="outside" placeholder="Nhập" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={dependentsCount} onValueChange={setDependentsCount} isDisabled={!hasFamilyDeduction} />
+                                                    <Input label="Số người phụ thuộc" labelPlacement="outside" classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }} value={dependentsCount} onValueChange={setDependentsCount} isDisabled={!hasFamilyDeduction} />
                                                 </div>
 
                                                 <div className="flex flex-col gap-2">
@@ -846,7 +846,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
                                                     <Input
                                                         label="Tỷ lệ (%)"
                                                         labelPlacement="outside"
-                                                        placeholder="Nhập"
+
                                                         endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
                                                         classNames={{ inputWrapper: "bg-[#F4F4F5] rounded-xl shadow-none" }}
                                                         value={personalIncomeTaxRate}

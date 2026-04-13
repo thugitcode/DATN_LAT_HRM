@@ -15,6 +15,7 @@ import { CandidateRequirementsSection } from './sections/candidate-requirements-
 import { SalaryBudgetSection } from './sections/salary-budget-section';
 import { InternalNoteSection } from './sections/internal-note-section';
 import { ControlMode, useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { useDirtyDrawer } from '@/hooks/use-dirty-drawer';
 
 interface DrawerData {
     id?: string;
@@ -34,6 +35,7 @@ export const FormRecruitmentRequestMutate = () => {
     const { mode, isView } = useControlMode();
     const { methods, isDetailLoading, isSubmitting, onSubmit } =
         useFormRecruitmentRequest({ id, onSuccess: onClose });
+    useDirtyDrawer(methods.formState.isDirty);
 
     const sectionProps = { isReadOnly: isView, variant: isView ? 'underlined' as const : undefined };
 

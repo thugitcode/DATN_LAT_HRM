@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FormArea } from '@/components/form-fields/form-area';
 import { FormInput } from '@/components/form-fields/form-input';
 import { FormSelect } from '@/components/form-fields/form-select';
-import { EducationLevelEnum, ExperienceYearsEnum } from '@/features/recruitment-management/constants/constants';
+import { EducationLevelEnum, ExperienceYearsEnum } from '@/features/recruitment-management/constants/candidate.constants';
 import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
 import { AcademicTitleEnum } from '@/types/staff.type';
@@ -42,21 +42,21 @@ export function ProfessionalInfoSection() {
             control={control}
             name="school"
             label={t('candidate.form.fields.school')}
-            placeholder="Nhập"
+
           />
 
           <FormInput
             control={control}
             name="major"
             label={t('candidate.form.fields.major')}
-            placeholder="Nhập"
+
           />
 
           <FormSelect
             control={control}
             name="educationLevel"
             label={t('candidate.form.fields.education_level')}
-            placeholder="Chọn"
+
             options={educationLevelOptions}
           />
 
@@ -64,17 +64,17 @@ export function ProfessionalInfoSection() {
             control={control}
             name="academicTitle"
             label={t('candidate.form.fields.academic_title')}
-            placeholder="Chọn"
+
             options={academicTitleOptions}
           />
 
           <div className="col-span-2">
-            <FormSelect
+            <FormInput
               control={control}
               name="experienceYears"
               label={t('candidate.form.fields.experience_years')}
-              placeholder="Chọn"
-              options={experienceYearsOptions}
+
+            // options={experienceYearsOptions}
             />
           </div>
         </div>

@@ -81,21 +81,21 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
           variant={variant}
         />
 
-        <FormInput
+        {/* <FormInput
           control={control}
           name="position"
           label={t('form.fields.position')}
           isRequired
           readOnly={isReadOnly}
           variant={variant}
-        />
+        /> */}
 
         <FormSelect
           control={control}
           name="jobTitleId"
-          label={t('form.fields.job_title')}
+          label={t('form.fields.position')}
           isRequired
-          placeholder={t('form.placeholders.select_job_title')}
+          placeholder={t('form.fields.position')}
           options={jobTitleOptions.map((jt) => ({ key: jt.value, label: jt.label }))}
           readOnly={isReadOnly}
           variant={variant}
@@ -103,7 +103,7 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
 
         <FormSelect
           control={control}
-          name="staffType"
+          name="workType"
           label={t('form.fields.staff_type')}
           isRequired
           placeholder={t('form.placeholders.select_staff_type')}
@@ -112,18 +112,18 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
           variant={variant}
         />
 
-        {/* <div className='col-span-2'> */}
-        <FormSelect
-          control={control}
-          name="workType"
-          label={t('form.fields.work_type')}
-          isRequired
-          placeholder={t('form.placeholders.select_work_type')}
-          options={workTypeOptions}
-          readOnly={isReadOnly}
-          variant={variant}
-        />
-        {/* </div> */}
+        <div className='col-span-2'>
+          <FormSelect
+            control={control}
+            name="workType"
+            label={t('form.fields.work_type')}
+            isRequired
+            placeholder={t('form.placeholders.select_work_type')}
+            options={workTypeOptions}
+            readOnly={isReadOnly}
+            variant={variant}
+          />
+        </div>
       </div>
     </div>
   );

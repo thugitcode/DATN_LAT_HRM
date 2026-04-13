@@ -3,6 +3,7 @@ import type { TFunction } from 'i18next';
 import type { NAMESPACES } from '@/i18n/constants';
 import dayjs from 'dayjs';
 import { normalizeString, requiredString } from '@/features/staff-management/staff-list-management/schemas/staff.schema';
+import { optionalString } from '../../candidate/schemas/candidate.schema';
 
 const numberField = (message: string) =>
   z.preprocess(
@@ -17,10 +18,10 @@ export const recruitmentRequestSchema = (t: TFunction<typeof NAMESPACES.RECRUITM
     code: z.string().nullable().optional(),
     createdAt: z.preprocess(normalizeString, z.string()).optional(),
     departmentId: requiredString(t('form.validation.department_required')),
-    roomId: requiredString(t('form.validation.room_required')),
-    position: requiredString(t('form.validation.position_required')),
+    roomId: optionalString(),
+    // position: requiredString(t('form.validation.position_required')),
     jobTitleId: requiredString(t('form.validation.job_title_required')),
-    staffType: requiredString(t('form.validation.staff_type_required')),
+    // staffType: requiredString(t('form.validation.staff_type_required')),
     workType: requiredString(t('form.validation.work_type_required')),
     quantity: z.coerce.number().min(1, t('form.validation.quantity_required')),
     requiredDate: z.preprocess(normalizeString, z.string()).optional(),
@@ -35,7 +36,18 @@ export const recruitmentRequestSchema = (t: TFunction<typeof NAMESPACES.RECRUITM
     salaryFrom: numberField(t('form.validation.salary_from_required')),
     salaryTo: numberField(t('form.validation.salary_to_required')),
     note: z.preprocess(normalizeString, z.string()).optional(),
-  });
+  }).refine((data) => {
+    const from = data.salaryFrom ? Number(data.salaryFrom) : 0;
+    const to = data.salaryTo ? Number(data.salaryTo) : Infinity;
+
+    if (from > 0 && to !== Infinity) {
+      return to >= from;
+    }
+    return true;
+  }, {
+    message: t('candidate.validation.salary_invalid'),
+    path: ['salaryTo'],
+  })
 
 export type RecruitmentRequestFormValues = z.infer<ReturnType<typeof recruitmentRequestSchema>>;
 
@@ -44,9 +56,9 @@ export const DEFAULT_VALUES: RecruitmentRequestFormValues = {
   createdAt: dayjs().format("YYYY-MM-DD"),
   departmentId: '',
   roomId: '',
-  position: '',
+  // position: '',
   jobTitleId: '',
-  staffType: '',
+  // staffType: '',
   workType: '',
   quantity: 1,
   requiredDate: undefined,

@@ -50,7 +50,7 @@ export function StatusChipSelect({ value, options, onSelect, isPending = false, 
         disabled={isPending}
         onClick={() => setOpen((v) => !v)}
         className={`
-          inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full
+          inline-flex items-center gap-1 text-xs font-normal px-2.5 py-1 rounded-full
           cursor-pointer select-none transition-opacity
           ${current.bg} ${current.color}
           ${isPending ? 'opacity-60 cursor-wait' : 'hover:opacity-80'}
@@ -77,7 +77,7 @@ export function StatusChipSelect({ value, options, onSelect, isPending = false, 
                 ${classNames?.option}
               `}
             >
-              <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full ${opt.bg} ${opt.color}`}>
+              <span className={`inline-block text-xs font-normal px-2 py-0.5 rounded-full ${opt.bg} ${opt.color}`}>
                 {opt.label}
               </span>
               {opt.key === value && <span className="ml-auto text-primary text-xs">✓</span>}

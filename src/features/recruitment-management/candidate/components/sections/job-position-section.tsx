@@ -11,20 +11,17 @@ import { CandidateSourceEnum } from '@/features/recruitment-management/types/can
 import { useRecruitmentRequestList } from '@/features/recruitment-management/recruitment-request-list/hooks/use-recruitment-request';
 import { icons } from '@/lib/icons';
 import { RecruitmentRequestStatusEnum } from '@/features/recruitment-management/recruitment-request-list/types/type';
-
-const STAFF_TYPE_OPTIONS = [
-  { key: 'FULL_TIME', label: 'Toàn thời gian' },
-  { key: 'PART_TIME', label: 'Bán thời gian' },
-  { key: 'CONTRACT', label: 'Hợp đồng' },
-  { key: 'INTERN', label: 'Thực tập' },
-];
+import { WorkingTypeTypeEnum } from '@/types/staff.type';
 
 export function JobPositionSection({ recruitmentRequestId }: { recruitmentRequestId?: string }) {
-  const { control, watch, setValue } = useFormContext();
+  const { control, watch, setValue, formState: { errors } } = useFormContext();
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
   const selectedDept = watch('departmentId');
-  const selectedRoom = watch('roomId');
+  const workTypeOptions = Object.values(WorkingTypeTypeEnum).map((val) => ({
+    key: val,
+    label: t(`form.options.work_type.${val}`),
+  }));
   const { options: departmentOptions } = useDepartmentOptions();
   const { options: roomOptions } = useRoomOptions(selectedDept);
   const sourceOptions = Object.values(CandidateSourceEnum).map((source) => ({
@@ -32,7 +29,8 @@ export function JobPositionSection({ recruitmentRequestId }: { recruitmentReques
     label: t(`candidate.source.${source}` as any),
   }));
 
-  const { data: recruitmentRequestData } = useRecruitmentRequestList({ status: RecruitmentRequestStatusEnum.RECRUITING, departmentId: selectedDept, roomId: selectedRoom });
+  const { data: recruitmentRequestData } = useRecruitmentRequestList({ status: RecruitmentRequestStatusEnum.RECRUITING });
+  // const { data: recruitmentRequestData } = useRecruitmentRequestList({ status: RecruitmentRequestStatusEnum.RECRUITING, departmentId: selectedDept, roomId: selectedRoom });
   const recruitmentRequestOptions =
     recruitmentRequestData?.data?.map((r) => ({
       key: r.id,
@@ -58,25 +56,29 @@ export function JobPositionSection({ recruitmentRequestId }: { recruitmentReques
             if (selectedRecruitmentRequest) {
               setValue('departmentId', selectedRecruitmentRequest.departmentId);
               setValue('roomId', selectedRecruitmentRequest.roomId);
+              setValue('workType', selectedRecruitmentRequest.workType);
+              setValue('expectedSalaryFrom', selectedRecruitmentRequest.salaryFrom);
+              setValue('expectedSalaryTo', selectedRecruitmentRequest.salaryTo);
             }
           }}
         />
 
         <FormSelect
           control={control}
-          name="staffType"
+          name="workType"
           label={t('candidate.form.fields.work_type')}
-          placeholder="Chọn"
-          isRequired
-          options={STAFF_TYPE_OPTIONS}
+
+          readOnly
+          options={workTypeOptions}
         />
 
         <FormSelect
           control={control}
           name="departmentId"
           label={t('candidate.form.fields.department')}
-          placeholder="Chọn"
-          isRequired
+
+          // isRequired
+          readOnly
           options={departmentOptions.map((o) => ({ key: o.value, label: o.label }))}
           onSelect={() => {
             setValue('roomId', null);
@@ -88,11 +90,12 @@ export function JobPositionSection({ recruitmentRequestId }: { recruitmentReques
           control={control}
           name="roomId"
           label={t('candidate.form.fields.room')}
-          placeholder="Chọn"
+
           options={roomOptions.map((o) => ({ key: o.value, label: o.label }))}
           onSelect={() => {
             setValue('recruitmentRequestId', '');
           }}
+          readOnly
         />
 
 
@@ -126,7 +129,7 @@ export function JobPositionSection({ recruitmentRequestId }: { recruitmentReques
           control={control}
           name="source"
           label={t('candidate.form.fields.source')}
-          placeholder="Chọn"
+
           options={sourceOptions}
         />
       </div>

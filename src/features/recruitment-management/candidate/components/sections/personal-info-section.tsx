@@ -5,7 +5,7 @@ import { FormArea } from '@/components/form-fields/form-area';
 import { FormDatePicker } from '@/components/form-fields/form-date-picker';
 import { FormInput } from '@/components/form-fields/form-input';
 import { FormSelect } from '@/components/form-fields/form-select';
-import { GenderEnum } from '@/features/recruitment-management/constants/constants';
+import { GenderEnum } from '@/features/recruitment-management/constants/candidate.constants';
 import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
 
@@ -31,7 +31,7 @@ export function PersonalInfoSection() {
           control={control}
           name="name"
           label={t('candidate.form.fields.name')}
-          placeholder="Nhập"
+
           isRequired
         />
 
@@ -45,7 +45,7 @@ export function PersonalInfoSection() {
           control={control}
           name="gender"
           label={t('candidate.form.fields.gender')}
-          placeholder="Chọn"
+
           isRequired
           options={GENDER_OPTIONS}
         />
@@ -54,7 +54,7 @@ export function PersonalInfoSection() {
           control={control}
           name="phone"
           label={t('candidate.form.fields.phone')}
-          placeholder="Nhập"
+
           isRequired
         />
 
@@ -62,7 +62,7 @@ export function PersonalInfoSection() {
           control={control}
           name="email"
           label={t('candidate.form.fields.email')}
-          placeholder="Nhập"
+
           isRequired
         />
 
@@ -70,7 +70,7 @@ export function PersonalInfoSection() {
           control={control}
           name="identityCard"
           label={t('candidate.form.fields.identity_card')}
-          placeholder="Nhập"
+
         />
 
         <div className="col-span-2">
@@ -78,7 +78,7 @@ export function PersonalInfoSection() {
             control={control}
             name="address"
             label={t('candidate.form.fields.address')}
-            placeholder="Nhập"
+
           />
         </div>
       </div>

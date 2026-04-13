@@ -16,7 +16,7 @@ import {
   recruitmentRequestSchema,
   DEFAULT_VALUES,
   type RecruitmentRequestFormValues,
-} from '../schemas/schema';
+} from '../schemas/recruitment-request.schema';
 import dayjs from 'dayjs';
 
 interface UseFormRecruitmentRequestParams {

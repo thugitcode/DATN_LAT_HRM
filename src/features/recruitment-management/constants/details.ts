@@ -20,13 +20,13 @@ export const PIPELINE_STEPS: { key: CandidateStatusEnum; labelKey: string }[] = 
 ];
 
 export const STATUS_BADGE: Record<CandidateStatusEnum, { label: string; color: string; bg: string }> = {
-    [CandidateStatusEnum.APPLIED]: { label: 'candidate.status.applied', color: 'text-primary', bg: 'bg-[#EEF5FF]' },
+    [CandidateStatusEnum.APPLIED]: { label: 'candidate.status.applied', color: 'text-black', bg: 'bg-default' },
     [CandidateStatusEnum.SCREENED]: { label: 'candidate.status.screened', color: 'text-[#7828C8]', bg: 'bg-[#F4EEFF]' },
     [CandidateStatusEnum.WAITING_INTERVIEW]: { label: 'candidate.status.waiting_interview', color: 'text-[#C4841D]', bg: 'bg-[#FEF3CD]' },
-    [CandidateStatusEnum.INTERVIEWING]: { label: 'candidate.status.interviewing', color: 'text-[#0E793C]', bg: 'bg-[#E8FAF0]' },
-    [CandidateStatusEnum.WAITING_OFFER]: { label: 'candidate.status.waiting_offer', color: 'text-[#0E793C]', bg: 'bg-[#E8FAF0]' },
-    [CandidateStatusEnum.PROBATION_PROPOSED]: { label: 'candidate.status.probation_proposed', color: 'text-primary', bg: 'bg-[#EEF5FF]' },
-    [CandidateStatusEnum.ON_PROBATION]: { label: 'candidate.status.on_probation', color: 'text-[#71717A]', bg: 'bg-[#F4F4F5]' },
+    [CandidateStatusEnum.INTERVIEWING]: { label: 'candidate.status.interviewing', color: 'text-primary', bg: 'bg-[#006FEE33]' },
+    [CandidateStatusEnum.WAITING_OFFER]: { label: 'candidate.status.waiting_offer', color: 'text-cyan-600', bg: 'bg-cyan-100' },
+    [CandidateStatusEnum.PROBATION_PROPOSED]: { label: 'candidate.status.probation_proposed', color: 'text-[#FF4ECD]', bg: 'bg-[#FFEDFA]' },
+    [CandidateStatusEnum.ON_PROBATION]: { label: 'candidate.status.on_probation', color: 'text-success', bg: 'bg-[#17C96433]' },
     [CandidateStatusEnum.REJECTED]: { label: 'candidate.status.rejected', color: 'text-[#F31260]', bg: 'bg-[#FEE7EF]' },
     [CandidateStatusEnum.OFFER_DECLINED]: { label: 'candidate.status.offer_declined', color: 'text-[#F31260]', bg: 'bg-[#FEE7EF]' },
 };

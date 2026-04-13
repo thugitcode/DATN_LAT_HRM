@@ -11,6 +11,7 @@ import { useDrawer } from '@/store/useDrawer';
 import type { CandidateFormValues } from '../../schemas/candidate.schema';
 
 import { useFormCandidate } from '../../hooks/use-form-candidate';
+import { useDirtyDrawer } from '@/hooks/use-dirty-drawer';
 import { JobPositionSection } from '../sections/job-position-section';
 import { PersonalInfoSection } from '../sections/personal-info-section';
 import { PracticeCertificateSection } from '../sections/practice-certificate-section';
@@ -38,7 +39,7 @@ const TABS = [
 
 const TAB_FIELDS: Record<CandidateTabEnum, (keyof CandidateFormValues)[]> = {
     [CandidateTabEnum.PERSONAL]: ['name', 'gender', 'phone', 'email', 'dateOfBirth', 'identityCard', 'address'],
-    [CandidateTabEnum.APPLICATION]: ['departmentId', 'roomId', 'recruitmentRequestId', 'staffType', 'expectedSalaryFrom', 'expectedSalaryTo', 'source'],
+    [CandidateTabEnum.APPLICATION]: ['departmentId', 'roomId', 'recruitmentRequestId', 'workType', 'expectedSalaryFrom', 'expectedSalaryTo', 'source'],
     [CandidateTabEnum.QUALIFICATIONS]: ['school', 'major', 'educationLevel', 'academicTitle', 'experienceYears', 'note', 'practiceNumber', 'practiceIssueDate', 'practiceIssuePlace', 'practiceScope', 'practiceFileUrl'],
     [CandidateTabEnum.ATTACHMENTS]: ['documents'],
 };
@@ -62,6 +63,7 @@ export const FormCandidateMutate = () => {
         recruitmentRequestId,
         onSuccess: onClose,
     });
+    useDirtyDrawer(methods.formState.isDirty);
 
     const currentTabIndex = TAB_KEYS.indexOf(activeTab);
     const isLastTab = currentTabIndex === TAB_KEYS.length - 1;

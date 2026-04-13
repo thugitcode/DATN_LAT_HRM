@@ -70,7 +70,7 @@ export function CriterionEditCard({
                 />
 
                 <div className="flex justify-end gap-2">
-                    <Button variant="bordered" size="sm" className="rounded-lg" onPress={onCancel}>
+                    <Button variant="bordered" size="sm" className="rounded-lg border-1" onPress={onCancel}>
                         {t('candidate.evaluation.btn_cancel')}
                     </Button>
                     <Button color="primary" size="sm" className="rounded-lg" onPress={onSave}>
@@ -91,7 +91,7 @@ export function CriterionEditCard({
                     )}
                 </div>
                 {hasData ? (
-                    <Button type="button" isIconOnly variant="bordered" onPress={onEdit}>
+                    <Button type="button" isIconOnly variant="bordered" className="border-1" onPress={onEdit}>
                         <icons.edit />
                     </Button>
                 ) : (

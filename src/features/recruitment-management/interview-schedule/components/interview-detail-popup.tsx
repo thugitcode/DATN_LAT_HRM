@@ -69,7 +69,7 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
     mutationFn: (value: string) =>
       interviewScheduleService.patch(
         interview.id,
-        editingMethod === InterviewMethodEnum.ONLINE ? { onlineLink: value } : { roomName: value },
+        editingMethod === InterviewMethodEnum.ONLINE ? { onlineLink: value } : { address: value },
       ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY.INTERVIEW_SCHEDULE, 'list'] });
@@ -214,7 +214,7 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
                     />
                   </span>
                 ) : (
-                  interview.roomName
+                  interview.address
                 )}
               </span>
             )}

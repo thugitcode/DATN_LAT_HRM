@@ -22,7 +22,7 @@ import { useIsFetching } from '@tanstack/react-query';
 import { recruitmentRequestKeys } from '@/services/query-options/recruitment-request.query';
 import { cn } from '@/lib/utils';
 
-const BTN_BASE = 'rounded-xl font-medium h-9 w-[120px] text-sm';
+const BTN_BASE = 'rounded-xl font-medium h-9 min-w-[120px] text-sm border-1';
 
 interface RowRecruitmentRequestActionsProps {
   dataRow?: RecruitmentRequest;

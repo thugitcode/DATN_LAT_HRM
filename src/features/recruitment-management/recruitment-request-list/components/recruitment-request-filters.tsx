@@ -32,7 +32,7 @@ export const RecruitmentRequestFilterBar = () => {
   );
 
   const { options: departmentOptions } = useDepartmentOptions();
-  const { options: roomOptions } = useRoomOptions(filters?.departmentIds);
+  const { options: roomOptions } = useRoomOptions(filters?.departmentId);
 
   const handleMonthChange = useCallback(
     (value: string) => {

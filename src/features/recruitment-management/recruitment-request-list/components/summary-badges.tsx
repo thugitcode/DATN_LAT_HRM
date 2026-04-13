@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { StatusSummaryItem } from '@/components/status-summary-tabs/status-summary-item';
 import { StatusSummaryTabs } from '@/components/status-summary-tabs/status-summary-tabs';
 
-import { SUMMARY_BADGE_KEYS } from '../../constants/constants';
+import { SUMMARY_BADGE_KEYS } from '../../constants/candidate.constants';
 import type { MetadataRecruitmentRequest } from '../types/type';
 
 interface SummaryBadgesProps {

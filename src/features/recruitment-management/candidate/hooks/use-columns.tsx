@@ -4,43 +4,16 @@ import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@/components/data-table/data-table';
 import { NAMESPACES } from '@/i18n/constants';
 import { formatDate } from '@/lib/utils';
-import { Button, Chip } from '@heroui/react';
+import {
+  Chip
+} from '@heroui/react';
 
-import { QUERY_KEY } from '@/hooks/use-crud-query';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCandidateUpdateStatus } from '../../recruitment-request-details/hooks/use-candidate-update-status';
-import { type ICandidate } from '../../recruitment-request-details/types/candidate.type';
-import { ACTION_LABEL, NEXT_STATUS, STATUS_CHIP } from '../../constants/constants';
 import dayjs from 'dayjs';
-import type { InterviewSchedule } from '../../recruitment-request-details/types/interview.type';
+import { STATUS_CHIP } from '../../constants/candidate.constants';
 import { INTERVIEW_STATUS_CONFIG } from '../../recruitment-request-details/constants/data';
-
-function ActionsCell({ candidate }: { candidate: ICandidate }) {
-  const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-  const { mutate: updateStatus, isPending } = useCandidateUpdateStatus();
-  const queryClient = useQueryClient()
-  return (
-    <div className='flex flex-end justify-end'>
-      <Button
-        size="sm"
-        variant="bordered"
-        color="primary"
-        className="rounded-xl text-xs font-medium border-1 whitespace-nowrap"
-        isDisabled={!NEXT_STATUS[candidate.status] || isPending}
-        onPress={() => {
-          const nextStatus = NEXT_STATUS[candidate.status];
-          if (nextStatus) updateStatus({ id: candidate.id, status: nextStatus }, {
-            onSuccess: () => {
-              queryClient.invalidateQueries({ queryKey: [QUERY_KEY.CANDIDATE, 'list'] })
-            }
-          });
-        }}
-      >
-        {t(ACTION_LABEL[candidate.status] as any)}
-      </Button>
-    </div>
-  );
-}
+import { type ICandidate } from '../../recruitment-request-details/types/candidate.type';
+import type { InterviewSchedule } from '../../recruitment-request-details/types/interview.type';
+import { CandidateRowActionsCell } from '../components/candidate-row-action-cell';
 
 export const useCandidateColumns = () => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
@@ -93,7 +66,7 @@ export const useCandidateColumns = () => {
         key: 'source',
         title: t('candidate.columns.source'),
         minWidth: 100,
-        render: (_, row) => <span className="text-sm text-[#11181C] whitespace-nowrap">{t(`candidate.source.${row.source}`)}</span>
+        render: (_, row) => <span className="text-sm text-[#11181C] whitespace-nowrap">{row.source ? t(`candidate.source.${row.source}`) : '—'}</span>
       },
       {
         key: 'status',
@@ -102,7 +75,7 @@ export const useCandidateColumns = () => {
         render: (_, row) => {
           const chip = STATUS_CHIP[row.status];
           return (
-            <Chip size="sm" variant="flat" color={chip.color}>
+            <Chip size="sm" variant="flat" classNames={{ base: `${chip.bg} ${chip.text}` }} color={chip.color}>
               {t(chip.label)}
             </Chip>
           );
@@ -120,7 +93,7 @@ export const useCandidateColumns = () => {
         minWidth: 160,
         hideable: false,
         sticky: 'right',
-        render: (_, row) => <ActionsCell candidate={row} />,
+        render: (_, row) => <CandidateRowActionsCell candidate={row} />,
       },
     ],
     [t],

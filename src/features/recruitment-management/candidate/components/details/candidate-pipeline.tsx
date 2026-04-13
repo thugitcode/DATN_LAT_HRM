@@ -9,7 +9,7 @@ import {
 import { useCandidateUpdateStatus } from '@/features/recruitment-management/recruitment-request-details/hooks/use-candidate-update-status';
 
 import { PIPELINE_STEPS } from '@/features/recruitment-management/constants/details';
-import { NEXT_STATUS } from '@/features/recruitment-management/constants/constants';
+import { NEXT_STATUS } from '@/features/recruitment-management/constants/candidate.constants';
 
 interface CandidatePipelineProps {
   candidate: ICandidate;
