@@ -378,6 +378,7 @@
       "on_probation": "Đang thử việc",
       "rejected": "Từ chối",
       "offer_declined": "Từ chối offer",
+      "received": "Đã nhận",
       "update_error": "Cập nhật trạng thái thất bại"
     },
     "empty": {

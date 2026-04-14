@@ -125,7 +125,8 @@ type CandidateStatusLabel =
   | 'candidate.status.probation_proposed'
   | 'candidate.status.on_probation'
   | 'candidate.status.rejected'
-  | 'candidate.status.offer_declined';
+  | 'candidate.status.offer_declined'
+  | 'candidate.status.received';
 
 export const STATUS_CHIP: Record<
   CandidateStatusEnum,
@@ -140,6 +141,7 @@ export const STATUS_CHIP: Record<
   [CandidateStatusEnum.ON_PROBATION]: { label: 'candidate.status.on_probation', color: 'success', bg: 'bg-[#17C96433]', text: 'text-success' },
   [CandidateStatusEnum.REJECTED]: { label: 'candidate.status.rejected', color: 'danger', bg: 'bg-[#FEE7EF]', text: 'text-[#F31260]' },
   [CandidateStatusEnum.OFFER_DECLINED]: { label: 'candidate.status.offer_declined', color: 'danger', bg: 'bg-[#FEE7EF]', text: 'text-[#F31260]' },
+  [CandidateStatusEnum.RECEIVED]: { label: 'candidate.status.received', color: 'success', bg: 'bg-[#E8FAF0]', text: 'text-[#0E793C]' },
 };
 
 export const NEXT_STATUS: Partial<Record<CandidateStatusEnum, CandidateStatusEnum>> = {
@@ -147,6 +149,7 @@ export const NEXT_STATUS: Partial<Record<CandidateStatusEnum, CandidateStatusEnu
   [CandidateStatusEnum.SCREENED]: CandidateStatusEnum.WAITING_INTERVIEW,
   [CandidateStatusEnum.WAITING_OFFER]: CandidateStatusEnum.PROBATION_PROPOSED,
   [CandidateStatusEnum.PROBATION_PROPOSED]: CandidateStatusEnum.ON_PROBATION,
+  [CandidateStatusEnum.ON_PROBATION]: CandidateStatusEnum.RECEIVED,
 };
 
 export const ACTION_LABEL: Record<CandidateStatusEnum, string> = {
@@ -159,6 +162,7 @@ export const ACTION_LABEL: Record<CandidateStatusEnum, string> = {
   [CandidateStatusEnum.ON_PROBATION]: 'candidate.actions.accept_official',
   [CandidateStatusEnum.REJECTED]: 'candidate.actions.view_detail',
   [CandidateStatusEnum.OFFER_DECLINED]: 'candidate.actions.view_detail',
+  [CandidateStatusEnum.RECEIVED]: 'candidate.actions.view_detail',
 };
 
 export const criteria = (candidate: ICandidate, t: any) => [
@@ -256,10 +260,18 @@ export const CANDIDATE_ROW_ACTION_CONFIG: Partial<Record<CandidateStatusEnum, Ca
     mainIcon: <IconUserCheck size={14} />,
     mainVariant: 'bordered',
     mainColor: 'primary',
-    mainStatusTo: CandidateStatusEnum.ON_PROBATION, // placeholder — replace with actual flow
+    mainStatusTo: CandidateStatusEnum.RECEIVED,
     secondary: [
       { key: 'view_detail', labelKey: 'candidate.actions.view_detail', icon: <IconEye size={14} />, navigate: 'detail' },
     ],
+  },
+  [CandidateStatusEnum.RECEIVED]: {
+    mainLabelKey: 'candidate.actions.view_detail',
+    mainIcon: <IconEye size={14} />,
+    mainVariant: 'bordered',
+    mainColor: 'primary',
+    mainNavigate: MainNavigateEnum.DETAIL,
+    secondary: [],
   },
   [CandidateStatusEnum.REJECTED]: {
     mainLabelKey: 'candidate.actions.restore',

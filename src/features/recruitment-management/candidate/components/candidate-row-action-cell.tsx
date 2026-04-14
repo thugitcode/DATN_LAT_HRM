@@ -23,7 +23,7 @@ export function CandidateRowActionsCell({ candidate }: { candidate: ICandidate }
             return;
         }
         if (config.mainDrawer) {
-            onOpen(config.mainDrawer, { candidateId: candidate?.id, candidateName: candidate?.name, candidateStatus: candidate.status });
+            onOpen(config.mainDrawer, { candidateId: candidate?.id, candidateName: candidate?.name, candidateStatus: candidate.status, candidateEmail: candidate?.email });
             return;
         }
         if (config.mainNavigate === MainNavigateEnum.DETAIL) {

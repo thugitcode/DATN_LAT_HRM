@@ -12,6 +12,6 @@ type ModalConfig = {
 export const MODAL_CONFIG: Record<ModalType, ModalConfig> = {
   [ModalType.RESEND_MAIL]: {
     component: <ResendMailModal />,
-    modalProps: { size: 'lg' },
+    modalProps: { size: 'xl', style: { width: '50vw', maxWidth: '50vw' } },
   },
 };

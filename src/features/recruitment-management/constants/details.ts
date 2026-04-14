@@ -17,6 +17,7 @@ export const PIPELINE_STEPS: { key: CandidateStatusEnum; labelKey: string }[] = 
     { key: CandidateStatusEnum.WAITING_OFFER, labelKey: 'candidate.status.waiting_offer' },
     { key: CandidateStatusEnum.PROBATION_PROPOSED, labelKey: 'candidate.status.probation_proposed' },
     { key: CandidateStatusEnum.ON_PROBATION, labelKey: 'candidate.status.on_probation' },
+    { key: CandidateStatusEnum.RECEIVED, labelKey: 'candidate.status.received' },
 ];
 
 export const STATUS_BADGE: Record<CandidateStatusEnum, { label: string; color: string; bg: string }> = {
@@ -29,6 +30,7 @@ export const STATUS_BADGE: Record<CandidateStatusEnum, { label: string; color: s
     [CandidateStatusEnum.ON_PROBATION]: { label: 'candidate.status.on_probation', color: 'text-success', bg: 'bg-[#17C96433]' },
     [CandidateStatusEnum.REJECTED]: { label: 'candidate.status.rejected', color: 'text-[#F31260]', bg: 'bg-[#FEE7EF]' },
     [CandidateStatusEnum.OFFER_DECLINED]: { label: 'candidate.status.offer_declined', color: 'text-[#F31260]', bg: 'bg-[#FEE7EF]' },
+    [CandidateStatusEnum.RECEIVED]: { label: 'candidate.status.received', color: 'text-[#0E793C]', bg: 'bg-[#E8FAF0]' },
 };
 
 export const GENDER_LABEL: Record<string, string> = {

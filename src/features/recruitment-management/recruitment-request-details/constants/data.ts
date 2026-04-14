@@ -65,6 +65,7 @@ export const NEXT_CANDIDATE_STATUS: Partial<Record<CandidateStatusEnum, Candidat
     [CandidateStatusEnum.SCREENED]: CandidateStatusEnum.WAITING_INTERVIEW,
     [CandidateStatusEnum.WAITING_OFFER]: CandidateStatusEnum.PROBATION_PROPOSED,
     [CandidateStatusEnum.PROBATION_PROPOSED]: CandidateStatusEnum.ON_PROBATION,
+    [CandidateStatusEnum.ON_PROBATION]: CandidateStatusEnum.RECEIVED,
 };
 
 export const ACTION_CANDIDATE_LABEL: Record<CandidateStatusEnum, string> = {
@@ -77,6 +78,7 @@ export const ACTION_CANDIDATE_LABEL: Record<CandidateStatusEnum, string> = {
     [CandidateStatusEnum.ON_PROBATION]: 'candidate.actions.accept_official',
     [CandidateStatusEnum.REJECTED]: 'candidate.actions.view_detail',
     [CandidateStatusEnum.OFFER_DECLINED]: 'candidate.actions.view_detail',
+    [CandidateStatusEnum.RECEIVED]: 'candidate.actions.view_detail',
 };
 
 
@@ -89,6 +91,7 @@ export const CANDIDATE_KANBAN_COLUMNS: KanbanColumn[] = [
     { status: CandidateStatusEnum.WAITING_OFFER,      labelKey: 'candidate.status.waiting_offer',      color: 'text-cyan-600',    bgColor: 'bg-cyan-100' },
     { status: CandidateStatusEnum.PROBATION_PROPOSED, labelKey: 'candidate.status.probation_proposed', color: 'text-[#FF4ECD]',   bgColor: 'bg-[#FFEDFA]' },
     { status: CandidateStatusEnum.ON_PROBATION,       labelKey: 'candidate.status.on_probation',       color: 'text-success',     bgColor: 'bg-[#17C96433]' },
+    { status: CandidateStatusEnum.RECEIVED,           labelKey: 'candidate.status.received',           color: 'text-[#0E793C]',   bgColor: 'bg-[#E8FAF0]' },
     { status: CandidateStatusEnum.REJECTED,           labelKey: 'candidate.status.rejected',           color: 'text-[#F31260]',   bgColor: 'bg-[#FEE7EF]' },
     { status: CandidateStatusEnum.OFFER_DECLINED,     labelKey: 'candidate.status.offer_declined',     color: 'text-[#F31260]',   bgColor: 'bg-[#FEE7EF]' },
 ];

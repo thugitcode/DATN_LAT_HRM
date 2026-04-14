@@ -25,6 +25,7 @@ const TITLE_BY_MODE: Record<ControlMode, string> = {
     [ControlMode.create]: 'recruitment_request.actions.create',
     [ControlMode.edit]: 'recruitment_request.actions.edit_request',
     [ControlMode.view]: 'recruitment_request.actions.view_detail',
+    [ControlMode.duplicate]: 'recruitment_request.actions.duplicate',
 };
 
 export const FormRecruitmentRequestMutate = () => {

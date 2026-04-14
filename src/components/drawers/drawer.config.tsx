@@ -10,7 +10,7 @@ import { FormOtherIncomeMutate } from '@/features/payroll-management/components/
 import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
 import { TimekeepingDetails } from '@/features/payroll-management/components/timekeeping-details';
 import { FormAddNewPayPeriodsMutate } from '@/features/payroll-management/manage-pay-periods/components/form-add-new-pay-periods-mutate';
-import { FormStaffMutate } from '@/features/staff-management/core/components/form-staff-mutate';
+import { StaffFormDrawer } from '@/features/staff-management/staff-list-management/components/staff-form-drawer';
 import { ProfileDetailsDrawer } from '@/features/staff-management/profile-staff/components/profile-details-drawer';
 import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling/explanation-management/components/explanation-detail-drawer';
 import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
@@ -117,13 +117,13 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
       },
     },
     [DrawerType.STAFF_MUTATE]: {
-      title: t('drawer.additionalArisingAmounts'),
-      component: <FormStaffMutate />,
+      title: '',
+      component: <StaffFormDrawer />,
       drawerProps: {
         placement: 'right',
-        size: '2xl',
+        size: '5xl',
         style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
-        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+        classNames: { body: 'p-0 bg-[#F4F4F5]', header: 'p-0!' },
       },
     },
 

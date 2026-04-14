@@ -18,11 +18,13 @@ import {
 } from '../schemas/interview-schedule.schema';
 import { useEffect } from 'react';
 import { normalizeAxiosError } from '@/lib/axios';
+import { normalizePayload } from '@/lib/utils';
 
 interface UseFormInterviewScheduleParams {
   interviewId?: string;
   candidateId?: string;
   candidateStatus?: CandidateStatusEnum;
+  candidateEmail?: string;
   onSuccess?: () => void;
   onSuccessAndSendMail?: () => void;
 }
@@ -31,6 +33,7 @@ export function useFormInterviewSchedule({
   interviewId,
   candidateId,
   candidateStatus,
+  candidateEmail,
   onSuccess,
   onSuccessAndSendMail,
 }: UseFormInterviewScheduleParams = {}) {
@@ -41,6 +44,7 @@ export function useFormInterviewSchedule({
   const defaultValues: InterviewScheduleFormValues = {
     ...INTERVIEW_SCHEDULE_DEFAULT_VALUES,
     candidateId: candidateId ?? '',
+    emailTo: candidateEmail ?? "",
   };
 
   const methods = useForm<InterviewScheduleFormValues>({
@@ -58,7 +62,7 @@ export function useFormInterviewSchedule({
         ...INTERVIEW_SCHEDULE_DEFAULT_VALUES,
         ...data.data,
         candidateId: data?.data?.candidate?.id,
-        interviewerId: data?.data?.interviewer?.id
+        interviewerId: data?.data?.interviewer?.id,
       })
     }
   }, [data])
@@ -76,7 +80,7 @@ export function useFormInterviewSchedule({
         const { emailTo: _e, emailSubject: _s, emailContent: _c, sendMail: _m, ...payload } = data;
         if (interviewId) {
           await updateInterview(
-            { id: interviewId, data: payload },
+            { id: interviewId, data: normalizePayload(payload) },
             {
               onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: [QUERY_KEY.INTERVIEW_SCHEDULE, 'list'] });
@@ -92,7 +96,7 @@ export function useFormInterviewSchedule({
             },
           );
         } else {
-          await createInterview(payload, {
+          await createInterview(normalizePayload(payload), {
             onSuccess: async () => {
               if (candidateId && candidateStatus === CandidateStatusEnum.SCREENED) {
                 await candidateService.patch(candidateId, { status: CandidateStatusEnum.WAITING_INTERVIEW });
@@ -128,14 +132,14 @@ export function useFormInterviewSchedule({
     await handleSubmit(async (data) => {
       try {
         if (interviewId) {
-          await interviewScheduleService.update(interviewId, data);
+          await interviewScheduleService.update(interviewId, normalizePayload(data));
           await interviewScheduleService.sendEmail(interviewId, {
             emailTo: data.emailTo,
             emailSubject: data.emailSubject,
             emailContent: data.emailContent,
           });
         } else {
-          await interviewScheduleService.createAndSend({
+          await interviewScheduleService.createAndSend(normalizePayload({
             candidateId: data.candidateId,
             interviewerId: data.interviewerId,
             content: data.content,
@@ -149,7 +153,7 @@ export function useFormInterviewSchedule({
             emailTo: data.emailTo,
             emailSubject: data.emailSubject,
             emailContent: data.emailContent,
-          });
+          }));
         }
 
         if (candidateId && candidateStatus === CandidateStatusEnum.SCREENED) {

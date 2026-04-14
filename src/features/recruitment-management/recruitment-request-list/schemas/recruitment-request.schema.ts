@@ -15,6 +15,7 @@ const numberField = (message: string) =>
 
 export const recruitmentRequestSchema = (t: TFunction<typeof NAMESPACES.RECRUITMENT_MANAGEMENT>) =>
   z.object({
+    id: z.string().nullable().optional(),
     code: z.string().nullable().optional(),
     createdAt: z.preprocess(normalizeString, z.string()).optional(),
     departmentId: requiredString(t('form.validation.department_required')),

@@ -16,11 +16,13 @@ import { useTranslation } from 'react-i18next';
 import { RecruitmentRequestActionEnum, RecruitmentRequestStatusEnum, type RecruitmentRequest } from '../types/type';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
 import { ControlMode, useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { useNavigate } from '@tanstack/react-router';
 import { useRecruitmentRequestAction } from '../hooks/use-recruitment-request-action';
 import { useConfirmStore } from '@/store/useConfirmStore';
 import { useIsFetching } from '@tanstack/react-query';
 import { recruitmentRequestKeys } from '@/services/query-options/recruitment-request.query';
 import { cn } from '@/lib/utils';
+import { RecruitmentRequestTabEnum } from '@/features/recruitment-management/recruitment-request-details/constants/data';
 
 const BTN_BASE = 'rounded-xl font-medium h-9 min-w-[120px] text-sm border-1';
 
@@ -32,6 +34,7 @@ export const useRecruitmentRequestActions = (dataRow?: RecruitmentRequest) => {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
   const { onOpen } = useDrawer();
   const { setMode } = useControlMode();
+  const navigate = useNavigate();
   const openConfirm = useConfirmStore((s) => s.open);
   const isFetchingList = useIsFetching({ queryKey: recruitmentRequestKeys.lists() }) > 0;
 
@@ -86,6 +89,7 @@ export const useRecruitmentRequestActions = (dataRow?: RecruitmentRequest) => {
     t,
     onOpen,
     setMode,
+    navigate,
     openConfirm,
     isFetchingList,
     actions: {
@@ -106,7 +110,7 @@ export const useRecruitmentRequestActions = (dataRow?: RecruitmentRequest) => {
 };
 
 export const RecruitmentRequestActionButtons: FC<{ dataRow: RecruitmentRequest; className?: string; size?: 'sm' | 'md' | 'lg' }> = ({ dataRow, className, size = 'md' }) => {
-  const { t, isFetchingList, actions } = useRecruitmentRequestActions(dataRow);
+  const { t, isFetchingList, navigate, actions } = useRecruitmentRequestActions(dataRow);
   const { submit, isSubmitting, approve, isApproving, openRecruiting, isOpeningRecruiting, pause, isPausing, resume, isResuming, isRejecting, handleReject } = actions;
 
   const btnClass = cn(BTN_BASE, className);
@@ -163,7 +167,19 @@ export const RecruitmentRequestActionButtons: FC<{ dataRow: RecruitmentRequest; 
       case RecruitmentRequestStatusEnum.CLOSED:
       case RecruitmentRequestStatusEnum.CANCELLED:
         return (
-          <Button variant="bordered" color="primary" className={btnClass} size={size}>
+          <Button
+            variant="bordered"
+            color="primary"
+            className={btnClass}
+            size={size}
+            onPress={() =>
+              navigate({
+                to: '/admin/recruitment-management/recruitment-request/$id',
+                params: { id: dataRow.id },
+                search: { tab: RecruitmentRequestTabEnum.CANDIDATES },
+              })
+            }
+          >
             {t('recruitment_request.actions.view_detail')}
           </Button>
         );
@@ -182,7 +198,7 @@ export const RecruitmentRequestActionButtons: FC<{ dataRow: RecruitmentRequest; 
 
 
 export const RecruitmentRequestActionDropdown: FC<{ dataRow: RecruitmentRequest }> = ({ dataRow }) => {
-  const { t, onOpen, setMode, actions } = useRecruitmentRequestActions(dataRow);
+  const { t, onOpen, setMode, navigate, actions } = useRecruitmentRequestActions(dataRow);
   const { handleCloseRequest, handleCancelRequest } = actions;
 
   const getDropdownItems = () => {
@@ -252,11 +268,11 @@ export const RecruitmentRequestActionDropdown: FC<{ dataRow: RecruitmentRequest 
             icon: <IconX size={16} />,
             onClick: handleCloseRequest
           },
-          {
-            key: 'view_candidates',
-            label: t('recruitment_request.actions.view_candidates'),
-            icon: <IconUsers size={16} />
-          },
+          // {
+          //   key: 'view_candidates',
+          //   label: t('recruitment_request.actions.view_candidates'),
+          //   icon: <IconUsers size={16} />
+          // },
         );
         break;
       case RecruitmentRequestStatusEnum.PAUSED:
@@ -274,18 +290,25 @@ export const RecruitmentRequestActionDropdown: FC<{ dataRow: RecruitmentRequest 
         items.push(
           {
             key: 'duplicate',
-            label: t('recruitment_request.actions.duplicate'), icon: <IconCopy size={16} />
+            label: t('recruitment_request.actions.duplicate'), icon: <IconCopy size={16} />,
+            onClick: () => { setMode(ControlMode.duplicate); onOpen(DrawerType.RECRUITMENT_REQUEST_MUTATE, { id: dataRow?.id }); }
           },
         );
         break;
     }
-
-    items.push({
-      key: 'view_detail',
-      label: t('recruitment_request.actions.view_detail'),
-      icon: <IconEye size={16} />,
-      onClick: () => { setMode(ControlMode.view); onOpen(DrawerType.RECRUITMENT_REQUEST_MUTATE, { id: dataRow?.id }); }
-    });
+    if (RecruitmentRequestStatusEnum.CLOSED !== dataRow.status && RecruitmentRequestStatusEnum.CANCELLED !== dataRow.status) {
+      items.push({
+        key: 'view_detail',
+        label: t('recruitment_request.actions.view_detail'),
+        icon: <IconEye size={16} />,
+        onClick: () =>
+          navigate({
+            to: '/admin/recruitment-management/recruitment-request/$id',
+            params: { id: dataRow?.id ?? '' },
+            search: { tab: RecruitmentRequestTabEnum.CANDIDATES },
+          }),
+      });
+    }
 
     return items;
   };

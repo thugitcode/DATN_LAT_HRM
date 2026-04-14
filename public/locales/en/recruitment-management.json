@@ -378,6 +378,7 @@
       "on_probation": "On Probation",
       "rejected": "Rejected",
       "offer_declined": "Offer Declined",
+      "received": "Received",
       "update_error": "Failed to update status"
     },
     "empty": {
