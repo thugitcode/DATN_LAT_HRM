@@ -208,7 +208,8 @@
   },
   "interview_schedule": {
     "form": {
-      "title": "Create Interview Schedule",
+      "create_title": "Create Interview Schedule",
+      "update_title": "Update Interview Schedule",
       "sections": {
         "general_info": "General Information",
         "message": "Message"
@@ -250,7 +251,9 @@
       },
       "toast": {
         "create_success": "Interview schedule created successfully.",
-        "create_error": "Failed to create interview schedule."
+        "create_error": "Failed to create interview schedule.",
+        "update_success": "Interview schedule updated successfully.",
+        "update_error": "Failed to update interview schedule."
       },
       "btn_save": "Save",
       "btn_save_and_send_mail": "Save & Send Mail"

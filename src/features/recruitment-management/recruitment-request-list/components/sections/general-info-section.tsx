@@ -103,7 +103,7 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
 
         <FormSelect
           control={control}
-          name="workType"
+          name="staffType"
           label={t('form.fields.staff_type')}
           isRequired
           placeholder={t('form.placeholders.select_staff_type')}

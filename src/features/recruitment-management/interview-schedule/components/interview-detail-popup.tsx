@@ -1,19 +1,18 @@
-import { useState } from 'react';
 import { StatusChipSelect } from '@/components/status-chip-select';
 import { NAMESPACES } from '@/i18n/constants';
-import { Button, Chip, Input, Select, SelectItem } from '@heroui/react';
+import { Button, Input } from '@heroui/react';
 import {
   IconCheck,
-  IconChevronDown,
   IconClock,
   IconCopy,
   IconMapPin,
   IconUserCircle,
   IconVideo,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import dayjs from 'dayjs';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
@@ -106,7 +105,7 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
   };
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col" id={interview.id}>
       {/* Header */}
       <div
         className={cn('flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#E4E4E7]')}

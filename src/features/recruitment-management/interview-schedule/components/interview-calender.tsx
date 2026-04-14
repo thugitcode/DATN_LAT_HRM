@@ -83,12 +83,13 @@ function EventPopoverWrapper({
             showArrow
             isOpen={isSelected}
             onOpenChange={(open) => {
-                if (!open && isSelected) setSelectedId(null);
+                setSelectedId(open ? interview.id : null);
             }}
             classNames={{
                 base: 'w-[498px]',
                 content: cn('rounded-none! border-t-4', INTERVIEW_STATUS_CONFIG[interview.status]?.borderTColor),
             }}
+            onClose={() => setSelectedId(null)}
         >
             <PopoverTrigger>
                 <div className="h-full w-full cursor-pointer">{children}</div>

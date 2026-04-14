@@ -65,7 +65,7 @@ export function FormInterviewScheduleMutate() {
             {/* Header */}
             <div className="px-6 py-5 bg-white border-b border-[#F4F4F5]">
                 <h2 className="text-2xl font-bold text-[#11181C]">
-                    {t('interview_schedule.form.title')}
+                    {t(`interview_schedule.form.${interviewId ? 'update_title' : 'create_title'}`)}
                 </h2>
             </div>
 

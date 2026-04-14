@@ -208,7 +208,8 @@
   },
   "interview_schedule": {
     "form": {
-      "title": "Tạo lịch phỏng vấn",
+      "create_title": "Tạo lịch phỏng vấn",
+      "update_title": "Cập nhật lịch phỏng vấn",
       "sections": {
         "general_info": "Thông tin chung",
         "message": "Message"
@@ -250,7 +251,9 @@
       },
       "toast": {
         "create_success": "Tạo lịch phỏng vấn thành công.",
-        "create_error": "Tạo lịch phỏng vấn thất bại."
+        "create_error": "Tạo lịch phỏng vấn thất bại.",
+        "update_success": "Cập nhật lịch phỏng vấn thành công.",
+        "update_error": "Cập nhật lịch phỏng vấn thất bại."
       },
       "btn_save": "Lưu",
       "btn_save_and_send_mail": "Lưu và Gửi mail"

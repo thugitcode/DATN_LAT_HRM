@@ -46,7 +46,7 @@ export const CandidateRequirementsSection = ({ isReadOnly, variant }: CandidateR
           variant={variant}
         />
 
-        <FormNumberInput
+        <FormInput
           control={control}
           name="experienceYears"
           label={t('form.fields.experience_years')}

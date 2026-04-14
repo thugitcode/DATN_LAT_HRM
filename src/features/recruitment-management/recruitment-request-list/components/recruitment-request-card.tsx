@@ -43,7 +43,6 @@ const getProgress = (requiredDate: string, createdAt: string): number => {
 
 export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }) => {
   const { t, i18n } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-  console.log(i18n, 333);
 
   const navigate = useNavigate();
   const { format } = useShortPriceFormatter(i18n.language as Locale)
