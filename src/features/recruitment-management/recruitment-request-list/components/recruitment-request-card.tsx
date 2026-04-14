@@ -1,19 +1,24 @@
 import type { FC } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
-import {
-  Progress,
-} from '@heroui/react';
+import { Progress, Avatar, Tooltip } from '@heroui/react';
 import {
   IconCalendar,
+  IconUsers,
+  IconBriefcase,
+  IconCurrencyDollar,
+  IconChevronRight,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 
-import { formatDate } from '@/lib/utils';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 import { type RecruitmentRequest } from '../types/type';
 import { RecruitmentRequestStatusChip } from './recruitment-request-status-chip';
 import { RecruitmentRequestActionButtons, RecruitmentRequestActionDropdown } from './row-recruitment-request-actions';
 import { useNavigate } from '@tanstack/react-router';
+import { useShortPriceFormatter, type Locale } from '@/hooks/common/use-short-price-formatter';
+import { icons } from '@/lib/icons';
 
 interface RecruitmentRequestCardProps {
   data: RecruitmentRequest;
@@ -37,9 +42,11 @@ const getProgress = (requiredDate: string, createdAt: string): number => {
 };
 
 export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }) => {
-  const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-  const navigate = useNavigate();
+  const { t, i18n } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+  console.log(i18n, 333);
 
+  const navigate = useNavigate();
+  const { format } = useShortPriceFormatter(i18n.language as Locale)
   const daysRemaining = getDaysRemaining(data.requiredDate);
   const progress = getProgress(data.requiredDate, data.createdAt);
 
@@ -48,25 +55,44 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
   };
 
   return (
-    <div
-      className="bg-white rounded-xl shadow-sm p-3 flex flex-col gap-3 cursor-pointer hover:shadow-md transition-shadow"
+    <motion.div
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
+      className="group relative bg-white dark:bg-[#18181B] rounded-2xl border border-[rgba(0,0,0,0.08)] dark:border-[rgba(255,255,255,0.08)] p-4 flex flex-col gap-4 cursor-pointer hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.02)] transition-all duration-300 ring-1 ring-transparent hover:ring-primary/20"
       onClick={handleCardClick}
     >
-      {/* Header: Status + Menu */}
+      {/* Top Section: Status & Actions */}
       <div className="flex items-center justify-between">
         <RecruitmentRequestStatusChip status={data.status} />
-        <RecruitmentRequestActionDropdown dataRow={data} />
+        <div className="flex items-center gap-1">
+          <RecruitmentRequestActionDropdown dataRow={data} />
+        </div>
       </div>
 
-      {/* Position Info */}
-      <div className="flex flex-col">
-        <span className="text-base font-medium text-[#11181C] leading-6">{data.position}</span>
-        <div className="flex items-center gap-2 text-sm text-[#71717A] leading-5">
-          <span>{data.workType}</span>
-          <span className="size-1 rounded-full bg-[#71717A]" />
-          <span>{data?.salaryFrom ?? '-'} - {data?.salaryTo ?? '-'}</span>
-          <span className="size-1 rounded-full bg-[#71717A]" />
-          <span>{t('recruitment_request.card.people_count', { count: data.quantity })}</span>
+      {/* Main Info */}
+      <div className="flex flex-col gap-1.5 flex-1">
+        <Tooltip content={data.position}>
+          <h3 className="text-[#11181C] dark:text-[#ECEDEE]  group-hover:text-primary transition-colors line-clamp-1 text-base leading-6 font-medium w-fit min-h-6">
+            {data.position}
+          </h3>
+        </Tooltip>
+
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-[#71717A] dark:text-[#A1A1AA]">
+          <div className="flex items-center gap-1">
+            {/* <IconBriefcase size={14} /> */}
+            <span>{t(`form.options.work_type.${data.workType}`)}</span>
+          </div>
+          <span className="w-1 h-1 rounded-full bg-primary" />
+          <div className="flex items-center gap-1">
+            {/* <IconCurrencyDollar size={14} /> */}
+            <span className="text-small">
+              {format(data?.salaryFrom, { compact: true, currency: true }) ?? '-'} - {format(data?.salaryTo, { compact: true, currency: true }) ?? '-'}
+            </span>
+          </div>
+          <span className="w-1 h-1 rounded-full bg-primary" />
+          <div className="flex items-center gap-1 text-small">
+            {/* <IconUsers size={14} /> */}
+            <span>{t('recruitment_request.card.people_count', { count: data.quantity })}</span>
+          </div>
         </div>
       </div>
 
@@ -91,31 +117,42 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
         </div>
       </div>
 
-      {/* Date + Progress */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2 text-xs">
-          <IconCalendar size={16} color="#A1A1AA" />
-          <span className="text-[#A1A1AA]">{t('recruitment_request.card.required_date')}</span>
-          <span className="flex-1 text-black">{formatDate(data.requiredDate)}</span>
-          <span className="text-black">
+      {/* Progress & Deadline */}
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center justify-between text-[12px]">
+          <div className="flex items-center gap-1.5 text-[#71717A] dark:text-[#A1A1AA]">
+            {icons.calendar}
+            <span className="text-[#A1A1AA]">{t('recruitment_request.card.required_date')}</span>
+            <span>{formatDate(data.requiredDate)}</span>
+          </div>
+          <div className={`font-semibold ${daysRemaining <= 3 ? 'text-danger' : 'text-primary'}`}>
             {t('recruitment_request.card.days_remaining', { count: daysRemaining })}
-          </span>
+          </div>
         </div>
+
         <Progress
           size="sm"
           value={progress}
-          color="primary"
-          classNames={{ track: 'h-[7px]', indicator: 'h-[7px]' }}
+          color={daysRemaining <= 3 ? 'danger' : 'primary'}
+          classNames={{
+            base: 'max-w-md',
+            track: 'drop-shadow-sm h-1.5',
+            indicator: 'bg-gradient-to-r from-primary to-primary-400',
+          }}
         />
       </div>
 
       {/* Footer: Creator + Action */}
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-[#A1A1AA]">{t('recruitment_request.card.created_by')}</span>
-        <span className="text-xs text-black flex-1">{data.createdByName}</span>
-        <RecruitmentRequestActionButtons dataRow={data} size="sm" className="flex-1" />
+      <div className="flex items-center justify-between gap-2">
+        {data.createdByStaffName ? <div className='flex gap-2'>
+          <span className="text-xs text-[#A1A1AA]">{t('recruitment_request.card.created_by')}</span>
+          <span className="text-xs text-black flex-1">{data.createdByStaffName}</span>
+        </div> : <div></div>}
+        <RecruitmentRequestActionButtons dataRow={data} size="sm" className="w-fit" />
       </div>
-    </div>
+    </motion.div>
   );
 };
+
+
 

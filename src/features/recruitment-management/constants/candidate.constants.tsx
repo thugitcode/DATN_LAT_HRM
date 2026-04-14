@@ -2,7 +2,7 @@ import { icons } from '@/lib/icons';
 
 import type { MetadataRecruitmentRequest } from '../recruitment-request-list/types/type';
 import type { CandidateFormValues } from '../candidate/schemas/candidate.schema';
-import { CandidateStatusEnum, type CandidateRowActionConfig, type ICandidate } from '../recruitment-request-details/types/candidate.type';
+import { CandidateStatusEnum, MainNavigateEnum, type CandidateRowActionConfig, type ICandidate } from '../recruitment-request-details/types/candidate.type';
 import { IconCalendarPlus, IconCalendarSearch, IconCalendarX, IconEye, IconFileText, IconRefresh, IconSend, IconUserCheck, IconUserX } from '@tabler/icons-react';
 import { DrawerType } from '@/store/useDrawer';
 
@@ -216,7 +216,7 @@ export const CANDIDATE_ROW_ACTION_CONFIG: Partial<Record<CandidateStatusEnum, Ca
     mainIcon: <IconCalendarSearch size={14} />,
     mainVariant: 'bordered',
     mainColor: 'primary',
-    mainNavigate: 'detail',
+    mainNavigate: MainNavigateEnum.SCHEDULE,
     secondary: [
       { key: 'reschedule', labelKey: 'candidate.actions.reschedule', icon: <IconCalendarPlus size={14} />, drawer: DrawerType.INTERVIEW_SCHEDULE_MUTATE },
       { key: 'cancel_schedule', labelKey: 'candidate.actions.cancel_schedule', icon: <IconCalendarX size={14} />, color: 'danger' },
@@ -276,7 +276,7 @@ export const CANDIDATE_ROW_ACTION_CONFIG: Partial<Record<CandidateStatusEnum, Ca
     mainIcon: <IconEye size={14} />,
     mainVariant: 'bordered',
     mainColor: 'primary',
-    mainNavigate: 'detail',
+    mainNavigate: MainNavigateEnum.DETAIL,
     secondary: [],
   },
 };

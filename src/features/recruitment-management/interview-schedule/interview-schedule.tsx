@@ -5,10 +5,15 @@ import { useTranslation } from 'react-i18next';
 import { InterviewCalendar } from './components/interview-calender';
 import { BtnCreate } from '@/components/btn-actions';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { useSearch } from '@tanstack/react-router';
 
 export const InterviewSchedule = () => {
   const { t } = useTranslation(NAMESPACES.COMMON);
-  const { onOpen } = useDrawer()
+  const { onOpen } = useDrawer();
+  const { candidateId } = useSearch({
+    from: '/_private/admin/_dashboard/recruitment-management/interview-schedule',
+  });
+
   return (
     <PageContainer className="space-y-3">
       <div className="flex justify-between">
@@ -18,7 +23,7 @@ export const InterviewSchedule = () => {
         </BtnCreate>
       </div>
       <div className='h-[calc(100vh-164px)]'>
-        <InterviewCalendar />
+        <InterviewCalendar candidateId={candidateId} />
       </div>
     </PageContainer>
   );

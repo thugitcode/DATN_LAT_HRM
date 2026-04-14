@@ -684,7 +684,8 @@
         "internal_email": "Internal Email",
         "enter_email": "Enter email",
         "system_permissions": "Systems to Grant Access",
-        "enter_system_permissions": "e.g. HIS, Email, Prescription Software"
+        "enter_system_permissions": "e.g. HIS, Email, Prescription Software",
+        "allowance": "Allowances"
       },
       "checklist": {
         "documents": "Complete Documents",
@@ -716,6 +717,9 @@
         "start_date_required": "Please select a probation start date",
         "review_date_required": "Please select a review date",
         "qualification_required": "Please select a qualification level"
+      },
+      "actions": {
+        "add_allowance": "Add Allowance"
       }
     }
   }

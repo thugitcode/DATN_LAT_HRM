@@ -9,7 +9,7 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
     id: '2',
     path: '/admin/timekeeping-shift-scheduling',
     label: t('sidebar.timekeeping_shift_scheduling'),
-    icon: icons.calendar,
+    icon: icons.calendarFill,
     children: [
       {
         id: '1',
@@ -173,7 +173,7 @@ export const menuSidebar: MenuItem[] = [
     id: '2',
     path: '/admin/timekeeping-shift-scheduling',
     label: 'Chấm công và phân ca',
-    icon: icons.calendar,
+    icon: icons.calendarFill,
     children: [
       {
         id: '1',

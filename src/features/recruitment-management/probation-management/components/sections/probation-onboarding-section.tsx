@@ -6,6 +6,7 @@ import { IconClipboardList } from '@tabler/icons-react';
 import { FormArea } from '@/components/form-fields/form-area';
 import { FormCheckbox } from '@/components/form-fields/form-checkbox';
 import { NAMESPACES } from '@/i18n/constants';
+import { icons } from '@/lib/icons';
 
 const CHECKLIST_ITEMS = [
   { completedField: 'onboardingDocumentsCompleted', noteField: 'onboardingDocumentsNote', labelKey: 'probation.form.checklist.documents' },
@@ -23,7 +24,7 @@ export function ProbationOnboardingSection() {
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
       <h3 className="text-base flex items-center font-semibold text-[#11181C] gap-3">
-        <IconClipboardList size={18} />
+        {icons.documentMedicine}
         {t('probation.form.sections.onboarding' as any)}
       </h3>
 
@@ -45,7 +46,7 @@ export function ProbationOnboardingSection() {
               placeholder="Nhập ghi chú..."
               size="sm"
               classNames={{
-                inputWrapper: 'ml-6 bg-[#F4F4F5] shadow-none border-none min-h-7 h-7',
+                inputWrapper: 'ml-6 bg-[#F4F4F5] shadow-none border-none min-h-7 h-7 w-[calc(100%-24px)]',
                 input: 'text-xs text-[#71717A] placeholder:text-xs',
               }}
             />

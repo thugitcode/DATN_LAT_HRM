@@ -18,7 +18,7 @@ import type { ProbationFilters } from './types/probation.type';
 import { BtnCreate } from '@/components/btn-actions';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
 
-const TABLE_CLASS_NAMES = { wrapper: 'rounded-[14px] h-[calc(100vh-340px)]' } as const;
+const TABLE_CLASS_NAMES = { wrapper: 'rounded-[14px] h-[calc(100vh-275px)]' } as const;
 
 export const ProbationManagement = () => {
   const { t: tR } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
@@ -55,7 +55,9 @@ export const ProbationManagement = () => {
       <div className="flex items-center justify-between">
         <TitlePage title={tR('probation.title')} />
         <div className="flex items-center gap-2">
-          <ActionsPage actions={<BtnCreate onPress={() => onOpen(DrawerType.PROBATION_ACCEPT)} />} />
+          <ActionsPage
+          // actions={<BtnCreate onPress={() => onOpen(DrawerType.PROBATION_ACCEPT)} />} 
+          />
           <ColumnVisibilityPopover
             columns={columns}
             visibleColumns={visibleColumns}

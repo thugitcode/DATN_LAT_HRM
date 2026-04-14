@@ -107,6 +107,7 @@ export interface EntryPersonList {
 export interface AllowanceList {
   id: string;
   name: string;
+  [key: string]: unknown;
 }
 
 export interface AttachmentList {

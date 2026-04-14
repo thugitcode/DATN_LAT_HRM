@@ -5,7 +5,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { useStaffList } from '@/query-options/staff';
 import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
-import { StaffPositionEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
+import { StaffPositionEnum, WorkingTypeEnum } from '@/types/staff.type';
 
 // Các custom component bạn đã có
 import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
@@ -112,7 +112,7 @@ export const ContractInfoSection: FC = () => {
             name="workType"
             label={t('contract_info.work_type')}
             isRequired
-            options={Object.values(WorkingTypeTypeEnum).map((val) => ({
+            options={Object.values(WorkingTypeEnum).map((val) => ({
               label: t(`options.workType.${val}`),
               key: val
             }))}

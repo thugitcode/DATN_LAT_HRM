@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { NAMESPACES } from '@/i18n/constants';
 import { interviewScheduleService } from '@/services/recruitment-management/interview-schedule.service';
+import { candidateService } from '@/services/recruitment-management/candidate.service';
+import { CandidateStatusEnum } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import { addToast } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, type Resolver } from 'react-hook-form';
@@ -19,6 +21,7 @@ import { useEffect } from 'react';
 interface UseFormInterviewScheduleParams {
   interviewId?: string;
   candidateId?: string;
+  candidateStatus?: CandidateStatusEnum;
   onSuccess?: () => void;
   onSuccessAndSendMail?: () => void;
 }
@@ -26,6 +29,7 @@ interface UseFormInterviewScheduleParams {
 export function useFormInterviewSchedule({
   interviewId,
   candidateId,
+  candidateStatus,
   onSuccess,
   onSuccessAndSendMail,
 }: UseFormInterviewScheduleParams = {}) {
@@ -69,8 +73,12 @@ export function useFormInterviewSchedule({
       try {
         const { emailTo: _e, emailSubject: _s, emailContent: _c, sendMail: _m, ...payload } = data;
         await createInterview(payload, {
-          onSuccess: () => {
+          onSuccess: async () => {
+            if (candidateId && candidateStatus === CandidateStatusEnum.SCREENED) {
+              await candidateService.patch(candidateId, { status: CandidateStatusEnum.WAITING_INTERVIEW });
+            }
             queryClient.invalidateQueries({ queryKey: [QUERY_KEY.INTERVIEW_SCHEDULE, 'list'] });
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEY.CANDIDATE, 'list'] });
             addToast({
               title: t('interview_schedule.form.toast.create_success'),
               color: 'success',
@@ -106,8 +114,12 @@ export function useFormInterviewSchedule({
           emailSubject: data.emailSubject,
           emailContent: data.emailContent,
         });
+        if (candidateId && candidateStatus === CandidateStatusEnum.SCREENED) {
+          await candidateService.patch(candidateId, { status: CandidateStatusEnum.WAITING_INTERVIEW });
+        }
         addToast({ title: t('interview_schedule.form.toast.create_success'), color: 'success' });
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY.INTERVIEW_SCHEDULE, 'list'] });
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY.CANDIDATE, 'list'] });
         onSuccessAndSendMail?.();
       } catch {
         addToast({ title: t('interview_schedule.form.toast.create_error'), color: 'danger' });

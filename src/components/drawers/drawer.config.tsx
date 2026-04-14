@@ -35,7 +35,7 @@ type DrawerConfig = {
     header?: string;
   };
 };
-
+const FULL_WIDTH = 'calc(100vw - 64px)';
 export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
   const { t } = useTranslation(NAMESPACES.COMMON);
 
@@ -85,7 +85,7 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
       drawerProps: {
         placement: 'right',
         size: '5xl',
-        style: { width: '97vw', maxWidth: '97vw' },
+        style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
         classNames: { body: 'p-0 bg-[#F4F4F5]' },
       },
     },
@@ -122,7 +122,7 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
       drawerProps: {
         placement: 'right',
         size: '2xl',
-        style: { width: '97vw', maxWidth: '97vw' },
+        style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
         classNames: { body: 'p-0 bg-[#F4F4F5]' },
       },
     },
@@ -151,7 +151,7 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
       drawerProps: {
         placement: 'right',
         size: '5xl',
-        style: { width: '97vw', maxWidth: '97vw' },
+        style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
         classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
       },
     },
@@ -221,7 +221,7 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
       drawerProps: {
         placement: 'right',
         size: '5xl',
-        style: { width: '80vw', maxWidth: '80vw' },
+        style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
         classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
       },
     },

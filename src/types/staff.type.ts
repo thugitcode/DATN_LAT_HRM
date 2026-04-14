@@ -97,7 +97,7 @@ export enum StaffTypeEnum {
   OTHER = 'OTHER',
 }
 
-export enum WorkingTypeTypeEnum {
+export enum WorkingTypeEnum {
   FULL_TIME = 'FULL_TIME',
   PART_TIME = 'PART_TIME',
 }
@@ -132,7 +132,7 @@ export interface StaffWorkHistory {
   position: StaffPositionEnum;
   contractNumber: string;
   contractType: ContractTypeEnum;
-  workType: WorkingTypeTypeEnum;
+  workType: WorkingTypeEnum;
   duration: number;
   durationUnit: DurationUnitEnum;
   startDate: string;
@@ -180,7 +180,7 @@ export interface StaffSalary {
 export interface StaffContract {
   id: string;
   contractType: ContractTypeEnum;
-  workType: WorkingTypeTypeEnum;
+  workType: WorkingTypeEnum;
   contractNumber: string;
   startDate: string;
   endDate: string;
@@ -268,7 +268,7 @@ export interface Staff {
   jobTitle?: { id: string; name: string };
   position?: StaffPosition;
   currentWorkType?: string;
-  workType?: WorkingTypeTypeEnum;
+  workType?: WorkingTypeEnum;
   contractExpiryDate?: string;
   endDate?: string;
   status?: Status;

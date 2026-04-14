@@ -9,7 +9,7 @@ import { ActionButton } from '@/components/action-button';
 import { icons } from '@/lib/icons';
 import { useConfirmStore } from '@/store/useConfirmStore';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
-import { ContractStatusEnum, ContractTypeEnum, StaffPositionEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
+import { ContractStatusEnum, ContractTypeEnum, StaffPositionEnum, WorkingTypeEnum } from '@/types/staff.type';
 import {
   useApproveContract,
   useDeleteContract,
@@ -34,7 +34,7 @@ export interface WorkHistoryRow {
   jobTitle: { id: string; name: string };
   position: StaffPositionEnum;
   contractType: ContractTypeEnum;
-  workType: WorkingTypeTypeEnum;
+  workType: WorkingTypeEnum;
   duration: number;
   durationUnit: string;
   startDate: string;

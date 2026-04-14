@@ -9,7 +9,7 @@ import { FormSelect } from '@/components/form-fields/form-select';
 import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
 import { useRoomOptions } from '@/hooks/select-options/use-room-options';
 import { NAMESPACES } from '@/i18n/constants';
-import { StaffTypeEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
+import { StaffTypeEnum, WorkingTypeEnum } from '@/types/staff.type';
 import { useFormRecruitmentRequest } from '../../recruitment-request-list/hooks/use-form-recruitment-request';
 import { useParams } from '@tanstack/react-router';
 import { icons } from '@/lib/icons';
@@ -38,7 +38,7 @@ export const RecruitmentInformationSection = () => {
         label: t(`form.options.staff_type.${val}`),
     }));
 
-    const workTypeOptions = Object.values(WorkingTypeTypeEnum).map((val) => ({
+    const workTypeOptions = Object.values(WorkingTypeEnum).map((val) => ({
         key: val,
         label: t(`form.options.work_type.${val}`),
     }));

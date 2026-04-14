@@ -684,7 +684,8 @@
         "internal_email": "Email nội bộ",
         "enter_email": "Nhập email",
         "system_permissions": "Hệ thống cần cấp quyền",
-        "enter_system_permissions": "VD: HIS, Email, Phần mềm kê đơn"
+        "enter_system_permissions": "VD: HIS, Email, Phần mềm kê đơn",
+        "allowance": "Phụ cấp"
       },
       "checklist": {
         "documents": "Hồ sơ giấy tờ đầy đủ",
@@ -716,6 +717,9 @@
         "start_date_required": "Vui lòng chọn ngày bắt đầu thử việc",
         "review_date_required": "Vui lòng chọn ngày đánh giá",
         "qualification_required": "Vui lòng chọn trình độ chuyên môn"
+      },
+      "actions": {
+        "add_allowance": "Thêm phụ cấp"
       }
     }
   }

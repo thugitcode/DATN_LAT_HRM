@@ -1,6 +1,6 @@
 import type { PaginationParams } from '@/types';
 import type { CandidateSourceEnum } from '../../types/candidate.type';
-import type { AcademicTitleEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
+import type { AcademicTitleEnum, WorkingTypeEnum } from '@/types/staff.type';
 import type { EducationLevelEnum, ExperienceYearsEnum } from '../../constants/candidate.constants';
 import type { DrawerType } from '@/store/useDrawer';
 
@@ -21,7 +21,7 @@ export interface CandidateRecruitmentRequest {
   code: string;
   position: string;
   staffType: string;
-  workType: WorkingTypeTypeEnum;
+  workType: WorkingTypeEnum;
   salaryFrom: string;
   salaryTo: string;
   department: { id: string; name: string };
@@ -224,7 +224,10 @@ export type CandidateRowSecondaryAction = {
   drawer?: DrawerType;                  // open a drawer
   navigate?: 'detail';                  // navigate to detail page
 };
-
+export enum MainNavigateEnum {
+  DETAIL = 'DETAIL',
+  SCHEDULE = 'SCHEDULE',
+}
 export type CandidateRowActionConfig = {
   mainLabelKey: string;
   mainIcon: React.ReactNode;
@@ -235,6 +238,6 @@ export type CandidateRowActionConfig = {
   /** If set, main action opens this drawer */
   mainDrawer?: DrawerType;
   /** If set, main action navigates to detail */
-  mainNavigate?: 'detail';
+  mainNavigate?: MainNavigateEnum;
   secondary: CandidateRowSecondaryAction[];
 };

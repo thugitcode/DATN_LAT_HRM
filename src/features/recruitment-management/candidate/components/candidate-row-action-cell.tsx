@@ -1,6 +1,6 @@
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 import { IconDots } from "@tabler/icons-react";
-import type { CandidateRowSecondaryAction, ICandidate } from "../../recruitment-request-details/types/candidate.type";
+import { MainNavigateEnum, type CandidateRowSecondaryAction, type ICandidate } from "../../recruitment-request-details/types/candidate.type";
 import { CANDIDATE_ROW_ACTION_CONFIG } from "../../constants/candidate.constants";
 import { useDrawer } from "@/store/useDrawer";
 import { useNavigate } from "@tanstack/react-router";
@@ -23,11 +23,14 @@ export function CandidateRowActionsCell({ candidate }: { candidate: ICandidate }
             return;
         }
         if (config.mainDrawer) {
-            onOpen(config.mainDrawer, { ...candidate });
+            onOpen(config.mainDrawer, { candidateId: candidate?.id, candidateName: candidate?.name, candidateStatus: candidate.status });
             return;
         }
-        if (config.mainNavigate === 'detail') {
+        if (config.mainNavigate === MainNavigateEnum.DETAIL) {
             navigate({ to: `/admin/recruitment-management/candidate/${candidate.id}` });
+        }
+        if (config.mainNavigate === MainNavigateEnum.SCHEDULE) {
+            navigate({ to: `/admin/recruitment-management/interview-schedule`, search: { candidateId: candidate.id } });
         }
     };
 

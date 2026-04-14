@@ -7,7 +7,7 @@ import { useRoomOptions } from "@/hooks/select-options/use-room-options";
 import { NAMESPACES } from "@/i18n/constants";
 import { icons } from "@/lib/icons";
 import { useUpdateStaff } from "@/query-options/staff";
-import { ContractTypeEnum, StaffPositionEnum, WorkingTypeTypeEnum } from "@/types/staff.type";
+import { ContractTypeEnum, StaffPositionEnum, WorkingTypeEnum } from "@/types/staff.type";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { STAFF_SECTION_KEYS } from "../../constants/data";
@@ -122,7 +122,7 @@ export const DepartmentSection = () => {
                     placeholder={t('staffForm.fields.workType.placeholder')}
                     readOnly={!isCreate || isView}
                     variant={variant}
-                    options={Object.values(WorkingTypeTypeEnum).map((val) => ({
+                    options={Object.values(WorkingTypeEnum).map((val) => ({
                         label: t(`options.workType.${val}`),
                         key: val
                     }))}
