@@ -12,7 +12,7 @@ export const menuSidebar: MenuItem[] = [
     id: '2',
     path: '/timekeeping-shift-scheduling',
     label: 'Chấm công và phân ca',
-    icon: icons.calendar,
+    icon: icons.calendarFill,
     children: [
       {
         id: '1',

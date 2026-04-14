@@ -13,6 +13,7 @@ import {
   positionOptions,
   workTypeOptions,
 } from '@/features/staff-management/staff-list-management/constants/constants';
+import { icons } from '@/lib/icons';
 
 export function ProbationJobInfoSection() {
   const { control, watch } = useFormContext();
@@ -28,7 +29,7 @@ export function ProbationJobInfoSection() {
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
       <h3 className="text-base flex items-center font-semibold text-[#11181C] gap-3">
-        <IconBriefcase size={18} />
+        {icons.case}
         {t('probation.form.sections.job_info')}
       </h3>
 

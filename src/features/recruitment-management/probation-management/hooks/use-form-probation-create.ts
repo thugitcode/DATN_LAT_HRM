@@ -12,6 +12,9 @@ import { probationKeys } from '@/services/query-options/recruitment-management/p
 import { probationService } from '@/services/recruitment-management/probation.service';
 
 import { probationCreateSchema, type ProbationCreateValues } from '../schemas/probation.schema';
+import { useCandidateUpdateStatus } from '../../recruitment-request-details/hooks/use-candidate-update-status';
+import { CandidateStatusEnum } from '../../recruitment-request-details/types/candidate.type';
+import { QUERY_KEY } from '@/hooks/use-crud-query';
 
 interface UseFormProbationCreateProps {
   candidateId: string;
@@ -67,13 +70,14 @@ const EMPTY_DEFAULTS = {
   onboardingOrientationNote: null,
   probationWorkObjectives: null,
   note: null,
+  allowanceIds: [{ allowanceId: '' }],
 };
 
 export function useFormProbationCreate({ candidateId, onSuccess }: UseFormProbationCreateProps) {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
   const queryClient = useQueryClient();
   const schema = probationCreateSchema(t);
-
+  const { mutate: updateStatus, isPending } = useCandidateUpdateStatus();
   const { data: res, isLoading: isFetchingCandidate } = useCandidateDetail(candidateId);
   const candidate = res?.data;
 
@@ -159,8 +163,12 @@ export function useFormProbationCreate({ candidateId, onSuccess }: UseFormProbat
         probationWorkObjectives: data.probationWorkObjectives || null,
         note: data.note || null,
       });
-
+      updateStatus({
+        id: candidateId,
+        status: CandidateStatusEnum.ON_PROBATION,
+      });
       await queryClient.invalidateQueries({ queryKey: probationKeys.lists() });
+      await queryClient.invalidateQueries({ queryKey: [QUERY_KEY.CANDIDATE, "list"] });
 
       addToast({
         description: t('probation.toast.create_success' as any),

@@ -14,6 +14,7 @@ import type { CandidatePayload } from '@/features/recruitment-management/recruit
 import { addToast } from '@heroui/react';
 import { candidateSchema, DEFAULT_VALUES, type CandidateFormValues } from '../schemas/candidate.schema';
 import { uploadService } from '@/services/upload.service';
+import { normalizePayload } from '@/lib/utils';
 
 interface UseFormCandidateParams {
   id?: string;
@@ -84,10 +85,10 @@ export function useFormCandidate({ id, recruitmentRequestId, onSuccess }: UseFor
     const payload = { ...data, documents, practiceFileUrl } as unknown as CandidatePayload
     try {
       if (isEditMode && id) {
-        await updateCandidate({ id, data: payload });
+        await updateCandidate({ id, data: normalizePayload(payload) });
         addToast({ title: t('candidate.toast.update_success'), color: 'success' });
       } else {
-        await createCandidate(payload);
+        await createCandidate(normalizePayload(payload));
         addToast({ title: t('candidate.toast.create_success'), color: 'success' });
       }
       onSuccess?.();

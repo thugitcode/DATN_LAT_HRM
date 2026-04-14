@@ -1,5 +1,6 @@
 import type { Department } from "@/types/deparment.type";
 import type { Room } from "@/types/room.type";
+import type { WorkingTypeEnum } from "@/types/staff.type";
 
 export interface RecruitmentRequestFilters {
   fromDate?: string;
@@ -34,11 +35,11 @@ export interface RecruitmentRequest {
   salaryTo: number;
   requiredDate: string;
   status: RecruitmentRequestStatusEnum;
-  workType: string;
+  workType: WorkingTypeEnum;
   candidateCount: number;
   interviewCount: number;
   createdById: string;
-  createdByName: string;
+  createdByStaffName: string;
   approvedById: string | null;
   approvedByName: string | null;
   approvedAt: string | null;

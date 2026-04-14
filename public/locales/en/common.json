@@ -375,7 +375,8 @@
     "WIFI_NOT_FOUND": "WiFi not found",
     "SCHEDULE_NOT_FOUND": "Work schedule not found",
     "INVALID_DATE_RANGE": "Invalid date range",
-    "SCHEDULE_ALREADY_EXISTS_DATE": "Schedule already exists for this date"
+    "SCHEDULE_ALREADY_EXISTS_DATE": "Schedule already exists for this date",
+    "INTERVIEWER_SCHEDULE_CONFLICT": "Interviewer schedule conflict"
   },
   "toast": {
     "success": {

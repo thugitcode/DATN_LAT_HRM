@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { TFunction } from 'i18next';
 import type { NAMESPACES } from '@/i18n/constants';
 import { InterviewMethodEnum } from '@/features/recruitment-management/recruitment-request-details/types/interview.type';
+import dayjs from 'dayjs';
 
 const requiredString = (message: string) =>
   z.preprocess(
@@ -41,11 +42,9 @@ export const interviewScheduleSchema = (t: TFunction<typeof NAMESPACES.RECRUITME
       }
 
       // Interview date must be >= today
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
+      const todayStr = dayjs().format('YYYY-MM-DD'); // YYYY-MM-DD
 
-      if (data.interviewDate && data.interviewDate < todayStr) {
+      if (data.interviewDate && data.interviewDate < todayStr!) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: t('interview_schedule.form.validation.date_past'),
@@ -57,6 +56,7 @@ export const interviewScheduleSchema = (t: TFunction<typeof NAMESPACES.RECRUITME
       if (data.interviewDate && data.interviewDate === todayStr && data.startTime) {
         const now = new Date();
         const nowTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
         if (data.startTime <= nowTime) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,

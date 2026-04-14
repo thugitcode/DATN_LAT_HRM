@@ -386,7 +386,8 @@
     "WIFI_NOT_FOUND": "Không tìm thấy WiFi",
     "SCHEDULE_NOT_FOUND": "Không tìm thấy biểu đồ phân ca",
     "INVALID_DATE_RANGE": "Khoảng thời gian không hợp lệ",
-    "SCHEDULE_ALREADY_EXISTS_DATE": "Ngày này đã có lịch làm việc"
+    "SCHEDULE_ALREADY_EXISTS_DATE": "Ngày này đã có lịch làm việc",
+    "INTERVIEWER_SCHEDULE_CONFLICT": "Lịch phỏng vấn bị trùng"
   },
   "toast": {
     "success": {

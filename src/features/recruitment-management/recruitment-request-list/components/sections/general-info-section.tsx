@@ -8,7 +8,7 @@ import { useDepartmentOptions } from '@/hooks/select-options/use-department-opti
 import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
 import { useRoomOptions } from '@/hooks/select-options/use-room-options';
 import { NAMESPACES } from '@/i18n/constants';
-import { StaffTypeEnum, WorkingTypeTypeEnum } from '@/types/staff.type';
+import { StaffTypeEnum, WorkingTypeEnum } from '@/types/staff.type';
 
 interface GeneralInfoSectionProps {
   isReadOnly?: boolean;
@@ -29,7 +29,7 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
     label: t(`form.options.staff_type.${val}`),
   }));
 
-  const workTypeOptions = Object.values(WorkingTypeTypeEnum).map((val) => ({
+  const workTypeOptions = Object.values(WorkingTypeEnum).map((val) => ({
     key: val,
     label: t(`form.options.work_type.${val}`),
   }));
@@ -103,7 +103,7 @@ export const GeneralInfoSection = ({ isReadOnly, variant }: GeneralInfoSectionPr
 
         <FormSelect
           control={control}
-          name="workType"
+          name="staffType"
           label={t('form.fields.staff_type')}
           isRequired
           placeholder={t('form.placeholders.select_staff_type')}

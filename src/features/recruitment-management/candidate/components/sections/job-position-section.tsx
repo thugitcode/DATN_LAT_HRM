@@ -11,14 +11,14 @@ import { CandidateSourceEnum } from '@/features/recruitment-management/types/can
 import { useRecruitmentRequestList } from '@/features/recruitment-management/recruitment-request-list/hooks/use-recruitment-request';
 import { icons } from '@/lib/icons';
 import { RecruitmentRequestStatusEnum } from '@/features/recruitment-management/recruitment-request-list/types/type';
-import { WorkingTypeTypeEnum } from '@/types/staff.type';
+import { WorkingTypeEnum } from '@/types/staff.type';
 
 export function JobPositionSection({ recruitmentRequestId }: { recruitmentRequestId?: string }) {
   const { control, watch, setValue, formState: { errors } } = useFormContext();
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
   const selectedDept = watch('departmentId');
-  const workTypeOptions = Object.values(WorkingTypeTypeEnum).map((val) => ({
+  const workTypeOptions = Object.values(WorkingTypeEnum).map((val) => ({
     key: val,
     label: t(`form.options.work_type.${val}`),
   }));

@@ -10,6 +10,7 @@ import { idbPersister } from './idb-persister';
 import { logger } from './logger';
 import type { TFunction } from 'i18next';
 import type { SalaryData } from '@/features/payroll-management/types/payroll-caculation.type';
+import { COMPACT_CONFIG, type FormatOptions, type Locale } from '@/hooks/common/use-short-price-formatter';
 
 export const DISABLE_AUTH = true;
 
@@ -556,5 +557,98 @@ export function calculateEmployerContributions(data: SalaryData) {
         this.unionFee
       );
     },
+  };
+}
+
+export const optionFromEnum = (enumObj: Record<string, string>, t: TFunction<any>) => {
+  return Object.entries(enumObj).map(([key, value]) => ({
+    label: t(value),
+    value: key,
+  }));
+};
+
+
+function formatCompactCustom(
+  value: number,
+  locale: Locale,
+  fractionDigits = 1
+): string {
+  const abs = Math.abs(value);
+  const config = COMPACT_CONFIG[locale];
+
+  for (const item of config) {
+    if (abs >= item.value) {
+      const result = value / item.value;
+      return (
+        parseFloat(result.toFixed(fractionDigits)).toString() + item.suffix
+      );
+    }
+  }
+
+  return value.toString();
+}
+
+export function formatNumberI18n(
+  value: number,
+  options: FormatOptions = {}
+): string {
+  const {
+    locale = 'vi',
+    compact = false,
+    currency = false,
+    maximumFractionDigits = 1,
+  } = options;
+
+  // 👉 Compact custom (ưu tiên)
+  if (compact && COMPACT_CONFIG[locale]) {
+    return formatCompactCustom(value, locale, maximumFractionDigits);
+  }
+
+  // 👉 Currency
+  if (currency) {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: locale === 'vi' ? 'VND' : 'USD',
+      maximumFractionDigits: 0,
+    }).format(value);
+  }
+
+  // 👉 Default number
+  return new Intl.NumberFormat(locale, {
+    maximumFractionDigits,
+  }).format(value);
+}
+
+export const normalizePayload = <T>(payload: T): T => {
+  if (payload === undefined || payload === '') return null as unknown as T;
+
+  if (Array.isArray(payload)) {
+    return payload.map((item) => normalizePayload(item)) as unknown as T;
+  }
+
+  if (payload !== null && typeof payload === 'object') {
+    const result: Record<string, any> = {};
+
+    Object.entries(payload).forEach(([key, value]) => {
+      result[key] = normalizePayload(value);
+    });
+
+    return result as T;
+  }
+
+  return payload;
+};
+
+export function runAfterPaint(callback: () => void) {
+  let raf1 = 0;
+  let raf2 = 0;
+
+  raf1 = requestAnimationFrame(() => {
+    raf2 = requestAnimationFrame(callback);
+  });
+
+  return () => {
+    cancelAnimationFrame(raf1);
+    cancelAnimationFrame(raf2);
   };
 }

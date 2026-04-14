@@ -208,7 +208,8 @@
   },
   "interview_schedule": {
     "form": {
-      "title": "Tạo lịch phỏng vấn",
+      "create_title": "Tạo lịch phỏng vấn",
+      "update_title": "Cập nhật lịch phỏng vấn",
       "sections": {
         "general_info": "Thông tin chung",
         "message": "Message"
@@ -250,7 +251,9 @@
       },
       "toast": {
         "create_success": "Tạo lịch phỏng vấn thành công.",
-        "create_error": "Tạo lịch phỏng vấn thất bại."
+        "create_error": "Tạo lịch phỏng vấn thất bại.",
+        "update_success": "Cập nhật lịch phỏng vấn thành công.",
+        "update_error": "Cập nhật lịch phỏng vấn thất bại."
       },
       "btn_save": "Lưu",
       "btn_save_and_send_mail": "Lưu và Gửi mail"
@@ -684,7 +687,8 @@
         "internal_email": "Email nội bộ",
         "enter_email": "Nhập email",
         "system_permissions": "Hệ thống cần cấp quyền",
-        "enter_system_permissions": "VD: HIS, Email, Phần mềm kê đơn"
+        "enter_system_permissions": "VD: HIS, Email, Phần mềm kê đơn",
+        "allowance": "Phụ cấp"
       },
       "checklist": {
         "documents": "Hồ sơ giấy tờ đầy đủ",
@@ -716,6 +720,9 @@
         "start_date_required": "Vui lòng chọn ngày bắt đầu thử việc",
         "review_date_required": "Vui lòng chọn ngày đánh giá",
         "qualification_required": "Vui lòng chọn trình độ chuyên môn"
+      },
+      "actions": {
+        "add_allowance": "Thêm phụ cấp"
       }
     }
   }

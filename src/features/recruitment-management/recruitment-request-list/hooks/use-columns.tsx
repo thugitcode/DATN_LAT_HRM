@@ -83,7 +83,7 @@ export const useColumns = () => {
         minWidth: 140,
         render: (_, row) => (
           <span className="text-sm text-[#11181C] whitespace-nowrap">
-            {row.createdByName ?? '—'}
+            {row.createdByStaffName ?? '—'}
           </span>
         ),
       },

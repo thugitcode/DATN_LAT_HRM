@@ -19,10 +19,12 @@ import { useFormInterviewSchedule } from '../hooks/use-form-interview-schedule';
 import { useDirtyDrawer } from '@/hooks/use-dirty-drawer';
 import { FormTimePicker } from '@/components/form-fields/form-time-picker';
 import { EmailSection } from '../components/email-section';
+import type { CandidateStatusEnum } from '../../recruitment-request-details/types/candidate.type';
 
 interface DrawerData {
     candidateId?: string;
     interviewId?: string;
+    candidateStatus?: CandidateStatusEnum;
 }
 
 const METHOD_KEYS = [
@@ -35,9 +37,11 @@ export function FormInterviewScheduleMutate() {
     const onClose = useDrawer((s) => s.onClose);
     const drawerData = useDrawer((s) => s.data) as DrawerData | undefined;
     const candidateId = drawerData?.candidateId;
+    const candidateStatus = drawerData?.candidateStatus;
     const interviewId = drawerData?.interviewId;
 
     const { methods, isSubmitting, onSubmit, onSubmitAndSendMail } = useFormInterviewSchedule({
+        candidateStatus,
         interviewId,
         candidateId,
         onSuccess: onClose,
@@ -61,7 +65,7 @@ export function FormInterviewScheduleMutate() {
             {/* Header */}
             <div className="px-6 py-5 bg-white border-b border-[#F4F4F5]">
                 <h2 className="text-2xl font-bold text-[#11181C]">
-                    {t('interview_schedule.form.title')}
+                    {t(`interview_schedule.form.${interviewId ? 'update_title' : 'create_title'}`)}
                 </h2>
             </div>
 

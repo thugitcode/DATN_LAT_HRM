@@ -32,33 +32,32 @@ export function ProbationPeriodSection() {
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
       <h3 className="text-base flex items-center font-semibold text-[#11181C] gap-3">
-        {icons.calendar}
-        {t('probation.form.sections.period' as any)}
+        {icons.calendarFill}
+        {t('probation.form.sections.period')}
       </h3>
 
       <div className="grid grid-cols-3 gap-4">
         <FormDatePicker
           control={control}
           name="probationStartDate"
-          label={t('probation.form.fields.start_date' as any)}
+          label={t('probation.form.fields.start_date')}
           isRequired
         />
 
         <FormNumberInput
           control={control}
           name="probationMonths"
-          label={t('probation.form.fields.probation_months' as any)}
+          label={t('probation.form.fields.probation_months')}
           placeholder="2"
           isRequired
         />
 
         <div className="flex flex-col gap-1">
           <span className="text-sm font-medium text-[#11181C]">
-            {t('probation.form.fields.end_date_expected' as any)}
+            {t('probation.form.fields.end_date_expected')}
           </span>
           <Input
             value={endDateDisplay ? dayjs(endDateDisplay).format('DD/MM/YYYY') : ''}
-            placeholder="Tự sinh"
             isDisabled
             classNames={{
               inputWrapper: 'bg-[#F4F4F5] shadow-none border-none',
@@ -72,13 +71,13 @@ export function ProbationPeriodSection() {
         <FormDatePicker
           control={control}
           name="actualStartDate"
-          label={t('probation.form.fields.actual_start_date' as any)}
+          label={t('probation.form.fields.actual_start_date')}
         />
 
         <FormDatePicker
           control={control}
           name="probationReviewDate"
-          label={t('probation.form.fields.review_date' as any)}
+          label={t('probation.form.fields.review_date')}
           isRequired
         />
       </div>

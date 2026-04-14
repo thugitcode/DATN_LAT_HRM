@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Calendar, dayjsLocalizer } from 'react-big-calendar';
 import type { Components, EventProps, View } from 'react-big-calendar';
 
@@ -23,15 +23,17 @@ import {
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
-import { cn } from '@/lib/utils';
+import { cn, runAfterPaint } from '@/lib/utils';
 
 import { INTERVIEW_STATUS_CONFIG } from '../../recruitment-request-details/constants/data';
-import { useInterviewSchedule } from '../../recruitment-request-details/hooks/use-interview-schedule';
+import { useHistoryInterviewed, useInterviewSchedule } from '../../recruitment-request-details/hooks/use-interview-schedule';
 import { type InterviewSchedule } from '../../recruitment-request-details/types/interview.type';
 import { InterviewDetailCard } from './interview-detail-popup';
+import { LoadingWrapper } from '@/components/loading-wrapper';
 
 dayjs.locale('vi');
 const localizer = dayjsLocalizer(dayjs);
+
 interface InterviewEvent {
     id: string;
     title: string;
@@ -39,6 +41,13 @@ interface InterviewEvent {
     end: Date;
     resource: InterviewSchedule;
 }
+const TIME_TO_START_WORK = 7;
+const TIME_TO_END_WORK = 18;
+// Context to share selected interview ID with event components
+const SelectedInterviewContext = createContext<{
+    selectedId: string | null;
+    setSelectedId: (id: string | null) => void;
+}>({ selectedId: null, setSelectedId: () => { } });
 
 const getFixedDate = (hours: number) => {
     const now = new Date();
@@ -65,14 +74,22 @@ function EventPopoverWrapper({
     interview: InterviewSchedule;
     children: React.ReactNode;
 }) {
+    const { selectedId, setSelectedId } = useContext(SelectedInterviewContext);
+    const isSelected = selectedId === interview.id;
+
     return (
         <Popover
             placement="right"
             showArrow
+            isOpen={isSelected}
+            onOpenChange={(open) => {
+                setSelectedId(open ? interview.id : null);
+            }}
             classNames={{
                 base: 'w-[498px]',
                 content: cn('rounded-none! border-t-4', INTERVIEW_STATUS_CONFIG[interview.status]?.borderTColor),
             }}
+            onClose={() => setSelectedId(null)}
         >
             <PopoverTrigger>
                 <div className="h-full w-full cursor-pointer">{children}</div>
@@ -101,7 +118,7 @@ function CustomEvent({ event }: EventProps<InterviewEvent>) {
                     classNames={{ content: 'w-full flex justify-center' }}
                     className="mb-1 text-sm font-nomal w-full max-w-full"
                 >
-                    {t(`interview_schedule.status.${interview.status}` as any)}
+                    {t(`interview_schedule.status.${interview.status}`)}
                 </Chip>
                 <div className="space-y-0.5">
                     <p className="font-medium text-base text-gray-900 truncate">{interview.candidateName}</p>
@@ -128,7 +145,7 @@ function MonthEvent({ event }: EventProps<InterviewEvent>) {
         <EventPopoverWrapper interview={interview}>
             <Chip
                 size="sm"
-                color={config.chipColor}
+                color={config?.chipColor}
                 variant="flat"
                 className="w-full max-w-full text-xs truncate rounded-md cursor-pointer"
             >
@@ -145,14 +162,62 @@ const components: Components<InterviewEvent> = {
 
 interface InterviewCalendarProps {
     recruitmentRequestId?: string;
+    candidateId?: string;
 }
 
-export function InterviewCalendar({ recruitmentRequestId }: InterviewCalendarProps) {
+export function InterviewCalendar({ recruitmentRequestId, candidateId }: InterviewCalendarProps) {
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
     const [view, setView] = useState<View>('week');
     const [currentDate, setCurrentDate] = useState(new Date());
+    const [selectedId, setSelectedId] = useState<string | null>(null);
+    const calendarRef = useRef<HTMLDivElement>(null);
+
     const { data, isLoading } = useInterviewSchedule(recruitmentRequestId);
     const interviews = data?.data ?? [];
+
+    const { data: candidateInterviewsData } = useHistoryInterviewed(candidateId ?? '', {
+        order: 'DESC',
+        page: 1,
+        limit: 10,
+    });
+
+    // Auto-open the popover for the first interview of the candidate
+    useEffect(() => {
+        if (!candidateId) return;
+
+        const target = candidateInterviewsData?.data?.[0];
+        if (!target) return;
+
+        const interviewDate = dayjs(target.interviewDate).toDate();
+        setCurrentDate(interviewDate);
+
+        const targetId = target.id;
+
+        const cleanup = runAfterPaint(() => {
+            setSelectedId(targetId);
+
+            if (!target.startTime) return;
+
+            const [h = 7, m = 0] = target.startTime.split(':').map(Number);
+
+            const targetMinutes = h * 60 + m - TIME_TO_START_WORK * 60;
+            const totalMinutes = (TIME_TO_END_WORK - TIME_TO_START_WORK) * 60;
+
+            const el = calendarRef.current?.querySelector(
+                '.rbc-time-content'
+            ) as HTMLElement | null;
+
+            if (!el) return;
+
+            el.scrollTop = (targetMinutes / totalMinutes) * el.scrollHeight;
+        });
+
+        return cleanup;
+
+    }, [
+        candidateId,
+        candidateInterviewsData?.data, // ✅ fix dependency
+    ]);
 
     const events = useMemo(() => toCalendarEvents(interviews), [interviews]);
 
@@ -202,69 +267,70 @@ export function InterviewCalendar({ recruitmentRequestId }: InterviewCalendarPro
         }),
         [t],
     );
-    const calendarMin = getFixedDate(7);
-    const calendarMax = getFixedDate(18);
+
+    const calendarMin = getFixedDate(TIME_TO_START_WORK);
+    const calendarMax = getFixedDate(TIME_TO_END_WORK);
+
     return (
-        <div className="flex flex-col h-full bg-white rounded-lg">
-            <div className="flex items-center justify-between p-4 border-b border-[#11111126]">
-                <Tabs
-                    size="sm"
-                    selectedKey={view}
-                    onSelectionChange={(key) => setView(key as View)}
-                    variant="solid"
-                    color="primary"
-                >
-                    {(['day', 'week', 'month'] as View[]).map((v) => (
-                        <Tab key={v} title={t(`interview_schedule.view.${v}` as any)} />
-                    ))}
-                </Tabs>
+        <SelectedInterviewContext.Provider value={{ selectedId, setSelectedId }}>
+            <div className="flex flex-col h-full bg-white rounded-lg">
+                <div className="flex items-center justify-between p-4 border-b border-[#11111126]">
+                    <Tabs
+                        size="sm"
+                        selectedKey={view}
+                        onSelectionChange={(key) => setView(key as View)}
+                        variant="solid"
+                        color="primary"
+                    >
+                        {(['day', 'week', 'month'] as View[]).map((v) => (
+                            <Tab key={v} title={t(`interview_schedule.view.${v}` as any)} />
+                        ))}
+                    </Tabs>
 
-                <h2 className="text-lg font-semibold capitalize">{formattedDate}</h2>
+                    <h2 className="text-lg font-semibold capitalize">{formattedDate}</h2>
 
-                <div className="flex gap-1">
-                    <Button isIconOnly size="sm" variant="flat" onPress={() => handleNavigate('PREV')}>
-                        <IconChevronLeft className="w-4 h-4" />
-                    </Button>
-                    <Button isIconOnly size="sm" variant="flat" onPress={() => handleNavigate('NEXT')}>
-                        <IconChevronRight className="w-4 h-4" />
-                    </Button>
-                </div>
-            </div>
-
-            <div className="p-4" style={{ height: 'calc(100vh - 230px)' }}>
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-full">
-                        <Spinner size="lg" color="secondary" />
+                    <div className="flex gap-1">
+                        <Button isIconOnly size="sm" variant="flat" onPress={() => handleNavigate('PREV')}>
+                            <IconChevronLeft className="w-4 h-4" />
+                        </Button>
+                        <Button isIconOnly size="sm" variant="flat" onPress={() => handleNavigate('NEXT')}>
+                            <IconChevronRight className="w-4 h-4" />
+                        </Button>
                     </div>
-                ) : (
-                    <Calendar<InterviewEvent>
-                        localizer={localizer}
-                        events={events}
-                        view={view}
-                        onView={setView}
-                        date={currentDate}
-                        onNavigate={setCurrentDate}
-                        startAccessor="start"
-                        endAccessor="end"
-                        formats={formats}
-                        messages={messages}
-                        {...(view !== 'month' && { min: calendarMin, max: calendarMax })}
-                        step={30}
-                        timeslots={2}
-                        toolbar={false}
-                        components={components}
-                        eventPropGetter={() => ({
-                            style: { backgroundColor: 'transparent', border: 'none', padding: 0, margin: 0 },
-                        })}
-                        className="interview-calendar"
-                        style={{ height: '100%', minHeight: 500 }}
-                        popup
-                        popupOffset={10}
-                    />
-                )}
-            </div>
+                </div>
 
-            <style>{`
+                <div ref={calendarRef} className="p-4" style={{ height: 'calc(100vh - 230px)' }}>
+
+                    <LoadingWrapper isLoading={isLoading}>
+                        <Calendar<InterviewEvent>
+                            localizer={localizer}
+                            events={events}
+                            view={view}
+                            onView={setView}
+                            date={currentDate}
+                            onNavigate={setCurrentDate}
+                            startAccessor="start"
+                            endAccessor="end"
+                            formats={formats}
+                            messages={messages}
+                            {...(view !== 'month' && { min: calendarMin, max: calendarMax })}
+                            scrollToTime={getFixedDate(TIME_TO_START_WORK)}
+                            step={30}
+                            timeslots={2}
+                            toolbar={false}
+                            components={components}
+                            eventPropGetter={() => ({
+                                style: { backgroundColor: 'transparent', border: 'none', padding: 0, margin: 0 },
+                            })}
+                            className="interview-calendar"
+                            style={{ height: '100%', minHeight: 500 }}
+                            popup
+                            popupOffset={10}
+                        />
+                    </LoadingWrapper>
+                </div>
+
+                <style>{`
         .interview-calendar { height: 100%; min-height: 500px; }
         .interview-calendar .rbc-time-view { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
         .interview-calendar .rbc-time-header { border-bottom: 1px solid #e5e7eb; }
@@ -291,6 +357,7 @@ export function InterviewCalendar({ recruitmentRequestId }: InterviewCalendarPro
         .interview-calendar .rbc-time-content { border-top: 1px solid #e5e7eb; }
         .interview-calendar .rbc-day-slot .rbc-events-container { margin-right: 4px; }
       `}</style>
-        </div>
+            </div>
+        </SelectedInterviewContext.Provider>
     );
 }
