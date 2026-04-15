@@ -14,6 +14,7 @@ export enum CandidateStatusEnum {
   ON_PROBATION = 'ON_PROBATION',
   REJECTED = 'REJECTED',
   OFFER_DECLINED = 'OFFER_DECLINED',
+  RECEIVED = 'RECEIVED',
 }
 
 export interface CandidateRecruitmentRequest {
@@ -206,7 +207,8 @@ export type CandidateStatusLabelKey =
   | 'candidate.status.probation_proposed'
   | 'candidate.status.on_probation'
   | 'candidate.status.rejected'
-  | 'candidate.status.offer_declined';
+  | 'candidate.status.offer_declined'
+  | 'candidate.status.received';
 
 export interface KanbanColumn {
   status: CandidateStatusEnum;

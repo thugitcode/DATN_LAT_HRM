@@ -25,6 +25,7 @@ interface DrawerData {
     candidateId?: string;
     interviewId?: string;
     candidateStatus?: CandidateStatusEnum;
+    candidateEmail?: string
 }
 
 const METHOD_KEYS = [
@@ -38,10 +39,12 @@ export function FormInterviewScheduleMutate() {
     const drawerData = useDrawer((s) => s.data) as DrawerData | undefined;
     const candidateId = drawerData?.candidateId;
     const candidateStatus = drawerData?.candidateStatus;
+    const candidateEmail = drawerData?.candidateEmail;
     const interviewId = drawerData?.interviewId;
 
     const { methods, isSubmitting, onSubmit, onSubmitAndSendMail } = useFormInterviewSchedule({
         candidateStatus,
+        candidateEmail,
         interviewId,
         candidateId,
         onSuccess: onClose,
@@ -86,7 +89,7 @@ export function FormInterviewScheduleMutate() {
                                 isRequired
                                 options={candidateOptions}
                                 placeholder={t('interview_schedule.form.placeholders.select')}
-                                isDisabled={!!candidateId}
+                                readOnly={!!candidateId}
                             />
                             <FormSelect
                                 control={control}

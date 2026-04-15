@@ -1,22 +1,21 @@
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-import { FormArea } from '@/components/form-fields/form-area';
 import { FormInput } from '@/components/form-fields/form-input';
 import { FormSelect } from '@/components/form-fields/form-select';
-import { EducationLevelEnum, ExperienceYearsEnum } from '@/features/recruitment-management/constants/candidate.constants';
+import { ExperienceYearsEnum } from '@/features/recruitment-management/constants/candidate.constants';
 import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
-import { AcademicTitleEnum } from '@/types/staff.type';
+import { AcademicTitleEnum, StaffQualificationEnum } from '@/types/staff.type';
 
 export function ProfessionalInfoSection() {
   const { control } = useFormContext<any>();
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
   const { t: tCommon } = useTranslation(NAMESPACES.COMMON);
 
-  const educationLevelOptions = Object.values(EducationLevelEnum).map((val) => ({
-    key: val,
-    label: t(`candidate.form.fields.education_level_options.${val}` as any),
+  const educationLevelOptions = Object.values(StaffQualificationEnum).map((val) => ({
+    label: tCommon(`options.qualifications.${val}`),
+    key: val
   }));
 
   const academicTitleOptions = Object.values(AcademicTitleEnum).map((val) => ({

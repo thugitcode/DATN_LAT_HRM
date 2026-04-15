@@ -1,7 +1,6 @@
 import { create } from "zustand";
-import type { SalaryFormValues } from "../schemas";
 
-export enum ControlMode { view = "view", edit = "edit", create = "create" };
+export enum ControlMode { view = "view", edit = "edit", create = "create", duplicate = "duplicate" };
 
 type ControlModeState<T> = {
   mode: ControlMode;
@@ -37,6 +36,7 @@ export const createControlMode = <T>() => {
       isView: state.isReadOnly || state.mode === ControlMode.view,
       isEdit: !state.isReadOnly && state.mode === ControlMode.edit,
       isCreate: !state.isReadOnly && state.mode === ControlMode.create,
+      isDuplicate: !state.isReadOnly && state.mode === ControlMode.duplicate,
     };
   };
 };

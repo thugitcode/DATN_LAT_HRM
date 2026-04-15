@@ -13,14 +13,14 @@ export const RightMenuItem = ({ label, icon, href, active }: RightMenuItemProps)
     <a
       href={href}
       className={cn(
-        'flex flex-col items-center justify-center gap-1 w-full py-3 px-1 cursor-pointer',
-        'text-[10px] font-medium leading-tight text-center transition-colors',
+        'flex flex-col size-[90px]! items-center justify-center gap-1 w-full py-3 px-4 cursor-pointer',
+        'text-[13px] font-medium leading-tight text-center transition-colors font-["Quicksand",sans-serif]',
         active
-          ? 'text-[#6576FF] bg-[#F0F1FF]'
-          : 'text-[#71717A] hover:text-[#6576FF] hover:bg-[#F4F4F5]',
+          ? 'text-[#6576FF] bg-white shadow-[-14px_20px_40px_rgba(0,0,0,0.15),0_6px_20px_rgba(0,0,0,0.15)]!'
+          : 'text-[#2c3782] hover:shadow-[-14px_20px_40px_rgba(0,0,0,0.15),0_6px_20px_rgba(0,0,0,0.15)]! hover:text-[#6576FF] hover:bg-[#F4F4F5]',
       )}
     >
-      <span className={cn(active ? 'text-[#6576FF]' : 'text-[#71717A]')}>{icon}</span>
+      <span className={cn(active ? 'text-[#6576FF]' : 'text-[#2c3782]')}>{icon}</span>
       <span>{label}</span>
     </a>
   );

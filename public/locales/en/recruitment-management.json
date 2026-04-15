@@ -378,6 +378,7 @@
       "on_probation": "On Probation",
       "rejected": "Rejected",
       "offer_declined": "Offer Declined",
+      "received": "Received",
       "update_error": "Failed to update status"
     },
     "empty": {
@@ -598,7 +599,8 @@
       "view_profile": "View Profile",
       "extend": "Extend Probation",
       "end_early": "End Early",
-      "cancel_acceptance": "Cancel Acceptance"
+      "cancel_acceptance": "Cancel Acceptance",
+      "view_evaluation": "View Evaluation"
     },
     "filters": {
       "search_placeholder": "Employee name"
@@ -724,6 +726,69 @@
       "actions": {
         "add_allowance": "Add Allowance"
       }
+    },
+    "evaluation": {
+      "col_round": "Round",
+      "col_type": "Type",
+      "col_date": "Date",
+      "col_evaluator": "Evaluator",
+      "col_professional": "Professional",
+      "col_performance": "Performance",
+      "col_attitude": "Attitude",
+      "col_total": "Total Score",
+      "col_status": "Status",
+      "col_actions": "Actions",
+      "btn_view": "View Evaluation",
+      "no_data": "No evaluations yet",
+      "result_pass_label": "Result: Pass - Transfer to official employee"
+    },
+    "evaluation_form": {
+      "title": "Probation Evaluation",
+      "template_label": "Template: Template {{round}}",
+      "round_banner": "Round 1: Evaluation period: {{start}} - {{end}}",
+      "reviewer": "Reviewer",
+      "approver": "Approver",
+      "evaluation_date": "Evaluation Date",
+      "tab_result": "Evaluation Result",
+      "tab_detail": "Evaluation Detail",
+      "score_professional": "Professional",
+      "score_attitude": "Attitude",
+      "score_communication": "Communication",
+      "reviewer_comment_section": "Reviewer Comments",
+      "approver_comment_section": "Approver Comments",
+      "general_comment": "General Comment",
+      "strengths": "Strengths",
+      "improvement_areas": "Areas for Improvement",
+      "reviewer_comment": "Comment",
+      "approver_comment": "General Comment",
+      "enter_comment": "Enter comment...",
+      "decision_section": "Approval Decision",
+      "decision_approve": "Confirm Evaluation Result",
+      "decision_extend": "Extend Probation",
+      "decision_reject": "Reject",
+      "btn_save": "Save"
+    }
+  },
+  "report": {
+    "title": "Recruitment Report",
+    "month_nav": "Month {{month}}/{{year}}",
+    "quarter_label": "Q{{quarter}}",
+    "summary": {
+      "total_requests": "Total Recruitment Requests",
+      "total_candidates": "Total Candidates",
+      "total_interviews": "Interviews This Month",
+      "offer_acceptance_rate": "Offer Acceptance Rate",
+      "in_progress_probation": "On Probation",
+      "waiting_evaluation_probation": "Probation Expiring",
+      "converted_official": "Converted to Official",
+      "on_time_hiring_rate": "On-Time Hiring Rate"
+    },
+    "charts": {
+      "by_department_title": "Recruitment by Department (Q{{quarter}})",
+      "by_department_y_label": "Quantity",
+      "candidate_source_title": "Candidate Sources",
+      "candidate_source_center_label": "Candidates",
+      "no_data": "No data available"
     }
   }
 }

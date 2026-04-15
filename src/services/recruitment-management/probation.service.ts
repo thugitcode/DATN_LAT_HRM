@@ -3,7 +3,7 @@ import type { ApiResponse } from '@/types';
 
 import { BaseApiService } from '../base-api.service';
 import { API_ENDPOINTS } from '../constants/endpoints';
-import type { ProbationCreatePayload, ProbationFilters, ProbationItem } from '@/features/recruitment-management/probation-management/types/probation.type';
+import type { ProbationCreatePayload, ProbationEvaluation, ProbationEvaluationPayload, ProbationFilters, ProbationItem } from '@/features/recruitment-management/probation-management/types/probation.type';
 import { DEFAULT_PAGINATION } from '@/query-options/constants';
 
 class ProbationService extends BaseApiService<ProbationItem, never, never, ProbationFilters> {
@@ -79,6 +79,20 @@ class ProbationService extends BaseApiService<ProbationItem, never, never, Proba
   async cancelAcceptance(id: string): Promise<ApiResponse<void>> {
     return this.request(async () => {
       const res = await this.instance.patch(`${this.url(id)}/cancel`);
+      return res.data;
+    });
+  }
+
+  async getEvaluations(id: string): Promise<ApiResponse<ProbationEvaluation[]>> {
+    return this.request(async () => {
+      const res = await this.instance.get(`${this.url(id)}/evaluations`);
+      return res.data;
+    });
+  }
+
+  async submitEvaluation(id: string, payload: ProbationEvaluationPayload): Promise<ApiResponse<void>> {
+    return this.request(async () => {
+      const res = await this.instance.post(`${this.url(id)}/evaluate`, payload);
       return res.data;
     });
   }

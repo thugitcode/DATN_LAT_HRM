@@ -1,8 +1,8 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { NAMESPACES } from '@/i18n/constants';
 import { useImportStaff, useStaffList } from '@/query-options/staff';
-import { addToast, Button, Chip, useDisclosure } from '@heroui/react';
+import { addToast, Button, Chip } from '@heroui/react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useReactToPrint } from 'react-to-print';
@@ -15,9 +15,9 @@ import { useRoomOptions } from '@/hooks/select-options/use-room-options';
 import { ActionsPage } from '@/components/actions-page';
 import { LayoutRenderer } from '@/features/timekeeping-shift-scheduling/components/layout-renderer';
 
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 import { ControlMode, useControlMode } from '../salary-and-benefits/hooks/use-control-mode-handle';
 import { StaffFilters } from './components/staff-filter';
-import { StaffFormDrawer } from './components/staff-form-drawer';
 import { StaffGrid } from './components/staff-grid';
 import { StaffListPrint } from './components/staff-list-print';
 import { StaffTable } from './components/staff-table';
@@ -81,7 +81,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   const resignedCount = (response?.metadata?.RESIGNED as number) || 0;
   const { exportStaff, onExportStaffTemplate } = useStaffExport(staffData);
   const { setMode } = useControlMode();
-
+  const onOpenDrawer = useDrawer((state) => state.onOpen);
 
   const handleViewDetail = (id: string) => {
     setMode(ControlMode.edit);
@@ -92,25 +92,16 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
   };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [editingStaff, setEditingStaff] = useState<Staff | undefined>();
   const { mutateAsync: importStaff, isPending: isImporting } = useImportStaff();
 
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
   const handleEdit = (id: string) => {
-    // setEditingStaff(staff);
-    // onOpen();
     navigate({
       to: '/admin/staff-management/detail/$id',
       params: { id },
     });
     setMode(ControlMode.edit, "ALL");
-  };
-
-  const handleCloseDrawer = () => {
-    setEditingStaff(undefined);
-    onClose();
   };
 
   const handleImportExcel = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -247,7 +238,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
             onImport={() => fileInputRef.current?.click()}
             actions={
               <div className="flex gap-3">
-                <Button color="primary" onPress={onOpen}>
+                <Button color="primary" onPress={() => onOpenDrawer(DrawerType.STAFF_MUTATE)}>
                   {t('button.add_staff')}
                 </Button>
               </div>
@@ -300,7 +291,6 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
           />
         </div>
       </div>
-      <StaffFormDrawer isOpen={isOpen} onClose={handleCloseDrawer} editData={editingStaff} />
       <div style={{ display: 'none' }}>
         <StaffListPrint ref={printRef} data={response?.data ?? []} />
       </div>

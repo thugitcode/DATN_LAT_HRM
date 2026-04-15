@@ -36,6 +36,7 @@ export interface InterviewSchedule {
   createdAt: string;
   interviewer: Staff
   candidate: ICandidate
+  candidateId: string
 }
 
 export interface InterviewScheduleFilters extends Partial<PaginationParams> {

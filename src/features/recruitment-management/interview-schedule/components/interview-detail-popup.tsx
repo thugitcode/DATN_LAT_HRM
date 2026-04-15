@@ -99,7 +99,7 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
     //   onOpen(DrawerType.EVALUATION_MUTATE, { candidate: interviewDetail?.data?.candidate, candidateId: interviewDetail?.data?.candidate?.id });
     // }
     if (action === 'create_new') {
-      onOpen(DrawerType.INTERVIEW_SCHEDULE_MUTATE);
+      onOpen(DrawerType.INTERVIEW_SCHEDULE_MUTATE, { candidateId: interview?.candidateId });
     }
     onAction?.(action, interview);
   };

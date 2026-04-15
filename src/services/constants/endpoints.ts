@@ -44,6 +44,7 @@ export const API_ENDPOINTS = {
     OFFER_LETTER: '/offer-letter',
     PROBATION: '/staff/probation',
     UPLOAD: '/upload',
+    DASHBOARD_RECRUITMENT: '/dashboard/recruitment',
 
     CONFIGURATION: '/configuration',
     TAX: '/tax',

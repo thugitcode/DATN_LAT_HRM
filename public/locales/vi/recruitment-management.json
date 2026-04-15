@@ -378,6 +378,7 @@
       "on_probation": "Đang thử việc",
       "rejected": "Từ chối",
       "offer_declined": "Từ chối offer",
+      "received": "Đã nhận",
       "update_error": "Cập nhật trạng thái thất bại"
     },
     "empty": {
@@ -598,7 +599,8 @@
       "view_profile": "Xem hồ sơ",
       "extend": "Gia hạn thử việc",
       "end_early": "Kết thúc sớm",
-      "cancel_acceptance": "Hủy tiếp nhận"
+      "cancel_acceptance": "Hủy tiếp nhận",
+      "view_evaluation": "Xem đánh giá"
     },
     "filters": {
       "search_placeholder": "Tên nhân viên"
@@ -724,6 +726,69 @@
       "actions": {
         "add_allowance": "Thêm phụ cấp"
       }
+    },
+    "evaluation": {
+      "col_round": "Lần",
+      "col_type": "Loại đánh giá",
+      "col_date": "Ngày",
+      "col_evaluator": "Người đánh giá",
+      "col_professional": "Chuyên môn",
+      "col_performance": "Hiệu suất",
+      "col_attitude": "Thái độ",
+      "col_total": "Điểm tổng",
+      "col_status": "Trạng thái",
+      "col_actions": "Thao tác",
+      "btn_view": "Xem đánh giá",
+      "no_data": "Chưa có đánh giá nào",
+      "result_pass_label": "Kết quả: Đạt - chuyển nhân viên chính thức"
+    },
+    "evaluation_form": {
+      "title": "Đánh giá thử việc",
+      "template_label": "Mẫu đánh giá: Template {{round}}",
+      "round_banner": "Lần 1: Kỳ đánh giá: {{start}} - {{end}}",
+      "reviewer": "Người đánh giá",
+      "approver": "Người phê duyệt",
+      "evaluation_date": "Ngày đánh giá",
+      "tab_result": "Kết quả đánh giá",
+      "tab_detail": "Chi tiết đánh giá",
+      "score_professional": "Chuyên môn",
+      "score_attitude": "Thái độ",
+      "score_communication": "Giao tiếp",
+      "reviewer_comment_section": "Nhận xét của người đánh giá",
+      "approver_comment_section": "Nhận xét của người phê duyệt",
+      "general_comment": "Nhận xét chung",
+      "strengths": "Điểm mạnh",
+      "improvement_areas": "Điểm cần cải thiện",
+      "reviewer_comment": "Nhận xét",
+      "approver_comment": "Nhận xét chung",
+      "enter_comment": "Nhập nhận xét...",
+      "decision_section": "Quyết định phê duyệt",
+      "decision_approve": "Xác nhận kết quả đánh giá",
+      "decision_extend": "Gia hạn thử việc",
+      "decision_reject": "Từ chối duyệt",
+      "btn_save": "Lưu"
+    }
+  },
+  "report": {
+    "title": "Báo cáo tuyển dụng",
+    "month_nav": "Tháng {{month}}/{{year}}",
+    "quarter_label": "Quý {{quarter}}",
+    "summary": {
+      "total_requests": "Tổng yêu cầu tuyển dụng",
+      "total_candidates": "Tổng ứng viên",
+      "total_interviews": "Số lịch PV tuần này",
+      "offer_acceptance_rate": "Tỷ lệ nhận việc",
+      "in_progress_probation": "Đang thử việc",
+      "waiting_evaluation_probation": "Sắp hết thử việc",
+      "converted_official": "Đã tiếp nhận chính thức",
+      "on_time_hiring_rate": "Tỷ lệ tuyển đúng hạn"
+    },
+    "charts": {
+      "by_department_title": "Tuyển dụng theo khoa (Quý {{quarter}})",
+      "by_department_y_label": "Số lượng",
+      "candidate_source_title": "Nguồn ứng viên",
+      "candidate_source_center_label": "Ứng viên",
+      "no_data": "Không có dữ liệu"
     }
   }
 }

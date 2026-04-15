@@ -97,3 +97,7 @@ export function useProbationCancelAcceptance() {
     'probation.toast.cancel_acceptance_error',
   );
 }
+
+export function useProbationEvaluations(id: string) {
+  return useQuery(probationQueryOptions.evaluations(id));
+}

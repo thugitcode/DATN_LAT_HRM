@@ -18,6 +18,8 @@ import {
   type RecruitmentRequestFormValues,
 } from '../schemas/recruitment-request.schema';
 import dayjs from 'dayjs';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { normalizePayload } from '@/lib/utils';
 
 interface UseFormRecruitmentRequestParams {
   id?: string;
@@ -27,6 +29,7 @@ interface UseFormRecruitmentRequestParams {
 export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentRequestParams) {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
   const queryClient = useQueryClient();
+  const { isDuplicate } = useControlMode()
   const isEditMode = !!id;
 
   const { data: detailRes, isLoading: isDetailLoading } = useQuery({
@@ -48,10 +51,10 @@ export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentR
     const d = detailRes.data;
     reset({
       createdAt: dayjs(d.createdAt).format("YYYY-MM-DD") ?? dayjs().format("YYYY-MM-DD"),
-      code: d.code ?? null,
+      code: isDuplicate ? null : d.code ?? null,
       departmentId: d.departmentId ?? d.department?.id ?? '',
       roomId: d.roomId ?? d.room?.id ?? '',
-      position: d.position ?? '',
+      // position: d.position ?? '',
       jobTitleId: d.jobTitleId ?? d.jobTitle?.id ?? '',
       staffType: (d as any).staffType ?? '',
       workType: d.workType ?? '',
@@ -100,14 +103,14 @@ export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentR
   });
 
   const onSubmit = handleSubmit((data) => {
-    const payload = {
+    const payload = normalizePayload({
       ...data,
       code: data?.code ?? null,
-    }
-    if (isEditMode) {
+    })
+    if (isEditMode && !isDuplicate) {
       updateMutation.mutate(payload);
     } else {
-      createMutation.mutate(payload);
+      createMutation.mutate({ ...payload, id: null });
     }
   });
 

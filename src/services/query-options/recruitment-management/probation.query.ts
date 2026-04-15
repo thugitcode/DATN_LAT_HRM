@@ -9,6 +9,7 @@ export const probationKeys = {
   list: (params?: ProbationFilters) => [...probationKeys.lists(), params] as const,
   details: () => [...probationKeys.all, 'detail'] as const,
   detail: (id: string) => [...probationKeys.details(), id] as const,
+  evaluations: (id: string) => [...probationKeys.all, 'evaluations', id] as const,
 } as const;
 
 export const probationQueryOptions = {
@@ -16,5 +17,11 @@ export const probationQueryOptions = {
     queryOptions({
       queryKey: probationKeys.list(params),
       queryFn: () => probationService.getAll(params),
+    }),
+  evaluations: (id: string) =>
+    queryOptions({
+      queryKey: probationKeys.evaluations(id),
+      queryFn: () => probationService.getEvaluations(id),
+      enabled: !!id,
     }),
 } as const;

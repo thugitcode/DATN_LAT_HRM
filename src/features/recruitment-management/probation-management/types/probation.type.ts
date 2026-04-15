@@ -88,3 +88,48 @@ export enum ProbationStatusEnum {
   FAIL = 'FAIL',
   OFFICIALLY_ACCEPTED = 'OFFICIALLY_ACCEPTED',
 }
+
+export enum ProbationEvaluationResultEnum {
+  PASS = 'PASS',
+  FAIL = 'FAIL',
+}
+
+export enum ProbationEvaluationDecisionEnum {
+  IN_PROGRESS = 'IN_PROGRESS',
+  APPROVED = 'APPROVED',
+  EXTENDED = 'EXTENDED',
+  REJECTED = 'REJECTED',
+}
+
+export interface ProbationEvaluationPayload {
+  reviewerId?: string;
+  approverId?: string;
+  templateName?: string;
+  roundLabel?: string;
+  evaluationStartDate?: string;
+  evaluationEndDate?: string;
+  evaluationDate?: string;
+  professionalScore?: number;
+  attitudeScore?: number;
+  communicationScore?: number;
+  generalComment?: string;
+  strengths?: string;
+  improvementAreas?: string;
+  reviewerComment?: string;
+  approverComment?: string;
+  decision?: ProbationEvaluationDecisionEnum;
+  isFinal?: boolean;
+}
+
+export interface ProbationEvaluation {
+  id: string;
+  round: number;
+  type: string;
+  date: string;
+  evaluator: { id: string; name: string } | null;
+  professionalScore: number | null;
+  performanceScore: number | null;
+  attitudeScore: number | null;
+  totalScore: number | null;
+  result: ProbationEvaluationResultEnum | null;
+}
