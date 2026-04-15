@@ -112,7 +112,7 @@ export const RightMenu = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center w-[72px] bg-white shadow-[0_1px_3px_0_#0000001A]">
+    <div className="flex flex-col items-center w-[90px] bg-white shadow-[0_1px_3px_0_#0000001A]">
       {items.map((item, idx) => {
         if (item.type === 'divider') {
           return <RightMenuDivider key={idx} />;

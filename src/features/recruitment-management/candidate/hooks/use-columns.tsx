@@ -75,8 +75,8 @@ export const useCandidateColumns = () => {
         render: (_, row) => {
           const chip = STATUS_CHIP[row.status];
           return (
-            <Chip size="sm" variant="flat" classNames={{ base: `${chip.bg} ${chip.text}` }} color={chip.color}>
-              {t(chip.label)}
+            <Chip size="sm" variant="flat" classNames={{ base: `${chip?.bg} ${chip?.text}` }} color={chip?.color}>
+              {t(chip?.label)}
             </Chip>
           );
         },

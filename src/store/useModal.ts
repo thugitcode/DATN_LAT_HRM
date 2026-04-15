@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 export enum ModalType {
   RESEND_MAIL = 'RESEND_MAIL',
+  PROBATION_EVALUATION_LIST = 'PROBATION_EVALUATION_LIST',
 }
 
 interface ModalState {

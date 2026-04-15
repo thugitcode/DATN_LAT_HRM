@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { ModalType, useModal } from '@/store/useModal';
 import {
   useProbationCancelAcceptance,
   useProbationEnd,
   useProbationEndEarly,
-  useProbationEvaluate,
   useProbationExtend,
   useProbationResendInvitation,
   useProbationUpdateExtension,
@@ -27,7 +27,6 @@ function ProbationActionButton({ dataRow }: { dataRow: ProbationItem }) {
   const { onOpen } = useDrawer();
 
   const { mutate: resendInvitation, isPending: isResending } = useProbationResendInvitation();
-  const { mutate: evaluate, isPending: isEvaluating } = useProbationEvaluate();
   const { mutate: updateExtension, isPending: isUpdating } = useProbationUpdateExtension();
   const { mutate: endProbation, isPending: isEnding } = useProbationEnd();
 
@@ -51,8 +50,12 @@ function ProbationActionButton({ dataRow }: { dataRow: ProbationItem }) {
         <Button
           color="primary"
           className={BTN_BASE}
-          isLoading={isEvaluating}
-          onPress={() => evaluate(dataRow.id)}
+          onPress={() =>
+            onOpen(DrawerType.PROBATION_EVALUATION_MUTATE, {
+              probationId: dataRow.id,
+              dataRow,
+            })
+          }
         >
           {t('probation.actions.evaluate')}
         </Button>
@@ -116,10 +119,14 @@ function ProbationActionButton({ dataRow }: { dataRow: ProbationItem }) {
 
 function ProbationActionDropdown({ dataRow }: { dataRow: ProbationItem }) {
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+  const { onOpen: openModal } = useModal();
 
   const { mutate: cancelAcceptance } = useProbationCancelAcceptance();
   const { mutate: extend } = useProbationExtend();
   const { mutate: endEarly } = useProbationEndEarly();
+
+  const openEvaluationList = () =>
+    openModal(ModalType.PROBATION_EVALUATION_LIST, { probationId: dataRow.id, dataRow });
 
   const getDropdownItems = (): { key: string; label: string; onPress?: () => void; color?: 'danger' }[] => {
     switch (dataRow.displayProbationStatus) {
@@ -133,6 +140,13 @@ function ProbationActionDropdown({ dataRow }: { dataRow: ProbationItem }) {
         return [
           { key: 'extend', label: t('probation.actions.extend'), onPress: () => extend(dataRow.id) },
           { key: 'end_early', label: t('probation.actions.end_early'), color: 'danger', onPress: () => endEarly(dataRow.id) },
+        ];
+
+      case ProbationStatusEnum.PASS:
+      case ProbationStatusEnum.FAIL:
+      case ProbationStatusEnum.OFFICIALLY_ACCEPTED:
+        return [
+          { key: 'view_evaluation', label: t('probation.actions.view_evaluation'), onPress: openEvaluationList },
         ];
 
       default:

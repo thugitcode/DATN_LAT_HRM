@@ -17,7 +17,7 @@ import { API_ENDPOINTS } from './constants/endpoints';
 class RecruitmentRequestService extends BaseApiService<
   RecruitmentRequest,
   RecruitmentRequestFormValues,
-  RecruitmentRequestFormValues,
+  Partial<RecruitmentRequest>,
   RecruitmentRequestFilters
 > {
   constructor() {
@@ -45,6 +45,9 @@ class RecruitmentRequestService extends BaseApiService<
     });
 
     return res as ApiResponse<RecruitmentRequest[], MetadataRecruitmentRequest>;
+  }
+  async update(id: string, payload: Partial<RecruitmentRequest>) {
+    return super.update(id, payload);
   }
 
   async submit(

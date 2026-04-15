@@ -20,17 +20,17 @@ export const MainHeader = () => {
   const [langOpen, setLangOpen] = useState(false);
   const { activeMenu } = useMenuSidebar()
   return (
-    <div className="bg-white text-primary min-h-20 h-20 grid grid-cols-3 items-center ps-6 pe-5 py-3 border-b border-white/5 relative">
+    <div className="bg-white text-primary min-h-20 h-20 flex items-center ps-6 pe-5 py-3 border-b border-white/5 relative">
       <div className="flex justify-start">
         {/* <MainLogo /> */}
-        <h1 className="max-lg:hidden text-2xl text-[#2C3782] font-medium">{activeMenu?.label}</h1>
+        <h1 className="max-xl:hidden text-2xl text-[#2C3782] font-medium">{activeMenu?.label}</h1>
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex justify-center flex-1">
         <MainHeaderNav />
       </div>
 
-      <div className="flex justify-end items-center gap-x-3 ">
+      <div className="flex justify-end items-center gap-x-3">
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
             <Avatar

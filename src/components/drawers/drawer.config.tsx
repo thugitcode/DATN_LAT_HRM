@@ -23,6 +23,7 @@ import { FormEvaluationMutate } from '@/features/recruitment-management/candidat
 import { FormInterviewScheduleMutate } from '@/features/recruitment-management/interview-schedule/forms/form-interview-schedule-mutate';
 import { FormProbationAccept } from '@/features/recruitment-management/probation-management/forms/form-probation-accept';
 import { FormCandidateProbationCreate } from '@/features/recruitment-management/probation-management/forms/form-candidate-probation-create';
+import { FormProbationEvaluationMutate } from '@/features/recruitment-management/probation-management/forms/form-probation-evaluation-mutate';
 
 type DrawerConfig = {
   title: string;
@@ -222,6 +223,16 @@ export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
         placement: 'right',
         size: '5xl',
         style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.PROBATION_EVALUATION_MUTATE]: {
+      title: '',
+      component: <FormProbationEvaluationMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
         classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
       },
     },
