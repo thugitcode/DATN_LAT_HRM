@@ -244,11 +244,11 @@ export const RecruitmentRequestActionDropdown: FC<{ dataRow: RecruitmentRequest 
             label: t('recruitment_request.actions.revoke'), icon: <IconX size={16} />,
             onClick: () => updateRequest({ status: RecruitmentRequestStatusEnum.DRAFT })
           },
-          {
-            key: 'print',
-            label: t('recruitment_request.actions.print'),
-            icon: <IconPrinter size={16} />
-          },
+          // {
+          //   key: 'print',
+          //   label: t('recruitment_request.actions.print'),
+          //   icon: <IconPrinter size={16} />
+          // },
         );
         break;
       case RecruitmentRequestStatusEnum.REJECTED:

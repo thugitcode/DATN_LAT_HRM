@@ -66,7 +66,7 @@ export const STATIC_DATA_STALE_TIME = 1000 * 60 * 60 * 24; // 24 hours
 export const BOOTSTRAP_BATCH_SIZE = 1;
 
 export const DEFAULT_PAGE = 1;
-export const DEFAULT_LIMIT = 25;
+export const DEFAULT_LIMIT = 10;
 
 export const RADIUS_INPUT = 8;
 

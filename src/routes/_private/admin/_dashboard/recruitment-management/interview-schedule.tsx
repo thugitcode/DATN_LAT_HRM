@@ -5,6 +5,10 @@ import { InterviewSchedule } from '@/features/recruitment-management/interview-s
 
 const searchSchema = z.object({
   candidateId: z.string().optional(),
+  search: z.string().optional(),
+  jobTitleId: z.string().optional(),
+  status: z.string().optional(),
+  source: z.string().optional(),
 });
 
 export const Route = createFileRoute(

@@ -69,9 +69,9 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
 
       {/* Main Info */}
       <div className="flex flex-col gap-1.5 flex-1">
-        <Tooltip content={data.position}>
+        <Tooltip content={data.position || data?.jobTitle?.name}>
           <h3 className="text-[#11181C] dark:text-[#ECEDEE]  group-hover:text-primary transition-colors line-clamp-1 text-base leading-6 font-medium w-fit min-h-6">
-            {data.position}
+            {data.position || data?.jobTitle?.name}
           </h3>
         </Tooltip>
 
@@ -145,7 +145,7 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
       <div className="flex items-center justify-between gap-2">
         {data.createdByStaffName ? <div className='flex gap-2'>
           <span className="text-xs text-[#A1A1AA]">{t('recruitment_request.card.created_by')}</span>
-          <span className="text-xs text-black flex-1">{data.createdByStaffName}</span>
+          <span className="text-xs text-black flex-1 line-clamp-2">{data.createdByStaffName}</span>
         </div> : <div></div>}
         <RecruitmentRequestActionButtons dataRow={data} size="sm" className="w-fit" />
       </div>

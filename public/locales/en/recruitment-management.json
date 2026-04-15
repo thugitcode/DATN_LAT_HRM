@@ -274,6 +274,12 @@
       "ONLINE": "Online",
       "OFFLINE": "Offline"
     },
+    "filter": {
+      "search_placeholder": "Candidate Name",
+      "position_placeholder": "Position",
+      "status_placeholder": "Status",
+      "source_placeholder": "Source"
+    },
     "label": {
       "interview": "Interview",
       "no_events": "No interview schedules in this period."
@@ -534,7 +540,8 @@
         "attitude": "Attitude",
         "communication": "Communication",
         "experience": "Experience",
-        "no_evaluation": "No evaluation",
+        "no_evaluation": "No evaluation yet",
+        "no_evaluation_description": "This candidate has not been evaluated. Click the button below to start the evaluation.",
         "score_board": "Score Board",
         "btn_evaluate": "Evaluate",
         "next_interview": "Next Interview",
@@ -746,6 +753,7 @@
       "title": "Probation Evaluation",
       "template_label": "Template: Template {{round}}",
       "round_banner": "Round 1: Evaluation period: {{start}} - {{end}}",
+      "progress": "Probation Progress",
       "reviewer": "Reviewer",
       "approver": "Approver",
       "evaluation_date": "Evaluation Date",
@@ -759,6 +767,7 @@
       "general_comment": "General Comment",
       "strengths": "Strengths",
       "improvement_areas": "Areas for Improvement",
+      "other_section": "Other",
       "reviewer_comment": "Comment",
       "approver_comment": "General Comment",
       "enter_comment": "Enter comment...",
@@ -766,7 +775,18 @@
       "decision_approve": "Confirm Evaluation Result",
       "decision_extend": "Extend Probation",
       "decision_reject": "Reject",
-      "btn_save": "Save"
+      "btn_save": "Save",
+      "result_evaluation": "Evaluation Result",
+      "pass": "Pass",
+      "fail": "Fail",
+      "extend_modal_title": "Extend Probation",
+      "extend_employee_label": "Employee: {{name}} - {{code}}",
+      "extend_current_end_date": "Current probation period ends on {{date}}",
+      "extend_duration_label": "Extension Duration",
+      "extend_duration_placeholder": "Select",
+      "extend_new_end_date": "New End Date",
+      "extend_reason": "Reason for Extension",
+      "extend_confirm": "Confirm Extension"
     }
   },
   "report": {

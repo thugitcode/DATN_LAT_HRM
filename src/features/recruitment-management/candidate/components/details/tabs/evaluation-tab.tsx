@@ -11,11 +11,11 @@ import { CRITERIA_EVALUATION } from '@/features/recruitment-management/constants
 import type { CriterionKey } from '@/features/recruitment-management/types/candidate.type';
 import { NAMESPACES } from '@/i18n/constants';
 import { icons } from '@/lib/icons';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import { useFormEvaluation } from '@/features/recruitment-management/candidate/hooks/use-form-evaluation';
 import { useUpdateEvaluation } from '@/features/recruitment-management/candidate/hooks/use-update-evaluation';
 import { CriterionEditCard } from '../criterion-edit-card';
-import { ScoreBar } from '../criterion-card';
 import { SummaryScoreCard } from '../summary-score-card';
 
 interface EvaluationTabProps {
@@ -26,17 +26,19 @@ export function EvaluationTab({ candidate }: EvaluationTabProps) {
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
     const { options: staffOptions } = useStaffOptions();
     const [editingKey, setEditingKey] = useState<CriterionKey | null>(null);
+    const { onOpen } = useDrawer();
 
     const { methods, onSubmit } = useFormEvaluation({ candidateId: candidate.id, candidate });
     const { control, watch } = methods;
 
     const { handleNext, handleWatchMore, handleReject, isPending } = useUpdateEvaluation(candidate.id);
 
-    const scores = CRITERIA_EVALUATION.map((c) => {
-        const v = watch(c.scoreField as any) as number | null;
-        return v !== null ? v : null;
-    }).filter((s): s is number => s !== null);
+    const criteria = CRITERIA_EVALUATION.map((c) => ({
+        label: t(c.labelKey),
+        score: (watch(c.scoreField as any) as number | null) ?? null,
+    }));
 
+    const scores = criteria.map((c) => c.score).filter((s): s is number => s !== null);
     const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
 
     const hasEvaluation =
@@ -47,18 +49,31 @@ export function EvaluationTab({ candidate }: EvaluationTabProps) {
 
     if (!hasEvaluation) {
         return (
-            <div className="flex h-1/2 flex-col items-center gap-3 justify-center">
-                <h3>{t('candidate.detail.evaluation.no_evaluation')}</h3>
-                <FormProvider {...methods}>
-                    <Button
-                        color="primary"
-                        onPress={() => {
-                            setEditingKey('professional');
-                        }}
-                    >
-                        {t('candidate.evaluation.btn_evaluate')}
-                    </Button>
-                </FormProvider>
+            <div className="flex flex-col items-center justify-center h-[40vh] gap-4 text-center">
+                <div className="w-16 h-16 rounded-full bg-[#EEF5FF] flex items-center justify-center">
+                    {icons.stars}
+                </div>
+                <div>
+                    <p className="text-base font-semibold text-[#11181C]">
+                        {t('candidate.detail.evaluation.no_evaluation')}
+                    </p>
+                    <p className="text-sm text-[#71717A] mt-1">
+                        {t('candidate.detail.evaluation.no_evaluation_description')}
+                    </p>
+                </div>
+                <Button
+                    color="primary"
+                    onPress={() => onOpen(DrawerType.EVALUATION_MUTATE, {
+                        candidate,
+                        candidateId: candidate.id,
+                        candidateName: candidate.name,
+                        candidatePosition: candidate.recruitmentRequest?.position,
+                        candidateDepartment: candidate.recruitmentRequest?.department?.name,
+                        candidateStatus: candidate.status,
+                    })}
+                >
+                    {t('candidate.detail.evaluation.btn_evaluate')}
+                </Button>
             </div>
         );
     }
@@ -76,7 +91,7 @@ export function EvaluationTab({ candidate }: EvaluationTabProps) {
                     </div>
 
                     {/* Summary score card */}
-                    <SummaryScoreCard avgScore={avgScore} watch={watch} />
+                    <SummaryScoreCard avgScore={avgScore} criteria={criteria} />
 
                     {/* Reviewer + interview date */}
                     <div className="grid grid-cols-2 gap-4">

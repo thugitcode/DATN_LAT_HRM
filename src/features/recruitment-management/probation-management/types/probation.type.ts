@@ -57,8 +57,8 @@ export interface ProbationFilters {
   departmentId?: string;
   roomId?: string;
   status?: string;
-  page?: string;
-  limit?: string;
+  page?: number;
+  limit?: number;
   [key: string]: unknown;
 }
 
@@ -99,6 +99,8 @@ export enum ProbationEvaluationDecisionEnum {
   APPROVED = 'APPROVED',
   EXTENDED = 'EXTENDED',
   REJECTED = 'REJECTED',
+  CONVERTED_OFFICIAL = 'CONVERTED_OFFICIAL',
+  RESIGNED = 'RESIGNED',
 }
 
 export interface ProbationEvaluationPayload {

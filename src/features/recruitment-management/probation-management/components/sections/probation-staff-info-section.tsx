@@ -23,6 +23,7 @@ interface Props {
 export function ProbationStaffInfoSection({ code }: Props) {
   const { control } = useFormContext();
   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+  const { t: tc } = useTranslation(NAMESPACES.COMMON);
 
   return (
     <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4">
@@ -53,18 +54,6 @@ export function ProbationStaffInfoSection({ code }: Props) {
 
           isRequired
         />
-        <FormInput
-          control={control}
-          name="phone"
-          label={t('probation.form.fields.phone')}
-          isRequired
-        />
-        <FormInput
-          control={control}
-          name="email"
-          label={t('probation.form.fields.email')}
-          isRequired
-        />
 
         <FormDatePicker
           control={control}
@@ -79,7 +68,10 @@ export function ProbationStaffInfoSection({ code }: Props) {
           label={t('probation.form.fields.gender')}
 
           isRequired
-          options={GENDER_OPTIONS}
+          options={Object.values(GenderEnum).map((val) => ({
+            label: tc(`options.gender.${val}`),
+            key: val,
+          }))}
         />
 
         <FormInput

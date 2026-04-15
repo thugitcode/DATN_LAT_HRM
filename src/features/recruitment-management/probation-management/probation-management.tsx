@@ -1,30 +1,29 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { NAMESPACES } from '@/i18n/constants';
-import { useQueryFilter } from '@/hooks/useQueryFilter';
-import { useColumnVisibility } from '@/hooks/use-column-visibility';
 import { ActionsPage } from '@/components/actions-page';
 import { ColumnVisibilityPopover } from '@/components/column-visibility-popover';
 import DataTable from '@/components/data-table/data-table';
 import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
+import { useColumnVisibility } from '@/hooks/use-column-visibility';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { NAMESPACES } from '@/i18n/constants';
 import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
 
+import { useDrawer } from '@/store/useDrawer';
 import { ProbationFilterBar } from './components/probation-filters';
 import { useProbationColumns } from './hooks/use-columns';
 import { useProbationList } from './hooks/use-probation-list';
 import type { ProbationFilters } from './types/probation.type';
-import { BtnCreate } from '@/components/btn-actions';
-import { DrawerType, useDrawer } from '@/store/useDrawer';
+import { DEFAULT_LIMIT, DEFAULT_PAGE } from '@/lib/constants';
 
 const TABLE_CLASS_NAMES = { wrapper: 'rounded-[14px] h-[calc(100vh-275px)]' } as const;
 
 export const ProbationManagement = () => {
   const { t: tR } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
-  const onOpen = useDrawer(s => s.onOpen)
   const { filters } = useQueryFilter<ProbationFilters>();
-  const { search, departmentId, roomId, status, page, limit } = filters;
+  const { search, departmentId, roomId, status, page = DEFAULT_PAGE, limit = DEFAULT_LIMIT } = filters;
 
   const { columns } = useProbationColumns();
   const { visibleColumns, handleApplyColumns } = useColumnVisibility({ columns });
@@ -44,7 +43,7 @@ export const ProbationManagement = () => {
       showSizeChanger: true,
       pageSizeOptions: PAGE_SIZE_OPTIONS,
       total: data?.pagination?.total,
-      pageSize: Number(limit) || 25,
+      pageSize: Number(limit) || 10,
       totalPage: data?.pagination?.totalPage,
     }),
     [page, limit, data?.pagination],

@@ -1,11 +1,15 @@
+import { useTranslation } from 'react-i18next';
+import { useSearch } from '@tanstack/react-router';
+
 import { PageContainer } from '@/components/page-container';
 import { TitlePage } from '@/components/title-page';
 import { NAMESPACES } from '@/i18n/constants';
-import { useTranslation } from 'react-i18next';
-import { InterviewCalendar } from './components/interview-calender';
 import { BtnCreate } from '@/components/btn-actions';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
-import { useSearch } from '@tanstack/react-router';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import type { InterviewScheduleFilters } from '../recruitment-request-details/types/interview.type';
+import { InterviewCalendar } from './components/interview-calender';
+import { InterviewScheduleFilter } from './components/interview-schedule-filter';
 
 export const InterviewSchedule = () => {
   const { t } = useTranslation(NAMESPACES.COMMON);
@@ -13,6 +17,7 @@ export const InterviewSchedule = () => {
   const { candidateId } = useSearch({
     from: '/_private/admin/_dashboard/recruitment-management/interview-schedule',
   });
+  const { filters } = useQueryFilter<InterviewScheduleFilters>();
 
   return (
     <PageContainer className="space-y-3">
@@ -22,8 +27,9 @@ export const InterviewSchedule = () => {
           {t('button.set_schedule')}
         </BtnCreate>
       </div>
-      <div className='h-[calc(100vh-164px)]'>
-        <InterviewCalendar candidateId={candidateId} />
+      <InterviewScheduleFilter />
+      <div className='h-[calc(100vh-229px)]'>
+        <InterviewCalendar candidateId={candidateId} filters={filters} heightCalendar='calc(100vh - 296px)' />
       </div>
     </PageContainer>
   );
