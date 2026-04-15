@@ -1,13 +1,7 @@
+import { ScoreBar } from "@/components/score-bar";
 import { icons } from "@/lib/icons";
 import { Button } from "@heroui/react";
-function ScoreBar({ score }: { score: number }) {
-    const pct = Math.min(Math.max((score / 10) * 100, 0), 100);
-    return (
-        <div className="flex-1 h-2 bg-[#E4E4E7] rounded-full overflow-hidden">
-            <div className="h-full bg-primary rounded-full" style={{ width: `${pct}%` }} />
-        </div>
-    );
-}
+
 function CriterionCard({ label, score, evaluation, comment, onEdit }: {
     label: string;
     score: string | null;
@@ -51,4 +45,4 @@ function CriterionCard({ label, score, evaluation, comment, onEdit }: {
     );
 }
 
-export { CriterionCard, ScoreBar }
+export { CriterionCard }

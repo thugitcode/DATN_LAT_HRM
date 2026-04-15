@@ -20,4 +20,6 @@ export const MODAL_CONFIG: Record<ModalType, ModalConfig> = {
     component: <ProbationEvaluationListModal />,
     modalProps: { size: '5xl', style: { width: '80vw', maxWidth: '80vw' } },
   },
+  // Rendered inside FormProvider in form-probation-evaluation-mutate.tsx
+  [ModalType.PROBATION_EXTEND]: { component: null },
 };

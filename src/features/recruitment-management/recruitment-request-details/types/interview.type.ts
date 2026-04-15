@@ -42,5 +42,9 @@ export interface InterviewSchedule {
 export interface InterviewScheduleFilters extends Partial<PaginationParams> {
   candidateId?: string;
   recruitmentRequestId?: string;
+  search?: string;
+  jobTitleId?: string;
+  status?: string;
+  source?: string;
   [key: string]: unknown;
 }

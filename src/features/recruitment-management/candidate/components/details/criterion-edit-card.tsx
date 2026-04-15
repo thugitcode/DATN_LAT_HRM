@@ -5,8 +5,8 @@ import type { EvaluationFormValues } from "../../schemas/evaluation.schema";
 import { Button } from "@heroui/react";
 import type { CriterionConfig } from "@/features/recruitment-management/types/candidate.type";
 import { icons } from "@/lib/icons";
-import { ScoreBar } from "./criterion-card";
 import { FormArea } from "@/components/form-fields/form-area";
+import { ScoreBar } from "@/components/score-bar";
 
 export function CriterionEditCard({
     config,

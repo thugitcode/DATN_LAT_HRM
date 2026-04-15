@@ -19,6 +19,7 @@ import { Button, Textarea } from '@heroui/react';
 import { ControlMode, useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 import { useEffect } from 'react';
 import { buildRequirementsText } from '../helpers/helpers';
+import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
 
 export const RecruitmentInformationSection = () => {
     const { id } = useParams({ strict: false })
@@ -32,6 +33,7 @@ export const RecruitmentInformationSection = () => {
     const { options: departmentOptions } = useDepartmentOptions();
     const selectedDept = watch('departmentId');
     const { options: roomOptions } = useRoomOptions(selectedDept);
+    const { options: jobTitleOptions } = useJobTitleOptions();
 
     const staffTypeOptions = Object.values(StaffTypeEnum).map((val) => ({
         key: val,
@@ -85,7 +87,7 @@ export const RecruitmentInformationSection = () => {
                             name="code"
                             label={t('form.fields.code')}
                             placeholder={t('form.placeholders.auto_generated')}
-                            isDisabled
+                            readOnly
                             variant={variant}
                         />
                         <FormSelect
@@ -108,13 +110,14 @@ export const RecruitmentInformationSection = () => {
                             readOnly={isReadOnly}
                             variant={variant}
                         />
-                        <FormInput
+                        <FormSelect
                             control={control}
-                            name="position"
+                            name="jobTitleId"
                             label={t('form.fields.position')}
                             isRequired
                             readOnly={isReadOnly}
                             variant={variant}
+                            options={jobTitleOptions.map((o) => ({ key: o.value, label: o.label }))}
                         />
                         <FormSelect
                             control={control}

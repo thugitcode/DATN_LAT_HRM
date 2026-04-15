@@ -11,6 +11,9 @@ export function MainModal() {
 
   const config = MODAL_CONFIG[type];
 
+  // Some modals render themselves (e.g. inside FormProvider) — skip here
+  if (!config.component) return null;
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} {...config.modalProps}>
       <ModalContent>

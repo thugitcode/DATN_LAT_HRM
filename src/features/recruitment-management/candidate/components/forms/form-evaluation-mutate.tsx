@@ -10,14 +10,13 @@ import { useStaffOptions } from '@/hooks/options/use-staff-options';
 import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 
+import { CRITERIA_EVALUATION } from '@/features/recruitment-management/constants/details';
 import type { CandidateStatusEnum, ICandidate } from '@/features/recruitment-management/recruitment-request-details/types/candidate.type';
 import type { CriterionKey } from '@/features/recruitment-management/types/candidate.type';
-import { useFormEvaluation } from '../../hooks/use-form-evaluation';
 import { useDirtyDrawer } from '@/hooks/use-dirty-drawer';
+import { useFormEvaluation } from '../../hooks/use-form-evaluation';
 import { CandidateStatusSelect } from '../details/candidate-status-select';
-import { ScoreBar } from '../details/criterion-card';
 import { CriterionEditCard } from '../details/criterion-edit-card';
-import { CRITERIA_EVALUATION } from '@/features/recruitment-management/constants/details';
 import { SummaryScoreCard } from '../details/summary-score-card';
 
 interface DrawerData {
@@ -44,10 +43,11 @@ export function FormEvaluationMutate() {
     const { control, watch } = methods;
     const { options: staffOptions } = useStaffOptions();
 
-    const scores = CRITERIA_EVALUATION.map((c) => {
-        const v = watch(c.scoreField) as number | null;
-        return v !== null ? v : null;
-    }).filter((s): s is number => s !== null);
+    const criteria = CRITERIA_EVALUATION.map((c) => ({
+        label: t(c.labelKey),
+        score: (watch(c.scoreField) as number | null) ?? null,
+    }));
+    const scores = criteria.map((c) => c.score).filter((s): s is number => s !== null);
     const avgScore = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
 
     const candidateName = candidate?.name ?? '';
@@ -94,7 +94,7 @@ export function FormEvaluationMutate() {
                                 )}
                             </div>
                             {/* Summary score card */}
-                            <SummaryScoreCard avgScore={avgScore} watch={watch} />
+                            <SummaryScoreCard avgScore={avgScore} criteria={criteria} />
                         </div>
                     )}
 

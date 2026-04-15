@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { ProbationEvaluationDecisionEnum } from '../types/probation.type';
 
-const scoreField = z.preprocess(
+const scoreField: z.ZodType<number | null> = z.preprocess(
   (v) => (v === '' || v === null || v === undefined ? null : Number(v)),
   z.number().min(0).max(10).nullable(),
 );

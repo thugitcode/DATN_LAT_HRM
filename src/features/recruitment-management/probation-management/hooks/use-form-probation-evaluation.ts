@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addToast } from '@heroui/react';
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { normalizeAxiosError } from '@/lib/axios';
@@ -23,7 +23,7 @@ export function useFormProbationEvaluation({ probationId, onSuccess }: UseFormPr
   const queryClient = useQueryClient();
 
   const methods = useForm<ProbationEvaluationFormValues>({
-    resolver: zodResolver(probationEvaluationSchema),
+    resolver: zodResolver(probationEvaluationSchema) as Resolver<ProbationEvaluationFormValues>,
     defaultValues: PROBATION_EVALUATION_DEFAULT_VALUES,
     mode: 'onChange',
   });

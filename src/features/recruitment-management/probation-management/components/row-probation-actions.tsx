@@ -15,6 +15,7 @@ import {
   useProbationUpdateExtension,
 } from '../hooks/use-probation-list';
 import { ProbationStatusEnum, type ProbationItem } from '../types/probation.type';
+import { cn } from '@/lib/utils';
 
 interface RowProbationActionsProps {
   dataRow: ProbationItem;
@@ -49,7 +50,8 @@ function ProbationActionButton({ dataRow }: { dataRow: ProbationItem }) {
       return (
         <Button
           color="primary"
-          className={BTN_BASE}
+          variant='bordered'
+          className={cn(BTN_BASE, 'border')}
           onPress={() =>
             onOpen(DrawerType.PROBATION_EVALUATION_MUTATE, {
               probationId: dataRow.id,

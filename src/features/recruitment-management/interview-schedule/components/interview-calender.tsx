@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { Calendar, dayjsLocalizer } from 'react-big-calendar';
 import type { Components, EventProps, View } from 'react-big-calendar';
+import { Calendar, dayjsLocalizer } from 'react-big-calendar';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
@@ -16,20 +16,19 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-    Spinner,
     Tab,
-    Tabs,
+    Tabs
 } from '@heroui/react';
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
 import { cn, runAfterPaint } from '@/lib/utils';
 
+import { LoadingWrapper } from '@/components/loading-wrapper';
 import { INTERVIEW_STATUS_CONFIG } from '../../recruitment-request-details/constants/data';
 import { useHistoryInterviewed, useInterviewSchedule } from '../../recruitment-request-details/hooks/use-interview-schedule';
-import { type InterviewSchedule } from '../../recruitment-request-details/types/interview.type';
+import { type InterviewSchedule, type InterviewScheduleFilters } from '../../recruitment-request-details/types/interview.type';
 import { InterviewDetailCard } from './interview-detail-popup';
-import { LoadingWrapper } from '@/components/loading-wrapper';
 
 dayjs.locale('vi');
 const localizer = dayjsLocalizer(dayjs);
@@ -110,6 +109,7 @@ function CustomEvent({ event }: EventProps<InterviewEvent>) {
         <EventPopoverWrapper interview={interview}>
             <Card
                 className={`h-full p-2 border-l-4 ${config?.borderLColor} ${config?.bgColor} w-fit shadow-none rounded-r-xl rounded-l-none overflow-hidden`}
+                id={interview.id}
             >
                 <Chip
                     size="sm"
@@ -163,16 +163,18 @@ const components: Components<InterviewEvent> = {
 interface InterviewCalendarProps {
     recruitmentRequestId?: string;
     candidateId?: string;
+    filters?: InterviewScheduleFilters;
+    heightCalendar?: string;
 }
 
-export function InterviewCalendar({ recruitmentRequestId, candidateId }: InterviewCalendarProps) {
+export function InterviewCalendar({ recruitmentRequestId, candidateId, filters, heightCalendar = 'calc(100vh - 230px)' }: InterviewCalendarProps) {
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
     const [view, setView] = useState<View>('week');
     const [currentDate, setCurrentDate] = useState(new Date());
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const calendarRef = useRef<HTMLDivElement>(null);
 
-    const { data, isLoading } = useInterviewSchedule(recruitmentRequestId);
+    const { data, isLoading } = useInterviewSchedule(recruitmentRequestId, filters);
     const interviews = data?.data ?? [];
 
     const { data: candidateInterviewsData } = useHistoryInterviewed(candidateId ?? '', {
@@ -193,6 +195,8 @@ export function InterviewCalendar({ recruitmentRequestId, candidateId }: Intervi
 
         const targetId = target.id;
 
+        let innerCleanup: (() => void) | undefined;
+
         const cleanup = runAfterPaint(() => {
             setSelectedId(targetId);
 
@@ -210,9 +214,18 @@ export function InterviewCalendar({ recruitmentRequestId, candidateId }: Intervi
             if (!el) return;
 
             el.scrollTop = (targetMinutes / totalMinutes) * el.scrollHeight;
+
+            const element = document.getElementById(targetId);
+
+            innerCleanup = runAfterPaint(() => {
+                element?.click();
+            });
         });
 
-        return cleanup;
+        return () => {
+            cleanup?.();
+            innerCleanup?.();
+        };
 
     }, [
         candidateId,
@@ -233,10 +246,20 @@ export function InterviewCalendar({ recruitmentRequestId, candidateId }: Intervi
         [view],
     );
 
-    const formattedDate = useMemo(
-        () => dayjs(currentDate).locale('vi').format('MMMM YYYY'),
-        [currentDate],
-    );
+    const formattedDate = useMemo(() => {
+        const d = dayjs(currentDate).locale('vi');
+        if (view === 'week') {
+            const start = d.startOf('week');
+            const end = d.endOf('week');
+            if (start.month() !== end.month()) {
+                if (start.year() !== end.year()) {
+                    return `${start.format('MMMM YYYY')} - ${end.format('MMMM YYYY')}`;
+                }
+                return `${start.format('MMMM')} - ${end.format('MMMM YYYY')}`;
+            }
+        }
+        return d.format('MMMM YYYY');
+    }, [currentDate, view]);
 
     const formats = useMemo(
         () => ({
@@ -299,7 +322,7 @@ export function InterviewCalendar({ recruitmentRequestId, candidateId }: Intervi
                     </div>
                 </div>
 
-                <div ref={calendarRef} className="p-4" style={{ height: 'calc(100vh - 230px)' }}>
+                <div ref={calendarRef} className="p-4" style={{ height: heightCalendar }}>
 
                     <LoadingWrapper isLoading={isLoading}>
                         <Calendar<InterviewEvent>

@@ -274,6 +274,12 @@
       "ONLINE": "Trực tuyến",
       "OFFLINE": "Trực tiếp"
     },
+    "filter": {
+      "search_placeholder": "Tên ứng viên",
+      "position_placeholder": "Vị trí",
+      "status_placeholder": "Trạng thái",
+      "source_placeholder": "Nguồn"
+    },
     "label": {
       "interview": "Phỏng vấn",
       "no_events": "Không có lịch phỏng vấn trong khoảng thời gian này."
@@ -534,7 +540,8 @@
         "attitude": "Thái độ",
         "communication": "Giao tiếp",
         "experience": "Kinh nghiệm",
-        "no_evaluation": "Ứng viên chưa có đánh giá",
+        "no_evaluation": "Chưa có đánh giá",
+        "no_evaluation_description": "Ứng viên này chưa được đánh giá. Nhấn nút bên dưới để bắt đầu đánh giá.",
         "score_board": "Bảng điểm đánh giá",
         "btn_evaluate": "Đánh giá",
         "next_interview": "Nhận vào tiếp theo",
@@ -746,6 +753,7 @@
       "title": "Đánh giá thử việc",
       "template_label": "Mẫu đánh giá: Template {{round}}",
       "round_banner": "Lần 1: Kỳ đánh giá: {{start}} - {{end}}",
+      "progress": "Tiến độ thử việc",
       "reviewer": "Người đánh giá",
       "approver": "Người phê duyệt",
       "evaluation_date": "Ngày đánh giá",
@@ -759,6 +767,7 @@
       "general_comment": "Nhận xét chung",
       "strengths": "Điểm mạnh",
       "improvement_areas": "Điểm cần cải thiện",
+      "other_section": "Khác",
       "reviewer_comment": "Nhận xét",
       "approver_comment": "Nhận xét chung",
       "enter_comment": "Nhập nhận xét...",
@@ -766,7 +775,18 @@
       "decision_approve": "Xác nhận kết quả đánh giá",
       "decision_extend": "Gia hạn thử việc",
       "decision_reject": "Từ chối duyệt",
-      "btn_save": "Lưu"
+      "btn_save": "Lưu",
+      "result_evaluation": "Kết quả đánh giá",
+      "pass": "Đạt",
+      "fail": "Không đạt",
+      "extend_modal_title": "Gia hạn thử việc",
+      "extend_employee_label": "Nhân viên: {{name}} - {{code}}",
+      "extend_current_end_date": "Thời gian thử việc hiện tại kết thúc ngày {{date}}",
+      "extend_duration_label": "Thời gian gia hạn",
+      "extend_duration_placeholder": "Chọn",
+      "extend_new_end_date": "Ngày kết thúc mới",
+      "extend_reason": "Lý do gia hạn",
+      "extend_confirm": "Xác nhận gia hạn"
     }
   },
   "report": {
