@@ -1,6 +1,6 @@
 import type { Department } from "@/types/deparment.type";
 import type { Room } from "@/types/room.type";
-import type { WorkingTypeEnum } from "@/types/staff.type";
+import type { Staff, StaffJobTitleEnum, StaffTypeEnum, WorkingTypeEnum } from "@/types/staff.type";
 
 export interface RecruitmentRequestFilters {
   fromDate?: string;
@@ -21,31 +21,49 @@ export interface RecruitmentRequestFilters {
 export interface RecruitmentRequest {
   id: string;
   code: string;
-  departmentId: string;
-  departmentName: string;
-  department: Department;
-  room: Room;
-  roomId: string;
-  roomName: string;
-  position: string;
-  jobTitleId?: string;
-  jobTitle?: { id: string; name: string };
-  quantity: number;
-  salaryFrom: number;
-  salaryTo: number;
-  requiredDate: string;
-  status: RecruitmentRequestStatusEnum;
-  workType: WorkingTypeEnum;
-  candidateCount: number;
-  interviewCount: number;
-  createdById: string;
-  createdByStaffName: string;
-  approvedById: string | null;
-  approvedByName: string | null;
-  approvedAt: string | null;
-  rejectedReason: string | null;
+
   createdAt: string;
   updatedAt: string;
+  deletedAt: string | null;
+
+  createdByStaff: Staff;
+  approvedByStaff: Staff | null;
+
+  department: Department;
+  jobTitle: { id: string, name: string, code: string };
+
+  description: string;
+  educationLevel: string;
+  experienceYears: string;
+
+  note: string | null;
+  otherRequirements: string;
+  softSkills: string;
+  technicalSkills: string;
+
+  position: string | null;
+  quantity: number;
+
+  reason: string;
+  rejectionReason: string | null;
+
+  requestDate: string;   // yyyy-MM-dd
+  requiredDate: string;  // yyyy-MM-dd
+
+  requiredCertificates: string;
+
+  room: Room;
+
+  salaryFrom: number;
+  salaryTo: number;
+
+  staffType: StaffTypeEnum;
+  workType: WorkingTypeEnum;
+
+  status: RecruitmentRequestStatusEnum;
+  candidateCount: number;
+  waitingInterviewCount: number;
+  createdByStaffName: string
 }
 
 export enum RecruitmentRequestStatusEnum {
@@ -70,6 +88,29 @@ export interface MetadataRecruitmentRequest {
   CLOSED: number;
   CANCELLED: number;
   [key: string]: unknown;
+}
+
+export interface IRecruitmentRequestMutatePayload {
+  code?: string | null;
+  departmentId?: string;
+  roomId?: string;
+  position?: string;
+  jobTitleId?: string;
+  staffType?: StaffTypeEnum;
+  workType?: WorkingTypeEnum;
+  quantity?: number;
+  requiredDate?: string;
+  reason?: string;
+  description?: string;
+  educationLevel?: string;
+  requiredCertificates?: string;
+  experienceYears?: string;
+  technicalSkills?: string;
+  softSkills?: string;
+  otherRequirements?: string;
+  salaryFrom?: number;
+  salaryTo?: number;
+  note?: string;
 }
 
 export interface ApproveRecruitmentRequestPayload {

@@ -192,6 +192,7 @@
       "interviews": "Awaiting Interview",
       "required_date": "Required:",
       "days_remaining": "{{count}} days left",
+      "days_overdue": "{{count}} days overdue",
       "created_by": "Created by:",
       "people_count": "{{count}} people"
     },

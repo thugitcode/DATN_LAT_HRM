@@ -1,6 +1,6 @@
 import { StatusChipSelect } from '@/components/status-chip-select';
 import { NAMESPACES } from '@/i18n/constants';
-import { Button, Input } from '@heroui/react';
+import { Button, Input, Tooltip } from '@heroui/react';
 import {
   IconCheck,
   IconClock,
@@ -110,15 +110,22 @@ export function InterviewDetailCard({ interview, onAction }: InterviewDetailCard
       <div
         className={cn('flex items-center justify-between px-4 pt-4 pb-3 border-b border-[#E4E4E7]')}
       >
-        <span className="text-xl leading-7 font-medium text-[#11181C] truncate flex-1 mr-2">
-          {t('interview_schedule.label.interview')}: {interview.position}
-        </span>
+        <Tooltip
+          content={`${t('interview_schedule.label.interview')}: ${interview.position}`}
+          placement="top"
+          portalContainer={document.body}
+          showArrow={false}
+        >
+          <span className="text-xl leading-7 font-medium text-[#11181C] truncate flex-1 mr-2">
+            {t('interview_schedule.label.interview')}: {interview.position}
+          </span>
+        </Tooltip>
         <StatusChipSelect
           value={interview.status}
           isPending={isPending}
           options={Object.values(InterviewStatusEnum).map((s) => ({
             key: s,
-            label: t(`interview_schedule.status.${s}` as any),
+            label: t(`interview_schedule.status.${s}`),
             color: INTERVIEW_STATUS_CONFIG[s].color,
             bg: INTERVIEW_STATUS_CONFIG[s].bg,
           }))}

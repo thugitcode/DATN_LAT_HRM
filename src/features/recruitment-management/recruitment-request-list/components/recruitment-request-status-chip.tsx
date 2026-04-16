@@ -64,3 +64,26 @@ export const RecruitmentRequestStatusChip: FC<RecruitmentRequestStatusChipProps>
     </Chip>
   );
 };
+
+
+// export const RecruitmentRequestStatusChip: FC<RecruitmentRequestStatusChipProps> = ({
+//   status,
+//   onSelect,
+//   isPending,
+// }) => {
+//   const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+
+//   const translatedOptions = RECRUITMENT_STATUS_OPTIONS.map((o) => ({
+//     ...o,
+//     label: t(o.label as any),
+//   }));
+
+//   return (
+//     <StatusChipSelect
+//       value={status}
+//       options={translatedOptions}
+//       onSelect={(key) => onSelect?.(key as RecruitmentRequestStatusEnum)}
+//       isPending={isPending}
+//     />
+//   );
+// };

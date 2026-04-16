@@ -20,17 +20,20 @@ import { ControlMode, useControlMode } from '@/features/staff-management/salary-
 import { useEffect } from 'react';
 import { buildRequirementsText } from '../helpers/helpers';
 import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
+import { RecruitmentRequestStatusEnum } from '../../recruitment-request-list/types/type';
 
 export const RecruitmentInformationSection = () => {
     const { id } = useParams({ strict: false })
     const { methods, onSubmit } = useFormRecruitmentRequest({ id });
     const { control, watch } = methods
     const { t } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
+
     const { t: tCommon } = useTranslation(NAMESPACES.COMMON);
     const { setMode, isView } = useControlMode()
     const variant = isView ? 'underlined' : 'flat'
     const isReadOnly = isView
     const { options: departmentOptions } = useDepartmentOptions();
+    const status = watch('status');
     const selectedDept = watch('departmentId');
     const { options: roomOptions } = useRoomOptions(selectedDept);
     const { options: jobTitleOptions } = useJobTitleOptions();
@@ -55,7 +58,7 @@ export const RecruitmentInformationSection = () => {
                     <div className='flex justify-between items-center text-lg leading-7 font-medium'>
                         <span className='flex gap-2.5 items-center'>{icons.case} {t('form.fields.recruitment_information')}</span>
                         <div className="flex items-center justify-between mt-0.75 mb-3.75">
-                            <div className="flex items-center gap-2">
+                            {([RecruitmentRequestStatusEnum.DRAFT, RecruitmentRequestStatusEnum.REJECTED].includes(status as RecruitmentRequestStatusEnum)) && <div className="flex items-center gap-2">
                                 {!isView ? (
                                     <>
                                         <BtnCancel
@@ -79,7 +82,7 @@ export const RecruitmentInformationSection = () => {
                                         {tCommon('button.edit')}
                                     </Button>
                                 )}
-                            </div>
+                            </div>}
                         </div></div>
                     <div className="grid grid-cols-3 gap-4">
                         <FormInput

@@ -20,6 +20,7 @@ import {
 import dayjs from 'dayjs';
 import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 import { normalizePayload } from '@/lib/utils';
+import type { IRecruitmentRequestMutatePayload } from '../types/type';
 
 interface UseFormRecruitmentRequestParams {
   id?: string;
@@ -52,25 +53,26 @@ export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentR
     reset({
       createdAt: dayjs(d.createdAt).format("YYYY-MM-DD") ?? dayjs().format("YYYY-MM-DD"),
       code: isDuplicate ? null : d.code ?? null,
-      departmentId: d.departmentId ?? d.department?.id ?? '',
-      roomId: d.roomId ?? d.room?.id ?? '',
+      departmentId: d.department?.id ?? '',
+      roomId: d.room?.id ?? '',
       // position: d.position ?? '',
-      jobTitleId: d.jobTitleId ?? d.jobTitle?.id ?? '',
-      staffType: (d as any).staffType ?? '',
+      jobTitleId: d.jobTitle?.id ?? '',
+      staffType: d.staffType ?? '',
       workType: d.workType ?? '',
       quantity: d.quantity ?? 1,
       requiredDate: d.requiredDate ?? '',
-      reason: (d as any).reason ?? '',
-      description: (d as any).description ?? '',
-      educationLevel: (d as any).educationLevel ?? '',
-      requiredCertificates: (d as any).requiredCertificates ?? '',
-      experienceYears: (d as any).experienceYears ?? 0,
-      technicalSkills: (d as any).technicalSkills ?? '',
-      softSkills: (d as any).softSkills ?? '',
-      otherRequirements: (d as any).otherRequirements ?? '',
-      salaryFrom: (d as any).salaryFrom ?? 0,
-      salaryTo: (d as any).salaryTo ?? 0,
-      note: (d as any).note ?? '',
+      reason: d.reason ?? '',
+      description: d.description ?? '',
+      educationLevel: d.educationLevel ?? '',
+      requiredCertificates: d.requiredCertificates ?? '',
+      experienceYears: d.experienceYears ?? 0,
+      technicalSkills: d.technicalSkills ?? '',
+      softSkills: d.softSkills ?? '',
+      otherRequirements: d.otherRequirements ?? '',
+      salaryFrom: Number(d.salaryFrom) ?? 0,
+      salaryTo: Number(d.salaryTo) ?? 0,
+      note: d.note ?? '',
+      status: d.status,
     });
   }, [detailRes, reset]);
 
@@ -88,7 +90,7 @@ export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentR
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: RecruitmentRequestFormValues) =>
+    mutationFn: (data: IRecruitmentRequestMutatePayload) =>
       recruitmentRequestService.update(id!, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: recruitmentRequestKeys.lists() });
@@ -108,7 +110,7 @@ export function useFormRecruitmentRequest({ id, onSuccess }: UseFormRecruitmentR
       code: data?.code ?? null,
     })
     if (isEditMode && !isDuplicate) {
-      updateMutation.mutate(payload);
+      updateMutation.mutate(payload as IRecruitmentRequestMutatePayload);
     } else {
       createMutation.mutate({ ...payload, id: null });
     }

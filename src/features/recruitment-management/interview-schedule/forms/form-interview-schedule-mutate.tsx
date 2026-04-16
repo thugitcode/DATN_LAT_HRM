@@ -20,6 +20,7 @@ import { useDirtyDrawer } from '@/hooks/use-dirty-drawer';
 import { FormTimePicker } from '@/components/form-fields/form-time-picker';
 import { EmailSection } from '../components/email-section';
 import type { CandidateStatusEnum } from '../../recruitment-request-details/types/candidate.type';
+import { ContractTypeEnum, StaffStatusEnum } from '@/types/staff.type';
 
 interface DrawerData {
     candidateId?: string;
@@ -55,7 +56,7 @@ export function FormInterviewScheduleMutate() {
     const { control, watch } = methods;
     const interviewMethod = watch('interviewMethod');
 
-    const { options: staffOptions } = useStaffOptions();
+    const { options: staffOptions } = useStaffOptions({ status: StaffStatusEnum.WORKING, contractType: ContractTypeEnum.FULL_TIME });
 
     const { data: candidatesData } = useQuery(candidateQueryOptions.getAll());
     const candidateOptions =
