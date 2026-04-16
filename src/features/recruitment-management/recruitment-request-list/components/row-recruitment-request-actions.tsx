@@ -269,13 +269,13 @@ export const RecruitmentRequestActionDropdown: FC<{ dataRow: RecruitmentRequest 
         );
         break;
       case RecruitmentRequestStatusEnum.APPROVED:
-        items.push(
-          {
-            key: 'edit_limited',
-            label: t('recruitment_request.actions.edit_limited'),
-            icon: <IconEdit size={16} />
-          },
-        );
+        // items.push(
+        //   {
+        //     key: 'edit_limited',
+        //     label: t('recruitment_request.actions.edit_limited'),
+        //     icon: <IconEdit size={16} />
+        //   },
+        // );
         break;
       case RecruitmentRequestStatusEnum.RECRUITING:
         items.push(

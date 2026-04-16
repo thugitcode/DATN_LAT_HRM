@@ -1,15 +1,15 @@
-import { Button, Spinner, Tab, Tabs } from '@heroui/react';
+import { Button, Progress, Spinner, Tab, Tabs } from '@heroui/react';
 import { IconArrowLeft, IconCalendar, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
-import { cn } from '@/lib/utils';
+import { cn, getProgress } from '@/lib/utils';
 import { recruitmentRequestQueryOptions } from '@/services/query-options/recruitment-request.query';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { RecruitmentRequestStatusEnum } from '../recruitment-request-list/types/type';
+import { RecruitmentRequestStatusChip } from '../recruitment-request-list/components/recruitment-request-status-chip';
 import { CandidateKanban } from './components/candidate-kanban';
 import { InterviewCalendar } from '../interview-schedule/components/interview-calender';
 import { RecruitmentInformationSection } from './components/recruitment-information-section';
@@ -30,16 +30,6 @@ interface RecruitmentRequestDetailsProps {
     onNext?: () => void;
 }
 
-const STATUS_COLOR: Record<RecruitmentRequestStatusEnum, { text: string; bg: string }> = {
-    [RecruitmentRequestStatusEnum.DRAFT]: { text: 'text-[#71717A]', bg: 'bg-[#F4F4F5]' },
-    [RecruitmentRequestStatusEnum.PENDING]: { text: 'text-[#C4841D]', bg: 'bg-[#FEF3CD]' },
-    [RecruitmentRequestStatusEnum.APPROVED]: { text: 'text-[#0E793C]', bg: 'bg-[#E8FAF0]' },
-    [RecruitmentRequestStatusEnum.RECRUITING]: { text: 'text-primary', bg: 'bg-[#EEF5FF]' },
-    [RecruitmentRequestStatusEnum.PAUSED]: { text: 'text-[#C4841D]', bg: 'bg-[#FEF3CD]' },
-    [RecruitmentRequestStatusEnum.REJECTED]: { text: 'text-[#F31260]', bg: 'bg-[#FEE7EF]' },
-    [RecruitmentRequestStatusEnum.CANCELLED]: { text: 'text-[#F31260]', bg: 'bg-[#FEE7EF]' },
-    [RecruitmentRequestStatusEnum.CLOSED]: { text: 'text-[#71717A]', bg: 'bg-[#F4F4F5]' },
-};
 
 export const RecruitmentRequestDetails = ({
     id,
@@ -63,18 +53,19 @@ export const RecruitmentRequestDetails = ({
 
     const detail = detailRes?.data;
     const candidates = candidatesRes?.data ?? [];
-
+    const candidateCount = detail?.candidateCount || candidates.length;
     const daysRemaining = useMemo(() => {
         if (!detail?.requiredDate) return null;
         return dayjs(detail.requiredDate).diff(dayjs(), 'day');
     }, [detail?.requiredDate]);
 
     const progressPercent = useMemo(() => {
-        if (!detail?.quantity || !detail?.candidateCount) return 0;
-        return Math.min(Math.round((detail.candidateCount / detail.quantity) * 100), 100);
+        if (!detail?.quantity || !candidateCount) return 0;
+        return Math.min(Math.round((candidateCount / detail.quantity) * 100), 100);
+
     }, [detail]);
 
-    const statusColor = detail ? STATUS_COLOR[detail.status] : null;
+    const progress = getProgress(detail?.requiredDate ?? "", detail?.requestDate ?? "");
 
     if (isDetailLoading) {
         return (
@@ -89,7 +80,7 @@ export const RecruitmentRequestDetails = ({
         navigate({ to: "/admin/recruitment-management/recruitment-request" })
     }
     return (
-        <div className="flex flex-col h-full bg-[#FAFAFA]">
+        <div className="flex flex-col h-full bg-[#f5f5f5]">
             {/* Header */}
             <div className="px-6 py-4 flex items-center gap-4">
                 <Button className="rounded-full bg-white" isIconOnly onPress={onBack}>
@@ -102,11 +93,7 @@ export const RecruitmentRequestDetails = ({
                             <div className="text-lg font-bold text-[#11181C] truncate">{detail.position || detail?.jobTitle?.name}</div>
                             <div className="text-xs text-[#71717A]">{detail.code}</div>
                         </div>
-                        {statusColor && (
-                            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${statusColor.bg} ${statusColor.text}`}>
-                                {t(`recruitment_request.status.${detail.status.toLowerCase()}` as any)}
-                            </span>
-                        )}
+                        <RecruitmentRequestStatusChip status={detail.status} />
 
                     </div>
                 </div>
@@ -122,15 +109,25 @@ export const RecruitmentRequestDetails = ({
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-24 h-1.5 bg-[#E4E4E7] rounded-full overflow-hidden">
+                            {/* <div className="w-24 h-1.5 bg-[#E4E4E7] rounded-full overflow-hidden">
                                 <div
                                     className="h-full bg-primary rounded-full transition-all"
                                     style={{ width: `${progressPercent}%` }}
                                 />
-                            </div>
+                            </div> */}
+                            <Progress
+                                size="sm"
+                                value={progress}
+                                color={daysRemaining ?? 0 <= 3 ? 'danger' : 'primary'}
+                                classNames={{
+                                    base: 'w-24',
+                                    track: 'drop-shadow-sm h-1.5',
+                                    indicator: 'bg-gradient-to-r from-primary to-primary-400',
+                                }}
+                            />
                             {daysRemaining !== null && (
-                                <span className="text-xs text-[#71717A]">
-                                    {t('recruitment_request.card.days_remaining', { count: daysRemaining })}
+                                <span className={`text-xs ${daysRemaining <= 3 ? 'text-danger' : 'text-[#71717A]'}`}>
+                                    {daysRemaining <= 0 ? t('recruitment_request.card.days_overdue', { count: Math.abs(daysRemaining) }) : t('recruitment_request.card.days_remaining', { count: daysRemaining })}
                                 </span>
                             )}
                         </div>

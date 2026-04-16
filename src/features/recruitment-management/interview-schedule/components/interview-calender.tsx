@@ -126,7 +126,7 @@ function CustomEvent({ event }: EventProps<InterviewEvent>) {
                         <p className="text-sm font-nomal text-black leading-5 truncate">
                             {t('interview_schedule.label.interview')}:&nbsp;
                         </p>
-                        <p className="text-sm font-nomal text-black leading-5 truncate">{interview.position}</p>
+                        <p className="text-sm font-nomal text-black leading-5 truncate max-w-45">{interview.position}</p>
                     </div>
                     <p className="text-[10px] bg-white rounded-lg text-black font-medium w-fit px-3.5 py-1.25">
                         {interview.startTime} - {interview.endTime}

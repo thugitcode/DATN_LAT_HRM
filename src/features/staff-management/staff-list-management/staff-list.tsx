@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { NAMESPACES } from '@/i18n/constants';
 import { useImportStaff, useStaffList } from '@/query-options/staff';
 import { addToast, Button, Chip } from '@heroui/react';
@@ -9,6 +9,7 @@ import { useReactToPrint } from 'react-to-print';
 import * as XLSX from 'xlsx';
 
 import { LayoutSwitcherEnum } from '@/types/global.type';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
 import type { ContractTypeEnum, Staff } from '@/types/staff.type';
 import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
 import { useRoomOptions } from '@/hooks/select-options/use-room-options';
@@ -32,33 +33,25 @@ interface StaffListProps {
 export const StaffList = ({ title, contractType }: StaffListProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
-  const searchParams: any = useSearch({
-    from: '/_private/admin/_dashboard/staff-management/$type',
-  });
   const currentLayout = useCurrentLayout();
 
+  const { filters, setFilter, setFilters } = useQueryFilter<{
+    page?: string;
+    limit?: string;
+    search?: string;
+    status?: string;
+    jobTitleId?: string;
+    positions?: string;
+    departmentId?: string;
+    roomId?: string;
+  }>();
+
   const printRef = useRef<HTMLDivElement>(null);
-  const page = searchParams.page || 1;
-  const limit = searchParams.limit || currentLayout === LayoutSwitcherEnum.GRID ? 12 : 10;
+  const page = Number(filters.page) || 1;
+  const limit = Number(filters.limit) || (currentLayout === LayoutSwitcherEnum.GRID ? 12 : 10);
 
-  const filters = {
-    search: searchParams.search,
-    status: searchParams.status,
-    jobTitleId: searchParams.jobTitleId,
-    positions: searchParams.positions,
-    departmentId: searchParams.departmentId,
-    roomId: searchParams.roomId,
-  };
-
-  const setFilters = (newFilters: any) => {
-    navigate({
-      search: { ...searchParams, ...newFilters },
-      replace: true,
-    });
-  };
-
-  const setPage = (p: number) => setFilters({ page: p });
-  const setLimit = (l: number) => setFilters({ limit: l });
+  const setPage = (p: number) => setFilter('page', String(p));
+  const setLimit = (l: number) => setFilter('limit', String(l));
 
   const { options: departmentOptions, isLoading: deptLoading } = useDepartmentOptions();
   const { options: roomOptions, isLoading: roomLoading } = useRoomOptions(filters?.departmentId);
@@ -69,7 +62,7 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
     search: filters.search,
     status: filters.status,
     jobTitleId: filters.jobTitleId,
-    positions: filters.positions,
+    positions: filters.positions as any,
     departmentIds: filters.departmentId ? [filters.departmentId] : undefined,
     roomIds: filters.roomId ? [filters.roomId] : undefined,
     contractType: contractType,
@@ -250,8 +243,8 @@ export const StaffList = ({ title, contractType }: StaffListProps) => {
         <div className="flex-1 flex flex-col">
           {/* Filters */}
           <StaffFilters
-            filters={filters}
-            setFilters={setFilters}
+            filters={filters as any}
+            setFilters={setFilters as any}
             deptLoading={deptLoading}
             roomLoading={roomLoading}
             departmentOptions={departmentOptions}

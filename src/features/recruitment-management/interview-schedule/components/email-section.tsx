@@ -37,11 +37,13 @@ export function EmailSection({ control, isRequired = false }: EmailSectionProps)
       />
 
       <FormArea
+        // classNames={{ input: "h-[35vh]!" }}
         control={control}
         name="emailContent"
         label={t('interview_schedule.form.fields.email_content')}
         placeholder={t('interview_schedule.form.placeholders.enter')}
-        minRows={5}
+        minRows={15}
+        maxRows={20}
         isRequired={isRequired}
       />
     </div>

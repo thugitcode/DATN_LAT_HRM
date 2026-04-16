@@ -652,3 +652,13 @@ export function runAfterPaint(callback: () => void) {
     cancelAnimationFrame(raf2);
   };
 }
+
+export const getProgress = (requiredDate: string, createdAt: string): number => {
+  const now = new Date().getTime();
+  const start = new Date(createdAt).getTime();
+  const end = new Date(requiredDate).getTime();
+  if (end <= start) return 100;
+  const elapsed = now - start;
+  const total = end - start;
+  return Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
+};

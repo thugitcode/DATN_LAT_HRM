@@ -10,6 +10,7 @@ interface PaginationFilters extends Record<string, unknown> {
 
 interface TablePaginationProps {
   total?: number;
+  limitOptions?: { label: string; value: string }[];
 }
 
 const LIMIT_OPTIONS = [
@@ -22,7 +23,7 @@ const LIMIT_OPTIONS = [
 const DEFAULT_PAGE = 1;
 const DEFAULT_LIMIT = '10';
 
-export const TablePagination: FC<Readonly<TablePaginationProps>> = ({ total = 0 }) => {
+export const TablePagination: FC<Readonly<TablePaginationProps>> = ({ total = 0, limitOptions = LIMIT_OPTIONS }) => {
   const { filters, setFilter, setFilters } = useQueryFilter<PaginationFilters>();
 
   const page = Number(filters.page) || DEFAULT_PAGE;
@@ -52,7 +53,7 @@ export const TablePagination: FC<Readonly<TablePaginationProps>> = ({ total = 0 
             trigger: 'bg-white',
           }}
         >
-          {LIMIT_OPTIONS.map((opt) => (
+          {limitOptions.map((opt) => (
             <SelectItem key={opt.value}>{opt.label}</SelectItem>
           ))}
         </Select>

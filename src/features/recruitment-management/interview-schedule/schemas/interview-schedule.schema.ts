@@ -107,7 +107,7 @@ export const INTERVIEW_SCHEDULE_DEFAULT_VALUES: InterviewScheduleFormValues = {
   candidateId: '',
   interviewerId: '',
   content: '',
-  interviewMethod: InterviewMethodEnum.ONLINE,
+  interviewMethod: InterviewMethodEnum.OFFLINE,
   onlineLink: '',
   address: '',
   interviewDate: '',

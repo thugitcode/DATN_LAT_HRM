@@ -37,6 +37,7 @@ export const recruitmentRequestSchema = (t: TFunction<typeof NAMESPACES.RECRUITM
     salaryFrom: numberField(t('form.validation.salary_from_required')),
     salaryTo: numberField(t('form.validation.salary_to_required')),
     note: z.preprocess(normalizeString, z.string()).optional(),
+    status: z.string().optional(),
   }).refine((data) => {
     const from = data.salaryFrom ? Number(data.salaryFrom) : 0;
     const to = data.salaryTo ? Number(data.salaryTo) : Infinity;

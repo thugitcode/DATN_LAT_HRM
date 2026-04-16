@@ -1,24 +1,18 @@
-import type { FC } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
-import { Progress, Avatar, Tooltip } from '@heroui/react';
-import {
-  IconCalendar,
-  IconUsers,
-  IconBriefcase,
-  IconCurrencyDollar,
-  IconChevronRight,
-} from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
+import { Progress, Tooltip } from '@heroui/react';
 import { motion } from 'framer-motion';
+import { useMemo, type FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatDate, getProgress } from '@/lib/utils';
 
+import { useShortPriceFormatter, type Locale } from '@/hooks/common/use-short-price-formatter';
+import { icons } from '@/lib/icons';
+import { useNavigate } from '@tanstack/react-router';
 import { type RecruitmentRequest } from '../types/type';
 import { RecruitmentRequestStatusChip } from './recruitment-request-status-chip';
 import { RecruitmentRequestActionButtons, RecruitmentRequestActionDropdown } from './row-recruitment-request-actions';
-import { useNavigate } from '@tanstack/react-router';
-import { useShortPriceFormatter, type Locale } from '@/hooks/common/use-short-price-formatter';
-import { icons } from '@/lib/icons';
+import dayjs from 'dayjs';
 
 interface RecruitmentRequestCardProps {
   data: RecruitmentRequest;
@@ -31,24 +25,17 @@ const getDaysRemaining = (requiredDate: string): number => {
   return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
 };
 
-const getProgress = (requiredDate: string, createdAt: string): number => {
-  const now = new Date().getTime();
-  const start = new Date(createdAt).getTime();
-  const end = new Date(requiredDate).getTime();
-  if (end <= start) return 100;
-  const elapsed = now - start;
-  const total = end - start;
-  return Math.min(100, Math.max(0, Math.round((elapsed / total) * 100)));
-};
-
 export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }) => {
   const { t, i18n } = useTranslation(NAMESPACES.RECRUITMENT_MANAGEMENT);
 
   const navigate = useNavigate();
   const { format } = useShortPriceFormatter(i18n.language as Locale)
-  const daysRemaining = getDaysRemaining(data.requiredDate);
   const progress = getProgress(data.requiredDate, data.createdAt);
-
+  // const daysRemaining = getDaysRemaining(data.requiredDate);
+  const daysRemaining = useMemo(() => {
+    if (!data?.requiredDate) return 0;
+    return dayjs(data.requiredDate).diff(dayjs(), 'day');
+  }, [data?.requiredDate]);
   const handleCardClick = () => {
     navigate({ to: `/admin/recruitment-management/recruitment-request/${data.id}` });
   };
@@ -108,7 +95,7 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
         <div className="w-px bg-[rgba(17,17,17,0.15)] self-stretch" />
         <div className="flex-1 flex flex-col gap-1">
           <span className="text-xl font-medium text-black leading-7">
-            {data.interviewCount > 0 ? data.interviewCount : '--'}
+            {data?.waitingInterviewCount > 0 ? data?.waitingInterviewCount : '--'}
           </span>
           <span className="text-xs text-black leading-4">
             {t('recruitment_request.card.interviews')}
@@ -125,7 +112,7 @@ export const RecruitmentRequestCard: FC<RecruitmentRequestCardProps> = ({ data }
             <span>{formatDate(data.requiredDate)}</span>
           </div>
           <div className={`font-semibold ${daysRemaining <= 3 ? 'text-danger' : 'text-primary'}`}>
-            {t('recruitment_request.card.days_remaining', { count: daysRemaining })}
+            {daysRemaining <= 0 ? t('recruitment_request.card.days_overdue', { count: Math.abs(daysRemaining) }) : t('recruitment_request.card.days_remaining', { count: daysRemaining })}
           </div>
         </div>
 

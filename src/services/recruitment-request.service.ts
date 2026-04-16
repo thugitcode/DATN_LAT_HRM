@@ -4,6 +4,7 @@ import type { ApiResponse } from '@/types';
 import { hrmInstance } from '@/lib/axios';
 import type {
   ApproveRecruitmentRequestPayload,
+  IRecruitmentRequestMutatePayload,
   RecruitmentRequest,
   RecruitmentRequestFilters,
   MetadataRecruitmentRequest,
@@ -17,7 +18,7 @@ import { API_ENDPOINTS } from './constants/endpoints';
 class RecruitmentRequestService extends BaseApiService<
   RecruitmentRequest,
   RecruitmentRequestFormValues,
-  Partial<RecruitmentRequest>,
+  Partial<IRecruitmentRequestMutatePayload>,
   RecruitmentRequestFilters
 > {
   constructor() {
@@ -46,7 +47,7 @@ class RecruitmentRequestService extends BaseApiService<
 
     return res as ApiResponse<RecruitmentRequest[], MetadataRecruitmentRequest>;
   }
-  async update(id: string, payload: Partial<RecruitmentRequest>) {
+  async update(id: string, payload: IRecruitmentRequestMutatePayload) {
     return super.update(id, payload);
   }
 

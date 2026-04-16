@@ -20,6 +20,7 @@ import { renderStatusChip } from '../hooks/use-staff-columns';
 import { LoadingWrapper } from '@/components/loading-wrapper';
 import { useUpdateStaff } from '@/query-options/staff';
 import { useConfirmStore } from '@/store/useConfirmStore';
+import { TablePagination } from '@/components/table/table-pagination';
 
 interface StaffGridProps {
   data: Staff[];
@@ -33,7 +34,12 @@ interface StaffGridProps {
   // onEdit?: (staff: Staff) => void;
   onEdit?: (id: string) => void;
 }
-
+const LIMIT_OPTIONS = [
+  { label: '12', value: '12' },
+  { label: '24', value: '24' },
+  { label: '48', value: '48' },
+  { label: '96', value: '96' },
+]
 export const StaffGrid: FC<StaffGridProps> = ({
   data,
   loading,
@@ -180,8 +186,8 @@ export const StaffGrid: FC<StaffGridProps> = ({
           )}
         </div>
         {/* Pagination block */}
-        <div className="flex items-center justify-between px-4 py-3 border border-[#F4F4F5] bg-white rounded-b-xl shrink-0">
-          <div className="flex items-center gap-2">
+        <div className="py-3">
+          {/*  <div className="flex items-center gap-2">
             <span className="text-sm text-[#71717A]">Page</span>
             <Select
               size="sm"
@@ -212,9 +218,10 @@ export const StaffGrid: FC<StaffGridProps> = ({
             classNames={{
               cursor: 'bg-[#6576FF] text-white',
             }}
-          />
+          /> */}
+          <TablePagination total={totalPages} limitOptions={LIMIT_OPTIONS} />
         </div>
       </div>
-    </LoadingWrapper>
+    </LoadingWrapper >
   );
 };

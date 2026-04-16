@@ -192,6 +192,7 @@
       "interviews": "Đợi phỏng vấn",
       "required_date": "Ngày cần:",
       "days_remaining": "Còn {{count}} ngày",
+      "days_overdue": "Quá hạn {{count}} ngày",
       "created_by": "Người tạo:",
       "people_count": "{{count}} người"
     },
