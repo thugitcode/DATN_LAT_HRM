@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import ShiftCategory from './ShiftCategory'; // Nạp màn hình Danh mục ca vào đây
+import ShiftCategory from './ShiftCategory'; // Nạp màn hình Danh mục ca làm việc
+import LeaveReasonCategory from './LeaveReasonCategory';
+import LeaveFundCategory from './LeaveFundCategory';
 
 const CategoryLayout = () => {
   const [activeMenu, setActiveMenu] = useState('shift');
@@ -46,10 +48,15 @@ const CategoryLayout = () => {
            {/* Khu vực render nội dung */}
            {activeMenu === 'shift' && <ShiftCategory />}
            
-           {/* Giữ chỗ cho các tab chưa làm */}
-           {activeMenu !== 'shift' && (
+           {/* 2. Kích hoạt render Danh mục lý do nghỉ khi chọn đúng Menu */}
+           {activeMenu === 'leaveReason' && <LeaveReasonCategory />}
+           
+           {activeMenu === 'leaveFund' && <LeaveFundCategory />}
+           
+           {/* Giữ chỗ cho các phân hệ còn lại chưa làm */}
+           {activeMenu !== 'shift' && activeMenu !== 'leaveReason' && (
              <div className="text-gray-500 italic">
-               (Khu vực này sẽ code sau khi hoàn thiện xong Danh mục ca làm việc)
+               (Khu vực này sẽ code sau khi hoàn thiện xong Danh mục lý do nghỉ)
              </div>
            )}
         </div>
