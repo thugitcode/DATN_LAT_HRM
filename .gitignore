@@ -1,0 +1,10 @@
+# Bỏ qua thư mục thư viện của cả FE và BE
+**/node_modules/
+
+# Bỏ qua file chứa mật khẩu bảo mật
+**/dist/
+**/.env
+
+# Bỏ qua các file rác của hệ điều hành
+.DS_Store
+Thumbs.db

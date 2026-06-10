@@ -1,0 +1,229 @@
+{
+  "timekeeping_management": {
+    "tabs": {
+      "worksheet_by_shift": "Worksheet by Shift",
+      "hourly_payroll": "Hourly Payroll",
+      "detailed_time_sheet": "Detailed Time Sheet"
+    },
+    "coming_soon": {
+      "title": "Coming Soon",
+      "description": "We are working hard to complete this feature.",
+      "description_2": "Please wait for the upcoming update!",
+      "understood": "Got it"
+    }
+  },
+
+  "legend": {
+    "on_time": "On Time",
+    "absent": "Absent",
+    "late": "Late",
+    "early_leave": "Early Leave",
+    "late_and_early": "Late & Early",
+    "overtime": "Business Trip",
+    "work_from_home": "Work From Home",
+    "short_hours": "Short Hours",
+    "missing_punch": "Missing Punch",
+    "day_off": "Day Off",
+    "full_hours": "Full Hours",
+    "missing": "Missing",
+    "exceed": "Exceed",
+    "off": "Off"
+  },
+
+  "columns": {
+    "stt": "No.",
+    "department": "DEPARTMENT",
+    "employee_code": "EMPLOYEE CODE",
+    "employee_name": "EMPLOYEE NAME",
+    "week": "WEEK {{week}}",
+    "position": "POSITION",
+
+    "employee_code_2": "Employee code",
+    "employee_name_2": "Employee name",
+
+    "summary": {
+      "total_attendance": "TOTAL",
+      "work_days": "WORK DAYS",
+      "paid_leave": "PAID LEAVE",
+      "on_call": "ON CALL",
+      "comp_leave": "COMP LEAVE",
+      "holiday": "HOLIDAY",
+      "other_leave": "OTHER LEAVE",
+      "overtime": "OVERTIME",
+      "comp_hours": "COMP HOURS",
+      "total_hours": "TOTAL HOURS"
+    }
+  },
+
+  "detailed_time_sheet": {
+    "columns": {
+      "date": "DATE",
+      "shift_code": "SHIFT CODE",
+      "standard_hours": "STANDARD HOURS",
+      "check_in": "CHECK IN",
+      "check_out": "CHECK OUT",
+      "late_minutes": "LATE",
+      "early_minutes": "EARLY LEAVE",
+      "work_count": "WORK COUNT",
+      "total_work_hours": "TOTAL HOURS",
+      "overtime_hours": "OVERTIME",
+      "comp_hours": "COMP HOURS"
+    },
+    "summary": "Showing {{staff}} employees"
+  },
+
+  "shift_details": {
+    "columns": {
+      "adjusted_by": "ADJUSTED BY",
+      "adjusted_time": "ADJUSTED TIME",
+      "reason": "REASON"
+    },
+    "toast": {
+      "no_changes": "No changes made to attendance time.",
+      "update_success": "Shift updated successfully.",
+      "update_error": "Failed to update shift."
+    },
+    "face_id": {
+      "check_in": "FaceID check in",
+      "check_out": "FaceID check out",
+      "no_image": "No image available"
+    },
+    "reason_label": "Adjustment reason",
+    "history": {
+      "title": "Adjustment History",
+      "empty": "No adjustment history"
+    },
+    "card": {
+      "employee_code": "Employee code",
+      "default_shift_name": "Work Shift",
+      "total_work_hours": "Total work hours",
+      "total_comp_hours": "Total comp hours",
+      "check_in": "Check in",
+      "check_out": "Check out",
+      "location": "Location",
+      "machine_name": "Machine name"
+    }
+  },
+
+  "shift_management": {
+    "title": "Shift Management",
+
+    "legend": {
+      "fixed": "Fixed Shift",
+      "split": "Split Shift",
+      "on_duty": "On Duty",
+      "flexible": "Flexible Shift",
+      "day_off": "Day Off"
+    }
+  },
+
+  "staff_position": {
+    "staff": "Staff",
+    "head_of_department": "Head of Department",
+    "deputy_head_of_department": "Deputy Head of Department",
+    "chief_nurse": "Chief Nurse",
+    "manager": "Manager",
+    "head_of_unit": "Head of Unit",
+    "deputy_manager": "Deputy Manager"
+  },
+
+  "card_user_shift": {
+    "standard_hours": "{{hours}} hours"
+  },
+
+  "change_shift_division": {
+    "department": "Department",
+    "room": "Room",
+    "select_shift": "Select shift",
+    "check_in_note": "Check-in note",
+    "check_out_note": "Check-out note",
+    "reason": "Reason"
+  },
+
+  "work_shifts_form": {
+    "staff_info": "Staff Information",
+    "shift_info": "Shift Information",
+    "from_date": "Start Date",
+    "to_date": "End Date",
+    "add_shift": "Add Shift",
+    "remove_shift": "Remove Shift",
+    "start_time": "Start Time",
+    "end_time": "End Time"
+  },
+  "print": {
+    "month_year": "MONTH {{month}} / {{year}}",
+    "employee_code_short": "Emp. ID",
+    "full_name": "Full Name",
+    "department": "Department",
+    "position": "Position",
+    "company_name_1": "COMPANY LTD",
+    "company_name_2": "GENERAL HOSPITAL",
+    "title": "SHIFT SCHEDULE MONTH {{month}} YEAR {{year}}",
+    "department_label": "DEPT",
+    "footer_date": "….............., date __ month __ year {{year}}",
+    "footer_unit_head": "Unit Head",
+    "footer_hr": "HR Department",
+    "footer_prepared_by": "Prepared By",
+    "sign_note": "(Signature, full name)",
+    "month_label": "MONTH",
+    "dept_room": "Department/Room",
+    "dept_room_required": "Department/Room",
+    "employee_code_required": "Employee Code",
+    "full_name_required": "Full Name",
+    "sheet_name": "Shift Schedule"
+  },
+
+  "explanation_management": {
+    "title": "Explanation Management",
+    "confirm_count": "Confirm ({{count}})",
+    "modal_title": "Confirm Approval",
+    "modal_body": "Are you sure you want to confirm {{count}} selected explanations? This action cannot be undone.",
+    "confirm": "Confirm",
+    "summary": {
+      "label": "Overview:",
+      "total": "Total Requests",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pending": "Pending"
+    },
+
+    "columns": {
+      "position": "POSITION",
+      "date": "DATE",
+      "error_type": "ERROR TYPE",
+      "explanation": "EXPLANATION",
+      "attachment": "ATTACHMENT",
+      "manager": "MANAGER",
+      "action": "ACTION"
+    },
+
+    "row_actions": {
+      "approve_title": "Confirm Approval",
+      "approve_desc": "Are you sure you want to approve this explanation? This action cannot be undone.",
+      "approve_label": "Approve",
+      "approve_success": "Explanation approved successfully",
+      "reject_title": "Confirm Rejection",
+      "reject_desc": "Please enter a reason for rejection so the staff member is informed.",
+      "reject_label": "Reject",
+      "reject_success": "Explanation rejected successfully",
+      "reject_reason_label": "Rejection Reason",
+      "reject_reason_placeholder": "Enter rejection reason...",
+      "max_chars": "Maximum {{max}} characters"
+    }
+  },
+
+  "attendance": {
+    "period_name": "Month {{month}}/{{year}}",
+    "approve_title": "Approve Timesheet",
+    "approve_desc": "Confirm approval of timesheet {{name}}?",
+    "approve_btn": "Approve Timesheet",
+    "navigate_payroll_btn": "Go to Payroll",
+    "published_status": "Published",
+    "unapprove_title": "Unapprove Timesheet",
+    "unapprove_desc": "Confirm unapproval of timesheet {{name}}?",
+    "unapprove_btn": "Unapprove Timesheet",
+    "not_approved_modal_title": "Not Approved Yet",
+    "not_approved_modal_body": "Month {{name}} has not been approved yet.",
+    "close_btn": "Close"
+  }
+}

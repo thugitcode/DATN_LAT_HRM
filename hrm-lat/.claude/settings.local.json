@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find \"/c/Users/tungn/AppData/Roaming/Code/User/History\" -name \"entries.json\" -exec grep -l \"hrm-web-ui.*recruitment-request-grid\\\\|hrm-web-ui.*recruitment-request-list\" {} \\\\;)",
+      "Read(//c/Users/tungn/DC/hrm-base-ui/src/components/drawers/**)",
+      "Read(//c/Users/tungn/DC/hrm-base-ui/src/routes/_private/dashboard/attendance/**)",
+      "Read(//c/Users/tungn/DC/hrm-base-ui/src/routes/_private/dashboard/attendance/explanations/**)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\tungn\\DC\\hrm-base-ui\\src\\routes\\_private\\_dashboard\\attendance",
+      "c:\\Users\\tungn\\DC\\hrm-base-ui\\src\\components\\drawers"
+    ]
+  }
+}

@@ -1,0 +1,362 @@
+{
+  "payrollCalculation": {
+    "title": "Danh sách tính lương",
+    "monthly_table_with_date": "Bảng lương tháng {{month}}/{{year}}",
+    "columns": {
+      "stt": "STT",
+      "department": "Khoa/Phòng",
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "job_title": "Chức danh",
+      "salary_template": "Mẫu bảng lương",
+      "base_salary": "Lương CB",
+      "total_gross": "Tổng Gross",
+      "total_paid_working_days": "Tổng công hưởng lương",
+      "total_overtime_hours": "Tổng giờ làm thêm hưởng lương",
+      "kpi_completion": "Hoàn thành KPI",
+      "allowance": "Phụ cấp",
+      "bonus": "Thưởng",
+      "deduction": "Khấu trừ",
+      "net_salary": "Lương Net",
+      "note": "Ghi chú",
+      "status": "Trạng thái",
+      "action": "Thao tác"
+    },
+    "detail": {
+      "allowance_title": "Các khoản phụ cấp",
+      "responsibility_allowance": "Phụ cấp trách nhiệm",
+      "hazard_allowance": "Phụ cấp độc hại, nguy hiểm",
+      "position_allowance": "Phụ cấp chức vụ",
+      "meal_allowance": "Phụ cấp ăn ca",
+      "phone_allowance": "Phụ cấp điện thoại",
+      "fuel_allowance": "Phụ cấp xăng xe",
+      "business_trip_allowance": "Phụ cấp công tác",
+      "performance_salary": "Lương hiệu quả",
+      "bonus_amount": "Tiền thưởng",
+      "other_allowance": "Phụ cấp khác",
+      "formula": "Công thức",
+      "deductionTitle": "Các khoản giảm trừ",
+      "socialInsurance": "BHXH",
+      "healthInsurance": "BHYT",
+      "unemploymentInsurance": "BHTN",
+      "unionFee": "Công đoàn",
+      "personalIncomeTax": "Thuế TNCN",
+      "violationPenalty": "Phạt vi phạm",
+      "violationDetails": "Chi tiết vi phạm",
+      "netIncomeTitle": "Lương net thực nhận",
+      "working": "Đang làm việc",
+      "history": "Lịch sử",
+      "print": "In",
+      "basicIncomeTitle": "Lương cơ bản",
+      "contractBasicSalary": "Lương cơ bản",
+      "days": "Ngày",
+      "overtimeSalary": "Lương tăng ca(OT)",
+      "onCallSalary": "Lương ca trực",
+      "production": "Sản phẩm",
+      "summaryTitle": "Tổng hợp",
+      "fromDate": "Từ ngày",
+      "toDate": "Đến ngày",
+      "standardWorkDays": "Ngày công chuẩn",
+      "actualWorkDays": "Ngày công thực tế",
+      "paidLeave": "Ngày nghỉ hưởng lương",
+      "onCallDays": "Ngày trực",
+      "overtime": "Làm thêm giờ",
+      "hours": "Giờ",
+      "leaveInfo": "Thông tin nghỉ phép",
+      "totalLeaveDays": "Tổng ngày nghỉ",
+      "usedLeaveDays": "Ngày nghỉ đã dùng",
+      "remainingLeaveDays": "Ngày nghỉ còn lại",
+      "totalGross": "Tổng Gross",
+      "employeeContribution": "Đóng góp của nhân viên",
+      "taxPIT": "Thuế TNCN",
+      "advancePayment": "Tạm ứng",
+      "totalNetIncome": "Tổng thực nhận",
+      "employerContributionTitle": "DOANH NGHIỆP ĐÓNG THÊM",
+      "employerSocialInsurance": "Bảo hiểm xã hội",
+      "employerHealthInsurance": "Bảo hiểm y tế",
+      "employerUnemploymentInsurance": "Bảo hiểm thất nghiệp",
+      "employerUnionFee": "Kinh phí công đoàn",
+      "totalEmployerCost": "Tổng chi phí NSDLD"
+    },
+    "sendPayslip": {
+      "title": "Gửi phiếu lương",
+      "bulkTitle": "Gửi phiếu lương hàng loạt",
+      "description": "Bạn có chắc muốn gửi phiếu lương cho tất cả nhân viên không?",
+      "descriptionStaff": "Bạn có chắc muốn gửi phiếu lương cho nhân viên {{name}} không?",
+      "confirmLabel": "Xác nhận",
+      "buttonLabel": "Gửi",
+      "bulkButtonLabel": "Gửi phiếu lương hàng loạt"
+    },
+    "confirmationStatus": {
+      "DRAFT": "Chưa xác nhận",
+      "PENDING": "Chờ xác nhận",
+      "CONFIRMED": "Đã xác nhận",
+      "REJECTED": "Đã từ chối",
+      "AUTO_CONFIRMED": "Tự động xác nhận"
+    }
+  },
+
+  "payslipFeedback": {
+    "title": "Phản hồi phiếu lương",
+    "columns": {
+      "stt": "STT",
+      "department": "Khoa/Phòng",
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "net_salary": "Lương Net",
+      "status": "Trạng thái",
+      "confirmed_at": "Thời gian xác nhận",
+      "feedback": "Phản hồi",
+      "action": "Thao tác"
+    },
+    "feedbackStatus": {
+      "PENDING": "Chờ phản hồi",
+      "CONFIRMED": "Đã xác nhận",
+      "REJECTED": "Từ chối"
+    },
+    "detail": {
+      "title": "Phiếu lương",
+      "payslip_period": "Phiếu lương {{period}}",
+      "status": {
+        "PENDING": "Chờ phản hồi",
+        "CONFIRMED": "Đã xác nhận",
+        "REJECTED": "Từ chối"
+      },
+      "from_date": "Từ ngày",
+      "to_date": "Đến ngày",
+      "standard_days": "Công chuẩn",
+      "actual_work_days": "Công thực tế",
+      "on_duty": "Công trực",
+      "overtime_hours": "Làm thêm",
+      "business_trip": "Công tác",
+      "total_gross": "Tổng Gross",
+      "insurance": "BH NV đóng",
+      "tax": "Thuế TNCN",
+      "advance": "Tạm ứng (Nếu có)",
+      "net_pay": "Tổng thực nhận:",
+      "unit_day": "ngày",
+      "unit_hour": "giờ",
+      "close": "Thoát",
+      "history": "Lịch sử phản hồi"
+    }
+  },
+
+  "data_summary": {
+    "tabs": {
+      "attendance_data": "Dữ liệu chấm công",
+      "revenue": "Doanh số",
+      "kpi": "KPI",
+      "other_income": "Các khoản thu nhập khác",
+      "summary_finalize": "Tổng hợp và chốt"
+    }
+  },
+  "attendance_data": {
+    "viewDetail": "Xem chi tiết"
+  },
+
+  "kpi": {
+    "title": "KPI",
+    "validation": {
+      "staff_id_required": "Mã nhân viên không được để trống",
+      "name_required": "Tên nhân viên không được để trống",
+      "department_required": "Khoa làm việc không được để trống",
+      "room_required": "Phòng làm việc không được để trống",
+      "kpi_score_required": "Điểm KPI không được để trống",
+      "kpi_score_range": "Điểm KPI phải là số từ 0 đến 100",
+      "evaluator_required": "Người đánh giá không được để trống",
+      "rating_required": "Xếp loại không được để trống"
+    },
+    "form": {
+      "staff_info": "Thông tin nhân viên",
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "department": "Khoa làm việc",
+      "room": "Phòng làm việc",
+      "kpi_section": "Điểm KPI",
+      "kpi_score": "Điểm KPI",
+      "evaluator": "Người đánh giá",
+      "rank": "Xếp loại",
+      "note": "Ghi chú"
+    }
+  },
+
+  "otherIncome": {
+    "title": "Các khoản thu nhập khác",
+    "validation": {
+      "staff_code_required": "Vui lòng nhập mã nhân viên",
+      "name_required": "Vui lòng nhập tên nhân viên",
+      "department_required": "Vui lòng chọn phòng ban",
+      "room_required": "Vui lòng chọn phòng",
+      "staff_id_required": "Thiếu thông tin nhân viên",
+      "type_required": "Vui lòng chọn loại thu nhập",
+      "allowance_id_required": "Vui lòng chọn khoản phụ cấp",
+      "amount_required": "Vui lòng nhập số tiền",
+      "amount_invalid": "Số tiền phải là số lớn hơn 0",
+      "date_required": "Vui lòng chọn ngày",
+      "entry_person_required": "Vui lòng chọn người nhập"
+    },
+    "form": {
+      "staff_info": "Thông tin nhân viên",
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "department": "Khoa làm việc",
+      "room": "Phòng làm việc",
+      "type": "Loại",
+      "allowance": "Tên loại",
+      "amount": "Số tiền",
+      "date": "Kỳ áp dụng",
+      "entry_person": "Người nhập",
+      "description": "Lý do/Mô tả",
+      "attachment": "File đính kèm",
+      "account_info": "Thông tin khoản"
+    },
+    "allowance_type": {
+      "ALLOWANCE": "Phụ cấp / Cộng",
+      "DEDUCTION": "Khấu trừ / Trừ"
+    },
+    "allowance": {
+      "delete_confirm": {
+        "title": "Xóa khoản thu nhập",
+        "description": "Bạn có chắc chắn muốn xóa khoản thu nhập này không? Dữ liệu liên quan đến bảng lương của nhân viên có thể bị ảnh hưởng.",
+        "confirm": "Xóa",
+        "cancel": "Hủy"
+      }
+    }
+  },
+
+  "summary-finalize": {
+    "title": "Tổng hợp và chốt",
+    "input-summary": {
+      "title": "Tổng hợp và chốt đầu vào kỳ lương",
+      "attendance": "Chấm công",
+      "revenue": "Doanh số",
+      "kpi": "Điểm KPI",
+      "other": "Khoản khác"
+    },
+    "cost-estimate": {
+      "title": "Ước tính tổng chi phí kỳ lương",
+      "gross": "Tổng lương Gross",
+      "bonus": "Tổng thưởng",
+      "penalty": "Tổng phạt",
+      "payout": "Chi trả ước tính"
+    },
+    "banner": {
+      "ready": "Sẵn sàng chuyển sang Tính lương",
+      "warning": "Sau khi chốt, dữ liệu đầu vào sẽ bị khoá. Mọi thay đổi cần huỷ chốt trước khi chỉnh sửa."
+    },
+    "actions": {
+      "save-draft": "Lưu nháp",
+      "transfer": "Chuyển tính lương",
+      "processing": "Đang xử lý..."
+    }
+  },
+
+  "columns": {
+    "stt": "STT",
+    "department": "Khoa/Phòng",
+    "staff_code": "Mã nhân viên",
+    "staff_name": "Tên nhân viên",
+    "total_work_days": "Tổng công",
+    "paid_leave": "Nghỉ phép",
+    "unpaid_leave": "Nghỉ không phép",
+    "on_duty": "Công trực",
+    "compensatory_leave": "Nghỉ bù trực",
+    "holiday_leave": "Nghỉ lễ",
+    "other_leave": "Nghỉ khác",
+    "overtime": "Tăng ca",
+    "compensatory_hours": "Giờ bù",
+    "violation": "Vi phạm",
+    "kpi_score": "Điểm KPI",
+    "ranking": "Xếp loại",
+    "evaluator": "Người đánh giá",
+    "source": "Nguồn",
+    "status": "Trạng thái",
+    "type": "Loại",
+    "description": "Lý do/Mô tả",
+    "amount": "Số tiền",
+    "input_by": "Người nhập",
+    "actions": "Thao tác"
+  },
+
+  "revenue": {
+    "columns": {
+      "stt": "STT",
+      "department": "KHOA/PHÒNG",
+      "staff_code": "MÃ NHÂN VIÊN",
+      "staff_name": "TÊN NHÂN VIÊN",
+      "target_amount": "CHỈ TIÊU THÁNG",
+      "actual_amount": "THỰC ĐẠT",
+      "achievement_rate": "TỈ LỆ ĐẠT",
+      "data_source": "NGUỒN DỮ LIỆU",
+      "status": "TRẠNG THÁI",
+      "actions": "THAO TÁC"
+    },
+    "status": {
+      "pending": "Chờ xác nhận",
+      "approved": "Đã xác nhận"
+    },
+    "delete_confirm": {
+      "title": "Xóa doanh thu",
+      "description": "Bạn có chắc chắn muốn xóa doanh thu này không? Hành động này không thể hoàn tác.",
+      "confirm": "Xóa",
+      "success": "Xóa doanh thu thành công."
+    },
+    "form": {
+      "title": "Giá trị",
+      "fields": {
+        "month": "Tháng",
+        "target": "Chỉ tiêu",
+        "actual": "Thực đạt",
+        "achievement_rate": "Tỉ lệ đạt"
+      },
+      "placeholders": {
+        "select": "Chọn",
+        "input": "Nhập"
+      },
+      "violation": "Vi phạm",
+      "kpi_score": "Điểm KPI",
+      "ranking": "Xếp loại",
+      "evaluator": "Người đánh giá",
+      "source": "Nguồn",
+      "status": "Trạng thái",
+      "actions": "Thao tác"
+    },
+
+    "kpi": {
+      "title": "KPI",
+
+      "validation": {
+        "staff_id_required": "Mã nhân viên không được để trống",
+        "name_required": "Tên nhân viên không được để trống",
+        "department_required": "Khoa làm việc không được để trống",
+        "room_required": "Phòng làm việc không được để trống",
+        "kpi_score_required": "Điểm KPI không được để trống",
+        "kpi_score_range": "Điểm KPI phải là số từ 0 đến 100",
+        "evaluator_required": "Người đánh giá không được để trống",
+        "rating_required": "Xếp loại không được để trống"
+      },
+
+      "form": {
+        "staff_info": "Thông tin nhân viên",
+        "staff_code": "Mã nhân viên",
+        "staff_name": "Tên nhân viên",
+        "department": "Khoa làm việc",
+        "room": "Phòng làm việc",
+        "kpi_section": "Điểm KPI",
+        "kpi_score": "Điểm KPI",
+        "evaluator": "Người đánh giá",
+        "rank": "Xếp loại",
+        "note": "Ghi chú"
+      }
+    }
+  },
+
+  "salary-history": {
+    "title": "Lịch sử lương nhân viên",
+    "current_salary": "Lương hiện tại",
+    "created_by": "Được tạo bởi",
+    "approved_by": "Phê duyệt bởi",
+    "no_salary_history": "Chưa có lịch sử lương",
+    "select_to_view_history": "Chọn nhân viên để xem lịch sử lương"
+  }
+}

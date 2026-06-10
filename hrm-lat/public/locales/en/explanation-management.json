@@ -1,0 +1,37 @@
+{
+  "explanation_modal": {
+    "reject_title": "Reject Explanation",
+    "reject_reason_label": "Reason for rejection",
+    "reject_reason_placeholder": "Enter the reason for rejection...",
+    "cancel": "Cancel",
+    "confirm_reject": "Confirm Rejection"
+  },
+  "explanation_detail": {
+    "data_not_found": "Data not found.",
+    "close": "Close",
+    "approve_success": "Approve explanation successfully",
+    "reject_success": "Reject explanation successfully",
+    "staff_code": "Staff code",
+    "shift": "Shift",
+    "check_in": "Check in",
+    "check_out": "Check out",
+    "total_working_hours": "Total working hours",
+    "reason": "Reason",
+    "no_reason": "No reason",
+    "attachments": "Attachments",
+    "manager": "Manager",
+    "manager_confirmation": "Manager confirmation",
+    "manager_confirmation_placeholder": "Enter manager confirmation (if any)...",
+    "hr_confirmation": "HR confirmation",
+    "hr_confirmation_placeholder": "Enter HR confirmation (if any)...",
+    "reject": "Reject",
+    "confirm": "Confirm"
+  },
+  "request_status": {
+    "PENDING": "Pending Manager",
+    "MANAGER_APPROVED": "Pending HR",
+    "MANAGER_REJECTED": "Manager Rejected",
+    "APPROVED": "Approved",
+    "HR_REJECTED": "HR Rejected"
+  }
+}

@@ -1,0 +1,645 @@
+{
+  "errors": {
+    "avatar": {
+      "maxSize": "Dung lượng file tối đa ~15MB"
+    },
+    "code": {
+      "required": "Mã nhân viên không được để trống",
+      "duplicate": "Trùng mã nhân viên."
+    },
+    "name": {
+      "required": "Họ và tên không được để trống",
+      "max": "Họ và tên tối đa 100 ký tự"
+    },
+    "birthday": {
+      "required": "Ngày sinh không được để trống",
+      "future": "Ngày sinh phải nhỏ hơn ngày hiện tại.",
+      "underage": "Yêu cầu ngày sinh lớn hơn hoặc bằng 18 tuổi."
+    },
+    "gender": {
+      "required": "Giới tính không được để trống"
+    },
+    "identityIssueDate": {
+      "future": "Ngày cấp CCCD/Passport phải nhỏ hơn ngày hiện tại."
+    },
+    "taxCode": {
+      "format": "Mã số thuế phải là 10 chữ số"
+    },
+    "insuranceNumber": {
+      "format": "Số BHXH phải là 10-15 ký tự số và chữ."
+    },
+    "healthInsuranceNumber": {
+      "format": "Số BHXH phải là 10 ký tự số và chữ."
+    },
+    "phone": {
+      "required": "Số điện thoại không được để trống",
+      "format": "Số điện thoại phải là 10 chữ số",
+      "duplicate": "Số điện thoại đã được sử dụng"
+    },
+    "email": {
+      "required": "Email không được để trống",
+      "format": "Email không đúng định dạng"
+    },
+    "emergencyContactPhone": {
+      "format": "Số điện thoại người liên hệ khẩn cấp phải là 10 chữ số"
+    },
+    "departmentIds": {
+      "required": "Phải chọn ít nhất một phòng ban"
+    },
+    "roomIds": {
+      "required": "Phải chọn ít nhất một phòng làm việc"
+    },
+    "jobTitle": {
+      "required": "Chức danh không được để trống"
+    },
+    "position": {
+      "required": "Vị trí công việc không được để trống"
+    },
+    "contractType": {
+      "required": "Loại hợp đồng không được để trống"
+    },
+    "qualification": {
+      "required": "Trình độ không được để trống"
+    },
+    "certificateExpiryDate": {
+      "past": "Ngày hết hạn chứng chỉ phải trong tương lai"
+    },
+    "contract": {
+      "contractType": {
+        "required": "Vui lòng chọn loại hợp đồng"
+      },
+      "workType": {
+        "required": "Vui lòng chọn loại hình làm việc"
+      },
+      "jobTitle": {
+        "required": "Vui lòng chọn chức danh"
+      },
+      "position": {
+        "required": "Vui lòng chọn cấp bậc"
+      },
+      "workingTime": {
+        "required": "Vui lòng nhập thời gian làm việc",
+        "invalid": "Thời gian làm việc phải là số dương"
+      },
+      "duration": {
+        "required": "Vui lòng nhập thời hạn",
+        "invalid": "Thời hạn phải là số dương"
+      },
+      "startDate": {
+        "required": "Vui lòng chọn ngày bắt đầu"
+      },
+      "endDate": {
+        "required": "Vui lòng chọn ngày kết thúc",
+        "afterStart": "Ngày kết thúc phải lớn hơn ngày bắt đầu"
+      },
+      "directManager": {
+        "required": "Vui lòng chọn ít nhất một quản lý trực tiếp"
+      },
+      "shiftType": {
+        "required": "Vui lòng chọn loại hình làm việc theo ca"
+      },
+      "workingDays": {
+        "required": "Vui lòng chọn ít nhất một ngày làm việc"
+      },
+      "workingAreas": {
+        "min": "Phải có ít nhất một khu vực làm việc",
+        "departmentRequired": "Vui lòng chọn khoa làm việc"
+      }
+    }
+  },
+  "staffForm": {
+    "addTitle": "Thêm mới nhân viên",
+    "editTitle": "Cập nhật thông tin nhân viên",
+    "sections": {
+      "personnel": "Thông tin nhân sự",
+      "department": "Khoa/phòng làm việc",
+      "additional": "Thông tin bổ sung",
+      "contact": "Thông tin liên hệ",
+      "personalContact": "Thông tin chính",
+      "emergencyContact": "Thông tin liên hệ khẩn cấp",
+      "qualification": "Bằng cấp chuyên môn",
+      "notes": "Ghi chú"
+    },
+    "fields": {
+      "avatar": {
+        "uploadNote": "* JPG, JPEG, PNG. Tối đa 15MB (180x180 px)",
+        "limitAlert": "Dung lượng file tối đa 15MB"
+      },
+      "code": {
+        "label": "Mã nhân viên",
+        "placeholder": "Nhập mã nhân viên"
+      },
+      "name": {
+        "label": "Tên nhân viên",
+        "placeholder": "Nhập tên nhân viên"
+      },
+      "birthday": {
+        "label": "Ngày sinh"
+      },
+      "gender": {
+        "label": "Giới tính",
+        "options": {
+          "male": "Nam",
+          "female": "Nữ",
+          "other": "Khác"
+        }
+      },
+      "identity": {
+        "label": "Số CCCD/Passport",
+        "placeholder": "Nhập số CCCD/Passport"
+      },
+      "identityIssueDate": {
+        "label": "Ngày cấp"
+      },
+      "identityIssuePlace": {
+        "label": "Nơi cấp",
+        "placeholder": "Nhập nơi cấp"
+      },
+      "nationality": {
+        "label": "Quốc tịch",
+        "options": {
+          "vietnam": "Việt Nam",
+          "other": "Khác"
+        }
+      },
+      "address": {
+        "label": "Địa chỉ",
+        "placeholder": "Nhập địa chỉ"
+      },
+      "departmentIds": {
+        "label": "Khoa quản lý"
+      },
+      "roomIds": {
+        "label": "Phòng quản lý"
+      },
+      "workType": {
+        "label": "Loại hình",
+        "placeholder": "Chọn loại hình",
+        "options": {
+          "fullTime": "Toàn thời gian",
+          "partTime": "Bán thời gian"
+        }
+      },
+      "jobTitle": {
+        "label": "Chức danh"
+      },
+      "position": {
+        "label": "Cấp bậc"
+      },
+      "contractType": {
+        "label": "Loại hợp đồng"
+      },
+      "contractDuration": {
+        "label": "Thời hạn làm việc",
+        "placeholder": "Nhập thời hạn"
+      },
+      "taxCode": {
+        "label": "Mã số thuế",
+        "placeholder": "Nhập mã số thuế"
+      },
+      "insuranceNumber": {
+        "label": "Số BHXH",
+        "placeholder": "Nhập số bảo hiểm xã hội"
+      },
+      "healthInsuranceNumber": {
+        "label": "Số BHYT",
+        "placeholder": "Nhập 10 chữ số BHYT"
+      },
+      "accountNumber": {
+        "label": "Số tài khoản",
+        "placeholder": "Nhập số tài khoản"
+      },
+      "beneficiaryName": {
+        "label": "Tên người thụ hưởng",
+        "placeholder": "Nhập tên người thụ hưởng"
+      },
+      "bankName": {
+        "label": "Tên ngân hàng",
+        "placeholder": "Nhập tên ngân hàng"
+      },
+      "phone": {
+        "label": "Số điện thoại",
+        "placeholder": "Nhập số điện thoại"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "abc@domain.com"
+      },
+      "emergencyContactName": {
+        "label": "Tên người liên hệ",
+        "placeholder": "Nhập tên người liên hệ"
+      },
+      "emergencyContactPhone": {
+        "label": "Số điện thoại",
+        "placeholder": "Nhập số điện thoại"
+      },
+      "emergencyContactAddress": {
+        "label": "Địa chỉ",
+        "placeholder": "Nhập địa chỉ"
+      },
+      "emergencyContactRelationship": {
+        "label": "Mối quan hệ",
+        "placeholder": "Nhập mối quan hệ (vd: Bố, Mẹ, Vợ...)"
+      },
+      "qualification": {
+        "label": "Trình độ chuyên môn"
+      },
+      "major": {
+        "label": "Chuyên ngành",
+        "placeholder": "Nhập chuyên ngành"
+      },
+      "academicTitles": {
+        "label": "Học hàm học vị"
+      },
+      "certificateNumber": {
+        "label": "Số CCHN",
+        "placeholder": "Nhập số chứng chỉ hành nghề"
+      },
+      "certificateIssuePlace": {
+        "label": "Nơi cấp",
+        "placeholder": "Nhập nơi cấp chứng chỉ"
+      },
+      "certificateExpiryDate": {
+        "label": "Ngày hết hạn",
+        "placeholder": "Chọn ngày hết hạn"
+      },
+      "note": {
+        "placeholder": "Nhập ghi chú"
+      }
+    }
+  },
+  "options": {
+    "job_title": {
+      "ALL": "Tất cả chức danh",
+      "DOCTOR": "Bác sĩ",
+      "NURSE": "Điều dưỡng",
+      "TECHNICIAN": "Kỹ thuật viên",
+      "MIDWIFE": "Hộ sinh",
+      "PHYSICIAN_ASSISTANT": "Y sĩ",
+      "OFFICE_STAFF": "Nhân viên văn phòng",
+      "MANAGEMENT": "Quản trị",
+      "LAB_TECHNICIAN": "Kỹ thuật viên xét nghiệm",
+      "IMAGING_TECHNICIAN": "Kỹ thuật viên CĐHA",
+      "CASHIER": "Thu ngân",
+      "RECEPTIONIST": "Lễ tân",
+      "WAREHOUSE_KEEPER": "Thủ kho",
+      "PHARMACIST": "Dược sĩ",
+      "SALES": "Sale",
+      "TELESALES": "Telesale",
+      "MARKETING": "Marketing",
+      "CUSTOMER_SUPPORT": "Chăm sóc khách hàng",
+      "MARKETING_LEAD": "Trưởng nhóm Marketing",
+      "CUSTOMER_SUPPORT_LEAD": "Trưởng nhóm CSKH"
+    },
+    "staff_position": {
+      "ALL": "Tất cả cấp bậc",
+      "STAFF": "Nhân viên",
+      "HEAD_OF_DEPARTMENT": "Trưởng khoa",
+      "DEPUTY_HEAD_OF_DEPARTMENT": "Phó khoa",
+      "CHIEF_NURSE": "Điều dưỡng trưởng",
+      "MANAGER": "Trưởng phòng",
+      "HEAD_OF_UNIT": "Trưởng bộ phận",
+      "DEPUTY_MANAGER": "Phó phòng"
+    },
+    "staff_status": {
+      "ALL": "Tất cả trạng thái",
+      "WORKING": "Đang làm việc",
+      "PENDING": "Chờ nhận việc",
+      "RESIGNED": "Đã nghỉ việc"
+    },
+    "contractType": {
+      "FULL_TIME": "Nhân viên chính thức",
+      "PROBATION": "Nhân viên thử việc",
+      "INTERNSHIP": "Nhân viên học việc",
+      "EXPERT_COOPERATION": "Chuyên gia hợp tác"
+    },
+    "workType": {
+      "FULL_TIME": "Toàn thời gian",
+      "PART_TIME": "Bán thời gian"
+    },
+    "qualifications": {
+      "INTERMEDIATE": "Trung cấp",
+      "COLLEGE": "Cao đẳng",
+      "BACHELOR": "Cử nhân",
+      "DOCTOR": "Bác sĩ",
+      "MASTER": "Thạc sĩ",
+      "PHD": "Tiến sĩ",
+      "SPECIALIST_DOCTOR": "Bác sĩ Chuyên khoa",
+      "OTHER": "Khác"
+    },
+    "academicTitles": {
+      "DOCTOR": "Bác sĩ",
+      "MASTER": "Thạc sĩ",
+      "PHD": "Tiến sĩ",
+      "SPECIALIST_I": "Bác sĩ Chuyên khoa I",
+      "SPECIALIST_II": "Bác sĩ Chuyên khoa II",
+      "RESIDENT_PHYSICIAN": "Bác sĩ Nội trú",
+      "PROFESSOR": "Giáo sư",
+      "ASSOCIATE_PROFESSOR": "Phó Giáo sư",
+      "PEOPLES_PHYSICIAN": "Thầy thuốc Nhân dân",
+      "EMINENT_PHYSICIAN": "Thầy thuốc Ưu tú",
+      "BACHELOR": "Cử nhân",
+      "ENGINEER": "Kỹ sư"
+    }
+  },
+  "staff_table": {
+    "columns": {
+      "name": "NHÂN VIÊN",
+      "birthday": "NGÀY SINH",
+      "gender": "GIỚI TÍNH",
+      "contact": "LIÊN HỆ",
+      "job_title": "CHỨC DANH",
+      "position": "CẤP BẬC",
+      "departments": "KHOA/PHÒNG",
+      "work_type": "LOẠI HÌNH",
+      "end_date": "NGÀY HẾT HẠN HĐ",
+      "actions": "HÀNH ĐỘNG"
+    },
+    "gender": {
+      "MALE": "Nam",
+      "FEMALE": "Nữ",
+      "OTHER": "Khác"
+    },
+    "work_type": {
+      "Fulltime": "Toàn thời gian",
+      "Parttime": "Bán thời gian"
+    },
+    "activate_title": "Kích hoạt nhân viên",
+    "deactivate_title": "Ngừng kích hoạt nhân viên",
+    "activate_confirm": "Bạn có chắc muốn kích hoạt nhân viên {{name}}?",
+    "deactivate_confirm": "Bạn có chắc muốn ngừng kích hoạt nhân viên {{name}}?"
+  },
+  "button": {
+    "add_staff": "Thêm mới nhân viên"
+  },
+  "off": "Nghỉ",
+  "staff_types": {
+    "official": "Nhân viên chính thức",
+    "probationary": "Nhân viên thử việc",
+    "apprentice": "Nhân viên học việc",
+    "partner": "Nhân sự hợp tác"
+  },
+  "staff_card": {
+    "contract_expiry": "Hết hạn HĐ",
+    "view_detail": "Xem chi tiết",
+    "no_date": "—"
+  },
+  "staffDetail": {
+    "infoTab": {
+      "title": "Thông tin nhân viên",
+      "buttons": {
+        "edit": "Chỉnh sửa",
+        "save": "Lưu",
+        "cancel": "Hủy"
+      }
+    },
+    "tabs": {
+      "info": "Thông tin nhân viên",
+      "contract": "Thông tin hợp đồng",
+      "salary": "Lương và phúc lợi",
+      "attendance": "Quản lý chấm công",
+      "documents": "Hồ sơ nhân viên"
+    }
+  },
+  "contract_info": {
+    "validation": {
+      "contract_type_required": "Vui lòng chọn loại hợp đồng",
+      "work_type_required": "Vui lòng chọn loại hình làm việc",
+      "job_title_required": "Vui lòng chọn chức danh",
+      "position_required": "Vui lòng chọn cấp bậc",
+      "working_time_required": "Vui lòng nhập thời gian làm việc",
+      "working_time_positive": "Thời gian làm việc phải là số dương",
+      "managed_room_required": "Vui lòng chọn phòng quản lý",
+      "managed_department_required": "Vui lòng chọn khoa quản lý",
+      "duration_required": "Vui lòng nhập thời hạn",
+      "duration_positive": "Thời hạn phải là số dương",
+      "contract_number_required": "Vui lòng nhập số hợp đồng",
+      "start_date_required": "Vui lòng chọn ngày bắt đầu",
+      "end_date_required": "Vui lòng chọn ngày kết thúc",
+      "end_date_after_start": "Ngày kết thúc phải lớn hơn ngày bắt đầu",
+      "direct_manager_required": "Vui lòng chọn ít nhất một quản lý trực tiếp",
+      "shift_type_required": "Vui lòng chọn loại hình làm việc theo ca",
+      "working_days_required": "Vui lòng chọn ít nhất một ngày làm việc",
+      "working_area_required": "Phải có ít nhất một khu vực làm việc",
+      "working_area_department_required": "Khoa làm việc không được để trống"
+    },
+    "add_contract": "Thêm mới hợp đồng",
+    "empty_description": "Nhân viên chưa có dữ liệu hợp đồng, vui lòng thêm mới hợp đồng.",
+    "edit_contract": "Chỉnh sửa hợp đồng",
+    "title": "Thông tin hợp đồng",
+    "contract_type": "Loại hợp đồng",
+    "work_type": "Loại hình",
+    "job_title": "Chức danh",
+    "position": "Cấp bậc",
+    "duration": "Thời hạn hợp đồng",
+    "contract_number": "Số hợp đồng",
+    "start_date": "Ngày bắt đầu",
+    "end_date": "Ngày kết thúc",
+    "direct_manager": "Quản lý trực tiếp",
+    "shift_type": "Loại hình làm việc theo ca",
+    "working_shift": "Ca làm việc",
+    "working_time": "Thời gian làm việc",
+    "working_days": "Ngày làm việc",
+    "placeholders": {
+      "enter": "Nhập",
+      "search_shift": "Tìm theo mã ca hoặc tên ca"
+    },
+    "duration_units": {
+      "YEAR": "Năm",
+      "MONTH": "Tháng"
+    },
+    "working_time_units": {
+      "DAY": "Ngày",
+      "WEEK": "Tuần",
+      "MONTH": "Tháng"
+    },
+    "days": {
+      "0": "Chủ nhật",
+      "2": "Thứ 2",
+      "3": "Thứ 3",
+      "4": "Thứ 4",
+      "5": "Thứ 5",
+      "6": "Thứ 6",
+      "7": "Thứ 7"
+    }
+  },
+  "shift_type": {
+    "FIXED": "Ca cố định",
+    "SPLIT": "Ca gãy",
+    "ON_DUTY": "Ca trực",
+    "FLEXIBLE": "Ca linh hoạt"
+  },
+  "working_area": {
+    "department": "Khoa làm việc",
+    "room": "Phòng làm việc",
+    "min_required": "Vui lòng thêm ít nhất một khu vực làm việc"
+  },
+  "insurance_union": {
+    "title": "Bảo hiểm và công đoàn",
+    "health_insurance": "Bảo hiểm y tế",
+    "social_insurance": "Bảo hiểm xã hội",
+    "unemployment_insurance": "Bảo hiểm thất nghiệp",
+    "union_fee": "Công đoàn",
+    "healthcare_insurance": "Bảo hiểm sức khỏe",
+    "contribution_rate": "Tỷ lệ đóng",
+    "contribution_rate_percent": "Tỷ lệ đóng (%)",
+    "contribution_amount": "Mức đóng",
+    "insurance_company": "Tên công ty bảo hiểm",
+    "benefit_level": "Mức hưởng",
+    "placeholders": {
+      "enter_rate": "Nhập tỷ lệ",
+      "enter_amount": "Nhập mức đóng",
+      "enter_company": "Nhập tên công ty",
+      "enter_benefit": "Nhập mức hưởng"
+    }
+  },
+  "salary_benefits": {
+    "title": "Lương và phúc lợi",
+    "edit": "Chỉnh sửa",
+    "update_success": "Cập nhật thông tin lương và phúc lợi thành công!",
+    "update_error": "Có lỗi xảy ra, vui lòng thử lại!",
+    "staff_not_found": "Không tìm thấy ID nhân viên",
+    "sections": {
+      "salary_info": "Thông tin lương",
+      "salary_structure": "Cấu trúc lương",
+      "tax": "Thuế thu nhập cá nhân",
+      "insurance_union": "Bảo hiểm & Công đoàn",
+      "leave_benefits": "Nghỉ phép và phúc lợi"
+    },
+    "salary_type": "Loại lương",
+    "salary_net": "Lương net",
+    "salary_gross": "Lương gross",
+    "basic_salary": "Lương cơ bản",
+    "insurance_salary": "Lương đóng BHXH",
+    "responsibility_allowance": "Phụ cấp trách nhiệm",
+    "position_allowance": "Phụ cấp chức vụ",
+    "hazard_allowance": "Phụ cấp độc hại, nguy hiểm",
+    "meal_allowance": "Phụ cấp ăn ca",
+    "fuel_allowance": "Phụ cấp xăng xe",
+    "phone_allowance": "Phụ cấp điện thoại",
+    "business_trip_allowance": "Phụ cấp công tác",
+    "other_allowance": "Phụ cấp khác",
+    "family_deduction": "Giảm trừ gia cảnh",
+    "dependents_count": "Số người phụ thuộc",
+    "tax_rate": "Tỷ lệ (%)",
+    "units": {
+      "day": "Ngày",
+      "month": "Tháng"
+    },
+    "options": {
+      "gross": "Lương Gross",
+      "net": "Lương Net"
+    },
+    "placeholders": {
+      "select": "Chọn",
+      "enter": "Nhập",
+      "enter_count": "Nhập số người",
+      "enter_rate": "Nhập tỷ lệ",
+      "enter_basic": "Nhập lương cơ bản",
+      "enter_insurance": "Nhập lương đóng BHXH"
+    }
+  },
+  "actions": {
+    "reset_faceid": "Cài đặt lại FaceID",
+    "send_email": "Gửi email"
+  },
+  "document": {
+    "add_new": "Thêm mới tài liệu"
+  },
+  "profileDetails": {
+    "labels": {
+      "documentName": "Tên giấy tờ",
+      "createdAt": "Ngày thêm mới",
+      "createdByName": "Người thêm mới",
+      "note": "Ghi chú",
+      "attachments": "Tệp đính kèm"
+    },
+    "placeholders": {
+      "documentName": "Nhập tên loại giấy tờ...",
+      "note": "Nhập ghi chú thêm..."
+    },
+    "buttons": {
+      "addOther": "+ Thêm giấy tờ khác",
+      "save": "Lưu hồ sơ"
+    },
+    "messages": {
+      "selectInfo": "Vui lòng chọn thông tin tài liệu cần tải lên",
+      "updateError": "Có lỗi xảy ra trong quá trình cập nhật"
+    }
+  },
+  "shiftEntry": {
+    "today": "Hôm nay",
+    "approved": "Đã được duyệt",
+    "checkIn": "Chấm công vào",
+    "checkOut": "Chấm công về",
+    "totalHours": "Tổng giờ",
+    "late": "Đi muộn",
+    "early": "Về sớm",
+    "wfh": "Làm việc tại nhà",
+    "businessTrip": "Công tác",
+    "vm": "Vắng mặt không phép",
+    "forgotClockTime": "Quên chấm công"
+  },
+  "attendanceSummary": {
+    "noData": "Không có dữ liệu",
+    "dayOff": "Ngày nghỉ",
+    "lateCount": "Chấm công muộn",
+    "earlyLeaveCount": "Về sớm",
+    "missedCheckIn": "Quên chấm công",
+    "remainingLeave": "Số phép còn lại",
+    "unauthorizedLeave": "Nghỉ không phép"
+  },
+  "no_staff_found": "Không tìm thấy thông tin nhân viên",
+  "work_history": {
+    "title": "Lịch sử làm việc",
+    "empty": "Chưa có dữ liệu lịch sử làm việc",
+    "columns": {
+      "staff_code": "Mã nhân viên",
+      "staff_name": "Tên nhân viên",
+      "job_title": "Chức danh",
+      "position": "Cấp bậc",
+      "department": "Khoa/Phòng",
+      "contract_type": "Loại hợp đồng",
+      "work_type": "Loại hình",
+      "duration": "Thời gian",
+      "start_date": "Ngày bắt đầu",
+      "end_date": "Ngày kết thúc",
+      "status": "Trạng thái"
+    },
+    "status": {
+      "PENDING_APPROVAL": "Chờ duyệt",
+      "PENDING_SIGNATURE": "Chờ ký",
+      "SIGNED": "Đã ký",
+      "EXPIRED": "Hết hạn"
+    },
+    "actions": {
+      "approve": "Duyệt",
+      "sign": "Ký hợp đồng",
+      "approve_title": "Xác nhận duyệt hợp đồng",
+      "approve_desc": "Bạn có chắc chắn muốn duyệt hợp đồng này không?",
+      "sign_title": "Xác nhận ký hợp đồng",
+      "sign_desc": "Bạn có chắc chắn muốn ký hợp đồng này không?",
+      "delete_title": "Xác nhận xóa hợp đồng",
+      "delete_desc": "Thông tin hợp đồng sau khi xóa không thể hoàn tác, bạn có chắc chắn muốn xóa hợp đồng?",
+      "approve_success": "Duyệt hợp đồng thành công",
+      "approve_error": "Duyệt hợp đồng thất bại",
+      "sign_success": "Ký hợp đồng thành công",
+      "sign_error": "Ký hợp đồng thất bại",
+      "delete_success": "Xóa hợp đồng thành công",
+      "delete_error": "Xóa hợp đồng thất bại"
+    },
+    "duration_year": "{{duration}} năm",
+    "duration_month": "{{duration}} tháng"
+  },
+  "page_filter": {
+    "recently_opened": "Đã mở gần đây",
+    "recently_added": "Thêm mới gần đây"
+  },
+  "time_attendance": {
+    "tabs": {
+      "worksheet_by_shift": "Chấm công",
+      "shift_explanation": "Giải trình ca",
+      "shift_assignment": "Phân ca"
+    }
+  }
+}

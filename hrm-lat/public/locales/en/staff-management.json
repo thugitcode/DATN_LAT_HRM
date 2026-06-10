@@ -1,0 +1,603 @@
+{
+  "errors": {
+    "avatar": {
+      "maxSize": "Maximum file size is ~15MB"
+    },
+    "code": {
+      "required": "Employee code is required",
+      "duplicate": "Employee code already exists"
+    },
+    "name": {
+      "required": "Full name is required",
+      "max": "Full name must be at most 100 characters"
+    },
+    "birthday": {
+      "required": "Date of birth is required",
+      "future": "Date of birth must be in the past",
+      "underage": "Employee must be at least 18 years old"
+    },
+    "gender": {
+      "required": "Gender is required"
+    },
+    "identityIssueDate": {
+      "future": "ID/Passport issue date must be in the past"
+    },
+    "taxCode": {
+      "format": "Tax code must be 10 digits"
+    },
+    "insuranceNumber": {
+      "format": "Social insurance number must be 10-15 alphanumeric characters."
+    },
+    "healthInsuranceNumber": {
+      "format": "Health insurance number must be exactly 10 digits."
+    },
+    "phone": {
+      "required": "Phone number is required",
+      "format": "Phone number must be 10 digits",
+      "duplicate": "Phone number is already in use"
+    },
+    "email": {
+      "required": "Email is required",
+      "format": "Invalid email format"
+    },
+    "emergencyContactPhone": {
+      "format": "Emergency contact phone must be 10 digits"
+    },
+    "departmentIds": {
+      "required": "At least one department must be selected"
+    },
+    "roomIds": {
+      "required": "At least one work room must be selected"
+    },
+    "jobTitle": {
+      "required": "Job title is required"
+    },
+    "position": {
+      "required": "Position is required"
+    },
+    "contractType": {
+      "required": "Contract type is required"
+    },
+    "qualification": {
+      "required": "Qualification is required"
+    },
+    "certificateExpiryDate": {
+      "past": "Certificate expiry date must be in the future"
+    }
+  },
+  "staffForm": {
+    "addTitle": "Add New Staff",
+    "editTitle": "Update Staff Information",
+    "sections": {
+      "personnel": "Personnel Information",
+      "department": "Department/Work Room",
+      "additional": "Additional Information",
+      "contact": "Contact Information",
+      "personalContact": "Key information",
+      "emergencyContact": "Emergency Contact",
+      "qualification": "Professional Qualifications",
+      "notes": "Notes"
+    },
+    "fields": {
+      "avatar": {
+        "uploadNote": "* JPG, JPEG, PNG. Max 15MB (180x180 px)",
+        "limitAlert": "Maximum file size is 15MB"
+      },
+      "code": {
+        "label": "Employee Code",
+        "placeholder": "Enter employee code"
+      },
+      "name": {
+        "label": "Employee Name",
+        "placeholder": "Enter full name"
+      },
+      "birthday": {
+        "label": "Date of Birth"
+      },
+      "gender": {
+        "label": "Gender",
+        "options": {
+          "male": "Male",
+          "female": "Female",
+          "other": "Other"
+        }
+      },
+      "identity": {
+        "label": "ID Card/Passport No.",
+        "placeholder": "Enter ID or Passport number"
+      },
+      "identityIssueDate": {
+        "label": "Issue Date"
+      },
+      "identityIssuePlace": {
+        "label": "Issue Place",
+        "placeholder": "Enter issue place"
+      },
+      "nationality": {
+        "label": "Nationality",
+        "options": {
+          "vietnam": "Vietnam",
+          "other": "Other"
+        }
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Enter address"
+      },
+      "departmentIds": {
+        "label": "Managing Department"
+      },
+      "roomIds": {
+        "label": "Managing Room"
+      },
+      "workType": {
+        "label": "Work Type",
+        "placeholder": "Select work type",
+        "options": {
+          "fullTime": "Full-time",
+          "partTime": "Part-time"
+        }
+      },
+      "jobTitle": {
+        "label": "Job Title"
+      },
+      "position": {
+        "label": "Position Level"
+      },
+      "contractType": {
+        "label": "Contract Type"
+      },
+      "contractDuration": {
+        "label": "Contract Duration",
+        "placeholder": "Enter duration"
+      },
+      "taxCode": {
+        "label": "Tax Code",
+        "placeholder": "Enter tax code"
+      },
+      "insuranceNumber": {
+        "label": "Social Insurance No.",
+        "placeholder": "Enter social insurance number"
+      },
+      "healthInsuranceNumber": {
+        "label": "Health Insurance No.",
+        "placeholder": "Enter health insurance number"
+      },
+      "accountNumber": {
+        "label": "Account Number",
+        "placeholder": "Enter bank account number"
+      },
+      "beneficiaryName": {
+        "label": "Beneficiary Name",
+        "placeholder": "Enter beneficiary name"
+      },
+      "bankName": {
+        "label": "Bank Name",
+        "placeholder": "Enter bank name"
+      },
+      "phone": {
+        "label": "Phone Number",
+        "placeholder": "Enter phone number"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "abc@domain.com"
+      },
+      "emergencyContactName": {
+        "label": "Contact Name",
+        "placeholder": "Enter contact person's name"
+      },
+      "emergencyContactPhone": {
+        "label": "Phone Number",
+        "placeholder": "Enter contact phone number"
+      },
+      "emergencyContactAddress": {
+        "label": "Address",
+        "placeholder": "Enter contact address"
+      },
+      "emergencyContactRelationship": {
+        "label": "Relationship",
+        "placeholder": "Enter relationship (e.g. Father, Mother, Wife...)"
+      },
+      "qualification": {
+        "label": "Professional Qualification"
+      },
+      "major": {
+        "label": "Major",
+        "placeholder": "Enter major"
+      },
+      "academicTitles": {
+        "label": "Academic Titles"
+      },
+      "certificateNumber": {
+        "label": "Practice Certificate No.",
+        "placeholder": "Enter certificate number"
+      },
+      "certificateIssuePlace": {
+        "label": "Issue Place",
+        "placeholder": "Enter certificate issue place"
+      },
+      "certificateExpiryDate": {
+        "label": "Expiry Date",
+        "placeholder": "Select expiry date"
+      },
+      "note": {
+        "placeholder": "Enter notes"
+      }
+    }
+  },
+  "options": {
+    "job_title": {
+      "ALL": "All Job Titles",
+      "DOCTOR": "Doctor",
+      "NURSE": "Nurse",
+      "TECHNICIAN": "Technician",
+      "MIDWIFE": "Midwife",
+      "PHYSICIAN_ASSISTANT": "Physician Assistant",
+      "OFFICE_STAFF": "Office Staff",
+      "MANAGEMENT": "Management",
+      "LAB_TECHNICIAN": "Lab Technician",
+      "IMAGING_TECHNICIAN": "Imaging Technician",
+      "CASHIER": "Cashier",
+      "RECEPTIONIST": "Receptionist",
+      "WAREHOUSE_KEEPER": "Warehouse Keeper",
+      "PHARMACIST": "Pharmacist",
+      "SALES": "Sales",
+      "TELESALES": "Telesales",
+      "MARKETING": "Marketing",
+      "CUSTOMER_SUPPORT": "Customer Support",
+      "MARKETING_LEAD": "Marketing Lead",
+      "CUSTOMER_SUPPORT_LEAD": "Customer Support Lead"
+    },
+    "staff_position": {
+      "ALL": "All Positions",
+      "STAFF": "Staff",
+      "HEAD_OF_DEPARTMENT": "Head of Department",
+      "DEPUTY_HEAD_OF_DEPARTMENT": "Deputy Head of Department",
+      "CHIEF_NURSE": "Chief Nurse",
+      "MANAGER": "Manager",
+      "HEAD_OF_UNIT": "Head of Unit",
+      "DEPUTY_MANAGER": "Deputy Manager"
+    },
+    "staff_status": {
+      "ALL": "All Statuses",
+      "WORKING": "Working",
+      "PENDING": "Pending",
+      "RESIGNED": "Resigned"
+    },
+    "contractType": {
+      "FULL_TIME": "Full-time Employee",
+      "PROBATION": "Probationary Employee",
+      "INTERNSHIP": "Intern",
+      "EXPERT_COOPERATION": "Cooperating Expert"
+    },
+    "workType": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time"
+    },
+    "qualifications": {
+      "INTERMEDIATE": "Intermediate",
+      "COLLEGE": "College",
+      "BACHELOR": "Bachelor",
+      "DOCTOR": "MD",
+      "MASTER": "MSc",
+      "PHD": "PhD",
+      "SPECIALIST_DOCTOR": "Specialist Doctor",
+      "OTHER": "Other"
+    },
+    "academicTitles": {
+      "DOCTOR": "MD",
+      "MASTER": "MSc",
+      "PHD": "PhD",
+      "SPECIALIST_I": "Spec. I",
+      "SPECIALIST_II": "Spec. II",
+      "RESIDENT_PHYSICIAN": "Resident Physician",
+      "PROFESSOR": "Prof.",
+      "ASSOCIATE_PROFESSOR": "Assoc. Prof.",
+      "PEOPLES_PHYSICIAN": "People's Physician",
+      "EMINENT_PHYSICIAN": "Eminent Physician",
+      "BACHELOR": "Bachelor",
+      "ENGINEER": "Engineer"
+    }
+  },
+  "staff_table": {
+    "columns": {
+      "name": "STAFF",
+      "birthday": "BIRTHDAY",
+      "gender": "GENDER",
+      "contact": "CONTACT",
+      "job_title": "JOB TITLE",
+      "position": "POSITION",
+      "departments": "DEPT/ROOM",
+      "work_type": "WORK TYPE",
+      "end_date": "CONTRACT EXPIRY",
+      "actions": "ACTIONS"
+    },
+    "gender": {
+      "MALE": "Male",
+      "FEMALE": "Female",
+      "OTHER": "Other"
+    },
+    "work_type": {
+      "Fulltime": "Full-time",
+      "Parttime": "Part-time"
+    },
+    "activate_title": "Activate Staff",
+    "deactivate_title": "Deactivate Staff",
+    "activate_confirm": "Are you sure you want to activate {{name}}?",
+    "deactivate_confirm": "Are you sure you want to deactivate {{name}}?"
+  },
+  "button": {
+    "add_staff": "Add New Staff"
+  },
+  "off": "Resigned",
+  "staff_types": {
+    "official": "Official Staff",
+    "probationary": "Probationary Staff",
+    "apprentice": "Apprentice Staff",
+    "partner": "Partner Staff"
+  },
+  "staff_card": {
+    "contract_expiry": "Contract Expiry",
+    "view_detail": "View Details",
+    "no_date": "—"
+  },
+  "staffDetail": {
+    "infoTab": {
+      "title": "Staff Information",
+      "buttons": {
+        "edit": "Edit",
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "tabs": {
+      "info": "Employee Info",
+      "contract": "Contract Info",
+      "salary": "Salary & Benefits",
+      "attendance": "Attendance",
+      "documents": "Documents"
+    }
+  },
+  "contract_info": {
+    "validation": {
+      "contract_type_required": "Please select a contract type",
+      "work_type_required": "Please select a work type",
+      "job_title_required": "Please select a job title",
+      "position_required": "Please select a position",
+      "working_time_required": "Please enter working time",
+      "working_time_positive": "Working time must be a positive number",
+      "managed_room_required": "Please select a managed room",
+      "managed_department_required": "Please select a managed department",
+      "duration_required": "Please enter contract duration",
+      "duration_positive": "Duration must be a positive number",
+      "contract_number_required": "Please enter a contract number",
+      "start_date_required": "Please select a start date",
+      "end_date_required": "Please select an end date",
+      "end_date_after_start": "End date must be after start date",
+      "direct_manager_required": "Please select at least one direct manager",
+      "shift_type_required": "Please select a shift type",
+      "working_days_required": "Please select at least one working day",
+      "working_area_required": "At least one working area is required",
+      "working_area_department_required": "Working department must not be empty"
+    },
+    "add_contract": "Add New Contract",
+    "empty_description": "This employee has no contract data yet. Please add a new contract.",
+    "edit_contract": "Edit Contract",
+    "title": "Contract Information",
+    "contract_type": "Contract Type",
+    "work_type": "Work Type",
+    "job_title": "Job Title",
+    "position": "Position Level",
+    "duration": "Contract Duration",
+    "contract_number": "Contract Number",
+    "start_date": "Start Date",
+    "end_date": "End Date",
+    "direct_manager": "Direct Manager",
+    "shift_type": "Shift Type",
+    "working_shift": "Working Shift",
+    "working_time": "Working Time",
+    "working_days": "Working Days",
+    "placeholders": {
+      "enter": "Enter",
+      "search_shift": "Search by shift code or name"
+    },
+    "duration_units": {
+      "YEAR": "Year",
+      "MONTH": "Month"
+    },
+    "working_time_units": {
+      "DAY": "Day",
+      "WEEK": "Week",
+      "MONTH": "Month"
+    },
+    "days": {
+      "0": "Sunday",
+      "2": "Monday",
+      "3": "Tuesday",
+      "4": "Wednesday",
+      "5": "Thursday",
+      "6": "Friday",
+      "7": "Saturday"
+    }
+  },
+  "shift_type": {
+    "FIXED": "Fixed Shift",
+    "SPLIT": "Split Shift",
+    "ON_DUTY": "On-duty Shift",
+    "FLEXIBLE": "Flexible Shift"
+  },
+  "working_area": {
+    "department": "Working Department",
+    "room": "Working Room",
+    "min_required": "Please add at least one working area"
+  },
+  "insurance_union": {
+    "title": "Insurance and Union",
+    "health_insurance": "Health Insurance",
+    "social_insurance": "Social Insurance",
+    "unemployment_insurance": "Unemployment Insurance",
+    "union_fee": "Union Fee",
+    "healthcare_insurance": "Healthcare Insurance",
+    "contribution_rate": "Contribution Rate",
+    "contribution_rate_percent": "Contribution Rate (%)",
+    "contribution_amount": "Contribution Amount",
+    "insurance_company": "Insurance Company",
+    "benefit_level": "Benefit Level",
+    "placeholders": {
+      "enter_rate": "Enter rate",
+      "enter_amount": "Enter amount",
+      "enter_company": "Enter company name",
+      "enter_benefit": "Enter benefit level"
+    }
+  },
+  "salary_benefits": {
+    "title": "Salary & Benefits",
+    "edit": "Edit",
+    "update_success": "Salary and benefits updated successfully!",
+    "update_error": "An error occurred, please try again!",
+    "staff_not_found": "Staff ID not found",
+    "sections": {
+      "salary_info": "Salary Information",
+      "salary_structure": "Salary Structure",
+      "tax": "Personal Income Tax",
+      "insurance_union": "Insurance & Union",
+      "leave_benefits": "Leave Benefits"
+    },
+    "salary_type": "Salary Type",
+    "salary_net": "Net Salary",
+    "salary_gross": "Gross Salary",
+    "basic_salary": "Basic Salary",
+    "insurance_salary": "Insurance Salary",
+    "responsibility_allowance": "Responsibility Allowance",
+    "position_allowance": "Position Allowance",
+    "hazard_allowance": "Hazardous Allowance",
+    "meal_allowance": "Meal Allowance",
+    "fuel_allowance": "Fuel Allowance",
+    "phone_allowance": "Phone Allowance",
+    "business_trip_allowance": "Business Trip Allowance",
+    "other_allowance": "Other Allowance",
+    "family_deduction": "Family Deduction",
+    "dependents_count": "Number of Dependents",
+    "tax_rate": "Rate (%)",
+    "units": {
+      "day": "Day",
+      "month": "Month"
+    },
+    "options": {
+      "gross": "Gross Salary",
+      "net": "Net Salary"
+    },
+    "placeholders": {
+      "select": "Select",
+      "enter": "Enter",
+      "enter_count": "Enter number of persons",
+      "enter_rate": "Enter rate",
+      "enter_basic": "Enter basic salary",
+      "enter_insurance": "Enter insurance salary"
+    }
+  },
+  "actions": {
+    "reset_faceid": "Reset FaceID",
+    "send_email": "Send email"
+  },
+  "document": {
+    "add_new": "Add New Document"
+  },
+  "profileDetails": {
+    "labels": {
+      "documentName": "Document Name",
+      "createdAt": "Created At",
+      "createdByName": "Created By",
+      "note": "Note",
+      "attachments": "Attachments"
+    },
+    "placeholders": {
+      "documentName": "Enter document name...",
+      "note": "Enter additional notes..."
+    },
+    "buttons": {
+      "addOther": "+ Add other document",
+      "save": "Save profile"
+    },
+    "messages": {
+      "selectInfo": "Please select document information to upload",
+      "updateError": "An error occurred during the update process"
+    }
+  },
+  "shiftEntry": {
+    "today": "Today",
+    "approved": "Approved",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "totalHours": "Total hours",
+    "late": "Late arrival",
+    "early": "Early leave",
+    "wfh": "Work from home",
+    "businessTrip": "Business trip",
+    "vm": "Absent without notice",
+    "forgotClockTime": "Forgot to clock in/out"
+  },
+  "attendanceSummary": {
+    "noData": "No data",
+    "dayOff": "Day off",
+    "lateCount": "Late count",
+    "earlyLeaveCount": "Early leave",
+    "missedCheckIn": "Missed check-in",
+    "remainingLeave": "Remaining leave",
+    "unauthorizedLeave": "Unauthorized leave"
+  },
+  "no_staff_found": "No staff found",
+  "work_history": {
+    "title": "Work History",
+    "empty": "No work history data",
+    "columns": {
+      "staff_code": "Staff Code",
+      "staff_name": "Staff Name",
+      "job_title": "Job Title",
+      "position": "Position",
+      "department": "Department/Room",
+      "contract_type": "Contract Type",
+      "work_type": "Work Type",
+      "duration": "Duration",
+      "start_date": "Start Date",
+      "end_date": "End Date",
+      "status": "Status"
+    },
+    "status": {
+      "PENDING_APPROVAL": "Pending Approval",
+      "PENDING_SIGNATURE": "Pending Signature",
+      "SIGNED": "Signed",
+      "EXPIRED": "Expired"
+    },
+    "actions": {
+      "approve": "Approve",
+      "sign": "Sign Contract",
+      "approve_title": "Confirm Approval",
+      "approve_desc": "Are you sure you want to approve this contract?",
+      "sign_title": "Confirm Signing",
+      "sign_desc": "Are you sure you want to sign this contract?",
+      "delete_title": "Confirm Delete",
+      "delete_desc": "This action cannot be undone. Are you sure you want to delete this contract?",
+      "approve_success": "Contract approved successfully",
+      "approve_error": "Failed to approve contract",
+      "sign_success": "Contract signed successfully",
+      "sign_error": "Failed to sign contract",
+      "delete_success": "Contract deleted successfully",
+      "delete_error": "Failed to delete contract"
+    },
+    "duration_year": "{{duration}} year(s)",
+    "duration_month": "{{duration}} month(s)"
+  },
+  "page_filter": {
+    "recently_opened": "Recently opened",
+    "recently_added": "Recently added"
+  },
+  "time_attendance": {
+    "tabs": {
+      "worksheet_by_shift": "Timekeeping",
+      "shift_explanation": "Shift explanation",
+      "shift_assignment": "Shift scheduling"
+    }
+  }
+}

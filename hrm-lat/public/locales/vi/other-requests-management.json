@@ -1,0 +1,47 @@
+{
+  "businessTripManagement": {
+    "title": "Quản lý công tác"
+  },
+
+  "trainingRegistrationManagement": {
+    "title": "Quản lý đăng ký đào tạo"
+  },
+
+  "overtimeManagement": {
+    "title": "Quản lý làm thêm giờ"
+  },
+
+  "remoteManagement": {
+    "title": "Quản lý làm việc từ xa"
+  },
+
+  "columns": {
+    "department": "Khoa/Phòng",
+    "staffCode": "Mã nhân viên",
+    "staffName": "Tên nhân viên",
+    "overtimeType": "Loại làm thêm",
+    "businessTripType": "Loại công tác",
+    "overtimeDate": "Ngày làm thêm giờ",
+    "trainingDate": "Ngày đào tạo",
+    "startTime": "Thời gian từ",
+    "endTime": "Thời gian đến",
+    "totalTime": "Tổng thời gian",
+    "trainingLocation": "Địa điểm đào tạo",
+    "businessTripLocation": "Địa điểm công tác",
+    "reason": "Lý do",
+    "directManager": "Quản lý trực tiếp",
+    "status": "Trạng thái",
+    "remoteDate": "Ngày làm từ xa",
+    "type": "Loại"
+  },
+
+  "hour": "tiếng",
+  "day": "ngày",
+
+  "print": {
+    "footer_date": "….............., ngày __ tháng __ năm {{year}}",
+    "footer_unit_head": "Trưởng Đơn Vị",
+    "footer_hr": "TL. Hành chánh - Nhân sự",
+    "footer_prepared_by": "Lập Bảng"
+  }
+}

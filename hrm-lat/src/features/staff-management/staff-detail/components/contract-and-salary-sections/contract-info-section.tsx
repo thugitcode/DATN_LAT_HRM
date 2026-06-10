@@ -1,0 +1,370 @@
+// sections/ContractInfoSection.tsx
+import { IconChevronDown } from '@tabler/icons-react';
+import type { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { useStaffList } from '@/query-options/staff';
+import { useJobTitleOptions } from '@/hooks/select-options/use-job-title-options';
+import { StaffPositionEnum, WorkingTypeEnum } from '@/types/staff.type';
+
+// Các custom component bạn đã có
+import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
+import { FormCheckboxGroup } from '@/components/form-fields/form-checkbox-group';
+import { FormDatePicker } from '@/components/form-fields/form-date-picker';
+import { FormInput } from '@/components/form-fields/form-input';
+import { FormLabel } from '@/components/form-fields/form-label';
+import { FormNumberInput } from '@/components/form-fields/form-number-input';
+import { FormSelect } from '@/components/form-fields/form-select';
+import { NAMESPACES } from '@/i18n/constants';
+import { icons } from '@/lib/icons';
+import { cn } from '@/lib/utils';
+import { shiftTemplateQueryOptions } from '@/services/query-options/shift-template.query';
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react';
+import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { WorkingAreaSection } from './working-area-section';
+import { useDepartmentOptions } from '@/hooks/select-options/use-department-options';
+import { useRoomOptions } from '@/hooks/select-options/use-room-options';
+import { taxOptions } from '@/services/query-options/tax/tax.query';
+import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+
+export const ContractInfoSection: FC = () => {
+  const { control, watch, setValue, formState: { isSubmitting, errors } } = useFormContext();
+  const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT)
+  const { options: departmentOptions } = useDepartmentOptions();
+  const { options: jobTitleOptions } = useJobTitleOptions();
+  const selectedDepts = watch("managedDepartmentId");
+  const { options: roomOptions } = useRoomOptions(selectedDepts);
+  const { data: taxRateRes } = useQuery(taxOptions.getTaxRate());
+  const { data: taxBracketRes } = useQuery(taxOptions.getTaxBracket());
+
+  const { isView } = useControlMode()
+  const variant = isView ? "underlined" : "flat"
+
+  const { data: managersRes } = useStaffList({
+    getAll: true,
+    positions: [
+      StaffPositionEnum.HEAD_OF_DEPARTMENT,
+      StaffPositionEnum.DEPUTY_HEAD_OF_DEPARTMENT,
+      StaffPositionEnum.CHIEF_NURSE,
+      StaffPositionEnum.MANAGER,
+      StaffPositionEnum.HEAD_OF_UNIT,
+      StaffPositionEnum.DEPUTY_MANAGER,
+    ],
+  });
+  const managers = managersRes?.data || [];
+
+  // Watch
+  const shiftType = watch('shiftType');
+  // Chuẩn bị options cho các Select
+  const contractTypeOptions = [
+    { key: 'FULL_TIME', label: t('options.contractType.FULL_TIME') },
+    { key: 'PROBATION', label: t('options.contractType.PROBATION') },
+    { key: 'INTERNSHIP', label: t('options.contractType.INTERNSHIP') },
+    { key: 'EXPERT_COOPERATION', label: t('options.contractType.EXPERT_COOPERATION') },
+  ];
+
+  const shiftTypeOptions = [
+    { key: 'FIXED', label: t('shift_type.FIXED') },
+    { key: 'FLEXIBLE', label: t('shift_type.FLEXIBLE') },
+    { key: 'SPLIT', label: t('shift_type.SPLIT') },
+  ];
+
+  const managerOptions = managers.map(m => ({
+    key: m.id,
+    label: `${m.code} - ${m.name}`,
+  }));
+
+  const { data: shiftsRes } = useQuery({
+    ...shiftTemplateQueryOptions.list({ getAll: true, type: 'FIXED', status: 'ACTIVE' }),
+    enabled: shiftType === 'FIXED',
+  });
+
+  const WORKING_TIME_UNITS = [
+    { key: "DAY", label: t('contract_info.working_time_units.DAY') },
+    { key: "WEEK", label: t('contract_info.working_time_units.WEEK') },
+    { key: "MONTH", label: t('contract_info.working_time_units.MONTH') },
+  ];
+
+  const workingTimeUnit = watch("workingTimeUnit") || "MONTH";
+
+  return (
+    <div className="bg-white p-5 rounded-2xl shadow-sm border border-[#E4E4E7] flex flex-col gap-4 w-full">
+      <div className="flex items-center gap-2 mb-2">
+        {icons.archiveBook}
+        <h3 className="text-[15px] font-bold text-[#11181C]">{t('contract_info.title')}</h3>
+      </div>
+
+      <div className="flex flex-col gap-6">
+        <div className="grid grid-cols-2 gap-4">
+          <FormSelect
+            control={control}
+            name="contractType"
+            label={t('contract_info.contract_type')}
+            isRequired
+            options={contractTypeOptions}
+            readOnly={isSubmitting || isView}
+            variant={variant}
+          />
+
+          <FormSelect
+            control={control}
+            name="workType"
+            label={t('contract_info.work_type')}
+            isRequired
+            options={Object.values(WorkingTypeEnum).map((val) => ({
+              label: t(`options.workType.${val}`),
+              key: val
+            }))}
+            readOnly={isSubmitting || isView}
+            variant={variant}
+          />
+
+          <FormSelect
+            control={control}
+            name="jobTitleId"
+            label={t('contract_info.job_title')}
+            isRequired
+            options={jobTitleOptions.map((jt) => ({ key: jt.value, label: jt.label }))}
+            readOnly={isSubmitting || isView}
+            variant={variant}
+          />
+
+          <FormSelect
+            control={control}
+            name="position"
+            label={t('contract_info.position')}
+            isRequired
+            options={Object.values(StaffPositionEnum).map((val) => ({
+              label: t(`options.staff_position.${val}`),
+              key: val
+            }))}
+            readOnly={isSubmitting || isView}
+            variant={variant}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Thời hạn hợp đồng - kết hợp Input + Select unit */}
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
+              <FormLabel label={t('contract_info.duration')} isRequired={true} isError={errors.hasOwnProperty('duration')} />
+
+              <FormNumberInput
+                control={control}
+                name="duration"
+                placeholder={t('contract_info.placeholders.enter')}
+                isRequired
+                readOnly={isSubmitting || isView}
+                classNames={{
+                  // inputWrapper: "pr-28", // hoặc pr-[7rem] nếu cần rộng hơn
+                }}
+                variant={variant}
+                endContent={
+                  <div className="flex items-center gap-2">
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button
+                          // variant="bordered"
+                          className="h-8 min-h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white transition-all hover:bg-gray-50"
+                          endContent={<IconChevronDown size={14} />}
+                          disabled={isSubmitting || isView}
+                          variant={isView ? "solid" : "bordered"}
+                        >
+                          {watch('durationUnit') === 'YEAR' ? t('contract_info.duration_units.YEAR') : t('contract_info.duration_units.MONTH')}
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu
+                        aria-label="Chọn đơn vị"
+                        disallowEmptySelection
+                        selectionMode="single"
+                        selectedKeys={new Set([watch('durationUnit') || 'YEAR'])}
+                        onSelectionChange={(keys) => {
+                          const unit = Array.from(keys)[0] as string;
+                          setValue('durationUnit', unit, { shouldValidate: true });
+                        }}
+                      >
+                        <DropdownItem key="YEAR">{t('contract_info.duration_units.YEAR')}</DropdownItem>
+                        <DropdownItem key="MONTH">{t('contract_info.duration_units.MONTH')}</DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+                }
+              />
+            </div>
+          </div>
+
+          <FormInput
+            control={control}
+            name="contractNumber"
+            label={t('contract_info.contract_number')}
+            isRequired
+            readOnly={isSubmitting || isView}
+            variant={variant}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <FormDatePicker
+            control={control}
+            name="startDate"
+            label={t('contract_info.start_date')}
+            isRequired
+            isReadOnly={isSubmitting || isView}
+            variant={variant}
+          />
+
+          <FormDatePicker
+            control={control}
+            name="endDate"
+            label={t('contract_info.end_date')}
+            isRequired
+            isReadOnly={isSubmitting || isView}
+            variant={variant}
+
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {/* Khoa quản lý */}
+          <FormSelect
+            control={control}
+            name="managedDepartmentId"
+            label={t('staffForm.fields.departmentIds.label')}
+            selectionMode="single"
+            isRequired
+            readOnly={isSubmitting || isView}
+            options={departmentOptions?.map(it => ({ key: it.value, label: it.label }))}
+            variant={variant}
+          />
+
+          {/* Phòng quản lý */}
+          <FormSelect
+            control={control}
+            name="managedRoomId"
+            label={t('staffForm.fields.roomIds.label')}
+            selectionMode="single"
+            isRequired
+            readOnly={isSubmitting || isView}
+            options={roomOptions?.map(it => ({ key: it.value, label: it.label }))}
+            variant={variant}
+          />
+        </div>
+        <WorkingAreaSection isView={isView} variant={variant} />
+
+        <FormSelect
+          control={control}
+          name="directManagerIds"
+          label={t('contract_info.direct_manager')}
+          isRequired
+          options={managerOptions}
+          readOnly={isSubmitting || isView}
+          selectionMode='multiple'
+          variant={variant}
+        />
+
+        <div className={cn(shiftType === 'FIXED' ? "grid grid-cols-2" : "flex w-full", "gap-4 items-end")}>
+          <div className='flex-1'>
+            <FormSelect
+              control={control}
+              name="shiftType"
+              label={t('contract_info.shift_type')}
+              isRequired
+              options={shiftTypeOptions}
+              readOnly={isSubmitting || isView}
+              variant={variant}
+            />
+          </div>
+
+          {shiftType === 'FIXED' && (
+            <FormAutocomplete
+              control={control}
+              name="fixedShiftId"
+              label={t('contract_info.working_shift')}
+              isRequired
+              placeholder={t('contract_info.placeholders.search_shift')}
+              options={shiftsRes?.data?.map((s) => ({
+                key: s.id,
+                label: `${s.code} - ${s.name}`
+              })) || []}
+              readOnly={isSubmitting || isView}
+              variant={variant}
+            />
+          )}
+          <div className="flex flex-col gap-2 col-span-2 flex-1">
+            <div className="flex flex-col gap-1.5">
+              <FormLabel
+                label={t('contract_info.working_time')}
+                isRequired
+                isError={!!errors.workingTime}
+              />
+
+              <FormNumberInput
+                control={control}
+                name="workingTime"
+                placeholder={t('contract_info.placeholders.enter')}
+                isRequired
+                readOnly={isSubmitting || isView}
+                variant={variant}
+                endContent={
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        disabled={isSubmitting || isView}
+                        className="h-8 min-h-8 min-w-[85px] border-[#E4E4E7] text-sm text-[#71717A] font-medium px-3 flex justify-between items-center rounded-lg bg-white hover:bg-gray-50"
+                        endContent={<IconChevronDown size={14} />}
+                        variant={isView ? "solid" : "bordered"}
+                      >
+                        {WORKING_TIME_UNITS.find((u) => u.key === workingTimeUnit)?.label}
+                      </Button>
+                    </DropdownTrigger>
+
+                    <DropdownMenu
+                      aria-label="Chọn đơn vị"
+                      selectionMode="single"
+                      disallowEmptySelection
+                      selectedKeys={new Set([workingTimeUnit])}
+                      onSelectionChange={(keys) => {
+                        const unit = Array.from(keys)[0] as string;
+                        setValue("workingTimeUnit", unit, { shouldValidate: true });
+                      }}
+                    >
+                      {WORKING_TIME_UNITS.map((unit) => (
+                        <DropdownItem key={unit.key}>
+                          {unit.label}
+                        </DropdownItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
+                }
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {
+        shiftType === 'FIXED' && (
+          <div className="flex flex-col gap-2">
+            <FormLabel
+              label={t('contract_info.working_days')}
+              isRequired
+              isError={!!errors.workingDays}
+            />
+            <FormCheckboxGroup
+              control={control}
+              name="workingDays"
+              disabled={isView}
+              className="flex-row flex-wrap"
+              transform={(key) => Number(key)}
+              options={[2, 3, 4, 5, 6, 7, 0].map((dayValue) => ({
+                key: String(dayValue),
+                label: t(`contract_info.days.${dayValue}` as any),
+              }))}
+            />
+          </div>
+        )
+      }
+    </div >
+  );
+};

@@ -1,0 +1,109 @@
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { NAMESPACES } from '@/i18n/constants';
+import { exportLeaveRequestToExcel } from '@/templates/excels/leave-requests-management/export-leave-request-excel';
+import { LeaveRequestPrint } from '@/templates/prints/leave-requests-management/leave-request-print';
+import { useTranslation } from 'react-i18next';
+import { useReactToPrint } from 'react-to-print';
+
+import { PAGE_SIZE_OPTIONS } from '@/lib/utils';
+import { useColumnVisibility } from '@/hooks/use-column-visibility';
+import { useDepartmentName } from '@/hooks/use-department-name';
+import { useMonthDateRange } from '@/hooks/use-month-date-range';
+import { useQueryFilter } from '@/hooks/useQueryFilter';
+import { ActionsPage } from '@/components/actions-page';
+import { ColumnVisibilityPopover } from '@/components/column-visibility-popover';
+import DataTable from '@/components/data-table/data-table';
+import { PageContainer } from '@/components/page-container';
+import { TitlePage } from '@/components/title-page';
+
+import { LeaveRequestFitlers } from './components/leave-request-fitlers';
+import { SummaryBadges } from './components/summary-badges';
+import { useColumns } from './hooks/use-columns';
+import { useLeaveRequestManagementList } from './hooks/use-leave-request';
+import type { LeaveRequestManagementFilters } from './type';
+
+const TABLE_CLASS_NAMES = { wrapper: 'h-[calc(100vh-369px)]' } as const;
+
+export const LeaveRequestManagement = () => {
+  const { t } = useTranslation(NAMESPACES.LEAVE_MANAGEMENT);
+
+  const { filters } = useQueryFilter<LeaveRequestManagementFilters>();
+  const { departmentId, month, roomId, search, status, type, page, limit, departmentIds, roomIds } =
+    filters;
+
+  const { columns } = useColumns();
+  const { startDate, endDate } = useMonthDateRange(month);
+
+  const { departmentName } = useDepartmentName({ departmentId: departmentIds });
+
+  const { visibleColumns, handleApplyColumns } = useColumnVisibility({
+    columns,
+  });
+
+  const { data, isLoading } = useLeaveRequestManagementList({
+    fromDate: startDate,
+    toDate: endDate,
+    departmentId,
+    roomId,
+    search,
+    status,
+    type,
+    page,
+    limit,
+    departmentIds,
+    roomIds,
+  });
+  const handleExport = useCallback(() => {
+    exportLeaveRequestToExcel(data?.data ?? [], month, '', '', departmentName);
+  }, [data?.data, month, departmentName]);
+
+  const printRef = useRef<HTMLDivElement>(null);
+  const handlePrint = useReactToPrint({ contentRef: printRef });
+
+  const paginationConfig = useMemo(
+    () => ({
+      current: Number(page),
+      showSizeChanger: true,
+      pageSizeOptions: PAGE_SIZE_OPTIONS,
+      total: data?.pagination?.total,
+      pageSize: Number(limit),
+      totalPage: data?.pagination?.totalPage,
+    }),
+    [page, limit, data?.pagination],
+  );
+
+  return (
+    <PageContainer className="space-y-3.75">
+      <div className="flex items-center justify-between">
+        <TitlePage title={t('leave_request.title')} />
+
+        <div className="flex items-center gap-2">
+          <ActionsPage onPrint={handlePrint} onExport={handleExport} hiddenLayoutSwitcher />
+          <ColumnVisibilityPopover
+            columns={columns}
+            visibleColumns={visibleColumns}
+            onApply={handleApplyColumns}
+          />
+        </div>
+      </div>
+
+      <LeaveRequestFitlers />
+
+      <SummaryBadges summary={data?.metadata} />
+
+      <DataTable
+        dataSource={data?.data ?? []}
+        columns={columns}
+        selectionMode="single"
+        loading={isLoading}
+        classNames={TABLE_CLASS_NAMES}
+        visibleColumns={visibleColumns}
+        pagination={paginationConfig}
+      />
+
+      <div style={{ display: 'none' }}>
+        <LeaveRequestPrint ref={printRef} data={data?.data ?? []} departmentName={departmentName} />
+      </div>
+    </PageContainer>
+  );
+};

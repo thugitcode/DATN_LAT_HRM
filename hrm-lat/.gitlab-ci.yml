@@ -1,0 +1,74 @@
+# Pipeline steps list
+stages:
+  - build
+  - deploy
+
+variables:
+  # The path to the repository of the project on ECR
+  PROJECT_REPO_PATH: "deepcare/cis/hrm"
+
+  # The name of the project in case it is different fron the gitlab project name
+  # Leave empty if using default (gitlab repo name)
+  # Ex: demo instead of cis-bs-ws
+  PROJECT_NAME: "hrm-web-ui"
+  DOCKER_AUTH_CONFIG: >
+    {"auths":{"$REGISTRY_ECR_SERVER":{"username":"$CI_REGISTRY_USER","password":"$CI_REGISTRY_PASSWORD"}}}
+
+build-artifact-kaniko:
+  stage: build
+  image:
+    name: ${KANIKO_BUILD_IMAGE}
+    entrypoint: [""]
+  script:
+    - WORKING_BRANCH=${PRODUCTION_WORKING_BRANCH}
+    - echo "Working branch $WORKING_BRANCH"
+    - if [[ -z "$WORKING_BRANCH" ]]; then exit 1 ; fi
+    - git --version
+    - CI_REGISTRY_PATH_IMAGE=$([ -z "$PROJECT_REPO_PATH" ] && echo "${REGISTRY_ECR_SERVER}" || echo "${REGISTRY_ECR_SERVER}/${PROJECT_REPO_PATH}")
+    - CI_REGISTRY_IMAGE=$([ -z "$PROJECT_NAME" ] && echo "${CI_REGISTRY_PATH_IMAGE}/${CI_PROJECT_NAME}" || echo "${CI_REGISTRY_PATH_IMAGE}/${PROJECT_NAME}")
+    - CI_ENVIRONMENT_SLUG="env"
+    - echo "$DOCKER_AUTH_CONFIG" > /kaniko/.docker/config.json
+    - >-
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "${CI_REGISTRY_IMAGE}:${CI_PIPELINE_ID}"
+      --destination "${CI_REGISTRY_IMAGE}:${WORKING_BRANCH}-latest"
+      --build-arg=CI_ENVIRONMENT_SLUG=$CI_ENVIRONMENT_SLUG
+  tags:
+    - deepcare-eks-backend
+  only:
+    - tags
+
+promote-artifact-helm:
+  stage: deploy
+  image:
+    name: bitnami/git:latest
+  script:
+    - WORKING_BRANCH=${PRODUCTION_WORKING_BRANCH}
+    - echo "Working branch $WORKING_BRANCH"
+    - if [[ -z "$WORKING_BRANCH" ]]; then exit 1 ; fi
+    - git version
+    - git clone https://dc-runner-ci:${GITLAB_ACCESS_TOKEN}@git.devops.deepcare.vn/deepcare/devops/helm/cis.git
+    - ls -al
+    - cat cis/cis-web-ui/dev/values.yaml
+    - echo ${CI_PIPELINE_ID}
+    - grep -n ${PROJECT_REPO_PATH}/${PROJECT_NAME} cis/cis-web-ui/${WORKING_BRANCH}/values.yaml
+    - nbst=$(grep -n ${PROJECT_REPO_PATH}/${PROJECT_NAME} cis/cis-web-ui/${WORKING_BRANCH}/values.yaml | cut -f1 -d:)
+    - nbsp=$((nbst+5))
+    - echo "${nbst},${nbsp}s/tag:\ \"(.*)\"/tag:\ \"${CI_PIPELINE_ID}\"/1" > .sed.temp
+    - echo .sed.temp
+    - sed -rf .sed.temp  cis/cis-web-ui/${WORKING_BRANCH}/values.yaml > cis/cis-web-ui/${WORKING_BRANCH}/values.yaml.new
+    - rm -rf cis/cis-web-ui/${WORKING_BRANCH}/values.yaml
+    - mv cis/cis-web-ui/${WORKING_BRANCH}/values.yaml.new cis/cis-web-ui/${WORKING_BRANCH}/values.yaml
+    - cat cis/cis-web-ui/${WORKING_BRANCH}/values.yaml
+    - git remote set-url origin https://dc-runner-ci:${GITLAB_ACCESS_TOKEN}@git.devops.deepcare.vn/deepcare/devops/helm/cis.git
+    - git config --global user.email "dcrunnerci@deepcare.vn"
+    - git config --global user.name "dc-runner-ci"
+    - cd cis
+    - git commit -am "Update manifest version ${CI_PIPELINE_ID}"
+    - git push
+  tags:
+    - deepcare-eks-backend
+  only:
+    - tags

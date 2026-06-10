@@ -1,0 +1,240 @@
+import { NAMESPACES } from '@/i18n/constants';
+import { DrawerType } from '@/store/useDrawer';
+import type { DrawerProps } from '@heroui/react';
+import { useTranslation } from 'react-i18next';
+
+import { DetailPayslipFeedback } from '@/features/payroll-management/components/detail-payslip-feedback';
+import { StaffContractFormDrawer } from '@/features/staff-management/staff-detail/components/staff-contract-form-drawer';
+import { FormKpiMutate } from '@/features/payroll-management/components/form-kpi-mutate';
+import { FormOtherIncomeMutate } from '@/features/payroll-management/components/form-other-income-mutate';
+import { EnterRevenueDrawer } from '@/features/payroll-management/components/revenue/enter-revenue-drawer';
+import { TimekeepingDetails } from '@/features/payroll-management/components/timekeeping-details';
+import { FormAddNewPayPeriodsMutate } from '@/features/payroll-management/manage-pay-periods/components/form-add-new-pay-periods-mutate';
+import { StaffFormDrawer } from '@/features/staff-management/staff-list-management/components/staff-form-drawer';
+import { ProfileDetailsDrawer } from '@/features/staff-management/profile-staff/components/profile-details-drawer';
+import { ExplanationDetailDrawer } from '@/features/timekeeping-shift-scheduling/explanation-management/components/explanation-detail-drawer';
+import { ChangeShiftDivision } from '@/features/timekeeping-shift-scheduling/shift-management/components/change-shift-division';
+import { WorkShiftsForm } from '@/features/timekeeping-shift-scheduling/shift-management/components/work-shifts-form';
+import { ShiftDetailsDrawer } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/detailed-time-sheet/shift-details-drawer';
+import { FormRecruitmentRequestMutate } from '@/features/recruitment-management/recruitment-request-list/components/form-recruitment-request-mutate';
+import { FormCandidateMutate } from '@/features/recruitment-management/candidate/components/forms/form-candidate-mutate';
+import { FormOfferMutate } from '@/features/recruitment-management/candidate/components/forms/form-offer-mutate';
+import { FormEvaluationMutate } from '@/features/recruitment-management/candidate/components/forms/form-evaluation-mutate';
+import { FormInterviewScheduleMutate } from '@/features/recruitment-management/interview-schedule/forms/form-interview-schedule-mutate';
+import { FormProbationAccept } from '@/features/recruitment-management/probation-management/forms/form-probation-accept';
+import { FormCandidateProbationCreate } from '@/features/recruitment-management/probation-management/forms/form-candidate-probation-create';
+import { FormProbationEvaluationMutate } from '@/features/recruitment-management/probation-management/forms/form-probation-evaluation-mutate';
+
+type DrawerConfig = {
+  title: string;
+  component: React.ReactNode;
+  drawerProps?: Partial<DrawerProps>;
+  classNames?: {
+    base?: string;
+    wrapper?: string;
+    content?: string;
+    header?: string;
+  };
+};
+const FULL_WIDTH = 'calc(100vw - 64px)';
+export const useDrawerConfig = (): Record<DrawerType, DrawerConfig> => {
+  const { t } = useTranslation(NAMESPACES.COMMON);
+
+  return {
+    [DrawerType.WORK_SHIFTS]: {
+      title: t('drawer.work_shifts'),
+      component: <WorkShiftsForm />,
+      drawerProps: { placement: 'right', size: '2xl' },
+      classNames: { header: 'text-[30px] px-6 pt-6 pb-3' },
+    },
+    [DrawerType.CHANGE_SHIFT_DIVISION]: {
+      title: t('drawer.change_shift_division'),
+      component: <ChangeShiftDivision />,
+      drawerProps: { placement: 'right', size: '2xl' },
+      classNames: { header: 'text-[30px] px-6 pt-6 pb-3' },
+    },
+    [DrawerType.EXPLANATION_DETAIL]: {
+      title: t('drawer.explanation_detail'),
+      component: <ExplanationDetailDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.TIME_SHEET_DETAIL]: {
+      title: t('drawer.time_sheet_detail'),
+      component: <ShiftDetailsDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.PROFILE_STAFF_DETAIL]: {
+      title: t('drawer.profile_staff_detail'),
+      component: <ProfileDetailsDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.TIMEKEEPING_DETAILS]: {
+      title: t('drawer.timekeepingDetails'),
+      component: <TimekeepingDetails />,
+      drawerProps: {
+        placement: 'right',
+        size: '5xl',
+        style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.CREATE_KPI]: {
+      title: t('drawer.enter_kpi'),
+      component: <FormKpiMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.REVENUE_DETAILS]: {
+      title: t('drawer.revenueDetails'),
+      component: <EnterRevenueDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.CREATE_OTHER_INCOME]: {
+      title: t('drawer.additionalArisingAmounts'),
+      component: <FormOtherIncomeMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.STAFF_MUTATE]: {
+      title: '',
+      component: <StaffFormDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '5xl',
+        style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
+        classNames: { body: 'p-0 bg-[#F4F4F5]', header: 'p-0!' },
+      },
+    },
+
+    [DrawerType.ADD_NEW_PAYROLL_PERIOD]: {
+      title: 'Thêm mới kỳ lương',
+      component: <FormAddNewPayPeriodsMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]' },
+      },
+    },
+    [DrawerType.DETAIL_PAYSLIP_FEEDBACK]: {
+      title: '',
+      component: <DetailPayslipFeedback />,
+      drawerProps: {
+        placement: 'right',
+        size: '2xl',
+        classNames: { body: 'p-0 bg-[#F4F4F5]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.STAFF_CONTRACT_MUTATE]: {
+      title: '',
+      component: <StaffContractFormDrawer />,
+      drawerProps: {
+        placement: 'right',
+        size: '5xl',
+        style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.RECRUITMENT_REQUEST_MUTATE]: {
+      title: '',
+      component: <FormRecruitmentRequestMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.CANDIDATE_MUTATE]: {
+      title: '',
+      component: <FormCandidateMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.OFFER_MUTATE]: {
+      title: '',
+      component: <FormOfferMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.EVALUATION_MUTATE]: {
+      title: '',
+      component: <FormEvaluationMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.INTERVIEW_SCHEDULE_MUTATE]: {
+      title: '',
+      component: <FormInterviewScheduleMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.PROBATION_ACCEPT]: {
+      title: '',
+      component: <FormProbationAccept />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.CANDIDATE_PROBATION_CREATE]: {
+      title: '',
+      component: <FormCandidateProbationCreate />,
+      drawerProps: {
+        placement: 'right',
+        size: '5xl',
+        style: { width: FULL_WIDTH, maxWidth: FULL_WIDTH },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+    [DrawerType.PROBATION_EVALUATION_MUTATE]: {
+      title: '',
+      component: <FormProbationEvaluationMutate />,
+      drawerProps: {
+        placement: 'right',
+        size: '3xl',
+        style: { width: '57vw', maxWidth: '57vw' },
+        classNames: { body: 'p-0 bg-[#FAFAFA]', header: 'p-0!' },
+      },
+    },
+  };
+};

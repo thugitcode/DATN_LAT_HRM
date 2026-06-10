@@ -1,0 +1,329 @@
+{
+  "payrollCalculation": {
+    "title": "Payroll List",
+    "monthly_table_with_date": "Payroll for {{month}}/{{year}}",
+    "columns": {
+      "stt": "No.",
+      "department": "Department/Ward",
+      "staff_code": "Staff Code",
+      "staff_name": "Full Name",
+      "job_title": "Job Title",
+      "salary_template": "Salary Template",
+      "base_salary": "Base Salary",
+      "total_gross": "Total Gross",
+      "total_paid_working_days": "Total Paid Days",
+      "total_overtime_hours": "Total Paid OT Hours",
+      "kpi_completion": "KPI Completion",
+      "allowance": "Allowance",
+      "bonus": "Bonus",
+      "deduction": "Deduction",
+      "net_salary": "Net Salary",
+      "note": "Note",
+      "status": "Status",
+      "action": "Action"
+    },
+    "detail": {
+      "allowance_title": "Allowances",
+      "responsibility_allowance": "Responsibility Allowance",
+      "hazard_allowance": "Hazard Allowance",
+      "position_allowance": "Position Allowance",
+      "meal_allowance": "Meal Allowance",
+      "phone_allowance": "Phone Allowance",
+      "fuel_allowance": "Fuel Allowance",
+      "business_trip_allowance": "Business Trip Allowance",
+      "performance_salary": "Performance Salary",
+      "bonus_amount": "Bonus Amount",
+      "other_allowance": "Other Allowance",
+      "formula": "Formula",
+      "deductionTitle": "Deductions",
+      "socialInsurance": "Social Insurance",
+      "healthInsurance": "Health Insurance",
+      "unemploymentInsurance": "Unemployment Insurance",
+      "unionFee": "Union Fee",
+      "personalIncomeTax": "Personal Income Tax (PIT)",
+      "violationPenalty": "Violation Penalties",
+      "violationDetails": "Violation details",
+      "netIncomeTitle": "Total Income",
+      "working": "Working",
+      "history": "History",
+      "print": "Print",
+      "basicIncomeTitle": "Basic Income",
+      "contractBasicSalary": "Contract Basic Salary",
+      "days": "Days",
+      "overtimeSalary": "Overtime Salary",
+      "onCallSalary": "On Call Salary",
+      "production": "Production",
+      "summaryTitle": "Summary",
+      "fromDate": "From Date",
+      "toDate": "To Date",
+      "standardWorkDays": "Standard Work Days",
+      "actualWorkDays": "Actual Work Days",
+      "paidLeave": "Paid Leave",
+      "onCallDays": "On Call Days",
+      "overtime": "Overtime",
+      "hours": "Hours",
+      "leaveInfo": "Leave Information",
+      "totalLeaveDays": "Total Leave Days",
+      "usedLeaveDays": "Used Leave Days",
+      "remainingLeaveDays": "Remaining Leave Days",
+      "totalGross": "Total Gross",
+      "employeeContribution": "Employee Contribution",
+      "taxPIT": "Tax PIT",
+      "advancePayment": "Advance Payment",
+      "totalNetIncome": "Total Net Income",
+      "employerContributionTitle": "Employer Contribution",
+      "employerSocialInsurance": "Employer Social Insurance",
+      "employerHealthInsurance": "Employer Health Insurance",
+      "employerUnemploymentInsurance": "Employer Unemployment Insurance",
+      "employerUnionFee": "Employer Union Fee",
+      "totalEmployerCost": "Total Employer Cost"
+    },
+    "sendPayslip": {
+      "title": "Send Payslip",
+      "bulkTitle": "Send Bulk Payslips",
+      "description": "Are you sure you want to send payslips to all employees?",
+      "descriptionStaff": "Are you sure you want to send the payslip to {{name}}?",
+      "confirmLabel": "Confirm",
+      "buttonLabel": "Send",
+      "bulkButtonLabel": "Send Bulk Payslips"
+    },
+    "confirmationStatus": {
+      "DRAFT": "Draft",
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "REJECTED": "Rejected",
+      "AUTO_CONFIRMED": "Auto Confirmed"
+    }
+  },
+
+  "payslipFeedback": {
+    "title": "Payslip Feedback",
+    "columns": {
+      "stt": "No.",
+      "department": "Department/Ward",
+      "staff_code": "Staff Code",
+      "staff_name": "Full Name",
+      "net_salary": "Net Salary",
+      "status": "Status",
+      "confirmed_at": "Confirmation Time",
+      "feedback": "Feedback",
+      "action": "Action"
+    },
+    "feedbackStatus": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "REJECTED": "Rejected"
+    },
+    "detail": {
+      "title": "Payslip",
+      "payslip_period": "Payslip {{period}}",
+      "status": {
+        "PENDING": "Pending",
+        "CONFIRMED": "Confirmed",
+        "REJECTED": "Rejected"
+      },
+      "from_date": "From date",
+      "to_date": "To date",
+      "standard_days": "Standard days",
+      "actual_work_days": "Actual work days",
+      "on_duty": "On duty",
+      "overtime_hours": "Overtime",
+      "business_trip": "Business trip",
+      "total_gross": "Total gross",
+      "insurance": "Employee insurance",
+      "tax": "Personal income tax",
+      "advance": "Advance (if any)",
+      "net_pay": "Total net pay:",
+      "unit_day": "days",
+      "unit_hour": "hours",
+      "close": "Close",
+      "history": "Feedback history"
+    }
+  },
+
+  "data_summary": {
+    "tabs": {
+      "attendance_data": "Attendance Data",
+      "revenue": "Revenue/Sales",
+      "kpi": "KPI",
+      "other_income": "Other Income",
+      "summary_finalize": "Summary & Finalize"
+    }
+  },
+
+  "attendance_data": {
+    "viewDetail": "View Details"
+  },
+
+  "kpi": {
+    "title": "KPI",
+    "validation": {
+      "staff_id_required": "Staff ID is required",
+      "name_required": "Staff name is required",
+      "department_required": "Department is required",
+      "room_required": "Room is required",
+      "kpi_score_required": "KPI score is required",
+      "kpi_score_range": "KPI score must be a number between 0 and 100",
+      "evaluator_required": "Evaluator is required",
+      "rating_required": "Rating is required"
+    },
+    "form": {
+      "staff_info": "Staff Information",
+      "staff_code": "Staff Code",
+      "staff_name": "Staff Name",
+      "department": "Department",
+      "room": "Room",
+      "kpi_section": "KPI Score",
+      "kpi_score": "KPI Score",
+      "evaluator": "Evaluator",
+      "rank": "Rating",
+      "note": "Note"
+    }
+  },
+
+  "otherIncome": {
+    "title": "Other Income",
+    "validation": {
+      "staff_code_required": "Please enter staff code",
+      "name_required": "Please enter staff name",
+      "department_required": "Please select a department",
+      "room_required": "Please select a room",
+      "staff_id_required": "Missing staff information",
+
+      "type_required": "Please select income type",
+      "allowance_id_required": "Please select an allowance",
+      "amount_required": "Please enter amount",
+      "amount_invalid": "Amount must be a number greater than 0",
+      "date_required": "Please select a date",
+      "entry_person_required": "Please select entry person"
+    },
+    "form": {
+      "staff_info": "Staff Information",
+      "staff_code": "Staff Code",
+      "staff_name": "Staff Name",
+      "department": "Department",
+      "room": "Room",
+      "type": "Type",
+      "allowance": "Allowance Type",
+      "amount": "Amount",
+      "date": "Effective Period",
+      "entry_person": "Entered By",
+      "description": "Reason / Description",
+      "attachment": "Attachment",
+      "account_info": "Account info"
+    },
+    "allowance_type": {
+      "ALLOWANCE": "Allowance / Addition",
+      "DEDUCTION": "Deduction / Subtraction"
+    },
+    "allowance": {
+      "delete_confirm": {
+        "title": "Delete allowance",
+        "description": "Are you sure you want to delete this allowance? Related payroll data may be affected.",
+        "confirm": "Delete now",
+        "cancel": "Cancel"
+      }
+    }
+  },
+
+  "summary-finalize": {
+    "title": "Summary and Finalization",
+    "input-summary": {
+      "title": "Payroll Input Summary and Finalization",
+      "attendance": "Attendance",
+      "revenue": "Revenue",
+      "kpi": "KPI Score",
+      "other": "Other Items"
+    },
+    "cost-estimate": {
+      "title": "Estimated Total Payroll Cost",
+      "gross": "Total Gross Salary",
+      "bonus": "Total Bonus",
+      "penalty": "Total Deductions",
+      "payout": "Estimated Payout"
+    },
+    "banner": {
+      "ready": "Ready to proceed to Payroll Calculation",
+      "warning": "Once finalized, input data will be locked. Any changes require unfinalizing before editing."
+    },
+    "actions": {
+      "save-draft": "Save Draft",
+      "transfer": "Proceed to Payroll Calculation",
+      "processing": "Processing..."
+    }
+  },
+
+  "columns": {
+    "stt": "No.",
+    "department": "Department/Ward",
+    "staff_code": "Staff Code",
+    "staff_name": "Full Name",
+    "total_work_days": "Total Workdays",
+    "paid_leave": "Paid Leave",
+    "unpaid_leave": "Unpaid Leave",
+    "on_duty": "On-duty Shift",
+    "compensatory_leave": "Compensatory Leave",
+    "holiday_leave": "Public Holiday",
+    "other_leave": "Other Leave",
+    "overtime": "Overtime",
+    "compensatory_hours": "Compensatory Hours",
+    "violation": "Violations",
+    "kpi_score": "KPI Score",
+    "ranking": "Rating",
+    "evaluator": "Evaluator",
+    "source": "Source",
+    "status": "Status",
+    "type": "Type",
+    "description": "Reason / Description",
+    "amount": "Amount",
+    "input_by": "Entered by",
+    "actions": "Actions"
+  },
+
+  "revenue": {
+    "columns": {
+      "stt": "No.",
+      "department": "DEPARTMENT",
+      "staff_code": "STAFF CODE",
+      "staff_name": "STAFF NAME",
+      "target_amount": "MONTHLY TARGET",
+      "actual_amount": "ACTUAL ACHIEVED",
+      "achievement_rate": "ACHIEVEMENT RATE",
+      "data_source": "DATA SOURCE",
+      "status": "STATUS",
+      "actions": "ACTIONS"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved"
+    },
+    "delete_confirm": {
+      "title": "Delete Revenue",
+      "description": "Are you sure you want to delete this revenue? This action cannot be undone.",
+      "confirm": "Delete",
+      "success": "Delete revenue successfully."
+    },
+    "form": {
+      "title": "Value",
+      "fields": {
+        "month": "Month",
+        "target": "Target",
+        "actual": "Actual",
+        "achievement_rate": "Achievement Rate"
+      },
+      "placeholders": {
+        "select": "Select",
+        "input": "Enter value"
+      }
+    }
+  },
+
+  "salary-history": {
+    "title": "Employee Salary History",
+    "current_salary": "Current Salary",
+    "created_by": "Created by",
+    "approved_by": "Approved by",
+    "no_salary_history": "No salary history",
+    "select_to_view_history": "Select staff to view salary history"
+  }
+}

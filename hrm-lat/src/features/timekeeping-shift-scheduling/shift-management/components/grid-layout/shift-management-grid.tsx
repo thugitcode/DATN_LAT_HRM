@@ -1,0 +1,34 @@
+import { type FC } from 'react';
+import { useParams } from '@tanstack/react-router';
+
+import type { StaffSchedule } from '@/types';
+import { cn } from '@/lib/utils';
+import { TableEmpty } from '@/components/table/table-empty';
+import { TableLoading } from '@/components/table/table-loading';
+
+import { BodyV2 } from './body-v2';
+import { DayHeader } from './day-header';
+
+export interface ShiftManagementGridProps {
+  data?: StaffSchedule[];
+  isLoading?: boolean;
+  fromDetailsEmployee?: boolean;
+  height?: string
+  disabled?: boolean
+}
+
+export const ShiftManagementGrid: FC<ShiftManagementGridProps> = ({ data, isLoading, height, disabled }) => {
+  const { id } = useParams({ strict: false });
+  const isEmpty = !isLoading && !data?.length;
+  const fromDetailsEmployee = !!id;
+  return (
+    <div className={cn('w-full rounded-xl relative overflow-auto', height ?? 'h-[calc(100vh-282px)]')}>
+      <table className="border-collapse min-w-max w-full table-fixed">
+        <DayHeader data={data} fromDetailsEmployee={fromDetailsEmployee} />
+        {isEmpty ? <TableEmpty /> : <BodyV2 data={data} fromDetailsEmployee={fromDetailsEmployee} disabled={disabled} />}
+      </table>
+
+      {isLoading && <TableLoading />}
+    </div>
+  );
+};
