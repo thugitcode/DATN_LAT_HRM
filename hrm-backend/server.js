@@ -34,7 +34,7 @@ app.use('/api/v1/rooms', roomRoutes);
 app.use('/api/v1/payroll-templates', payrollTemplateRoutes);
 app.use('/api/v1/salary-scales', salaryScaleRoutes);
 app.use('/api/v1/allowances', allowanceRoutes);
-app.use('/api/v1/tax', taxRoutes);
+app.use('/api/v1/tax-configs', taxRoutes);
 
 
 const PORT = process.env.PORT || 5000;
