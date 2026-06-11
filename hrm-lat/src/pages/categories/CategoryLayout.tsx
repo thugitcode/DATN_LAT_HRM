@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+//import React, { useState } from 'react';
+import { useSearch, useNavigate } from '@tanstack/react-router'; // Nạp hook của TanStack Router
 import ShiftCategory from './ShiftCategory'; // Nạp màn hình Danh mục ca làm việc
 import LeaveReasonCategory from './LeaveReasonCategory';
 import LeaveFundCategory from './LeaveFundCategory';
+import HolidayCategory from './HolidayCategory';
+import TimekeepingCategory from './TimekeepingCategory';
+import SalaryCategory from './SalaryCategory';
 
 const CategoryLayout = () => {
-  const [activeMenu, setActiveMenu] = useState('shift');
+  // 1. Đọc tham số 'tab' từ URL xuống, nếu trên URL chưa có thì mặc định là 'shift'
+  const search: any = useSearch({ from: '/hrm-categories' });
+  const activeMenu = search.tab || 'shift';
+  
+  const navigate = useNavigate({ from: '/hrm-categories' });
 
   const menuItems = [
     { id: 'shift', label: 'Danh mục ca làm việc' },
@@ -15,6 +23,13 @@ const CategoryLayout = () => {
     { id: 'salary', label: 'Thiết lập cơ chế lương' },
   ];
 
+  // 2. Hàm xử lý khi click đổi Menu: Thay vì set state, ta đẩy thẳng tên tab lên URL
+  const handleMenuChange = (tabId: string) => {
+    navigate({
+      search: (prev: any) => ({ ...prev, tab: tabId }),
+    });
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar bên trái */}
@@ -24,7 +39,7 @@ const CategoryLayout = () => {
           {menuItems.map((item) => (
             <li key={item.id}>
               <button
-                onClick={() => setActiveMenu(item.id)}
+                onClick={() => handleMenuChange(item.id)} // Gọi hàm chuyển đổi URL
                 className={`w-full text-left px-4 py-3 rounded-lg font-medium transition-colors ${
                   activeMenu === item.id
                     ? 'bg-blue-800 text-white' 
@@ -48,15 +63,20 @@ const CategoryLayout = () => {
            {/* Khu vực render nội dung */}
            {activeMenu === 'shift' && <ShiftCategory />}
            
-           {/* 2. Kích hoạt render Danh mục lý do nghỉ khi chọn đúng Menu */}
            {activeMenu === 'leaveReason' && <LeaveReasonCategory />}
            
            {activeMenu === 'leaveFund' && <LeaveFundCategory />}
+
+           {activeMenu === 'holiday' && <HolidayCategory />}
+
+           {activeMenu === 'timekeeping' && <TimekeepingCategory />}
            
-           {/* Giữ chỗ cho các phân hệ còn lại chưa làm */}
-           {activeMenu !== 'shift' && activeMenu !== 'leaveReason' && (
+           {activeMenu === 'salary' && <SalaryCategory />}
+
+           {/* Giữ chỗ thông minh: Chỉ hiện dòng chữ này với các mục thực sự chưa code */}
+           {(activeMenu === 'timekeeping' || activeMenu === 'salary') && (
              <div className="text-gray-500 italic">
-               (Khu vực này sẽ code sau khi hoàn thiện xong Danh mục lý do nghỉ)
+               (Khu vực này sẽ được triển khai ở phân hệ thiết lập phần cứng và cấu hình cơ chế lương tiếp theo)
              </div>
            )}
         </div>

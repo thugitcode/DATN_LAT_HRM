@@ -3,7 +3,7 @@ import axios from 'axios';
 import { 
   Button, Input, Select, SelectItem, Switch, Drawer, DrawerContent, 
   DrawerHeader, DrawerBody, DrawerFooter, useDisclosure, Table, 
-  TableHeader, TableBody, TableColumn, TableRow, TableCell, Chip, Checkbox, Textarea
+  TableHeader, TableBody, TableColumn, TableRow, TableCell, Checkbox, Textarea
 } from '@heroui/react';
 import { IconPlus, IconEdit, IconTrash, IconSearch } from '@tabler/icons-react';
 
