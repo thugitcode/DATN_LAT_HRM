@@ -6,6 +6,9 @@ import LeaveFundCategory from './LeaveFundCategory';
 import HolidayCategory from './HolidayCategory';
 import TimekeepingCategory from './TimekeepingCategory';
 import SalaryCategory from './SalaryCategory';
+import DepartmentCategory from './DepartmentCategory';
+import RoomCategory from './RoomCategory';
+import { IconBuildingHospital, IconDoorEnter } from '@tabler/icons-react';
 
 const CategoryLayout = () => {
   // 1. Đọc tham số 'tab' từ URL xuống, nếu trên URL chưa có thì mặc định là 'shift'
@@ -21,6 +24,8 @@ const CategoryLayout = () => {
     { id: 'leaveReason', label: 'Danh mục lý do nghỉ' },
     { id: 'timekeeping', label: 'Thiết lập chấm công' },
     { id: 'salary', label: 'Thiết lập cơ chế lương' },
+    { id: 'department', label: 'Danh mục Khoa', icon: <IconBuildingHospital size={20} /> },
+    { id: 'room', label: 'Danh mục Phòng', icon: <IconDoorEnter size={20} /> }
   ];
 
   // 2. Hàm xử lý khi click đổi Menu: Thay vì set state, ta đẩy thẳng tên tab lên URL
@@ -70,8 +75,12 @@ const CategoryLayout = () => {
            {activeMenu === 'holiday' && <HolidayCategory />}
 
            {activeMenu === 'timekeeping' && <TimekeepingCategory />}
-           
+
            {activeMenu === 'salary' && <SalaryCategory />}
+
+           {activeMenu === 'department' && <DepartmentCategory />}
+           
+           {activeMenu === 'room' && <RoomCategory />}
 
            {/* Giữ chỗ thông minh: Chỉ hiện dòng chữ này với các mục thực sự chưa code */}
            {(activeMenu === 'timekeeping' || activeMenu === 'salary') && (
