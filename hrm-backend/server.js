@@ -12,6 +12,10 @@ const masterDataRoutes = require('./routes/masterData.routes');
 const departmentRoutes = require('./routes/department.routes');
 const roomRoutes = require('./routes/room.routes');
 const payrollTemplateRoutes = require('./routes/payrollTemplate.routes');
+const salaryScaleRoutes = require('./routes/salaryScale.routes');
+const allowanceRoutes = require('./routes/allowance.routes');
+const taxRoutes = require('./routes/tax.routes');
+
 
 const app = express();
 app.use(cors());
@@ -28,6 +32,10 @@ app.use('/api/v1/master-data', masterDataRoutes);
 app.use('/api/v1/departments', departmentRoutes);
 app.use('/api/v1/rooms', roomRoutes);
 app.use('/api/v1/payroll-templates', payrollTemplateRoutes);
+app.use('/api/v1/salary-scales', salaryScaleRoutes);
+app.use('/api/v1/allowances', allowanceRoutes);
+app.use('/api/v1/tax', taxRoutes);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

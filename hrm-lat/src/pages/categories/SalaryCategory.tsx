@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { Tabs, Tab } from '@heroui/react';
 import SalaryComponentsTab from './salary/SalaryComponentsTab';
 import PayrollTemplateTab from './salary/PayrollTemplateTab';
+import SalaryScaleTab from './salary/SalaryScaleTab';
+import AllowancePolicyTab from './salary/AllowancePolicyTab';
+import PersonalTaxTab from './salary/PersonalTaxTab';
 
 const SalaryCategory = () => {
   const [activeSubTab, setActiveSubTab] = useState(() => {
@@ -32,9 +35,15 @@ const SalaryCategory = () => {
         <Tab key="template" title="Mẫu bảng lương">
           <PayrollTemplateTab />
         </Tab>
-        <Tab key="scale" title="Thang bảng lương"></Tab>
-        <Tab key="allowance" title="Chính sách phụ cấp và khấu trừ"></Tab>
-        <Tab key="tax" title="Thuế TNCN"></Tab>
+        <Tab key="scale" title="Thang bảng lương">
+            <SalaryScaleTab />
+        </Tab>
+        <Tab key="allowance" title="Chính sách phụ cấp và khấu trừ">
+            <AllowancePolicyTab />
+        </Tab>
+        <Tab key="tax" title="Thuế TNCN">
+            <PersonalTaxTab />
+        </Tab>
       </Tabs>
     </div>
   );
