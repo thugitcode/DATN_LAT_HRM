@@ -15,6 +15,7 @@ const payrollTemplateRoutes = require('./routes/payrollTemplate.routes');
 const salaryScaleRoutes = require('./routes/salaryScale.routes');
 const allowanceRoutes = require('./routes/allowance.routes');
 const taxRoutes = require('./routes/tax.routes');
+const employeeRoutes = require('./routes/employee.routes');
 
 
 const app = express();
@@ -35,6 +36,7 @@ app.use('/api/v1/payroll-templates', payrollTemplateRoutes);
 app.use('/api/v1/salary-scales', salaryScaleRoutes);
 app.use('/api/v1/allowances', allowanceRoutes);
 app.use('/api/v1/tax-configs', taxRoutes);
+app.use('/api/v1/employees', employeeRoutes);
 
 
 const PORT = process.env.PORT || 5000;
