@@ -1,11 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const ctrl = require('../controllers/department.controller');
+const router  = express.Router();
+const ctrl    = require('../controllers/department.controller');
 
-router.get('/', ctrl.getAll);
-router.post('/', ctrl.create);
-router.put('/:id', ctrl.update);
-router.put('/toggle/:id', ctrl.toggle);
-router.delete('/:id', ctrl.delete);
+router.get('/',            ctrl.getAll);
+router.get('/:id',         ctrl.getById);
+router.post('/',           ctrl.create);
+router.put('/toggle/:id',  ctrl.toggle);
+router.put('/:id',         ctrl.update);
+router.patch('/:id',       ctrl.update);
+router.delete('/:id',      ctrl.delete);
 
 module.exports = router;

@@ -3,7 +3,6 @@ import { FormSelect } from "@/components/form-fields/form-select";
 import { ControlMode, useControlMode } from "@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle";
 import { useDepartmentOptions } from "@/hooks/select-options/use-department-options";
 import { useJobTitleOptions } from "@/hooks/select-options/use-job-title-options";
-import { useRoomOptions } from "@/hooks/select-options/use-room-options";
 import { NAMESPACES } from "@/i18n/constants";
 import { icons } from "@/lib/icons";
 import { useUpdateStaff } from "@/query-options/staff";
@@ -13,70 +12,79 @@ import { useTranslation } from "react-i18next";
 import { STAFF_SECTION_KEYS } from "../../constants/data";
 import { WorkingAreaSection } from "../contract-and-salary-sections/working-area-section";
 import { SectionHeader } from "./section-header";
+import { useQuery } from "@tanstack/react-query";
+import { roomQueryOptions } from "@/services/query-options/room.query";
 
 export const DepartmentSection = () => {
     const { control, watch, trigger, getValues } = useFormContext();
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
 
-    // Mutation để cập nhật dữ liệu
     const { mutateAsync: updateStaff } = useUpdateStaff();
-
-    // Logic mode
     const { data, setMode, isCreate, isView: view } = useControlMode();
 
     const isEditing = data === STAFF_SECTION_KEYS.DEPARTMENT || data === "ALL";
     const isView = !isEditing || view;
     const variant = isView ? "underlined" : "flat";
 
-    // Logic lấy options
-    const { options: departmentOptions } = useDepartmentOptions();
+    // Load toàn bộ options
+    const { options: departmentOptions, isLoading: deptLoading } = useDepartmentOptions();
     const { options: jobTitleOptions } = useJobTitleOptions();
-    const selectedDepts = watch("managedDepartmentId");
-    const { options: roomOptions } = useRoomOptions(selectedDepts);
 
-    // Danh sách các fields thuộc section này để validate và lấy data
+    // Load TẤT CẢ phòng 1 lần, filter client-side theo managedDepartmentId
+    const { data: allRoomsRes, isLoading: roomLoading } = useQuery(
+        roomQueryOptions.list({ getAll: true })
+    );
+    const allRooms = (allRoomsRes?.data as any[]) || [];
+
+    const managedDeptId = watch("managedDepartmentId");
+
+    // Filter phòng theo khoa quản lý đã chọn - so sánh string chắc chắn
+    const roomOptions = allRooms
+        .filter((r: any) => {
+            if (!managedDeptId) return true;
+            return String(r.department?.id ?? '') === String(managedDeptId);
+        })
+        .map((r: any) => ({ key: String(r.id), label: r.name }));
+
     const sectionFields: any[] = [
-        "workingAreas",
-        "managedDepartmentId",
-        "managedRoomId",
-        "workType",
-        "jobTitleId",
-        "position",
-        "contractType",
-        "workingPeriod"
+        "workingAreas", "managedDepartmentId", "managedRoomId",
+        "workType", "jobTitleId", "position", "contractType", "workingPeriod"
     ];
 
     const handleSave = async () => {
-        // 1. Validate riêng các field thuộc phòng ban/hợp đồng
         const isValid = await trigger(sectionFields);
-
         if (isValid) {
             const values = getValues();
-            // 2. Trích xuất payload (chỉ gửi các field của section này)
             const payload = sectionFields.reduce((obj, key) => {
                 obj[key] = values[key];
                 return obj;
             }, {} as any);
 
             try {
-                // 3. Gọi API cập nhật
                 await updateStaff({
                     id: values.id,
                     data: {
-                        ...payload, departmentIds: payload.workingAreas?.map((it: any) => it.departmentId), roomIds: payload.workingAreas?.map((it: any) => it.roomId).flat(Infinity),
+                        ...payload,
+                        departmentIds: payload.workingAreas?.map((it: any) => it.departmentId),
+                        roomIds: payload.workingAreas?.map((it: any) => it.roomId).flat(Infinity),
                         workType: payload.workType || null,
                     }
                 });
-
-                // 4. Thoát mode chỉnh sửa nếu thành công
-                if (data !== "ALL") {
-                    setMode(ControlMode.view, null);
-                }
+                if (data !== "ALL") setMode(ControlMode.view, null);
             } catch (error) {
                 console.error("Update Department Info Failed:", error);
             }
         }
     };
+
+    // Chờ options load xong mới render để tránh hiện "Chọn" do race condition
+    if (deptLoading || roomLoading) {
+        return (
+            <div className="bg-white p-5 rounded-2xl border border-[#E4E4E7] shadow-sm">
+                <div className="text-sm text-gray-400 py-4">Đang tải dữ liệu...</div>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white p-5 rounded-2xl border border-[#E4E4E7] shadow-sm">
@@ -96,7 +104,7 @@ export const DepartmentSection = () => {
                     isRequired
                     readOnly={isView}
                     variant={variant}
-                    options={departmentOptions?.map(it => ({ key: it.value, label: it.label }))}
+                    options={departmentOptions?.map(it => ({ key: String(it.value), label: it.label }))}
                 />
 
                 {/* Phòng quản lý */}
@@ -108,13 +116,15 @@ export const DepartmentSection = () => {
                     isRequired
                     readOnly={isView}
                     variant={variant}
-                    options={roomOptions?.map(it => ({ key: it.value, label: it.label }))}
+                    options={roomOptions}
                 />
+
                 {/* Khoa phòng làm việc */}
                 <div className="col-span-2">
                     <WorkingAreaSection isView={isView} variant={variant} />
                 </div>
-                {/* Loại hình công việc */}
+
+                {/* Loại hình */}
                 <FormSelect
                     control={control}
                     name="workType"
@@ -136,10 +146,10 @@ export const DepartmentSection = () => {
                     isRequired
                     readOnly={isView}
                     variant={variant}
-                    options={jobTitleOptions.map((jt) => ({ key: jt.value, label: jt.label }))}
+                    options={jobTitleOptions.map((jt) => ({ key: String(jt.value), label: jt.label }))}
                 />
 
-                {/* Cấp bậc/Chức vụ */}
+                {/* Cấp bậc */}
                 <FormSelect
                     control={control}
                     name="position"
@@ -167,7 +177,7 @@ export const DepartmentSection = () => {
                     }))}
                 />
 
-                {/* Thời hạn hợp đồng */}
+                {/* Thời hạn */}
                 <div className="col-span-2">
                     <FormInput
                         control={control}

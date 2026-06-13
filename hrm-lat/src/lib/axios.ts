@@ -1,7 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import { jwtDecode } from 'jwt-decode';
 
-import { config as configApp } from './config';
+//import { config as configApp } from './config';
 import { getErrorMessage } from './utils';
 import i18n from '@/i18n';
 
@@ -13,9 +13,8 @@ export const apiTokens: {
   refreshToken: undefined,
 };
 
-// 1. [SỬA ĐƯỜNG DẪN API]: Bẻ lái Axios gọi thẳng vào Backend Node.js của chúng ta
 export const hrmInstance = axios.create({
-  baseURL: 'http://localhost:3000/api', 
+  baseURL: 'http://localhost:5000/api', 
   timeout: 15000,
 });
 

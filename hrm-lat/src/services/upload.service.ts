@@ -6,7 +6,7 @@ import { config as appConfig } from '@/lib/config';
 import { BaseApiService } from './base-api.service';
 
 const uploadInstance = axios.create({
-  baseURL: window.GATEWAY + 'hrm/api/upload',
+  baseURL: (window.GATEWAY || 'http://localhost:5000/api') + '/upload',
   timeout: 60000,
 });
 

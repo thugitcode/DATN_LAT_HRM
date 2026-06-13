@@ -2,7 +2,12 @@
 import i18n from '@/i18n';
 import clsx, { type ClassValue } from 'clsx';
 
-import type { FormFieldProps, IResponseFileUpload } from '@/types';
+import type { IResponseFileUpload } from '@/types';
+
+// Local type declarations cho các type chưa được export
+type FormFieldProps = { formProps?: { state: { value: any; meta: { errors: any[] } }; handleBlur: () => void } };
+type SecondsString = string;
+type IsoString = string;
 import dayjs from '@/lib/dayjs';
 
 import { PERSIST_WHITELIST } from './constants';
@@ -451,6 +456,11 @@ export const toHHMM = (time: string): string => {
 
 export const toDDMMYYYY = (date: string): string => {
   if (!date) return '-';
+  // Parse YYYY-MM-DD trực tiếp tránh lệch timezone
+  if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const [y, m, d] = date.split('-');
+    return `${d}/${m}/${y}`;
+  }
   return dayjs(date).format('DD/MM/YYYY');
 };
 

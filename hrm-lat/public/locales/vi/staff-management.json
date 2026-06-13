@@ -362,7 +362,9 @@
     },
     "work_type": {
       "Fulltime": "Toàn thời gian",
-      "Parttime": "Bán thời gian"
+      "Parttime": "Bán thời gian",
+      "FULL_TIME": "Toàn thời gian",
+      "PART_TIME": "Bán thời gian"
     },
     "activate_title": "Kích hoạt nhân viên",
     "deactivate_title": "Ngừng kích hoạt nhân viên",

@@ -50,7 +50,7 @@ router.get('/work-schedule/attendance-table', async (req, res) => {
       FROM employees e
       LEFT JOIN users u ON e.id = u.employee_id
       LEFT JOIN departments d ON e.department_id = d.id
-      LEFT JOIN shift_schedules sch ON e.id = sch.staff_id
+      LEFT JOIN shift_schedules sch ON e.id = sch.employee_id
       LEFT JOIN shifts sh ON sch.shift_id = sh.id
     `;
     
