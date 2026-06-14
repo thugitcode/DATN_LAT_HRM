@@ -41,7 +41,11 @@ export const AvatarSection = () => {
   return (
     <div className="col-span-12">
       <div className="relative inline-block group">
-        <StaffAvatar className="w-24 h-24 text-large bg-[#E4E4E7] border-2 border-white shadow-md" avatarUrl={url || value} name={getValues("name")} />
+        {/* Nếu có blob URL preview thì dùng trực tiếp, không qua GetSignedUrl */}
+        {url
+          ? <Avatar src={url} className="w-24 h-24 text-large bg-[#E4E4E7] border-2 border-white shadow-md" />
+          : <StaffAvatar className="w-24 h-24 text-large bg-[#E4E4E7] border-2 border-white shadow-md" avatarUrl={value} name={getValues("name")} />
+        }
         {isUploading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center rounded-full bg-black/20">
             <Spinner size="sm" color="white" />
