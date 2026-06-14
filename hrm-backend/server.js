@@ -19,6 +19,10 @@ const employeeRoutes        = require('./routes/employee.routes');
 
 // ── Routes MỚI ───────────────────────────────────────────────
 const staffRoutes      = require('./routes/staff.routes');
+const staffContractRoutes  = require('./routes/staff-contract.routes');
+const staffSalaryRoutes    = require('./routes/staff-salary.routes');
+const staffDocumentRoutes  = require('./routes/staff-document.routes');
+const shiftTemplateRoutes    = require('./routes/shift-template.routes');
 const departmentRoutes = require('./routes/department.routes');
 const roomRoutes       = require('./routes/room.routes');
 const jobTitleRoutes   = require('./routes/jobTitle.routes');
@@ -44,6 +48,7 @@ app.use('/api/v1/payroll-templates', payrollTemplateRoutes);
 app.use('/api/v1/salary-scales',     salaryScaleRoutes);
 app.use('/api/v1/allowances',        allowanceRoutes);
 app.use('/api/v1/tax-configs',       taxRoutes);
+app.use('/api/tax',                  taxRoutes);
 app.use('/api/v1/employees',         employeeRoutes);
 
 // ── Routes MỚI ───────────────────────────────────────────────
@@ -52,6 +57,10 @@ app.use('/api/department', departmentRoutes);
 app.use('/api/room',       roomRoutes);
 app.use('/api/job-title',  jobTitleRoutes);
 app.use('/api/upload',     uploadRoutes);
+app.use('/api/staff-contract',  staffContractRoutes);
+app.use('/api/staff-salary',    staffSalaryRoutes);
+app.use('/api/staff-document',  staffDocumentRoutes);
+app.use('/api/shift-template',   shiftTemplateRoutes);
 
 // Dùng chung 2 prefix cho department/room
 app.use('/api/v1/departments', departmentRoutes);

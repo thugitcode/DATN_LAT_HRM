@@ -1,12 +1,10 @@
 const express = require('express');
-const router = express.Router();
-const taxController = require('../controllers/tax.controller');
+const router  = express.Router();
+const ctrl    = require('../controllers/tax.controller');
 
-// 1. Lấy dữ liệu cấu hình (GET http://localhost:5000/api/v1/tax-configs)
-router.get('/', taxController.getConfig);
+router.get('/',        ctrl.getConfig);
+router.put('/',        ctrl.updateConfig);
+router.get('/rate',    ctrl.getRate);
+router.get('/bracket', ctrl.getBrackets);
 
-// 2. Đồng bộ dữ liệu (PUT http://localhost:5000/api/v1/tax-configs)
-router.put('/', taxController.updateConfig); // 🌟 ĐẢM BẢO ĐỂ DẤU '/' VÀ PHƯƠNG THỨC LÀ router.put
-
-// 🌟 ĐỒNG THỜI: Check kỹ xem cuối file đã có dòng xuất bản này chưa:
 module.exports = router;

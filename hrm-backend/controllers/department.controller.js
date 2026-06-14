@@ -6,7 +6,8 @@ const departmentController = {
   getAll: async (req, res) => {
     try {
       const [rows] = await db.query('SELECT * FROM cat_departments ORDER BY id DESC');
-      res.status(200).json({ success: true, statusCode: 200, data: rows });
+      const data = rows.map(r => ({ ...r, id: String(r.id) }));
+      res.status(200).json({ success: true, statusCode: 200, data });
     } catch (e) {
       res.status(500).json({ success: false, message: 'Lỗi server', error: e.message });
     }

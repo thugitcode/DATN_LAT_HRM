@@ -85,7 +85,26 @@ const taxController = {
     } finally {
       connection.release();
     }
-  }
+  },
+  // GET /api/tax/rate — trả về tax employee types
+  getRate: async (req, res) => {
+    try {
+      const [types] = await db.query('SELECT * FROM cat_tax_employee_types ORDER BY is_system DESC, id ASC');
+      res.status(200).json({ statusCode: 200, success: true, data: types });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  },
+
+  // GET /api/tax/bracket — trả về tax brackets
+  getBrackets: async (req, res) => {
+    try {
+      const [brackets] = await db.query('SELECT * FROM cat_tax_brackets ORDER BY level_number ASC');
+      res.status(200).json({ statusCode: 200, success: true, data: brackets });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e.message });
+    }
+  },
 };
 
 module.exports = taxController;

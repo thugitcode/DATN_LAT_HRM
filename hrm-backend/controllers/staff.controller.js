@@ -125,7 +125,12 @@ const BASE_SQL = `
     r.id    AS room_id_num,
     r.name  AS room_name
   FROM hr_employees e
-  LEFT JOIN hr_contracts c ON c.employee_id = e.id AND c.status = 'ACTIVE'
+  LEFT JOIN hr_contracts c ON c.employee_id = e.id 
+  AND c.id = (
+    SELECT id FROM hr_contracts c2 WHERE c2.employee_id = e.id
+    ORDER BY FIELD(status,'SIGNED','PENDING_SIGNATURE','PENDING_APPROVAL','ACTIVE','EXPIRED') ASC
+    LIMIT 1
+  )
   LEFT JOIN cat_titles ct ON ct.id = c.job_title_code
   LEFT JOIN cat_departments d ON d.code = c.department_code
   LEFT JOIN cat_rooms r ON r.code = c.room_code
@@ -402,7 +407,7 @@ const staffController = {
             deptCode || null,
             roomCode || null,
             b.endDate || '2099-12-31',
-            'ACTIVE',
+            'PENDING_APPROVAL',
           ],
         );
       }

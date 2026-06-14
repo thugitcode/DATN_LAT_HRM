@@ -8,26 +8,20 @@ export const staffContractSchema = (t: TFunction<'staff-management'>) => z.objec
     workType: z.string().min(1, t('contract_info.validation.work_type_required')).nullable(),
     jobTitleId: z.string().min(1, t('contract_info.validation.job_title_required')),
     position: z.string().min(1, t('contract_info.validation.position_required')),
-    workingTime: z.string().min(1, t('contract_info.validation.working_time_required')).refine(
-        (val) => !isNaN(Number(val)) && Number(val) > 0,
-        t('contract_info.validation.working_time_positive')
-    ),
-    workingTimeUnit: z.enum(['DAY', 'WEEK', 'MONTH']),
-    managedRoomId: requiredString(t('contract_info.validation.managed_room_required')),
-    managedDepartmentId: requiredString(t('contract_info.validation.managed_department_required')),
-    duration: z.string().min(1, t('contract_info.validation.duration_required')).refine(
-        (val) => !isNaN(Number(val)) && Number(val) > 0,
-        t('contract_info.validation.duration_positive')
-    ),
-    durationUnit: z.enum(['YEAR', 'MONTH']),
-    contractNumber: z.string().min(1, t('contract_info.validation.contract_number_required')),
-    startDate: z.string().min(1, t('contract_info.validation.start_date_required')),
-    endDate: z.string().min(1, t('contract_info.validation.end_date_required')),
+    workingTime: z.string().optional().default(''),
+    workingTimeUnit: z.enum(['DAY', 'WEEK', 'MONTH']).optional().default('MONTH'),
+    managedRoomId: z.string().optional().default(''),
+    managedDepartmentId: z.string().optional().default(''),
+    duration: z.string().optional().default(''),
+    durationUnit: z.enum(['YEAR', 'MONTH']).optional().default('YEAR'),
+    contractNumber: z.string().optional().default(''),
+    startDate: z.string().optional().default(''),
+    endDate: z.string().optional().default(''),
     roomId: z.string().optional(),
-    directManagerIds: z.array(z.string()).min(1, t('contract_info.validation.direct_manager_required')),
-    shiftType: z.string().min(1, t('contract_info.validation.shift_type_required')),
+    directManagerIds: z.array(z.string()).optional().default([]),
+    shiftType: z.string().optional().default(''),
     fixedShiftId: z.string().optional(),
-    workingDays: z.array(z.number()).min(1, t('contract_info.validation.working_days_required')),
+    workingDays: z.array(z.number()).optional().default([]),
     workingAreas: z
         .array(
             z.object({
@@ -41,16 +35,6 @@ export const staffContractSchema = (t: TFunction<'staff-management'>) => z.objec
             { message: t('contract_info.validation.working_area_department_required') }
         ),
     salary: salaryInnerSchema,
-}).refine(
-    (data) => {
-        const start = new Date(data.startDate);
-        const end = new Date(data.endDate);
-        return start < end;
-    },
-    {
-        message: t('contract_info.validation.end_date_after_start'),
-        path: ['endDate'],
-    }
-);
+});
 
 export type StaffContractFormValues = z.infer<ReturnType<typeof staffContractSchema>>;

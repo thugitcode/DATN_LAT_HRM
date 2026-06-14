@@ -429,6 +429,7 @@ export function formatDateVN(d: string | Date) {
 }
 
 export const convertMimeToExtension = (mime: string) => {
+  if (!mime) return null;
   const map: Record<string, string> = {
     'application/pdf': 'pdf',
     'image/jpeg': 'jpg',
