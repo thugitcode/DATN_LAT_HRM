@@ -12,59 +12,76 @@ const staffSalaryController = {
     try {
       const { staffId } = req.params;
 
-      // Lấy thông tin lương từ hợp đồng ACTIVE
+      // Lấy lương cơ bản từ hợp đồng ACTIVE/SIGNED/PENDING
       const [[contract]] = await db.query(
-        `SELECT c.base_salary, c.insurance_salary,
-                c.contract_type, c.working_type, c.level_name,
-                ct.name AS job_title_name
+        `SELECT c.base_salary, c.insurance_salary, c.id AS contract_id
          FROM hr_contracts c
-         LEFT JOIN cat_titles ct ON ct.id = c.job_title_code
-         WHERE c.employee_id = ? AND c.status = 'ACTIVE'
+         WHERE c.employee_id = ?
+         ORDER BY FIELD(c.status,'SIGNED','PENDING_SIGNATURE','PENDING_APPROVAL','ACTIVE','EXPIRED') ASC
          LIMIT 1`,
         [staffId]
       );
 
-      // Lấy thông tin lương chi tiết nếu có bảng riêng
-      const [salaryRows] = await db.query(
-        `SELECT * FROM hr_staff_salary WHERE employee_id = ? LIMIT 1`,
+      // Lấy chi tiết lương từ hr_staff_salary
+      const [[salaryDetail]] = await db.query(
+        'SELECT * FROM hr_staff_salary WHERE employee_id = ?',
         [staffId]
-      ).catch(() => [[]]); // Nếu bảng chưa có thì trả rỗng
+      ).catch(() => [[null]]);
 
-      const salaryDetail = salaryRows[0] || {};
-
+      // Map sang đúng cấu trúc FE expect: { salary: Salary }
       ok(res, {
-        // Lương cơ bản từ hợp đồng
-        baseSalary:      contract?.base_salary      || 0,
-        insuranceSalary: contract?.insurance_salary || 0,
-        // Chi tiết lương từ bảng salary
-        salaryType:      salaryDetail.salary_type   || 'GROSS',
-        netSalary:       salaryDetail.net_salary     || 0,
-        grossSalary:     salaryDetail.gross_salary   || 0,
-        // Phụ cấp
-        responsibilityAllowance: salaryDetail.responsibility_allowance || 0,
-        positionAllowance:       salaryDetail.position_allowance       || 0,
-        hazardAllowance:         salaryDetail.hazard_allowance         || 0,
-        mealAllowance:           salaryDetail.meal_allowance           || 0,
-        fuelAllowance:           salaryDetail.fuel_allowance           || 0,
-        phoneAllowance:          salaryDetail.phone_allowance          || 0,
-        businessTripAllowance:   salaryDetail.business_trip_allowance  || 0,
-        otherAllowance:          salaryDetail.other_allowance          || 0,
-        // Thuế & bảo hiểm
-        familyDeduction:   salaryDetail.family_deduction  || 11000000,
-        dependentsCount:   salaryDetail.dependents_count  || 0,
-        taxRate:           salaryDetail.tax_rate           || null,
-        // Bảo hiểm
-        healthInsurance:        salaryDetail.health_insurance         || 1.5,
-        socialInsurance:        salaryDetail.social_insurance         || 8,
-        unemploymentInsurance:  salaryDetail.unemployment_insurance   || 1,
-        unionFee:               salaryDetail.union_fee                || 1,
-        // Sức khỏe
-        healthcareInsurance:    salaryDetail.healthcare_insurance     || 0,
-        insuranceCompany:       salaryDetail.insurance_company        || null,
-        benefitLevel:           salaryDetail.benefit_level            || null,
-        // Nghỉ phép
-        annualLeaveDays:        salaryDetail.annual_leave_days        || 12,
-        sickLeaveDays:          salaryDetail.sick_leave_days          || 30,
+        salary: {
+          id:          salaryDetail?.id ? String(salaryDetail.id) : null,
+          contractId:  contract?.contract_id ? String(contract.contract_id) : null,
+          createdAt:   salaryDetail?.created_at || null,
+          updatedAt:   salaryDetail?.updated_at || null,
+          deletedAt:   null,
+
+          // Lương cơ bản từ hợp đồng
+          basicSalary:     (parseFloat(contract?.base_salary) || 0).toString(),
+          insuranceSalary: (parseFloat(contract?.insurance_salary) || 0).toString(),
+
+          // Phụ cấp
+          responsibilityAllowance: (parseFloat(salaryDetail?.responsibility_allowance) || 0).toString(),
+          positionAllowance:       (parseFloat(salaryDetail?.position_allowance) || 0).toString(),
+          hazardAllowance:         (parseFloat(salaryDetail?.hazard_allowance) || 0).toString(),
+          mealAllowance:           (parseFloat(salaryDetail?.meal_allowance) || 0).toString(),
+          mealAllowanceUnit:       salaryDetail?.meal_allowance_unit || 'DAY',
+          fuelAllowance:           (parseFloat(salaryDetail?.fuel_allowance) || 0).toString(),
+          phoneAllowance:          (parseFloat(salaryDetail?.phone_allowance) || 0).toString(),
+          businessTripAllowance:   (parseFloat(salaryDetail?.business_trip_allowance) || 0).toString(),
+          otherAllowance:          (parseFloat(salaryDetail?.other_allowance) || 0).toString(),
+
+          // Bảo hiểm
+          hasHealthInsurance:        !!salaryDetail?.has_health_insurance,
+          healthInsuranceRate:       (parseFloat(salaryDetail?.health_insurance_rate) || 1.5).toString(),
+          hasSocialInsurance:        !!salaryDetail?.has_social_insurance,
+          socialInsuranceRate:       (parseFloat(salaryDetail?.social_insurance_rate) || 8).toString(),
+          hasUnemploymentInsurance:  !!salaryDetail?.has_unemployment_insurance,
+          unemploymentInsuranceRate: (parseFloat(salaryDetail?.unemployment_insurance_rate) || 1).toString(),
+          hasUnionFee:               !!salaryDetail?.has_union_fee,
+          unionFee:                  (parseFloat(salaryDetail?.union_fee) || 0).toString(),
+
+          // Bảo hiểm sức khỏe
+          hasHealthCareInsurance:      !!salaryDetail?.has_healthcare_insurance,
+          healthCareInsuranceCompany:  salaryDetail?.insurance_company || '',
+          healthCareInsuranceBenefit:  (parseFloat(salaryDetail?.benefit_level) || 0).toString(),
+          healthCareInsuranceRate:     (parseFloat(salaryDetail?.healthcare_insurance) || 0).toString(),
+
+          // Nghỉ phép
+          leaveQuotaIds: [],
+
+          // Thuế
+          hasFamilyDeduction:    !!salaryDetail?.family_deduction,
+          dependentsCount:       salaryDetail?.dependents_count || 0,
+          hasPersonalIncomeTax:  salaryDetail?.has_personal_income_tax ?? true,
+          personalIncomeTaxRate: (parseFloat(salaryDetail?.tax_rate) || 0).toString(),
+
+          // Loại lương và tổng
+          salaryType:   salaryDetail?.salary_type || 'NET',
+          netSalary:    (parseFloat(salaryDetail?.net_salary) || 0).toString(),
+          grossSalary:  (parseFloat(salaryDetail?.gross_salary) || 0).toString(),
+        }
       });
     } catch (e) {
       console.error('[GET /staff-salary]', e);
@@ -76,66 +93,101 @@ const staffSalaryController = {
   updateByStaff: async (req, res) => {
     try {
       const { staffId } = req.params;
-      const b = req.body;
+      const salary = req.body.salary || req.body;
 
       // Cập nhật base_salary và insurance_salary vào hr_contracts
-      if (b.baseSalary !== undefined || b.insuranceSalary !== undefined) {
-        const fields = [];
-        const vals   = [];
-        if (b.baseSalary !== undefined)      { fields.push('base_salary = ?');      vals.push(b.baseSalary); }
-        if (b.insuranceSalary !== undefined) { fields.push('insurance_salary = ?'); vals.push(b.insuranceSalary); }
+      if (salary.basicSalary !== undefined || salary.insuranceSalary !== undefined) {
+        const fields = []; const vals = [];
+        if (salary.basicSalary !== undefined)      { fields.push('base_salary = ?');      vals.push(parseFloat(salary.basicSalary) || 0); }
+        if (salary.insuranceSalary !== undefined)  { fields.push('insurance_salary = ?'); vals.push(parseFloat(salary.insuranceSalary) || 0); }
         if (fields.length) {
           vals.push(staffId);
           await db.query(
-            `UPDATE hr_contracts SET ${fields.join(', ')} WHERE employee_id = ? AND status = 'ACTIVE'`,
+            `UPDATE hr_contracts SET ${fields.join(', ')}
+             WHERE employee_id = ?
+             ORDER BY FIELD(status,'SIGNED','PENDING_SIGNATURE','PENDING_APPROVAL','ACTIVE','EXPIRED') ASC
+             LIMIT 1`,
             vals
           );
         }
       }
 
-      // Upsert bảng hr_staff_salary
-      const salaryFields = {
-        salary_type:              b.salaryType,
-        net_salary:               b.netSalary,
-        gross_salary:             b.grossSalary,
-        responsibility_allowance: b.responsibilityAllowance,
-        position_allowance:       b.positionAllowance,
-        hazard_allowance:         b.hazardAllowance,
-        meal_allowance:           b.mealAllowance,
-        fuel_allowance:           b.fuelAllowance,
-        phone_allowance:          b.phoneAllowance,
-        business_trip_allowance:  b.businessTripAllowance,
-        other_allowance:          b.otherAllowance,
-        family_deduction:         b.familyDeduction,
-        dependents_count:         b.dependentsCount,
-        tax_rate:                 b.taxRate,
-        health_insurance:         b.healthInsurance,
-        social_insurance:         b.socialInsurance,
-        unemployment_insurance:   b.unemploymentInsurance,
-        union_fee:                b.unionFee,
-        healthcare_insurance:     b.healthcareInsurance,
-        insurance_company:        b.insuranceCompany,
-        benefit_level:            b.benefitLevel,
-        annual_leave_days:        b.annualLeaveDays,
-        sick_leave_days:          b.sickLeaveDays,
-      };
-
-      // Lọc bỏ undefined
-      const cleanFields = Object.fromEntries(
-        Object.entries(salaryFields).filter(([_, v]) => v !== undefined)
+      // Upsert hr_staff_salary
+      await db.query(
+        `INSERT INTO hr_staff_salary (
+          employee_id, salary_type, net_salary, gross_salary,
+          responsibility_allowance, position_allowance, hazard_allowance,
+          meal_allowance, meal_allowance_unit, fuel_allowance, phone_allowance,
+          business_trip_allowance, other_allowance,
+          has_health_insurance, health_insurance_rate,
+          has_social_insurance, social_insurance_rate,
+          has_unemployment_insurance, unemployment_insurance_rate,
+          has_union_fee, union_fee,
+          has_healthcare_insurance, insurance_company, benefit_level, healthcare_insurance,
+          family_deduction, dependents_count,
+          has_personal_income_tax, tax_rate
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        ON DUPLICATE KEY UPDATE
+          salary_type = VALUES(salary_type),
+          net_salary = VALUES(net_salary),
+          gross_salary = VALUES(gross_salary),
+          responsibility_allowance = VALUES(responsibility_allowance),
+          position_allowance = VALUES(position_allowance),
+          hazard_allowance = VALUES(hazard_allowance),
+          meal_allowance = VALUES(meal_allowance),
+          meal_allowance_unit = VALUES(meal_allowance_unit),
+          fuel_allowance = VALUES(fuel_allowance),
+          phone_allowance = VALUES(phone_allowance),
+          business_trip_allowance = VALUES(business_trip_allowance),
+          other_allowance = VALUES(other_allowance),
+          has_health_insurance = VALUES(has_health_insurance),
+          health_insurance_rate = VALUES(health_insurance_rate),
+          has_social_insurance = VALUES(has_social_insurance),
+          social_insurance_rate = VALUES(social_insurance_rate),
+          has_unemployment_insurance = VALUES(has_unemployment_insurance),
+          unemployment_insurance_rate = VALUES(unemployment_insurance_rate),
+          has_union_fee = VALUES(has_union_fee),
+          union_fee = VALUES(union_fee),
+          has_healthcare_insurance = VALUES(has_healthcare_insurance),
+          insurance_company = VALUES(insurance_company),
+          benefit_level = VALUES(benefit_level),
+          healthcare_insurance = VALUES(healthcare_insurance),
+          family_deduction = VALUES(family_deduction),
+          dependents_count = VALUES(dependents_count),
+          has_personal_income_tax = VALUES(has_personal_income_tax),
+          tax_rate = VALUES(tax_rate)`,
+        [
+          staffId,
+          salary.salaryType || 'NET',
+          parseFloat(salary.netSalary) || 0,
+          parseFloat(salary.grossSalary) || 0,
+          parseFloat(salary.responsibilityAllowance) || 0,
+          parseFloat(salary.positionAllowance) || 0,
+          parseFloat(salary.hazardAllowance) || 0,
+          parseFloat(salary.mealAllowance) || 0,
+          salary.mealAllowanceUnit || 'DAY',
+          parseFloat(salary.fuelAllowance) || 0,
+          parseFloat(salary.phoneAllowance) || 0,
+          parseFloat(salary.businessTripAllowance) || 0,
+          parseFloat(salary.otherAllowance) || 0,
+          salary.hasHealthInsurance ? 1 : 0,
+          parseFloat(salary.healthInsuranceRate) || 1.5,
+          salary.hasSocialInsurance ? 1 : 0,
+          parseFloat(salary.socialInsuranceRate) || 8,
+          salary.hasUnemploymentInsurance ? 1 : 0,
+          parseFloat(salary.unemploymentInsuranceRate) || 1,
+          salary.hasUnionFee ? 1 : 0,
+          parseFloat(salary.unionFee) || 0,
+          salary.hasHealthCareInsurance ? 1 : 0,
+          salary.healthCareInsuranceCompany || null,
+          parseFloat(salary.healthCareInsuranceBenefit) || 0,
+          parseFloat(salary.healthCareInsuranceRate) || 0,
+          salary.hasFamilyDeduction ? 1 : 0,
+          parseInt(salary.dependentsCount) || 0,
+          salary.hasPersonalIncomeTax ? 1 : 0,
+          parseFloat(salary.personalIncomeTaxRate) || 0,
+        ]
       );
-
-      if (Object.keys(cleanFields).length > 0) {
-        const cols = Object.keys(cleanFields);
-        const vals2 = Object.values(cleanFields);
-
-        await db.query(
-          `INSERT INTO hr_staff_salary (employee_id, ${cols.join(', ')})
-           VALUES (?, ${cols.map(() => '?').join(', ')})
-           ON DUPLICATE KEY UPDATE ${cols.map(c => `${c} = VALUES(${c})`).join(', ')}`,
-          [staffId, ...vals2]
-        ).catch(() => {}); // Nếu bảng chưa có thì bỏ qua
-      }
 
       ok(res, null, 'Cập nhật lương thành công');
     } catch (e) {

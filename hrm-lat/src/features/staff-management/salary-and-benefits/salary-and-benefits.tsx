@@ -6,7 +6,7 @@ import {
 import { addToast, Button } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useParams } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -23,14 +23,17 @@ import { SalaryInfoSection } from '../staff-detail/components/contract-and-salar
 import { SalaryStructureSection } from '../staff-detail/components/contract-and-salary-sections/salary-structure-section';
 import StaffContractEmptyState from '../staff-detail/components/staff-contract-empty-state';
 import { calculateSalary, mapApiToFormValues } from './helpers';
-import { ControlMode, useControlMode } from './hooks/use-control-mode-handle';
+import { useControlMode } from './hooks/use-control-mode-handle';
 import { salaryFormSchema, type SalaryFormValues } from './schemas';
 
 export const SalaryAndBenefits = () => {
   const { id } = useParams({ strict: false });
-  const { mode, setMode, isView, isReadOnly } = useControlMode();
+  const { isReadOnly } = useControlMode();
+  const [isEditing, setIsEditing] = useState(false);
+  const isView = !isEditing;
+  console.log('isEditing:', isEditing, 'isView:', isView);
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
-  const { mutate, isPending, isError } = usePatchDetailsStaffSalary();
+  const { mutate, isPending} = usePatchDetailsStaffSalary();
   const { data, isLoading, refetch } = useSalaryDetailsQuery(id);
 
   const methods = useForm<SalaryFormValues>({
@@ -49,10 +52,6 @@ export const SalaryAndBenefits = () => {
     }
   }, [data, isLoading, reset]);
 
-  // Set mode mặc định là view khi mount
-  useEffect(() => {
-    setMode(ControlMode.view);
-  }, [setMode]);
 
   const salaryInputs = useWatch({
     control,
@@ -105,7 +104,7 @@ export const SalaryAndBenefits = () => {
             description: t('salary_benefits.update_success'),
             color: 'success',
           });
-          setMode(ControlMode.view); // Tự động về mode view sau khi lưu
+          setIsEditing(false); // Tự động về mode view sau khi lưu
           refetch();
         },
         onError: (error) => {
@@ -134,13 +133,13 @@ export const SalaryAndBenefits = () => {
                   variant="bordered"
                   color="primary"
                   startContent={<icons.edit width="20px" height="20px" stroke="#6576FF" />}
-                  onPress={() => setMode(ControlMode.edit)}
+                  onPress={() => setIsEditing(true)}
                 >
                   {t('salary_benefits.edit')}
                 </Button>
               ) : (
                 <div className="flex gap-2">
-                  <BtnCancel isDisabled={isPending} onPress={() => setMode(ControlMode.view)} />
+                  <BtnCancel isDisabled={isPending} onPress={() => setIsEditing(false)} />
                   <BtnSave isLoading={isPending} />
                 </div>
               ))}
@@ -148,14 +147,14 @@ export const SalaryAndBenefits = () => {
 
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full overflow-auto h-[calc(100vh-229px)]">
               <div className="flex flex-col gap-6">
-                <SalaryInfoSection />
-                <SalaryStructureSection />
-                <PersonalIncomeTaxSection />
+                <SalaryInfoSection forceReadOnly />
+                <SalaryStructureSection forceReadOnly />
+                <PersonalIncomeTaxSection forceReadOnly={isView} />
               </div>
 
               <div className="flex flex-col gap-6">
-                <InsuranceAndUnionSection />
-                <LeaveBenefitsSection />
+                <InsuranceAndUnionSection forceReadOnly={isView} />
+                <LeaveBenefitsSection forceReadOnly={isView} />
               </div>
             </div>
           </Form>

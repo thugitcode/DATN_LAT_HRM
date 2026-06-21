@@ -8,11 +8,13 @@ import type { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-export const PersonalIncomeTaxSection: FC = () => {
+export const PersonalIncomeTaxSection: FC<{ forceReadOnly?: boolean }> = ({ forceReadOnly = false }) => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { control, watch, formState: { isSubmitting } } = useFormContext();
     const { isView } = useControlMode()
-    const variant = isView ? "underlined" : "flat"
+    // Dùng forceReadOnly prop trực tiếp - không phụ thuộc store
+  const readOnly = forceReadOnly
+    const variant = readOnly ? "underlined" : "flat"
     const hasFamilyDeduction = watch('salary.hasFamilyDeduction');
     const hasPersonalIncomeTax = watch('salary.hasPersonalIncomeTax');
 
@@ -30,7 +32,7 @@ export const PersonalIncomeTaxSection: FC = () => {
                         control={control}
                         name="salary.hasFamilyDeduction"
                         label={t('salary_benefits.family_deduction')}
-                        disabled={isSubmitting || isView}
+                        disabled={isSubmitting || readOnly}
                     />
 
                     <FormNumberInput
@@ -38,7 +40,7 @@ export const PersonalIncomeTaxSection: FC = () => {
                         name="salary.dependentsCount"
                         label={t('salary_benefits.dependents_count')}
                         placeholder={t('salary_benefits.placeholders.enter_count')}
-                        disabled={isSubmitting || isView || !hasFamilyDeduction}
+                        disabled={isSubmitting || readOnly || !hasFamilyDeduction}
                         isRequired={hasFamilyDeduction}
                         variant={variant}
                         allowNegative={false}
@@ -52,7 +54,7 @@ export const PersonalIncomeTaxSection: FC = () => {
                         control={control}
                         name="salary.hasPersonalIncomeTax"
                         label={t('salary_benefits.sections.tax')}
-                        disabled={isSubmitting || isView}
+                        disabled={isSubmitting || readOnly}
                     />
 
                     <FormNumberInput
@@ -61,7 +63,7 @@ export const PersonalIncomeTaxSection: FC = () => {
                         label={t('salary_benefits.tax_rate')}
                         placeholder={t('salary_benefits.placeholders.enter_rate')}
                         endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
-                        disabled={isSubmitting || isView || !hasPersonalIncomeTax}
+                        disabled={isSubmitting || readOnly || !hasPersonalIncomeTax}
                         variant={variant}
                         isRequired={hasPersonalIncomeTax}
                         // Validate %: decimalScale={2}, 

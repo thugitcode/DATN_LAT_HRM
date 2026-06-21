@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import type { TFunction } from 'i18next';
 import { salaryInnerSchema } from '../salary-and-benefits/schemas';
-import { requiredString } from '../staff-list-management/schemas/staff.schema';
 
 export const staffContractSchema = (t: TFunction<'staff-management'>) => z.object({
     contractType: z.string().min(1, t('contract_info.validation.contract_type_required')),
@@ -9,11 +8,11 @@ export const staffContractSchema = (t: TFunction<'staff-management'>) => z.objec
     jobTitleId: z.string().min(1, t('contract_info.validation.job_title_required')),
     position: z.string().min(1, t('contract_info.validation.position_required')),
     workingTime: z.string().optional().default(''),
-    workingTimeUnit: z.enum(['DAY', 'WEEK', 'MONTH']).optional().default('MONTH'),
+    workingTimeUnit: z.enum(['DAY', 'WEEK', 'MONTH']),
     managedRoomId: z.string().optional().default(''),
     managedDepartmentId: z.string().optional().default(''),
     duration: z.string().optional().default(''),
-    durationUnit: z.enum(['YEAR', 'MONTH']).optional().default('YEAR'),
+    durationUnit: z.enum(['YEAR', 'MONTH']),
     contractNumber: z.string().optional().default(''),
     startDate: z.string().optional().default(''),
     endDate: z.string().optional().default(''),

@@ -39,7 +39,7 @@ const DEFAULT_SALARY = {
   leaveQuotaIds: [],
   hasFamilyDeduction: false,
   dependentsCount: '',
-  hasPersonalIncomeTax: true,
+  hasPersonalIncomeTax: false,
   personalIncomeTaxRate: '',
 };
 
@@ -112,7 +112,7 @@ export function getContractDefaultValues(contract: NonNullable<ReturnType<typeof
       leaveQuotaIds: salaryData?.leaveQuotaIds || [],
       hasFamilyDeduction: salaryData?.hasFamilyDeduction || false,
       dependentsCount: salaryData?.dependentsCount?.toString() || '',
-      hasPersonalIncomeTax: salaryData?.hasPersonalIncomeTax ?? true,
+      hasPersonalIncomeTax: !!salaryData?.hasPersonalIncomeTax,
       personalIncomeTaxRate: salaryData?.personalIncomeTaxRate?.toString() || '',
       basicSalary: salaryData?.basicSalary?.toString() || '',
       insuranceSalary: salaryData?.insuranceSalary?.toString() || '',
@@ -181,7 +181,8 @@ export function useContractForm({
   useEffect(() => {
     if (!contract) return;
     reset(getContractDefaultValues(contract));
-  }, [contract, reset]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(contract?.salary), contract?.id, reset]);
 
   const submitHandler = async (data: StaffContractFormValues) => {
     const payload = {

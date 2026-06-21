@@ -47,7 +47,8 @@ export const ContractFormContainer = () => {
     useEffect(() => {
         if (!currentContract) return;
         reset(getContractDefaultValues(currentContract));
-    }, [currentContract, reset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(currentContract), reset]);
 
     const handleNewContract = () => {
         setMode(ControlMode.create)

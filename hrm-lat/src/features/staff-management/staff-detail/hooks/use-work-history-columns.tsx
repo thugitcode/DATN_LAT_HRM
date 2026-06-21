@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { Button, Chip } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,7 @@ import { addToast } from '@heroui/react';
 import { DepartmentRoomInfo } from '@/features/timekeeping-shift-scheduling/timekeeping-management/components/work-sheet-by-shift/department-room-info';
 import type { Department } from '@/types/deparment.type';
 import type { Room } from '@/types/room.type';
-import { IconX } from '@tabler/icons-react';
+import { IconX, IconEye } from '@tabler/icons-react';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -64,6 +64,7 @@ export const useWorkHistoryColumns = (staffId: string) => {
   const onOpenDrawer = useDrawer((state) => state.onOpen);
   const openConfirm = useConfirmStore((state) => state.open);
 
+  const [viewContractId, setViewContractId] = useState<string | null>(null);
   const approveMutation = useApproveContract(staffId);
   const signMutation = useSignContract(staffId);
   const deleteMutation = useDeleteContract(staffId);
@@ -281,6 +282,16 @@ export const useWorkHistoryColumns = (staffId: string) => {
                   {icons.bin}
                 </Button>
               )}
+              {/* 👁️ Xem chi tiết - hiện cho mọi status */}
+              <Button
+                isIconOnly
+                variant="light"
+                size="sm"
+                title="Xem chi tiết hợp đồng"
+                onPress={() => setViewContractId(row._contractId)}
+              >
+                <IconEye size={16} className="text-[#6576FF]" />
+              </Button>
             </div>
           );
         },
@@ -289,5 +300,5 @@ export const useWorkHistoryColumns = (staffId: string) => {
     [t, tc, i18n.language, staffId, approveMutation.isPending, signMutation.isPending],
   );
 
-  return { columns };
+  return { columns, viewContractId, setViewContractId };
 };

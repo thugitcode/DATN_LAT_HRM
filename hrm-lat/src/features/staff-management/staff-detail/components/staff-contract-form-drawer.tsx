@@ -5,6 +5,8 @@ import { BtnCancel } from '@/components/btn-cancel';
 import { BtnSave } from '@/components/btn-save';
 
 import { useContractForm } from '../hooks/use-contract-form';
+import { ControlMode, useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
+import { useEffect } from 'react';
 import { ContractInfoSection } from './contract-and-salary-sections/contract-info-section';
 import { InsuranceAndUnionSection } from './contract-and-salary-sections/insurance-and-union-section';
 import { LeaveBenefitsSection } from './contract-and-salary-sections/leave-benefits-section';
@@ -32,6 +34,13 @@ export const StaffContractFormDrawer = () => {
     staffId,
     contractId,
   });
+
+  // Set mode edit khi Drawer mở để unlock tất cả fields
+  const { setMode } = useControlMode();
+  useEffect(() => {
+    setMode(isEditMode ? ControlMode.edit : ControlMode.create);
+    return () => setMode(ControlMode.view); // Reset về view khi đóng
+  }, [isEditMode]);
 
   return (
     <div className="relative h-full overflow-hidden bg-[#FAFAFA]">

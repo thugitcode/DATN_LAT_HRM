@@ -9,12 +9,14 @@ import type { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
-export const InsuranceAndUnionSection: FC = () => {
+export const InsuranceAndUnionSection: FC<{ forceReadOnly?: boolean }> = ({ forceReadOnly = false }) => {
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { control, watch, formState: { isSubmitting } } = useFormContext();
 
   const { isView } = useControlMode()
-  const variant = isView ? "underlined" : "flat"
+  // Dùng forceReadOnly prop trực tiếp - không phụ thuộc store
+  const readOnly = forceReadOnly
+  const variant = readOnly ? "underlined" : "flat"
 
   // Watch để disable/enable input tương ứng
   const hasHealthInsurance = watch('salary.hasHealthInsurance');
@@ -37,7 +39,7 @@ export const InsuranceAndUnionSection: FC = () => {
             control={control}
             name="salary.hasHealthInsurance"
             label={t('insurance_union.health_insurance')}
-            disabled={isSubmitting || isView}
+            disabled={isSubmitting || readOnly}
           />
 
           <FormNumberInput
@@ -47,7 +49,7 @@ export const InsuranceAndUnionSection: FC = () => {
             placeholder={t('insurance_union.placeholders.enter_rate')}
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasHealthInsurance}
-            disabled={isSubmitting || isView || !hasHealthInsurance}
+            disabled={isSubmitting || readOnly || !hasHealthInsurance}
             variant={variant}
             allowNegative={false}
             max={100}
@@ -60,7 +62,7 @@ export const InsuranceAndUnionSection: FC = () => {
             control={control}
             name="salary.hasSocialInsurance"
             label={t('insurance_union.social_insurance')}
-            disabled={isSubmitting || isView}
+            disabled={isSubmitting || readOnly}
           />
 
           <FormNumberInput
@@ -70,7 +72,7 @@ export const InsuranceAndUnionSection: FC = () => {
             placeholder={t('insurance_union.placeholders.enter_rate')}
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasSocialInsurance}
-            disabled={isSubmitting || isView || !hasSocialInsurance}
+            disabled={isSubmitting || readOnly || !hasSocialInsurance}
             allowNegative={false}
             variant={variant}
             max={100}
@@ -83,7 +85,7 @@ export const InsuranceAndUnionSection: FC = () => {
             control={control}
             name="salary.hasUnemploymentInsurance"
             label={t('insurance_union.unemployment_insurance')}
-            disabled={isSubmitting || isView}
+            disabled={isSubmitting || readOnly}
           />
 
           <FormNumberInput
@@ -93,7 +95,7 @@ export const InsuranceAndUnionSection: FC = () => {
             placeholder={t('insurance_union.placeholders.enter_rate')}
             endContent={<span className="text-[#a1a1aa] text-sm">%</span>}
             isRequired={hasUnemploymentInsurance}
-            disabled={isSubmitting || isView || !hasUnemploymentInsurance}
+            disabled={isSubmitting || readOnly || !hasUnemploymentInsurance}
             allowNegative={false}
             variant={variant}
             max={100}
@@ -106,7 +108,7 @@ export const InsuranceAndUnionSection: FC = () => {
             control={control}
             name="salary.hasUnionFee"
             label={t('insurance_union.union_fee')}
-            disabled={isSubmitting || isView}
+            disabled={isSubmitting || readOnly}
           />
 
           <FormNumberInput
@@ -118,7 +120,7 @@ export const InsuranceAndUnionSection: FC = () => {
               {Number(watch("salary.unionFee") || 0) < 100 ? "%" : "VNĐ"}
             </span>}
             isRequired={hasUnionFee}
-            disabled={isSubmitting || isView || !hasUnionFee}
+            disabled={isSubmitting || readOnly || !hasUnionFee}
             variant={variant}
             allowNegative={false}
           // Nếu muốn format tiền Việt Nam: thousandSeparator=".", decimalScale={0}
@@ -130,7 +132,7 @@ export const InsuranceAndUnionSection: FC = () => {
           control={control}
           name="salary.hasHealthCareInsurance"
           label={t('insurance_union.healthcare_insurance')}
-          disabled={isSubmitting || isView}
+          disabled={isSubmitting || readOnly}
         />
 
         <FormInput

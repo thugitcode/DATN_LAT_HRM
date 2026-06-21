@@ -9,13 +9,15 @@ import { useLeaveQuotaOptions } from '@/hooks/options/use-leave-quota-options';
 import { FormCheckboxGroup } from '@/components/form-fields/form-checkbox-group';
 import { useControlMode } from '@/features/staff-management/salary-and-benefits/hooks/use-control-mode-handle';
 
-export const LeaveBenefitsSection: FC = () => {
+export const LeaveBenefitsSection: FC<{ forceReadOnly?: boolean }> = ({ forceReadOnly = false }) => {
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const {
     control,
     formState: { isSubmitting },
   } = useFormContext();
   const { isView } = useControlMode();
+  // Dùng forceReadOnly prop trực tiếp - không phụ thuộc store
+  const readOnly = forceReadOnly;
 
   const { options } = useLeaveQuotaOptions();
 
@@ -30,7 +32,7 @@ export const LeaveBenefitsSection: FC = () => {
         <FormCheckboxGroup
           control={control}
           name="salary.leaveQuotaIds"
-          disabled={isSubmitting || isView}
+          disabled={isSubmitting || readOnly}
           options={options}
           className="grid grid-cols-3"
         />

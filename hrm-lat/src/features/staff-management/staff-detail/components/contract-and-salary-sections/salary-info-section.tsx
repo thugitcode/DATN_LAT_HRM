@@ -9,11 +9,12 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 
-export const SalaryInfoSection: FC = () => {
+export const SalaryInfoSection: FC<{ forceReadOnly?: boolean }> = ({ forceReadOnly = false }) => {
   const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
   const { control, formState: { isSubmitting }, watch } = useFormContext();
   const { isView } = useControlMode()
-  const variant = isView ? "underlined" : "flat"
+  const readOnly = forceReadOnly ? true : isView
+  const variant = readOnly ? "underlined" : "flat"
   const salaryTypeOptions = [
     { key: 'GROSS', label: t('salary_benefits.options.gross') },
     { key: 'NET', label: t('salary_benefits.options.net') },

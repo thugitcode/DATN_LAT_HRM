@@ -17,11 +17,12 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
 
-export const SalaryStructureSection: FC = () => {
+export const SalaryStructureSection: FC<{ forceReadOnly?: boolean }> = ({ forceReadOnly = false }) => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { control, setValue, formState: { isSubmitting, errors }, getValues } = useFormContext();
     const { isView } = useControlMode()
-    const variant = isView ? "underlined" : "flat"
+    const readOnly = forceReadOnly ? true : isView
+    const variant = readOnly ? "underlined" : "flat"
     const mealAllowanceUnit = useWatch({ control, name: 'salary.mealAllowanceUnit' });
 
     return (

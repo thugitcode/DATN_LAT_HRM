@@ -36,7 +36,7 @@ export const mapApiToFormValues = (data: SalaryAndBenefits): SalaryFormValues =>
 
       hasFamilyDeduction: !!salary.hasFamilyDeduction,
       dependentsCount: salary.dependentsCount?.toString() || '',
-      hasPersonalIncomeTax: salary.hasPersonalIncomeTax ?? true,
+      hasPersonalIncomeTax: !!salary.hasPersonalIncomeTax,
       personalIncomeTaxRate: salary.personalIncomeTaxRate?.toString() || '',
 
       salaryType: salary.salaryType || 'NET',
@@ -107,28 +107,30 @@ export const calculateSalary = (values: SalaryFormValues) => {
     }
   }
 
-  // ===== GIẢM TRỪ GIA CẢNH =====
-  let familyDeduction = 0;
-
-  if (salary.hasFamilyDeduction) {
-    familyDeduction = 11000000 + parseNumber(salary.dependentsCount) * 4400000;
-  }
-
-  // ===== THU NHẬP CHỊU THUẾ =====
-  const taxableIncome = Math.max(0, gross - bhPersonal - familyDeduction - unionFee);
-
   // ===== THUẾ TNCN =====
   let pit = 0;
 
-  if (salary.hasPersonalIncomeTax && taxableIncome > 0) {
-    if (taxableIncome <= 5000000) pit = taxableIncome * 0.05;
-    else if (taxableIncome <= 10000000) pit = 250000 + (taxableIncome - 5000000) * 0.1;
-    else if (taxableIncome <= 18000000) pit = 750000 + (taxableIncome - 10000000) * 0.15;
-    else if (taxableIncome <= 32000000) pit = 1950000 + (taxableIncome - 18000000) * 0.2;
-    else if (taxableIncome <= 52000000) pit = 4750000 + (taxableIncome - 32000000) * 0.25;
-    else if (taxableIncome <= 80000000) pit = 9750000 + (taxableIncome - 52000000) * 0.3;
-    else pit = 18150000 + (taxableIncome - 80000000) * 0.35;
+  if (salary.hasFamilyDeduction) {
+    // NHÁNH 1: Lũy tiến từng phần — giảm trừ bản thân 11tr luôn áp dụng
+    const selfDeduction      = 11_000_000;
+    const dependentDeduction = parseNumber(salary.dependentsCount) * 4_400_000;
+    const familyDeduction    = selfDeduction + dependentDeduction;
+    const taxableIncome      = Math.max(0, gross - bhPersonal - familyDeduction - unionFee);
+    if (taxableIncome > 0) {
+      if      (taxableIncome <=  5_000_000) pit = taxableIncome * 0.05;
+      else if (taxableIncome <= 10_000_000) pit =   250_000 + (taxableIncome -  5_000_000) * 0.10;
+      else if (taxableIncome <= 18_000_000) pit =   750_000 + (taxableIncome - 10_000_000) * 0.15;
+      else if (taxableIncome <= 32_000_000) pit = 1_950_000 + (taxableIncome - 18_000_000) * 0.20;
+      else if (taxableIncome <= 52_000_000) pit = 4_750_000 + (taxableIncome - 32_000_000) * 0.25;
+      else if (taxableIncome <= 80_000_000) pit = 9_750_000 + (taxableIncome - 52_000_000) * 0.30;
+      else                                  pit = 18_150_000 + (taxableIncome - 80_000_000) * 0.35;
+    }
+  } else if (salary.hasPersonalIncomeTax) {
+    // NHÁNH 2: Thuế phẳng cố định (thử việc, vãng lai)
+    const flatRate = parseNumber(salary.personalIncomeTaxRate);
+    if (flatRate > 0) pit = gross * (flatRate / 100);
   }
+  // Không chọn ô nào → pit = 0 (miễn thuế)
 
   // ===== NET =====
   const net = gross - bhPersonal - pit - unionFee;

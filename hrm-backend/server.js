@@ -23,6 +23,7 @@ const staffContractRoutes  = require('./routes/staff-contract.routes');
 const staffSalaryRoutes    = require('./routes/staff-salary.routes');
 const staffDocumentRoutes  = require('./routes/staff-document.routes');
 const shiftTemplateRoutes    = require('./routes/shift-template.routes');
+const leaveQuotaRoutes       = require('./routes/leave-quota.routes');
 const departmentRoutes = require('./routes/department.routes');
 const roomRoutes       = require('./routes/room.routes');
 const jobTitleRoutes   = require('./routes/jobTitle.routes');
@@ -30,6 +31,7 @@ const uploadRoutes     = require('./routes/upload.routes');
 
 const app = express();
 app.use(cors());
+app.set('etag', false); // Tắt ETag để tránh 304 Not Modified
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -61,6 +63,7 @@ app.use('/api/staff-contract',  staffContractRoutes);
 app.use('/api/staff-salary',    staffSalaryRoutes);
 app.use('/api/staff-document',  staffDocumentRoutes);
 app.use('/api/shift-template',   shiftTemplateRoutes);
+app.use('/api/leave-quota',      leaveQuotaRoutes);
 
 // Dùng chung 2 prefix cho department/room
 app.use('/api/v1/departments', departmentRoutes);
