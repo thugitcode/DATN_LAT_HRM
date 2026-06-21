@@ -159,12 +159,10 @@ const workScheduleController = {
 
       return res.json({
         statusCode: 200,
-        data: {
-          data: gridData,
-          shiftTypesCount: { FIXED: 0, FLEXIBLE: 0, ON_CALL: 0, SPLIT: 0 },
-          summary: {},
-        },
-        pagination: { total, page: parseInt(page), limit: parseInt(limit) },
+        data: gridData,
+        shiftTypesCount: { FIXED: 0, FLEXIBLE: 0, ON_CALL: 0, SPLIT: 0 },
+        summary: {},
+        pagination: { total, page: parseInt(page), limit: parseInt(limit), totalPage: Math.ceil(total / parseInt(limit)) },
         metadata: null,
         message: 'success',
       });

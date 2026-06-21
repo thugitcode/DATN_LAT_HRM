@@ -36,13 +36,13 @@ const leaveRequestController = {
       const [rows] = await db.query(`
         SELECT lr.*,
                e.employee_code as staff_code, e.full_name as staff_name,
-               jt.name as position,
+               hc.title_name as position,
                sub.full_name as substitute_name,
                mgr.full_name as manager_name,
                lq.name as leave_type_name
         FROM hr_leave_requests lr
         JOIN hr_employees e ON e.id = lr.employee_id
-        LEFT JOIN cat_titles jt ON jt.id = e.job_title_id
+        LEFT JOIN hr_contracts hc ON hc.employee_id = e.id AND hc.status = 'ACTIVE'
         LEFT JOIN hr_staff_departments rsd ON rsd.employee_id = lr.employee_id
         LEFT JOIN hr_staff_rooms rsr ON rsr.employee_id = lr.employee_id
         LEFT JOIN hr_employees sub ON sub.id = lr.substitute_id
@@ -104,11 +104,11 @@ const leaveRequestController = {
       const { id } = req.params;
       const [[row]] = await db.query(`
         SELECT lr.*, e.employee_code as staff_code, e.full_name as staff_name,
-               jt.name as position, sub.full_name as substitute_name,
+               hc.title_name as position, sub.full_name as substitute_name,
                mgr.full_name as manager_name, lq.name as leave_type_name
         FROM hr_leave_requests lr
         JOIN hr_employees e ON e.id = lr.employee_id
-        LEFT JOIN cat_titles jt ON jt.id = e.job_title_id
+        LEFT JOIN hr_contracts hc ON hc.employee_id = e.id AND hc.status = 'ACTIVE'
         LEFT JOIN hr_employees sub ON sub.id = lr.substitute_id
         LEFT JOIN hr_employees mgr ON mgr.id = lr.manager_id
         LEFT JOIN cat_leave_quotas lq ON lq.id = lr.leave_quota_id
