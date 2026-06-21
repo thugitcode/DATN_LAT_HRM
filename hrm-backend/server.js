@@ -28,6 +28,9 @@ const departmentRoutes = require('./routes/department.routes');
 const roomRoutes       = require('./routes/room.routes');
 const jobTitleRoutes   = require('./routes/jobTitle.routes');
 const uploadRoutes     = require('./routes/upload.routes');
+const workScheduleRoutes     = require('./routes/work-schedule.routes');
+const attendanceExpRoutes    = require('./routes/attendance-explanation.routes');
+const leaveRequestRoutes     = require('./routes/leave-request.routes');
 
 const app = express();
 app.use(cors());
@@ -64,6 +67,12 @@ app.use('/api/staff-salary',    staffSalaryRoutes);
 app.use('/api/staff-document',  staffDocumentRoutes);
 app.use('/api/shift-template',   shiftTemplateRoutes);
 app.use('/api/leave-quota',      leaveQuotaRoutes);
+app.use('/api/work-schedule',        workScheduleRoutes);
+app.use('/api/payroll',              require('./routes/payroll.routes'));
+app.use('/api/staff-kpi',            (req,res) => res.json({statusCode:200,data:[],message:'success'}));
+app.use('/api/other-income',         (req,res) => res.json({statusCode:200,data:[],message:'success'}));
+app.use('/api/attendance-explanation', attendanceExpRoutes);
+app.use('/api/leave-request',        leaveRequestRoutes);
 
 // Dùng chung 2 prefix cho department/room
 app.use('/api/v1/departments', departmentRoutes);

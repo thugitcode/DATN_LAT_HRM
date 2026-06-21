@@ -1,0 +1,190 @@
+const db = require('../config/db');
+
+const ok   = (res, data, message = 'success') => res.json({ statusCode: 200, data, message });
+const fail = (res, status, message, error = null) => {
+  if (error) console.error(`[leave-request] ${message}:`, error.message);
+  return res.status(status).json({ statusCode: status, message });
+};
+
+const leaveRequestController = {
+
+  // GET /leave-request?month=&status=&departmentId=&roomId=&search=
+  getAll: async (req, res) => {
+    try {
+      const { month, status, departmentId, roomId, search, staffId, page = 1, limit = 20 } = req.query;
+      const offset = (page - 1) * limit;
+
+      let where = ['1=1'];
+      let params = [];
+
+      if (staffId) { where.push('lr.employee_id = ?'); params.push(staffId); }
+      if (status) { where.push('lr.status = ?'); params.push(status); }
+      if (month) { where.push('DATE_FORMAT(lr.from_date, "%Y-%m") = ?'); params.push(month); }
+      if (departmentId) { where.push('rsd.department_code = (SELECT code FROM cat_departments WHERE id = ?)'); params.push(departmentId); }
+      if (roomId) { where.push('rsr.room_code = (SELECT code FROM cat_rooms WHERE id = ?)'); params.push(roomId); }
+      if (search) { where.push('(e.full_name LIKE ? OR e.employee_code LIKE ?)'); params.push(`%${search}%`, `%${search}%`); }
+
+      const [[{ total }]] = await db.query(`
+        SELECT COUNT(DISTINCT lr.id) as total
+        FROM hr_leave_requests lr
+        JOIN hr_employees e ON e.id = lr.employee_id
+        LEFT JOIN hr_staff_departments rsd ON rsd.employee_id = lr.employee_id
+        LEFT JOIN hr_staff_rooms rsr ON rsr.employee_id = lr.employee_id
+        WHERE ${where.join(' AND ')}
+      `, params);
+
+      const [rows] = await db.query(`
+        SELECT lr.*,
+               e.employee_code as staff_code, e.full_name as staff_name,
+               jt.name as position,
+               sub.full_name as substitute_name,
+               mgr.full_name as manager_name,
+               lq.name as leave_type_name
+        FROM hr_leave_requests lr
+        JOIN hr_employees e ON e.id = lr.employee_id
+        LEFT JOIN cat_titles jt ON jt.id = e.job_title_id
+        LEFT JOIN hr_staff_departments rsd ON rsd.employee_id = lr.employee_id
+        LEFT JOIN hr_staff_rooms rsr ON rsr.employee_id = lr.employee_id
+        LEFT JOIN hr_employees sub ON sub.id = lr.substitute_id
+        LEFT JOIN hr_employees mgr ON mgr.id = lr.manager_id
+        LEFT JOIN cat_leave_quotas lq ON lq.id = lr.leave_quota_id
+        WHERE ${where.join(' AND ')}
+        GROUP BY lr.id
+        ORDER BY lr.created_at DESC
+        LIMIT ? OFFSET ?
+      `, [...params, parseInt(limit), parseInt(offset)]);
+
+      const empIds = [...new Set(rows.map(r => r.employee_id))];
+      let depts = [], rooms = [];
+      if (empIds.length) {
+        [depts] = await db.query(
+          `SELECT rsd.employee_id, d.id, d.name FROM hr_staff_departments rsd JOIN cat_departments d ON d.id=rsd.department_id WHERE rsd.employee_id IN (?)`,
+          [empIds]
+        );
+        [rooms] = await db.query(
+          `SELECT rsr.employee_id, r.id, r.name FROM hr_staff_rooms rsr JOIN cat_rooms r ON r.id=rsr.room_id WHERE rsr.employee_id IN (?)`,
+          [empIds]
+        );
+      }
+
+      const data = rows.map(row => mapLeaveRequest(row, depts, rooms));
+
+      // Summary
+      const [[meta]] = await db.query(`
+        SELECT
+          COUNT(*) as total,
+          SUM(status='APPROVED') as approved,
+          SUM(status='REJECTED') as rejected,
+          SUM(status='PENDING') as pending
+        FROM hr_leave_requests lr
+        JOIN hr_employees e ON e.id = lr.employee_id
+        LEFT JOIN hr_staff_departments rsd ON rsd.employee_id = lr.employee_id
+        LEFT JOIN hr_staff_rooms rsr ON rsr.employee_id = lr.employee_id
+        WHERE ${where.join(' AND ')}
+      `, params);
+
+      res.json({
+        statusCode: 200,
+        data,
+        metadata: {
+          total: parseInt(meta.total) || 0,
+          approved: parseInt(meta.approved) || 0,
+          rejected: parseInt(meta.rejected) || 0,
+          pending: parseInt(meta.pending) || 0,
+        },
+        pagination: { total: parseInt(total), page: parseInt(page), limit: parseInt(limit) },
+        message: 'success',
+      });
+    } catch (e) { fail(res, 500, 'Lỗi lấy danh sách đơn nghỉ', e); }
+  },
+
+  // GET /leave-request/:id
+  getById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const [[row]] = await db.query(`
+        SELECT lr.*, e.employee_code as staff_code, e.full_name as staff_name,
+               jt.name as position, sub.full_name as substitute_name,
+               mgr.full_name as manager_name, lq.name as leave_type_name
+        FROM hr_leave_requests lr
+        JOIN hr_employees e ON e.id = lr.employee_id
+        LEFT JOIN cat_titles jt ON jt.id = e.job_title_id
+        LEFT JOIN hr_employees sub ON sub.id = lr.substitute_id
+        LEFT JOIN hr_employees mgr ON mgr.id = lr.manager_id
+        LEFT JOIN cat_leave_quotas lq ON lq.id = lr.leave_quota_id
+        WHERE lr.id = ?
+      `, [id]);
+      if (!row) return fail(res, 404, 'Không tìm thấy đơn nghỉ');
+
+      const [depts] = await db.query(`SELECT rsd.employee_id, d.id, d.name FROM hr_staff_departments rsd JOIN cat_departments d ON d.id=rsd.department_id WHERE rsd.employee_id=?`, [row.employee_id]);
+      const [rooms] = await db.query(`SELECT rsr.employee_id, r.id, r.name FROM hr_staff_rooms rsr JOIN cat_rooms r ON r.id=rsr.room_id WHERE rsr.employee_id=?`, [row.employee_id]);
+
+      ok(res, mapLeaveRequest(row, depts, rooms));
+    } catch (e) { fail(res, 500, 'Lỗi lấy chi tiết đơn nghỉ', e); }
+  },
+
+  // POST /leave-request
+  create: async (req, res) => {
+    try {
+      const { staffId, leaveQuotaId, fromDate, toDate, totalDays, reason, substituteId, managerId } = req.body;
+      if (!staffId || !fromDate || !toDate || !reason) return fail(res, 400, 'Thiếu thông tin đơn nghỉ');
+
+      const [result] = await db.query(`
+        INSERT INTO hr_leave_requests (employee_id, leave_quota_id, from_date, to_date, total_days, reason, substitute_id, manager_id)
+        VALUES (?,?,?,?,?,?,?,?)
+      `, [staffId, leaveQuotaId || null, fromDate, toDate, totalDays || 1, reason, substituteId || null, managerId || null]);
+
+      ok(res, { id: String(result.insertId) }, 'Tạo đơn nghỉ thành công');
+    } catch (e) { fail(res, 500, 'Lỗi tạo đơn nghỉ', e); }
+  },
+
+  // PATCH /leave-request/:id/approve
+  approve: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { approvedById } = req.body;
+      await db.query(`UPDATE hr_leave_requests SET status='APPROVED', approved_by_id=?, approved_at=NOW() WHERE id=?`, [approvedById || null, id]);
+      ok(res, null, 'Duyệt đơn nghỉ thành công');
+    } catch (e) { fail(res, 500, 'Lỗi duyệt đơn nghỉ', e); }
+  },
+
+  // PATCH /leave-request/:id/reject
+  reject: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { reason } = req.body;
+      await db.query(`UPDATE hr_leave_requests SET status='REJECTED', rejected_reason=? WHERE id=?`, [reason || '', id]);
+      ok(res, null, 'Từ chối đơn nghỉ thành công');
+    } catch (e) { fail(res, 500, 'Lỗi từ chối đơn nghỉ', e); }
+  },
+};
+
+function mapLeaveRequest(row, depts, rooms) {
+  return {
+    id: String(row.id),
+    staffId: String(row.employee_id),
+    staffCode: row.staff_code,
+    staffName: row.staff_name,
+    position: row.position,
+    departments: depts.filter(d => d.employee_id === row.employee_id).map(d => ({ id: String(d.id), name: d.name })),
+    rooms: rooms.filter(r => r.employee_id === row.employee_id).map(r => ({ id: String(r.id), name: r.name })),
+    leaveQuotaId: row.leave_quota_id ? String(row.leave_quota_id) : null,
+    leaveType: row.leave_type_name || '',
+    fromDate: row.from_date,
+    toDate: row.to_date,
+    totalDays: parseFloat(row.total_days) || 1,
+    reason: row.reason,
+    substituteId: row.substitute_id ? String(row.substitute_id) : null,
+    substituteName: row.substitute_name || '',
+    managerId: row.manager_id ? String(row.manager_id) : null,
+    managerName: row.manager_name || '',
+    status: row.status,
+    approvedById: row.approved_by_id ? String(row.approved_by_id) : null,
+    approvedAt: row.approved_at,
+    rejectedReason: row.rejected_reason,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+module.exports = leaveRequestController;
