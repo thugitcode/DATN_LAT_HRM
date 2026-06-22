@@ -170,7 +170,7 @@ export const useColumns = ({ data = [] }: UseColumnsProps = {}) => {
                         {shift.shiftTemplateName}
                       </span>
                       <span className="text-[14px] text-black whitespace-nowrap bg-[#D4D4D866] rounded-md py-1 px-2.5">
-                        {shift.startTime.slice(0, 5)} - {shift.endTime.slice(0, 5)}
+                        {shift.startTime ? shift.startTime.slice(0, 5) : '--'} - {shift.endTime ? shift.endTime.slice(0, 5) : '--'}
                       </span>
                     </div>
                   );

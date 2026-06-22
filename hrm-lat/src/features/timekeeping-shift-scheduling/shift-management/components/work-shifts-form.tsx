@@ -12,7 +12,6 @@ import {
   useFieldArray,
   useForm,
   useFormContext,
-  type FieldErrors,
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 
@@ -161,14 +160,17 @@ export const WorkShiftsForm = () => {
     control,
     handleSubmit,
     setValue,
-    trigger,
     watch,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = methods;
 
   const fromDate = watch('fromDate');
   const toDate = watch('toDate');
   const isLoading = isSubmitting || isPending;
+
+  // Validation: không cho phân ca ngày quá khứ
+  const today = new Date().toISOString().slice(0, 10);
+  const isPastDate = fromDate && fromDate < today;
 
   const { fields: dayFields, replace: replaceDays } = useFieldArray({ name: 'days', control });
 
@@ -247,8 +249,8 @@ export const WorkShiftsForm = () => {
       note: values.note,
       details: day.shifts.map((s) => ({
         shiftTemplateId: s.shiftTemplateId,
-        startTime: s.startTime,
-        endTime: s.endTime,
+        startTime: s.startTime ?? '',
+        endTime: s.endTime ?? '',
         note: s.note,
       })),
     }));
@@ -313,13 +315,18 @@ export const WorkShiftsForm = () => {
 
           <WrapperBoxForm title={t('work_shifts_form.shift_info')}>
             <div className="mb-4 grid grid-cols-2 gap-3">
-              <FormDatePicker
-                control={control}
-                name="fromDate"
-                label={t('work_shifts_form.from_date')}
-                isRequired
-                disabled={isLoading}
-              />
+              <div className="flex flex-col gap-1">
+                <FormDatePicker
+                  control={control}
+                  name="fromDate"
+                  label={t('work_shifts_form.from_date')}
+                  isRequired
+                  disabled={isLoading}
+                />
+                {isPastDate && (
+                  <p className="text-xs text-red-500 px-1">Không được phép phân ca cho ngày trong quá khứ</p>
+                )}
+              </div>
               <FormDatePicker
                 control={control}
                 name="toDate"
@@ -351,7 +358,7 @@ export const WorkShiftsForm = () => {
           >
             {tc('button.cancel')}
           </Button>
-          <Button type="submit" color="primary" isLoading={isLoading}>
+          <Button type="submit" color="primary" isLoading={isLoading} isDisabled={!!isPastDate}>
             {tc('button.save')}
           </Button>
         </div>
@@ -435,21 +442,48 @@ const ShiftDetailRow = ({
 
   const shiftTemplateId = watch(`${baseName}.shiftTemplateId`);
   const selectedCa = caseCategoryOptions.find((ca) => ca.key === shiftTemplateId);
-  const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
+  // Lock giờ khi ca có sẵn giờ từ DB (startTime không rỗng)
+  const isFixed = !!(selectedCa?.startTime && selectedCa?.endTime);
+  // Ca nghỉ: không có shiftTemplateId hoặc label chứa "nghỉ"
+  const isOff = !shiftTemplateId || (selectedCa?.label || '').toLowerCase().includes('nghỉ');
+
+  // Giờ mặc định theo mã ca chuẩn y tế
+  const FIXED_SHIFT_DEFAULTS: Record<string, { start: string; end: string }> = {
+    HC: { start: '07:30', end: '16:30' },
+    S:  { start: '06:00', end: '14:00' },
+    C:  { start: '14:00', end: '22:00' },
+    D:  { start: '22:00', end: '06:00' },
+    Đ:  { start: '22:00', end: '06:00' },
+  };
 
   const handleSelectShiftTemplate = (id: string) => {
-    const template = caseCategoryOptions.find((e) => e.key === id);
-
+    const shiftId = id ?? '';
+    const template = caseCategoryOptions.find((e) => e.key === shiftId);
     if (!template) return;
 
-    if (template.type === ShiftTypeEnum.SPLIT) {
-      setValue(`${baseName}.startTime`, '');
-      setValue(`${baseName}.endTime`, '');
+    // Ca nghỉ: clear giờ và không validate
+    const isOff = !shiftId || shiftId === '' || (template.label || '').toLowerCase().includes('nghỉ');
+    if (isOff) {
+      setValue(`${baseName}.startTime`, '', { shouldValidate: false });
+      setValue(`${baseName}.endTime`, '', { shouldValidate: false });
       return;
     }
 
-    setValue(`${baseName}.startTime`, normalizeTime(template.startTime), { shouldValidate: true });
-    setValue(`${baseName}.endTime`, normalizeTime(template.endTime), { shouldValidate: true });
+    // Ca linh hoạt / SPLIT: mở khóa để nhập tay
+    if (template.type === ShiftTypeEnum.SPLIT || template.type === ShiftTypeEnum.FLEXIBLE) {
+      setValue(`${baseName}.startTime`, normalizeTime(template.startTime) || '');
+      setValue(`${baseName}.endTime`, normalizeTime(template.endTime) || '');
+      return;
+    }
+
+    // Ca cố định: auto-fill từ DB, fallback về mặc định theo mã ca
+    const code = (template.label || '').toUpperCase().split(' ')[0] || '';
+    const defaults = FIXED_SHIFT_DEFAULTS[code];
+    const startTime = normalizeTime(template.startTime) || defaults?.start || '';
+    const endTime   = normalizeTime(template.endTime)   || defaults?.end   || '';
+
+    setValue(`${baseName}.startTime`, startTime, { shouldValidate: true });
+    setValue(`${baseName}.endTime`, endTime, { shouldValidate: true });
   };
 
   return (
@@ -477,21 +511,21 @@ const ShiftDetailRow = ({
           isRequired
           disabled={isLoading}
           options={caseCategoryOptions}
-          onSelect={handleSelectShiftTemplate}
+          onSelect={handleSelectShiftTemplate as any}
         />
         <FormTimePicker
           control={control}
           name={`${baseName}.startTime`}
           label={t('work_shifts_form.start_time')}
           isRequired
-          disabled={isLoading || isFixed}
+          disabled={isLoading || isFixed || isOff}
         />
         <FormTimePicker
           control={control}
           name={`${baseName}.endTime`}
           label={t('work_shifts_form.end_time')}
-          isRequired
-          disabled={isLoading || isFixed}
+          isRequired={!isOff}
+          disabled={isLoading || isFixed || isOff}
         />
       </div>
     </div>

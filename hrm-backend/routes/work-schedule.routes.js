@@ -15,5 +15,6 @@ router.get('/',                                ctrl.getAll);
 router.post('/',                               ctrl.create);
 router.get('/:id',                             ctrl.getById);
 router.patch('/:id',                           ctrl.update);
+router.delete('/:id',                          ctrl.delete);
 
 module.exports = router;

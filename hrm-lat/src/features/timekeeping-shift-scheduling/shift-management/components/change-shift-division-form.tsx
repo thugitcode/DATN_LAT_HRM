@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, type FC } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
-import { Form } from '@heroui/react';
+import { Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -20,14 +20,14 @@ import { FormAutocomplete } from '@/components/form-fields/form-autocomplete';
 import { FormSelect } from '@/components/form-fields/form-select';
 import { FormTimePicker } from '@/components/form-fields/form-time-picker';
 
-import { useUpdateShiftManagement } from '../hooks/use-shift-management';
+import { useDeleteShiftManagement, useUpdateShiftManagement } from '../hooks/use-shift-management';
+import { useDrawer } from '@/store/useDrawer';
 import { shiftDivisinSchema, type ShiftDivisinFormValues } from '../schemas/shift-division.schema';
 import type {
   DepartmentWorkScheduleDetail,
   RoomWorkScheduleDetail,
   ShiftTemplateWorkScheduleDetail,
 } from '../types/type';
-import { FooterFrawer } from './footer-drawer';
 
 interface ChangeShiftDivisionFormProps {
   shift?: ShiftTemplateWorkScheduleDetail;
@@ -43,7 +43,7 @@ interface ChangeShiftDivisionFormProps {
 export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>> = ({
   shift,
   staffRow,
-  matchedSchedule,
+  matchedSchedule: _matchedSchedule,
   workScheduleId,
   shiftRow,
   note,
@@ -55,7 +55,10 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
 
   const { options: caseCategoryOptions } = useCaseCategoryOptions();
   const { mutate } = useUpdateShiftManagement();
-  const isMounted = useRef(false);
+  const { mutate: deleteShift, isPending: isDeleting } = useDeleteShiftManagement();
+  const closedDrawer = useDrawer((state) => state.onClose);
+  const handleDelete = () => { if (workScheduleId) deleteShift(workScheduleId); };
+  const _isMounted = useRef(false);
 
   const {
     control,
@@ -96,7 +99,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
   const caId = watch('caId');
   const initialCaId = useRef(shift?.id ?? '');
   const selectedCa = caseCategoryOptions.find((ca) => ca.key === caId);
-  const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED;
+  const isFixed = selectedCa?.type === ShiftTypeEnum.FIXED && !!(selectedCa?.startTime && selectedCa?.endTime);
 
   useEffect(() => {
     if (caId === initialCaId.current) return;
@@ -176,7 +179,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
             name="startTime"
             label={
               isFixed
-                ? t('shift_details.card.check_in') // reuse key đã có
+                ? t('shift_details.card.check_in')
                 : t('change_shift_division.check_in_note')
             }
             isRequired
@@ -188,7 +191,7 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
             name="endTime"
             label={
               isFixed
-                ? t('shift_details.card.check_out') // reuse key đã có
+                ? t('shift_details.card.check_out')
                 : t('change_shift_division.check_out_note')
             }
             isRequired
@@ -205,7 +208,35 @@ export const ChangeShiftDivisionForm: FC<Readonly<ChangeShiftDivisionFormProps>>
         </div>
       </div>
 
-      <FooterFrawer isLoading={isSubmitting} submitLabel={tc('button.update')} />
+      <div className="flex px-6 py-4 bg-white border-t border-[#E4E4E7] items-center justify-between sticky bottom-0 z-10 shadow-[0_-2px_8px_rgba(0,0,0,0.06)]">
+        <Button
+          type="button"
+          variant="bordered"
+          color="danger"
+          isLoading={isDeleting}
+          onPress={handleDelete}
+          className="h-10 px-5 rounded-xl font-medium"
+        >
+          Xóa phân ca
+        </Button>
+        <div className="flex gap-3">
+          <Button
+            variant="bordered"
+            onPress={closedDrawer}
+            className="h-10 px-5 rounded-xl border-[#6576FF] text-[#6576FF]"
+          >
+            {tc('button.cancel')}
+          </Button>
+          <Button
+            type="submit"
+            color="primary"
+            isLoading={isSubmitting}
+            className="h-10 px-5 rounded-xl"
+          >
+            {tc('button.update')}
+          </Button>
+        </div>
+      </div>
     </Form>
   );
 };

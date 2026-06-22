@@ -87,11 +87,18 @@ export function useUpdateShiftManagement() {
 
 export function useDeleteShiftManagement() {
   const queryClient = useQueryClient();
+  const closeDrawer = useDrawer((state) => state.onClose);
 
   return useMutation({
     mutationFn: (id: string | number) => shiftManagementService.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: shiftManagementKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: shiftManagementKeys.grids() });
+      addToast({ description: 'Xóa phân ca thành công.', color: 'success' });
+      closeDrawer();
+    },
+    onError: () => {
+      addToast({ description: 'Xóa phân ca thất bại.', color: 'danger' });
     },
   });
 }

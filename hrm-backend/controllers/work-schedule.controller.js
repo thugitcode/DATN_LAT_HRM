@@ -22,24 +22,29 @@ function statusCode(s) {
 }
 function buildSummary(details) {
   return {
-    totalWork: details.length, workDays: details.filter(d=>d.status==='PRESENT').length,
+    totalWork: details.length,
+    workDays: details.filter(d=>d.status==='PRESENT').length,
     actualWorkDays: details.filter(d=>['PRESENT','LATE','EARLY_LEAVE'].includes(d.status)).length,
     absentDays: details.filter(d=>d.status==='ABSENT').length,
     totalLateMinutes:0, totalEarlyMinutes:0,
     holiday: details.filter(d=>d.status==='HOLIDAY').length,
     onCall: details.filter(d=>d.status==='ON_CALL').length,
     paidLeave: details.filter(d=>d.status==='LEAVE').length,
-    otherLeave:0, overtimeHours:0, totalAttendance: details.filter(d=>d.check_in_time).length,
+    otherLeave:0,
+    overtimeHours: details.reduce((s,d) => s + (parseFloat(d.overtime_hours)||0), 0),
+    totalAttendance: details.filter(d=>d.check_in_time).length,
     compHours:0, compLeave:0, compRest:0, socialInsuranceLeave:0, unpaidLeave:0,
     violationCount: details.filter(d=>['LATE','EARLY_LEAVE','MISSING_CHECKIN','MISSING_CHECKOUT'].includes(d.status)).length,
-    totalWorkHours:0,
+    totalWorkHours: details.reduce((s,d) => s + (parseFloat(d.actual_hours)||0), 0),
+    nightShiftCount: details.filter(d=>['D','Đ','d','đ'].includes((d.shift_code||'').toUpperCase()) && d.status==='PRESENT').length,
   };
 }
 
-// Lấy danh sách nhân viên với filter
 async function getStaffList(query) {
-  const { staffId, departmentId, roomId, search, page = 1, limit = 20 } = query;
-  const offset = (parseInt(page) - 1) * parseInt(limit);
+  const { staffId, departmentId, roomId, search } = query;
+  const page  = parseInt(query.page)  || 1;
+  const limit = parseInt(query.limit) || 20;
+  const offset = (page - 1) * limit;
 
   let where = ["e.status != 'RESIGNED'"];
   let params = [];
@@ -54,21 +59,18 @@ async function getStaffList(query) {
      LEFT JOIN hr_staff_rooms rsr ON rsr.employee_id=e.id
      WHERE ${where.join(' AND ')}`, params
   );
-
   const [staff] = await db.query(`
     SELECT DISTINCT e.id, e.employee_code as code, e.full_name as name, e.avatar
     FROM hr_employees e
     LEFT JOIN hr_staff_departments rsd ON rsd.employee_id=e.id
     LEFT JOIN hr_staff_rooms rsr ON rsr.employee_id=e.id
     WHERE ${where.join(' AND ')}
-    ORDER BY e.full_name
-    LIMIT ? OFFSET ?
-  `, [...params, parseInt(limit), offset]);
+    ORDER BY e.full_name LIMIT ? OFFSET ?
+  `, [...params, limit, offset]);
 
   return { staff, total: parseInt(total) };
 }
 
-// Lấy departments và rooms cho list staff
 async function getStaffDeptRooms(staffIds) {
   if (!staffIds.length) return { depts: [], rooms: [] };
   const [depts] = await db.query(
@@ -82,30 +84,31 @@ async function getStaffDeptRooms(staffIds) {
   return { depts, rooms };
 }
 
-// ─── controllers ────────────────────────────────────────────
 const workScheduleController = {
 
-  // GET /work-schedule?startDate=&endDate=&departmentId=&roomId=&search=&page=&limit=
+  // GET /work-schedule
   getAll: async (req, res) => {
     try {
-      const { startDate, endDate, fromDate, toDate, month, page = 1, limit = 20 } = req.query;
+      const { startDate, endDate, fromDate, toDate, month } = req.query;
       const filterFrom = startDate || fromDate || (month ? `${month}-01` : null);
       const filterTo   = endDate   || toDate   || (month ? getLastDay(month) : null);
+      const page  = parseInt(req.query.page)  || 1;
+      const limit = parseInt(req.query.limit) || 20;
 
       const { staff, total } = await getStaffList(req.query);
       if (!staff.length) return res.json({
-        statusCode:200, data:{data:[],shiftTypesCount:{},summary:{}},
-        pagination:{total:0,page:parseInt(page),limit:parseInt(limit)}, metadata:null, message:'success'
+        statusCode:200, data:[], shiftTypesCount:{}, summary:{},
+        pagination:{total:0,page,limit,totalPage:0}, metadata:null, message:'success'
       });
 
       const staffIds = staff.map(s => s.id);
       const { depts, rooms } = await getStaffDeptRooms(staffIds);
 
-      // Lấy schedule details trong khoảng ngày
       let scheduleDetails = [];
       if (filterFrom && filterTo) {
         [scheduleDetails] = await db.query(`
-          SELECT wsd.id, wsd.work_schedule_id, wsd.shift_template_id, wsd.work_date,
+          SELECT wsd.id, wsd.work_schedule_id, wsd.shift_template_id,
+                 DATE_FORMAT(wsd.work_date, '%Y-%m-%d') as work_date,
                  wsd.start_time, wsd.end_time, wsd.check_in_time, wsd.check_out_time,
                  wsd.status, wsd.work_weight, wsd.note,
                  ws.employee_id,
@@ -133,21 +136,18 @@ const workScheduleController = {
             shiftTemplateName: d.shift_name,
             shiftTemplateCode: d.shift_code,
             shiftTemplateType: d.shift_type,
-            startTime: d.shift_start,
-            endTime: d.shift_end,
+            startTime: d.start_time || d.shift_start,
+            endTime: d.end_time || d.shift_end,
             status: d.status,
             checkInTime: d.check_in_time || null,
             checkOutTime: d.check_out_time || null,
           });
         });
-
         const shiftTypesCount = { FIXED: 0, FLEXIBLE: 0, ON_CALL: 0, SPLIT: 0 };
         sdList.forEach(d => { if (shiftTypesCount[d.shift_type] !== undefined) shiftTypesCount[d.shift_type]++; });
-
         return {
           staff: {
-            id: String(s.id), code: s.code, name: s.name, avatar: s.avatar,
-            position: '',
+            id: String(s.id), code: s.code, name: s.name, avatar: s.avatar, position: '',
             departments: depts.filter(d=>d.employee_id===s.id).map(d=>({id:String(d.id),name:d.name})),
             rooms: rooms.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
             status: 'ACTIVE',
@@ -158,90 +158,127 @@ const workScheduleController = {
       });
 
       return res.json({
-        statusCode: 200,
-        data: gridData,
+        statusCode: 200, data: gridData,
         shiftTypesCount: { FIXED: 0, FLEXIBLE: 0, ON_CALL: 0, SPLIT: 0 },
         summary: {},
-        pagination: { total, page: parseInt(page), limit: parseInt(limit), totalPage: Math.ceil(total / parseInt(limit)) },
-        metadata: null,
-        message: 'success',
+        pagination: { total, page, limit, totalPage: Math.ceil(total/limit) },
+        metadata: null, message: 'success',
       });
     } catch (e) { fail(res, 500, 'Lỗi lấy danh sách phân ca', e); }
   },
 
-  // GET /work-schedule/calendar — alias cho getAll dạng calendar
-  getCalendar: async (req, res) => {
-    return workScheduleController.getAll(req, res);
-  },
+  getCalendar: async (req, res) => workScheduleController.getAll(req, res),
 
-  // POST /work-schedule — tạo phân ca + tự sinh chấm công
+  // POST /work-schedule
   create: async (req, res) => {
     try {
       const { staffId, departmentId, roomId, fromDate, toDate, note, details } = req.body;
       if (!staffId || !details?.length) return fail(res, 400, 'Thiếu thông tin phân ca');
 
       const [ws] = await db.query(
-        `INSERT INTO hr_work_schedules (employee_id, department_id, room_id, from_date, to_date, note) VALUES (?,?,?,?,?,?)`,
+        `INSERT INTO hr_work_schedules (employee_id,department_id,room_id,from_date,to_date,note) VALUES (?,?,?,?,?,?)`,
         [staffId, departmentId||null, roomId||null, fromDate, toDate, note||null]
       );
       const wsId = ws.insertId;
-
       const dates = getDateRange(fromDate, toDate);
+
       for (const date of dates) {
         for (const d of details) {
-          const [wsd] = await db.query(
-            `INSERT INTO hr_work_schedule_details (work_schedule_id, employee_id, shift_template_id, work_date, start_time, end_time, note) VALUES (?,?,?,?,?,?,?)`,
-            [wsId, staffId, d.shiftTemplateId, date, d.startTime, d.endTime, d.note||null]
+          const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
+          // UPSERT - tránh duplicate
+          const [[existing]] = await db.query(
+            `SELECT id FROM hr_work_schedule_details WHERE work_schedule_id=? AND work_date=? AND shift_template_id=?`,
+            [wsId, date, d.shiftTemplateId]
           );
-          // Tự sinh chấm công từ ca
-          await generateAttendance(staffId, wsd.insertId, date, d.shiftTemplateId, d.startTime);
+          if (!existing) {
+            const [wsd] = await db.query(
+              `INSERT INTO hr_work_schedule_details (work_schedule_id,employee_id,shift_template_id,work_date,start_time,end_time,note) VALUES (?,?,?,?,?,?,?)`,
+              [wsId, staffId, d.shiftTemplateId, date, startTime, endTime, d.note||null]
+            );
+            await generateAttendance(staffId, wsd.insertId, date, d.shiftTemplateId, startTime);
+          }
         }
       }
-
       ok(res, { id: String(wsId) }, 'Thêm phân ca thành công');
     } catch (e) { fail(res, 500, 'Lỗi tạo phân ca', e); }
   },
 
-  // POST /work-schedule/range — phân ca nhiều ngày + tự sinh chấm công
-  createRange: async (req, res) => {
-    try {
-      const { staffId, departmentId, roomId, fromDate, toDate, note, details } = req.body;
-      if (!staffId || !details?.length) return fail(res, 400, 'Thiếu thông tin phân ca');
-
-      const [ws] = await db.query(
-        `INSERT INTO hr_work_schedules (employee_id, department_id, room_id, from_date, to_date, note) VALUES (?,?,?,?,?,?)`,
-        [staffId, departmentId||null, roomId||null, fromDate, toDate, note||null]
-      );
-      const wsId = ws.insertId;
-
-      const dates = getDateRange(fromDate, toDate);
-      for (const date of dates) {
-        for (const d of details) {
-          const [wsd] = await db.query(
-            `INSERT INTO hr_work_schedule_details (work_schedule_id, employee_id, shift_template_id, work_date, start_time, end_time, note) VALUES (?,?,?,?,?,?,?)`,
-            [wsId, staffId, d.shiftTemplateId, date, d.startTime, d.endTime, d.note||null]
-          );
-          await generateAttendance(staffId, wsd.insertId, date, d.shiftTemplateId, d.startTime);
-        }
-      }
-
-      ok(res, { id: String(wsId) }, 'Thêm phân ca thành công');
-    } catch (e) { fail(res, 500, 'Lỗi tạo phân ca nhiều ngày', e); }
-  },
+  // POST /work-schedule/range
+  createRange: async (req, res) => workScheduleController.create(req, res),
 
   // GET /work-schedule/:id
   getById: async (req, res) => {
     try {
       const [[ws]] = await db.query(`
-        SELECT ws.*, e.employee_code as staff_code, e.full_name as staff_name
+        SELECT ws.*, e.employee_code, e.full_name, e.avatar as staff_avatar
         FROM hr_work_schedules ws JOIN hr_employees e ON e.id=ws.employee_id
         WHERE ws.id=?`, [req.params.id]);
       if (!ws) return fail(res, 404, 'Không tìm thấy phân ca');
-      const [details] = await db.query(`
-        SELECT wsd.*, st.name as shift_name, st.code as shift_code, st.shift_type
-        FROM hr_work_schedule_details wsd JOIN shifts st ON st.id=wsd.shift_template_id
-        WHERE wsd.work_schedule_id=? ORDER BY wsd.work_date`, [req.params.id]);
-      ok(res, { ...ws, details });
+
+      const [[wsd]] = await db.query(`
+        SELECT wsd.*, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+               st.id as st_id, st.name as st_name, st.code as st_code,
+               st.shift_type, st.start_time as st_start, st.end_time as st_end,
+               st.coefficient, st.work_hours as st_hours, '#6576FF' as color
+        FROM hr_work_schedule_details wsd
+        JOIN shifts st ON st.id=wsd.shift_template_id
+        WHERE wsd.work_schedule_id=? ORDER BY wsd.work_date LIMIT 1`, [req.params.id]);
+
+      // Lấy dept/room từ hr_work_schedules (đúng với lúc tạo phân ca)
+      const [[dept]] = await db.query(
+        `SELECT id, name, code FROM cat_departments WHERE id=?`, [ws.department_id]
+      );
+      const [[room]] = ws.room_id
+        ? await db.query(`SELECT id, name, code FROM cat_rooms WHERE id=?`, [ws.room_id])
+        : [[null]];
+
+      // Lấy tất cả dept/room của nhân viên cho dropdown
+      const [allDepts] = await db.query(`
+        SELECT d.id, d.name FROM hr_staff_departments rsd
+        JOIN cat_departments d ON d.code=rsd.department_code
+        WHERE rsd.employee_id=?
+      `, [ws.employee_id]);
+      const [allRooms] = await db.query(`
+        SELECT r.id, r.name FROM hr_staff_rooms rsr
+        JOIN cat_rooms r ON r.code=rsr.room_code
+        WHERE rsr.employee_id=?
+      `, [ws.employee_id]);
+
+      ok(res, {
+        id: String(ws.id), workDate: wsd?.work_date||null,
+        startTime: wsd?.st_start||null, endTime: wsd?.st_end||null,
+        status: wsd?.status||'SCHEDULED', note: wsd?.note || ws.note || '',
+        createdAt: ws.created_at, updatedAt: ws.updated_at, deletedAt: null,
+
+        shiftTemplate: wsd ? {
+          id:String(wsd.st_id), code:wsd.st_code, name:wsd.st_name, type:wsd.shift_type,
+          startTime:wsd.st_start, endTime:wsd.st_end,
+          coefficient:wsd.coefficient||'1', standardHours:wsd.st_hours||'8',
+          color:wsd.color||'#6576FF', status:'ACTIVE',
+        } : null,
+        department: dept ? {id:String(dept.id),code:dept.code,name:dept.name,status:'ACTIVE'} : null,
+        room: room ? {id:String(room.id),code:room.code,name:room.name,status:'ACTIVE'} : null,
+        // Trả đầy đủ để FE auto-fill dropdown
+        // Merge dept/room của phân ca vào list nếu chưa có
+        staff: {
+          id: String(ws.employee_id), code: ws.employee_code, name: ws.full_name,
+          avatar: ws.staff_avatar ? `http://localhost:5000/${ws.staff_avatar}` : null,
+          departments: (() => {
+            const list = allDepts.map(d => ({ id: String(d.id), name: d.name }));
+            if (dept && !list.find(d => d.id === String(dept.id))) {
+              list.unshift({ id: String(dept.id), name: dept.name });
+            }
+            return list;
+          })(),
+          rooms: (() => {
+            const list = allRooms.map(r => ({ id: String(r.id), name: r.name }));
+            if (room && !list.find(r => r.id === String(room.id))) {
+              list.unshift({ id: String(room.id), name: room.name });
+            }
+            return list;
+          })(),
+        },
+      });
     } catch (e) { fail(res, 500, 'Lỗi lấy chi tiết phân ca', e); }
   },
 
@@ -249,21 +286,35 @@ const workScheduleController = {
   update: async (req, res) => {
     try {
       const { roomId, departmentId, note, status, details } = req.body;
+      const [[ws]] = await db.query(`SELECT employee_id,from_date,to_date FROM hr_work_schedules WHERE id=?`, [req.params.id]);
+      if (!ws) return fail(res, 404, 'Không tìm thấy phân ca');
+
       await db.query(
         `UPDATE hr_work_schedules SET room_id=?,department_id=?,note=?,status=? WHERE id=?`,
         [roomId||null, departmentId||null, note||null, status||'SCHEDULED', req.params.id]
       );
+
       if (details?.length) {
-        await db.query(`DELETE FROM hr_work_schedule_details WHERE work_schedule_id=?`, [req.params.id]);
-        const [[ws]] = await db.query(`SELECT employee_id,from_date,to_date FROM hr_work_schedules WHERE id=?`, [req.params.id]);
-        const dates = getDateRange(ws.from_date, ws.to_date);
-        for (const date of dates) {
-          for (const d of details) {
-            const [wsd] = await db.query(
-              `INSERT INTO hr_work_schedule_details (work_schedule_id,employee_id,shift_template_id,work_date,start_time,end_time,note) VALUES (?,?,?,?,?,?,?)`,
-              [req.params.id, ws.employee_id, d.shiftTemplateId, date, d.startTime, d.endTime, d.note||null]
+        for (const d of details) {
+          const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
+          const [[existing]] = await db.query(
+            `SELECT id FROM hr_work_schedule_details WHERE work_schedule_id=? LIMIT 1`, [req.params.id]
+          );
+          if (existing) {
+            await db.query(
+              `UPDATE hr_work_schedule_details SET shift_template_id=?,start_time=?,end_time=?,note=? WHERE id=?`,
+              [d.shiftTemplateId, startTime, endTime, d.note||null, existing.id]
             );
-            await generateAttendance(ws.employee_id, wsd.insertId, date, d.shiftTemplateId, d.startTime);
+            await generateAttendance(ws.employee_id, existing.id, null, d.shiftTemplateId, startTime);
+          } else {
+            const dates = getDateRange(ws.from_date, ws.to_date);
+            for (const date of dates) {
+              const [wsd] = await db.query(
+                `INSERT INTO hr_work_schedule_details (work_schedule_id,employee_id,shift_template_id,work_date,start_time,end_time,note) VALUES (?,?,?,?,?,?,?)`,
+                [req.params.id, ws.employee_id, d.shiftTemplateId, date, startTime, endTime, d.note||null]
+              );
+              await generateAttendance(ws.employee_id, wsd.insertId, date, d.shiftTemplateId, startTime);
+            }
           }
         }
       }
@@ -271,29 +322,35 @@ const workScheduleController = {
     } catch (e) { fail(res, 500, 'Lỗi cập nhật phân ca', e); }
   },
 
-  // GET /work-schedule/attendance-table | /detailed-attendance-table
+  // DELETE /work-schedule/:id
+  delete: async (req, res) => {
+    try {
+      await db.query(`DELETE FROM hr_work_schedule_details WHERE work_schedule_id=?`, [req.params.id]);
+      await db.query(`DELETE FROM hr_work_schedules WHERE id=?`, [req.params.id]);
+      ok(res, null, 'Xóa phân ca thành công');
+    } catch (e) { fail(res, 500, 'Lỗi xóa phân ca', e); }
+  },
+
+  // GET /work-schedule/attendance-table
   getAttendanceTable: async (req, res) => {
     try {
-      const { month, departmentId, roomId, staffId, search } = req.query;
+      const { month } = req.query;
       const page  = parseInt(req.query.page)  || 1;
       const limit = parseInt(req.query.limit) || 20;
       const currentMonth = month || new Date().toISOString().slice(0, 7);
-      const fromDate = `${currentMonth}-01`;
-      const toDate   = getLastDay(currentMonth);
+      const fromDate = `${currentMonth}-01`, toDate = getLastDay(currentMonth);
 
       const { staff, total } = await getStaffList({ ...req.query, page, limit });
       if (!staff.length) return ok(res, []);
-
       const staffIds = staff.map(s => s.id);
       const { depts, rooms } = await getStaffDeptRooms(staffIds);
 
-      const [details] = await db.query(`
-        SELECT wsd.id, wsd.work_date, wsd.start_time, wsd.end_time,
-               wsd.check_in_time, wsd.check_out_time, wsd.status, wsd.work_weight,
-               ws.employee_id,
+      let [details] = await db.query(`
+        SELECT wsd.id, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+               wsd.start_time, wsd.end_time, wsd.check_in_time, wsd.check_out_time,
+               wsd.status, wsd.work_weight, ws.employee_id,
                st.name as shift_name, st.code as shift_code, st.shift_type,
-               st.start_time as shift_start, st.end_time as shift_end,
-               st.id as shift_template_id
+               st.start_time as shift_start, st.end_time as shift_end, st.id as shift_template_id
         FROM hr_work_schedule_details wsd
         JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
         JOIN shifts st ON st.id=wsd.shift_template_id
@@ -307,33 +364,28 @@ const workScheduleController = {
         sd.forEach(d => {
           const key = d.shift_template_id;
           if (!byShift[key]) byShift[key] = {
-            shift: { id:String(d.shift_template_id), code:d.shift_code, name:d.shift_name,
-                     startTime:d.shift_start, endTime:d.shift_end, breakTimes:[] },
+            shift: {id:String(d.shift_template_id),code:d.shift_code,name:d.shift_name,startTime:d.shift_start,endTime:d.shift_end,breakTimes:[]},
             days: {}, summary: buildSummary([]),
           };
           byShift[key].days[d.work_date] = {
-            workScheduleDetailId: String(d.id), date: d.work_date,
+            workScheduleDetailId:String(d.id), date:d.work_date,
             displayCode: statusCode(d.status),
-            shiftStartTime: d.shift_start, shiftEndTime: d.shift_end,
-            checkInTime: d.check_in_time||null, checkOutTime: d.check_out_time||null,
-            status: d.status, workWeight: parseFloat(d.work_weight)||1,
+            shiftStartTime:d.shift_start, shiftEndTime:d.shift_end,
+            checkInTime:d.check_in_time||null, checkOutTime:d.check_out_time||null,
+            status:d.status, workWeight:parseFloat(d.work_weight)||1,
           };
         });
         Object.values(byShift).forEach(g => {
           g.summary = buildSummary(sd.filter(d=>d.shift_template_id===parseInt(g.shift.id)));
         });
-
         return {
-          staff: {
-            id:String(s.id), code:s.code, name:s.name, avatar:s.avatar, status:'ACTIVE',
-            departments: depts.filter(d=>d.employee_id===s.id).map(d=>({id:String(d.id),name:d.name})),
-            rooms: rooms.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
+          staff: { id:String(s.id),code:s.code,name:s.name,avatar:s.avatar,status:'ACTIVE',
+            departments:depts.filter(d=>d.employee_id===s.id).map(d=>({id:String(d.id),name:d.name})),
+            rooms:rooms.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
           },
-          shifts: Object.values(byShift),
-          summary: buildSummary(sd),
+          shifts: Object.values(byShift), summary: buildSummary(sd),
         };
       });
-
       ok(res, result);
     } catch (e) { fail(res, 500, 'Lỗi lấy bảng chấm công', e); }
   },
@@ -341,22 +393,20 @@ const workScheduleController = {
   // GET /work-schedule/attendance-by-hours
   getAttendanceByHours: async (req, res) => {
     try {
-      const { month, departmentId, roomId, staffId } = req.query;
+      const { month } = req.query;
       const page  = parseInt(req.query.page)  || 1;
       const limit = parseInt(req.query.limit) || 20;
       const currentMonth = month || new Date().toISOString().slice(0, 7);
-      const fromDate = `${currentMonth}-01`;
-      const toDate   = getLastDay(currentMonth);
+      const fromDate = `${currentMonth}-01`, toDate = getLastDay(currentMonth);
 
-      const { staff, total } = await getStaffList({ ...req.query, page, limit });
+      const { staff } = await getStaffList({ ...req.query, page, limit });
       if (!staff.length) return ok(res, []);
-
       const staffIds = staff.map(s => s.id);
       const { depts, rooms } = await getStaffDeptRooms(staffIds);
 
-      const [details] = await db.query(`
-        SELECT ws.employee_id, wsd.work_date, wsd.check_in_time, wsd.check_out_time, wsd.status,
-               TIMESTAMPDIFF(MINUTE, wsd.check_in_time, wsd.check_out_time) as worked_minutes
+      let [details] = await db.query(`
+        SELECT ws.employee_id, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+               wsd.check_in_time, wsd.check_out_time, wsd.status
         FROM hr_work_schedule_details wsd
         JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
         WHERE ws.employee_id IN (?) AND wsd.work_date BETWEEN ? AND ?
@@ -366,20 +416,27 @@ const workScheduleController = {
         const sd = details.filter(d => d.employee_id === s.id);
         const days = {};
         sd.forEach(d => {
-          const h = d.worked_minutes ? Math.round(d.worked_minutes/60*100)/100 : 0;
-          days[d.work_date] = { date:d.work_date, dayOfWeek:new Date(d.work_date).getDay(), hours:h, status:d.status };
+          // Tính giờ theo công thức - handle ca đêm qua ngày
+          let hours = 0;
+          if (d.check_in_time && d.check_out_time) {
+            const inMs  = new Date(d.check_in_time).getTime();
+            const outMs = new Date(d.check_out_time).getTime();
+            let diff = (outMs - inMs) / 3600000;
+            if (diff < 0) diff += 24; // ca đêm qua ngày
+            hours = Math.round(diff * 100) / 100;
+          }
+          if (!days[d.work_date]) days[d.work_date] = { date:d.work_date, dayOfWeek:new Date(d.work_date).getDay(), hours:0, status:d.status };
+          days[d.work_date].hours += hours; // cộng dồn nhiều ca/ngày
         });
         return {
-          staffId:String(s.id), staffCode:s.code, staffName:s.name,
-          position:'',
-          departments: depts.filter(d=>d.employee_id===s.id).map(d=>({id:String(d.id),name:d.name})),
-          rooms: rooms.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
+          staffId:String(s.id), staffCode:s.code, staffName:s.name, position:'',
+          departments:depts.filter(d=>d.employee_id===s.id).map(d=>({id:String(d.id),name:d.name})),
+          rooms:rooms.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
           days,
           totalHours: Object.values(days).reduce((s,d)=>s+d.hours,0),
           standardHours: 8 * Object.keys(days).length,
         };
       });
-
       ok(res, result);
     } catch (e) { fail(res, 500, 'Lỗi lấy chấm công theo giờ', e); }
   },
@@ -388,7 +445,8 @@ const workScheduleController = {
   getDetail: async (req, res) => {
     try {
       const [[d]] = await db.query(`
-        SELECT wsd.*, ws.employee_id, ws.department_id, ws.room_id,
+        SELECT wsd.*, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+               ws.employee_id, ws.department_id, ws.room_id,
                e.employee_code as staff_code, e.full_name as staff_name, e.avatar,
                st.name as shift_name, st.code as shift_code, st.shift_type,
                dep.name as department_name, r.name as room_name
@@ -416,18 +474,18 @@ const workScheduleController = {
     } catch (e) { fail(res, 500, 'Lỗi cập nhật chấm công', e); }
   },
 
-  // GET /work-schedule/staff-daily-attendance?staffId=&month=
+  // GET /work-schedule/staff-daily-attendance
   getStaffDailyAttendance: async (req, res) => {
     try {
       const { staffId, month } = req.query;
       if (!staffId) return fail(res, 400, 'Thiếu staffId');
       const currentMonth = month || new Date().toISOString().slice(0, 7);
-      const fromDate = `${currentMonth}-01`;
-      const toDate   = getLastDay(currentMonth);
+      const fromDate = `${currentMonth}-01`, toDate = getLastDay(currentMonth);
 
-      const [details] = await db.query(`
-        SELECT wsd.id, wsd.work_date, wsd.start_time, wsd.end_time,
-               wsd.check_in_time, wsd.check_out_time, wsd.status, wsd.work_weight, wsd.note,
+      let [details] = await db.query(`
+        SELECT wsd.id, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+               wsd.start_time, wsd.end_time, wsd.check_in_time, wsd.check_out_time,
+               wsd.status, wsd.work_weight, wsd.note,
                st.name as shift_name, st.code as shift_code, st.shift_type,
                st.start_time as shift_start, st.end_time as shift_end
         FROM hr_work_schedule_details wsd
@@ -439,7 +497,7 @@ const workScheduleController = {
 
       const byDate = {};
       details.forEach(d => {
-        if (!byDate[d.work_date]) byDate[d.work_date] = { date:d.work_date, dayOfWeek:new Date(d.work_date).getDay(), shifts:[] };
+        if (!byDate[d.work_date]) byDate[d.work_date] = {date:d.work_date,dayOfWeek:new Date(d.work_date).getDay(),shifts:[]};
         byDate[d.work_date].shifts.push({
           id:String(d.id), shiftName:d.shift_name, shiftCode:d.shift_code, shiftType:d.shift_type,
           startTime:d.shift_start, endTime:d.shift_end,
@@ -447,17 +505,30 @@ const workScheduleController = {
           status:d.status, workWeight:parseFloat(d.work_weight)||1,
         });
       });
-
       ok(res, Object.values(byDate));
     } catch (e) { fail(res, 500, 'Lỗi lấy chấm công nhân viên', e); }
   },
 };
 
-// ─── Mock Attendance Generator ───────────────────────────────
-// Tự sinh giờ chấm công dựa trên ca làm việc
+// ─── Helpers ─────────────────────────────────────────────────
+async function resolveShiftTimes(shiftTemplateId, startTime, endTime) {
+  let st = startTime || null, et = endTime || null;
+  if (!st || !et) {
+    const [[sh]] = await db.query(`SELECT start_time, end_time FROM shifts WHERE id=?`, [shiftTemplateId]);
+    if (sh) { st = st || sh.start_time; et = et || sh.end_time; }
+  }
+  return { startTime: st || '00:00:00', endTime: et || '00:00:00' };
+}
+
+// Mock Attendance Generator — tự sinh chấm công theo ca
 async function generateAttendance(employeeId, wsdId, date, shiftTemplateId, startTime) {
   try {
-    // Lấy thông tin ca
+    if (!date) {
+      const [[wsd]] = await db.query(`SELECT DATE_FORMAT(work_date,'%Y-%m-%d') as work_date FROM hr_work_schedule_details WHERE id=?`, [wsdId]);
+      date = wsd?.work_date;
+    }
+    if (!date) return;
+
     const [[shift]] = await db.query(`SELECT code, shift_type, start_time, end_time FROM shifts WHERE id=?`, [shiftTemplateId]);
     if (!shift) return;
 
@@ -465,39 +536,36 @@ async function generateAttendance(employeeId, wsdId, date, shiftTemplateId, star
     const st   = shift.start_time || startTime || '07:00:00';
     let checkIn, checkOut;
 
-    // Quy tắc sinh giờ theo loại ca
-    if (code.startsWith('HC') || st.startsWith('07') || st.startsWith('08')) {
-      checkIn  = `${date} 07:55:00`;
-      checkOut = `${date} 17:05:00`;
-    } else if (code.startsWith('S') || st.startsWith('05') || st.startsWith('06')) {
-      checkIn  = `${date} 05:55:00`;
-      checkOut = `${date} 14:05:00`;
-    } else if (code.startsWith('C') || st.startsWith('13') || st.startsWith('14')) {
-      checkIn  = `${date} 13:55:00`;
-      checkOut = `${date} 22:05:00`;
-    } else if (code.startsWith('D') || code.startsWith('Đ') || st.startsWith('21') || st.startsWith('22')) {
-      checkIn  = `${date} 21:55:00`;
-      // checkout ngày hôm sau
-      const nextDay = new Date(date);
-      nextDay.setDate(nextDay.getDate() + 1);
-      checkOut = `${nextDay.toISOString().slice(0,10)} 06:05:00`;
+    // Giờ theo SRS: HC=07:55-17:05, S=05:55-14:05, C=13:55-22:05, Đ=21:55-06:05
+    if (code.includes('HC') || st.startsWith('07') || st.startsWith('08')) {
+      checkIn = `${date} 07:55:00`; checkOut = `${date} 17:05:00`;
+    } else if (code === 'S' || st.startsWith('05') || st.startsWith('06')) {
+      checkIn = `${date} 05:55:00`; checkOut = `${date} 14:05:00`;
+    } else if (code === 'C' || st.startsWith('13') || st.startsWith('14')) {
+      checkIn = `${date} 13:55:00`; checkOut = `${date} 22:05:00`;
+    } else if (code === 'D' || code === 'Đ' || st.startsWith('21') || st.startsWith('22')) {
+      const next = new Date(date); next.setDate(next.getDate() + 1);
+      checkIn = `${date} 21:55:00`; checkOut = `${next.toISOString().slice(0,10)} 06:05:00`;
     } else {
-      // Ca khác: check in đúng giờ, check out sau 8 tiếng
-      const [h, m] = st.split(':').map(Number);
-      const checkInH = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00`;
-      const outH = (h + 8) % 24;
-      const nextD = h + 8 >= 24 ? (() => { const d2=new Date(date); d2.setDate(d2.getDate()+1); return d2.toISOString().slice(0,10); })() : date;
-      checkIn  = `${date} ${checkInH}`;
-      checkOut = `${nextD} ${String(outH).padStart(2,'0')}:${String(m).padStart(2,'0')}:00`;
+      checkIn = `${date} ${st.slice(0,8)}`; checkOut = `${date} 17:00:00`;
     }
 
-    // Cập nhật vào hr_work_schedule_details
-    await db.query(
-      `UPDATE hr_work_schedule_details SET check_in_time=?, check_out_time=?, status='PRESENT' WHERE id=?`,
-      [checkIn, checkOut, wsdId]
-    );
+    // Tính giờ thực tế theo công thức SRS
+    const inMs  = new Date(checkIn).getTime();
+    const outMs = new Date(checkOut).getTime();
+    let actualHours = (outMs - inMs) / 3600000;
+    if (actualHours < 0) actualHours += 24;
+    const standardHours = 8;
+    const overtimeHours = Math.max(0, actualHours - standardHours);
+
+    await db.query(`
+      UPDATE hr_work_schedule_details
+      SET check_in_time=?, check_out_time=?, status='PRESENT',
+          work_weight=1.00
+      WHERE id=?
+    `, [checkIn, checkOut, wsdId]);
   } catch (e) {
-    console.error('[generateAttendance] Error:', e.message);
+    console.error('[generateAttendance]', e.message);
   }
 }
 

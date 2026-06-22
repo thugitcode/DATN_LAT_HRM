@@ -13,8 +13,15 @@ const isValidTimeFormat = (time: string) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(t
 
 export const shiftDetailSchema = z.object({
   shiftTemplateId: z.string().min(1, 'Ca không được để trống'),
-  startTime: z.string().refine(isValidTimeFormat, 'Giờ bắt đầu không đúng định dạng HH:mm'),
-  endTime: z.string().refine(isValidTimeFormat, 'Giờ kết thúc không đúng định dạng HH:mm'),
+  // Giờ chỉ validate nếu có nhập - ca linh hoạt không bắt buộc
+  startTime: z.string().optional().refine(
+    (v) => !v || v === '' || isValidTimeFormat(v),
+    'Giờ bắt đầu không đúng định dạng HH:mm'
+  ),
+  endTime: z.string().optional().refine(
+    (v) => !v || v === '' || isValidTimeFormat(v),
+    'Giờ kết thúc không đúng định dạng HH:mm'
+  ),
   note: z.string().optional(),
 });
 

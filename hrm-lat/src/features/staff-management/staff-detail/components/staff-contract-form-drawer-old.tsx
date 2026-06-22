@@ -214,7 +214,7 @@ export const StaffContractFormDrawer: FC<StaffContractFormDrawerProps> = ({
 
         setContractType(contract.contractType || '');
         setWorkType(contract.workType || '');
-        setJobTitle(contract.jobTitle || '');
+        setJobTitle(typeof contract.jobTitle === 'object' ? (contract.jobTitle as any)?.id || '' : contract.jobTitle || '');
         setPosition(contract.position || '');
         setDuration(contract.duration?.toString() || '');
         setDurationUnit(contract.durationUnit || 'YEAR');

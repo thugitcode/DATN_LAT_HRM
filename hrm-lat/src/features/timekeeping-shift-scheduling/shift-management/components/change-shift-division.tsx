@@ -10,7 +10,7 @@ import { ChangeShiftDivisionForm } from './change-shift-division-form';
 export const ChangeShiftDivision = () => {
   const dataRow = useDrawer((state) => state.data) as CellDataShift | undefined;
 
-  const { record, shift, date, day, month, year, dayOfWeek } = dataRow ?? {};
+  const { record, shift, date } = dataRow ?? {};
 
   const { staff, schedules } = record || {};
 
@@ -37,7 +37,7 @@ export const ChangeShiftDivision = () => {
 
       <ChangeShiftDivisionForm
         shift={dataDetail?.shiftTemplate}
-        staffRow={staff}
+        staffRow={(dataDetail?.staff ?? staff) as any}
         matchedSchedule={matchedSchedule}
         workScheduleId={shift?.workScheduleId}
         shiftRow={shift}
