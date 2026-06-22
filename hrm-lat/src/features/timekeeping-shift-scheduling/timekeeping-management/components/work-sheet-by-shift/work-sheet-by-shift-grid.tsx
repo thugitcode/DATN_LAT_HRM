@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState, type FC } from 'react';
+import { DrawerType, useDrawer } from '@/store/useDrawer';
 
 import { StaffPosition } from '@/types/global.type';
 import { cn } from '@/lib/utils';
@@ -10,14 +11,51 @@ import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-
 import { ROW_H } from '@/features/timekeeping-shift-scheduling/shift-management/constants/constants';
 
 import { CELL_W, STICKY_COL_W, SUMMARY_COL_W } from '../../constants/data';
-import { useWorkSheetColumns } from '../../hooks/use-work-sheet-columns'; // ✅ dùng hook thay vì import static
+import { useWorkSheetColumns } from '../../hooks/use-work-sheet-columns'; 
 import type { WorkSheetByShiftType } from '../../types/timekeeping-management.type';
-import { GridScheduleRow } from './grid-schedule-row';
 import { GridStickyHeaderRow } from './grid-sticky-header-row';
 
 interface WorkSheetByShiftGridProps {
   data?: WorkSheetByShiftType[];
   isLoading?: boolean;
+}
+
+// Badge hiển thị trạng thái chấm công
+function AttendanceBadge({ code, wsdId }: { code: string; wsdId?: string }) {
+  const open = useDrawer((state) => state.onOpen);
+  const onClick = () => { if (wsdId) open(DrawerType.TIME_SHEET_DETAIL, wsdId); };
+
+  const cfg: Record<string, { bg: string; text: string; label: string }> = {
+    'P':  { bg: 'bg-blue-100',   text: 'text-blue-700',   label: 'Đ'  },
+    'Đ':  { bg: 'bg-blue-100',   text: 'text-blue-700',   label: 'Đ'  },
+    'AB': { bg: 'bg-purple-100', text: 'text-purple-700', label: 'VM' },
+    'VM': { bg: 'bg-purple-100', text: 'text-purple-700', label: 'VM' },
+    'L':  { bg: 'bg-orange-100', text: 'text-orange-700', label: 'M'  },
+    'M':  { bg: 'bg-orange-100', text: 'text-orange-700', label: 'M'  },
+    'EL': { bg: 'bg-orange-100', text: 'text-orange-700', label: 'S'  },
+    'S':  { bg: 'bg-orange-100', text: 'text-orange-700', label: 'S'  },
+    'LV': { bg: 'bg-green-100',  text: 'text-green-700',  label: 'P'  },
+    'GT': { bg: 'bg-blue-200',   text: 'text-blue-800',   label: 'GT' },
+    'N':  { bg: 'bg-gray-100',   text: 'text-gray-400',   label: 'N'  },
+    'SC': { bg: 'bg-gray-100',   text: 'text-gray-400',   label: 'N'  },
+  };
+  const c = cfg[code] ?? { bg: 'bg-gray-100', text: 'text-gray-400', label: 'N' };
+  if (c.label === 'N') {
+    return (
+      <div className="size-8 rounded-full bg-gray-100 overflow-hidden relative cursor-pointer flex items-center justify-center" onClick={onClick}>
+        <svg className="absolute inset-0 size-full"><defs><pattern id="h" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="#d1d5db" strokeWidth="1.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#h)"/></svg>
+        <span className="z-10 text-[10px] font-semibold text-gray-400 relative">N</span>
+      </div>
+    );
+  }
+  return (
+    <div
+      className={cn('size-8 rounded-full flex items-center justify-center text-[10px] font-bold cursor-pointer hover:scale-110 transition-transform', c.bg, c.text)}
+      onClick={onClick}
+    >
+      {c.label}
+    </div>
+  );
 }
 
 export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
@@ -61,12 +99,10 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
           ) : (
             rows.map((row, ri) => {
               const isRowHovered = hoveredRow === ri;
-              const shiftCount = row.shifts.length;
-
               return (
                 <tr
                   key={row.employee.id}
-                  style={{ height: ROW_H * shiftCount }}
+                  style={{ height: ROW_H }}
                   className={cn(
                     'transition-colors duration-100',
                     isRowHovered ? 'bg-blue-50/40' : 'bg-white',
@@ -74,6 +110,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                   onMouseEnter={() => setHoveredRow(ri)}
                   onMouseLeave={() => setHoveredRow(null)}
                 >
+                  {/* Cột thông tin nhân viên */}
                   <td
                     style={{ minWidth: 320, width: 320 }}
                     className={cn(
@@ -92,32 +129,61 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     />
                   </td>
 
-                  <td colSpan={days.length} className="p-0 border-b border-gray-100">
-                    <table
-                      className="w-full border-separate border-spacing-0"
-                      style={{ tableLayout: 'fixed' }}
-                    >
-                      <tbody>
-                        {row.shifts.map((shiftEntry) => {
-                          return (
-                            <tr key={shiftEntry.shift.id} style={{ height: ROW_H }}>
-                              <GridScheduleRow
-                                schedule={shiftEntry.schedule}
-                                runs={shiftEntry.runs}
-                                isHovered={isRowHovered}
-                                hoveredDay={hoveredDay}
-                                onDayEnter={setHoveredDay}
-                                onDayLeave={handleDayLeave}
-                              />
-                            </tr>
-                          )
-                        })}
-                      </tbody>
-                    </table>
-                  </td>
+                  {/* 1 ô per ngày — gộp tất cả ca của ngày đó */}
+                  {days.map((d) => {
+                    const isCN = d.dayOfWeek === 0;
+                    const isColHovered = hoveredDay === d.day;
 
+                    // Thu thập tất cả ca có chấm công trong ngày này
+                    const dayEntries = row.shifts
+                      .map((shiftEntry) => (shiftEntry as any).days?.[d.date])
+                      .filter(Boolean);
+
+                    return (
+                      <td
+                        key={d.date}
+                        className={cn(
+                          'border-b border-r border-gray-100 p-0 transition-colors duration-100',
+                          isColHovered && isRowHovered ? 'bg-blue-100/60' : '',
+                          isColHovered && !isRowHovered ? 'bg-blue-50/40' : '',
+                          !isColHovered && isCN ? 'bg-red-50/20' : '',
+                        )}
+                        style={{ width: CELL_W, minWidth: CELL_W }}
+                        onMouseEnter={() => setHoveredDay(d.day)}
+                        onMouseLeave={handleDayLeave}
+                      >
+                        <div className="flex items-center justify-center gap-0.5 h-full py-1 flex-wrap">
+                          {dayEntries.length === 0 ? (
+                            <AttendanceBadge code="N" />
+                          ) : (
+                            dayEntries.map((entry, ei) => (
+                              <AttendanceBadge
+                                key={ei}
+                                code={entry.displayCode}
+                                wsdId={entry.workScheduleDetailId}
+                              />
+                            ))
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+
+                  {/* Cột tổng hợp */}
                   {summaryColumns.map((col) => {
                     const isColHovered = hoveredSummaryCol === col.key;
+
+                    // Chuyển đổi mảng ngày thành dạng Record<string, WorkDay> chuẩn TypeScript
+                    const rowDaysRecord = days.reduce((acc, d) => {
+                      const dayEntry = row.shifts
+                        .map((shiftEntry) => (shiftEntry as any).days?.[d.date])
+                        .filter(Boolean)[0]; 
+
+                      if (dayEntry) {
+                        acc[d.date] = dayEntry;
+                      }
+                      return acc;
+                    }, {} as Record<string, any>);
 
                     return (
                       <td
@@ -133,7 +199,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                               : '#ffffff',
                         }}
                       >
-                        {col?.render(null, {
+                        {col?.render?.(null, {
                           id: row.employee.id,
                           code: row.employee.code,
                           name: row.employee.name,
@@ -142,8 +208,9 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                           rooms: row.employee.rooms,
                           position: row.employee.role as StaffPosition,
                           summary: row.summary,
-                          shifts: row.shifts,
-                        })}
+                          shift: row.shifts?.[0]?.shift ?? row.shifts[0]?.shift as any,
+                          days: rowDaysRecord, // Đã map chính xác cấu trúc Dictionary Record
+                        }, ri)}
                       </td>
                     );
                   })}

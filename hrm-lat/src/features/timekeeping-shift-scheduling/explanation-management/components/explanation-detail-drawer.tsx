@@ -14,7 +14,6 @@ import {
   useRejectAttendanceExplanation,
   useUpdateAttendanceExplanation,
 } from '@/hooks/use-attendance-explanation';
-import { BtnCancel } from '@/components/btn-cancel';
 
 import { StaffAvatar } from '../../components/staff-avatar';
 
@@ -22,20 +21,19 @@ export const ExplanationDetailDrawer: FC = () => {
   const { t } = useTranslation('explanation-management');
   const { data: drawerData, onClose } = useDrawer((state) => state);
   const explanationId = (drawerData as { id: string })?.id;
-  const [openRejectModal, setOpenRejectModal] = useState<boolean>(true);
   const { data, isLoading } = useQuery({
     ...attendanceExplanationDetailQueryOptions(explanationId),
     enabled: !!explanationId,
   });
-  const { mutateAsync: approveMutation, isPending: isApproving } =
-    useApproveAttendanceExplanation();
-  const { mutateAsync: update, isPending: isUpdate } = useUpdateAttendanceExplanation();
-  const { mutateAsync: managerApproveMutation, isPending: isManagerApproving } =
-    useManagerApproveAttendanceExplanation();
-  const { mutateAsync: rejectMutation, isPending: isRejecting } = useRejectAttendanceExplanation();
+  const { isPending: isApproving } = useApproveAttendanceExplanation();
+  const { mutateAsync: update } = useUpdateAttendanceExplanation();
+  const { isPending: isManagerApproving } = useManagerApproveAttendanceExplanation();
+  const { isPending: isRejecting } = useRejectAttendanceExplanation();
 
   const [hrCommentInput, setHrCommentInput] = useState('');
   const [managerConfirmationInput, setManagerConfirmationInput] = useState('');
+  const [confirmedCheckIn, setConfirmedCheckIn] = useState('');
+  const [confirmedCheckOut, setConfirmedCheckOut] = useState('');
 
   useEffect(() => {
     if (data?.hrComment) {
@@ -44,7 +42,10 @@ export const ExplanationDetailDrawer: FC = () => {
     if (data?.managerConfirmation) {
       setManagerConfirmationInput(data.managerConfirmation);
     }
-  }, [data?.hrComment, data?.managerConfirmation]);
+    // Set giờ mặc định từ đơn giải trình
+    if (data?.shiftStartTime) setConfirmedCheckIn(data.shiftStartTime.slice(0,5));
+    if (data?.shiftEndTime) setConfirmedCheckOut(data.shiftEndTime.slice(0,5));
+  }, [data?.hrComment, data?.managerConfirmation, data?.shiftStartTime, data?.shiftEndTime]);
 
   if (isLoading) {
     return (
@@ -74,14 +75,10 @@ export const ExplanationDetailDrawer: FC = () => {
     shiftName,
     dateLabel,
     typeLabel,
-    actualCheckIn,
-    actualCheckOut,
     totalActualWorkingHours,
     reason,
     attachments,
-    managerConfirmation,
     managerName,
-    hrComment,
     status,
   } = data;
 
@@ -100,6 +97,8 @@ export const ExplanationDetailDrawer: FC = () => {
           status: RequestStatusEnum.APPROVED,
           managerConfirmation: managerConfirmationInput,
           hrComment: hrCommentInput,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ...({ confirmedCheckIn, confirmedCheckOut } as any),
         },
         {
           onSuccess() {
@@ -184,17 +183,23 @@ export const ExplanationDetailDrawer: FC = () => {
             </div>
 
             <div className="grid grid-cols-3 divide-x divide-gray-100 text-center border-t border-dashed border-gray-200 pt-4">
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 px-2">
                 <span className="text-xs text-gray-400">{t('explanation_detail.check_in')}</span>
-                <span className="text-[22px] font-medium text-danger">
-                  {formatTime(actualCheckIn)}
-                </span>
+                <input
+                  type="time"
+                  value={confirmedCheckIn}
+                  onChange={(e) => setConfirmedCheckIn(e.target.value)}
+                  className="text-center text-[18px] font-medium text-danger border border-gray-200 rounded-lg p-1 bg-[#FFF5F5] focus:outline-none focus:border-danger"
+                />
               </div>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 px-2">
                 <span className="text-xs text-gray-400">{t('explanation_detail.check_out')}</span>
-                <span className="text-[22px] font-medium text-gray-900">
-                  {formatTime(actualCheckOut)}
-                </span>
+                <input
+                  type="time"
+                  value={confirmedCheckOut}
+                  onChange={(e) => setConfirmedCheckOut(e.target.value)}
+                  className="text-center text-[18px] font-medium text-gray-900 border border-gray-200 rounded-lg p-1 bg-[#F4F4F5] focus:outline-none focus:border-primary"
+                />
               </div>
               <div className="flex flex-col gap-1">
                 <span className="text-xs text-gray-400">
@@ -302,39 +307,40 @@ export const ExplanationDetailDrawer: FC = () => {
 
       {/* Actions */}
 
-      <div className="p-4 bg-white border-t border-gray-100 flex items-center justify-end gap-3 mt-auto">
-        {![
-          RequestStatusEnum.MANAGER_APPROVED,
-          RequestStatusEnum.APPROVED,
-          RequestStatusEnum.HR_REJECTED,
-        ].includes(status) ? (
-          <BtnCancel onPress={onClose} />
-        ) : (
-          <>
-            <Button
-              variant="bordered"
-              color="danger"
-              // onPress={() => (status === 'PENDING' || status === 'PENDING_HR') ? handleReject() : setOpenRejectModal(true)}
-              onPress={() => handleReject()}
-              isLoading={isRejecting}
-              isDisabled={isApproving || isManagerApproving}
-              className="font-medium bg-white"
-              startContent={!isRejecting && <IconX size={16} />}
-            >
-              {t('explanation_detail.reject')}
-            </Button>
-            <Button
-              color="primary"
-              onPress={handleApprove}
-              isLoading={isApproving || isManagerApproving}
-              isDisabled={isRejecting}
-              className="font-medium"
-              startContent={!isApproving && <IconCheck size={16} />}
-            >
-              {t('explanation_detail.confirm')}
-            </Button>
-          </>
-        )}
+      <div className="p-4 bg-white border-t border-gray-100 flex items-center justify-between mt-auto">
+        {/* Nút Từ chối - trái */}
+        <Button
+          variant="bordered"
+          color="danger"
+          onPress={() => handleReject()}
+          isLoading={isRejecting}
+          isDisabled={isApproving || isManagerApproving || status === RequestStatusEnum.APPROVED || status === RequestStatusEnum.HR_REJECTED}
+          className="font-medium bg-white h-10 px-5 rounded-xl"
+          startContent={!isRejecting && <IconX size={16} />}
+        >
+          Từ chối đơn
+        </Button>
+
+        {/* Nút Hủy + Duyệt - phải */}
+        <div className="flex gap-3">
+          <Button
+            variant="bordered"
+            onPress={onClose}
+            className="h-10 px-5 rounded-xl"
+          >
+            Hủy
+          </Button>
+          <Button
+            color="success"
+            onPress={handleApprove}
+            isLoading={isApproving || isManagerApproving}
+            isDisabled={isRejecting || status === RequestStatusEnum.APPROVED || status === RequestStatusEnum.HR_REJECTED}
+            className="font-medium text-white h-10 px-5 rounded-xl"
+            startContent={!isApproving && <IconCheck size={16} />}
+          >
+            Duyệt giải trình
+          </Button>
+        </div>
       </div>
       {/* <ConfirmModal
                 isOpen={openRejectModal}

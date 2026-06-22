@@ -7,6 +7,7 @@ import type {
   AttendanceExplanationSummary,
 } from '@/types/attendance-explanation.type';
 import { hrmInstance } from '@/lib/axios';
+import { timekeepingManagementKeys } from '@/services/query-options/timekeeping-management.query';
 import { accountabilityManagementKeys } from '@/services/query-options/accountability-management.query';
 
 // Query options for list
@@ -73,9 +74,14 @@ export const useApproveAttendanceExplanation = () => {
       return res.data.data;
     },
     onSuccess: () => {
+      // Refresh giải trình
       queryClient.invalidateQueries({
         queryKey: accountabilityManagementKeys.lists(),
         exact: false,
+      });
+      // Realtime sync bảng chấm công
+      queryClient.invalidateQueries({
+        queryKey: timekeepingManagementKeys.all,
       });
     },
   });
@@ -93,9 +99,14 @@ export const useUpdateAttendanceExplanation = () => {
       return res.data.data;
     },
     onSuccess: () => {
+      // Refresh giải trình
       queryClient.invalidateQueries({
         queryKey: accountabilityManagementKeys.lists(),
         exact: false,
+      });
+      // Realtime sync bảng chấm công
+      queryClient.invalidateQueries({
+        queryKey: timekeepingManagementKeys.all,
       });
     },
   });
@@ -120,9 +131,14 @@ export const useManagerApproveAttendanceExplanation = () => {
       return res.data.data;
     },
     onSuccess: () => {
+      // Refresh giải trình
       queryClient.invalidateQueries({
         queryKey: accountabilityManagementKeys.lists(),
         exact: false,
+      });
+      // Realtime sync bảng chấm công
+      queryClient.invalidateQueries({
+        queryKey: timekeepingManagementKeys.all,
       });
     },
   });
@@ -141,9 +157,14 @@ export const useRejectAttendanceExplanation = () => {
       return res.data.data;
     },
     onSuccess: () => {
+      // Refresh giải trình
       queryClient.invalidateQueries({
         queryKey: accountabilityManagementKeys.lists(),
         exact: false,
+      });
+      // Realtime sync bảng chấm công
+      queryClient.invalidateQueries({
+        queryKey: timekeepingManagementKeys.all,
       });
     },
   });
@@ -165,9 +186,14 @@ export const useBulkApproveAttendanceExplanation = () => {
       return res.data.data;
     },
     onSuccess: () => {
+      // Refresh giải trình
       queryClient.invalidateQueries({
         queryKey: accountabilityManagementKeys.lists(),
         exact: false,
+      });
+      // Realtime sync bảng chấm công
+      queryClient.invalidateQueries({
+        queryKey: timekeepingManagementKeys.all,
       });
     },
   });

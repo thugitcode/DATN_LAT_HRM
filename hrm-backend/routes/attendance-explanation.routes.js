@@ -7,6 +7,7 @@ router.post('/bulk-approve',       ctrl.bulkApprove);
 router.post('/:id/approve',        ctrl.approve);
 router.post('/:id/manager-approve',ctrl.managerApprove);
 router.post('/:id/reject',         ctrl.reject);
+router.patch('/:id',               ctrl.update);
 router.get('/:id',                 ctrl.getById);
 router.get('/',                    ctrl.getAll);
 
