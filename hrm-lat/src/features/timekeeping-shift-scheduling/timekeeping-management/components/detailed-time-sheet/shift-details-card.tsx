@@ -46,11 +46,15 @@ export const ShiftDetailsCard = ({ shift, control }: ShiftDetailsCardProps) => {
     dayjs(shiftInfo?.endTime, 'HH:mm:ss').subtract(shiftInfo?.allowedLateMinutes ?? 0, 'minute'),
   );
 
-  const newTotalWorkHours = (
-    actualCheckIn && actualCheckOut
-      ? calculateWorkingHoursOvernight(actualCheckIn, actualCheckOut, breaktime)
-      : totalWorkHours
-  ).toFixed(2);
+  const newTotalWorkHours = (() => {
+    const ci = actualCheckIn?.trim();
+    const co = actualCheckOut?.trim();
+    if (ci && co && ci !== '--:--' && co !== '--:--') {
+      const val = calculateWorkingHoursOvernight(ci, co, breaktime);
+      return isNaN(val) ? (totalWorkHours ?? 0) : val;
+    }
+    return totalWorkHours ?? 0;
+  })().toFixed(2);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">

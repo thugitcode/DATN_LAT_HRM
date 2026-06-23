@@ -76,11 +76,12 @@ export const ShiftDetailsDrawer = () => {
   });
 
   useEffect(() => {
-    reset({
-      reason: '',
+    if (!detailData) return;
+    reset((prev) => ({
+      reason: prev.reason || '',
       actualCheckIn: detailData?.attendance?.checkInTime ?? '',
       actualCheckOut: detailData?.attendance?.checkOutTime ?? '',
-    });
+    }));
   }, [detailData]);
 
   const onSubmit = async (values: any) => {
@@ -104,7 +105,6 @@ export const ShiftDetailsDrawer = () => {
           description: t('shift_details.toast.update_success'),
           color: 'success',
         });
-        reset();
         refetch();
       },
       onError() {

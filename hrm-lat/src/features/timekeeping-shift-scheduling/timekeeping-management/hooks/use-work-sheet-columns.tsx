@@ -32,22 +32,39 @@ const DayCell = ({ dayData }: { dayData?: WorkDay }) => {
   const open = useDrawer((state) => state.onOpen);
 
   if (!dayData) {
-    return <div className={cn(BASE_CELL_CLS, 'bg-gray-300')}>N</div>;
+    return (
+      <div className="min-w-[36px] h-7 px-1.5 rounded-lg flex items-center justify-center text-xs font-bold bg-gray-100 text-gray-400 select-none">
+        N
+      </div>
+    );
   }
 
-  const color = STATUS_COLOR_MAP[dayData.displayCode as keyof typeof STATUS_COLOR_MAP];
+  const BADGE_MAP: Record<string, [string, string, string]> = {
+    'P':  ['bg-blue-100',   'text-blue-700',   'Đ' ],
+    'Đ':  ['bg-blue-100',   'text-blue-700',   'Đ' ],
+    'L':  ['bg-orange-100', 'text-orange-700', 'M' ],
+    'M':  ['bg-orange-100', 'text-orange-700', 'M' ],
+    'EL': ['bg-orange-100', 'text-orange-700', 'S' ],
+    'S':  ['bg-orange-100', 'text-orange-700', 'S' ],
+    'AB': ['bg-red-100',    'text-red-700',    'VM'],
+    'VM': ['bg-red-100',    'text-red-700',    'VM'],
+    'LV': ['bg-purple-100', 'text-purple-700', 'P' ],
+    'GT': ['bg-blue-200',   'text-blue-800',   'GT'],
+  };
+
+  const s = BADGE_MAP[dayData.displayCode] ?? ['bg-gray-100', 'text-gray-400', dayData.displayCode];
 
   return (
     <div
       title={getLabelShift(dayData.displayCode as ShiftCode)}
       className={cn(
-        BASE_CELL_CLS,
-        'cursor-default transition-all duration-150 hover:brightness-110',
+        'min-w-[36px] h-7 px-1.5 rounded-lg flex items-center justify-center text-xs font-bold select-none',
+        'cursor-pointer transition-all duration-150 hover:brightness-110',
+        s[0], s[1]
       )}
-      style={{ backgroundColor: color ?? '#94a3b8' }}
       onClick={() => open(DrawerType.TIME_SHEET_DETAIL, dayData.workScheduleDetailId)}
     >
-      {dayData.displayCode}
+      {s[2]}
     </div>
   );
 };
@@ -70,11 +87,17 @@ const MultiShiftDayCell = ({
     );
   }
 
+  // Gộp tất cả ca thực tế trong ngày — bỏ ca không có data
+  const activeDays = shifts
+    .map((se) => se.days[dateString])
+    .filter((d) => d && d.displayCode && d.displayCode !== 'N' && d.displayCode !== 'SC');
+
   return (
-    <div className={cn('flex flex-col items-center justify-center gap-1 py-1')}>
-      {shifts.map((shiftEntry) => (
-        <DayCell key={shiftEntry.shift.id} dayData={shiftEntry.days[dateString]} />
-      ))}
+    <div className={cn('flex flex-row items-center justify-center gap-1 py-1 flex-wrap')}>
+      {activeDays.length === 0
+        ? <DayCell />
+        : activeDays.map((d, i) => <DayCell key={i} dayData={d} />)
+      }
     </div>
   );
 };

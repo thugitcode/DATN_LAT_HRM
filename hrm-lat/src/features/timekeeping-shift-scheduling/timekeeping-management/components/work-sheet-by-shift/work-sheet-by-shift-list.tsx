@@ -31,23 +31,24 @@ export const WorkSheetByShiftList: FC<WorkSheetByShiftListProps> = ({
 
   const dataSource = useMemo(() => {
     if (isLoading) return [];
-    // return data.flatMap(mapToListRow);
     return data;
   }, [data, isLoading]);
-  // console.log('dataSource_________', dataSource);
+
+  // Tính total từ data nếu API không trả về
+  const resolvedTotal = total ?? data?.length ?? 0;
 
   return (
     <Table
       key={`page-${page}-${pageSize}-${search}-${month}`}
-      columns={columns}
-      dataSource={dataSource ?? []}
+      columns={columns as any}
+      dataSource={dataSource as any ?? []}
       size="middle"
       loading={isLoading}
       className="h-[calc(100vh-390px)]"
       pagination={{
-        current: page,
-        pageSize,
-        total: total || 0,
+        current: page ?? 1,
+        pageSize: pageSize ?? 10,
+        total: resolvedTotal,
         showSizeChanger: true,
         pageSizeOptions: PAGE_SIZE_OPTIONS,
         totalPage,

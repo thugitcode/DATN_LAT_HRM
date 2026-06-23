@@ -21,22 +21,48 @@ function statusCode(s) {
            MISSING_CHECKIN:'MCI', MISSING_CHECKOUT:'MCO', HOLIDAY:'H', LEAVE:'LV', ON_CALL:'OC' }[s] || s;
 }
 function buildSummary(details) {
+  // Tính giờ thực tế + overtime từ check_in/out
+  let totalWorkHours = 0, overtimeHours = 0;
+  details.forEach(d => {
+    if (d.check_in_time && d.check_out_time) {
+      const diff = (new Date(d.check_out_time) - new Date(d.check_in_time)) / 3600000;
+      const hours = diff < 0 ? diff + 24 : diff;
+      totalWorkHours += hours;
+      overtimeHours  += Math.max(0, hours - 8);
+    }
+  });
+
+  // Ca trực đêm: shift_type ON_CALL hoặc code D/Đ hoặc start 21-22h
+  const isNight = (d) =>
+    d.shift_type === 'ON_CALL' ||
+    ['D','Đ'].includes((d.shift_code||'').toUpperCase()) ||
+    (d.shift_start||'').startsWith('21') || (d.shift_start||'').startsWith('22');
+
+  const present = details.filter(d => ['PRESENT','LATE','EARLY_LEAVE'].includes(d.status));
+
+  // Tổng công theo công thức SRS
+  const workDays  = present.filter(d => !isNight(d)).length;
+  const onCall    = present.filter(d => isNight(d)).length;
+  const paidLeave = details.filter(d => ['LEAVE','LEAVE_PAID'].includes(d.status)).length;
+  const holiday   = details.filter(d => d.status === 'HOLIDAY').length;
+  const totalWork = workDays + (onCall * 1.0) + paidLeave + holiday;
+
   return {
-    totalWork: details.length,
-    workDays: details.filter(d=>d.status==='PRESENT').length,
-    actualWorkDays: details.filter(d=>['PRESENT','LATE','EARLY_LEAVE'].includes(d.status)).length,
-    absentDays: details.filter(d=>d.status==='ABSENT').length,
-    totalLateMinutes:0, totalEarlyMinutes:0,
-    holiday: details.filter(d=>d.status==='HOLIDAY').length,
-    onCall: details.filter(d=>d.status==='ON_CALL').length,
-    paidLeave: details.filter(d=>d.status==='LEAVE').length,
-    otherLeave:0,
-    overtimeHours: details.reduce((s,d) => s + (parseFloat(d.overtime_hours)||0), 0),
-    totalAttendance: details.filter(d=>d.check_in_time).length,
-    compHours:0, compLeave:0, compRest:0, socialInsuranceLeave:0, unpaidLeave:0,
-    violationCount: details.filter(d=>['LATE','EARLY_LEAVE','MISSING_CHECKIN','MISSING_CHECKOUT'].includes(d.status)).length,
-    totalWorkHours: details.reduce((s,d) => s + (parseFloat(d.actual_hours)||0), 0),
-    nightShiftCount: details.filter(d=>['D','Đ','d','đ'].includes((d.shift_code||'').toUpperCase()) && d.status==='PRESENT').length,
+    totalWork: Math.round(totalWork * 100) / 100,
+    workDays,
+    actualWorkDays: present.length,
+    absentDays: details.filter(d => d.status === 'ABSENT').length,
+    totalLateMinutes: 0, totalEarlyMinutes: 0,
+    holiday,
+    onCall,
+    paidLeave,
+    otherLeave: 0,
+    overtimeHours: Math.round(overtimeHours * 100) / 100,
+    totalAttendance: details.filter(d => d.check_in_time).length,
+    compHours: 0, compLeave: 0, compRest: 0, socialInsuranceLeave: 0, unpaidLeave: 0,
+    violationCount: details.filter(d => ['LATE','EARLY_LEAVE'].includes(d.status)).length,
+    totalWorkHours: Math.round(totalWorkHours * 100) / 100,
+    nightShiftCount: onCall,
   };
 }
 
@@ -445,10 +471,14 @@ const workScheduleController = {
   getDetail: async (req, res) => {
     try {
       const [[d]] = await db.query(`
-        SELECT wsd.*, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+        SELECT wsd.id, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+               wsd.start_time, wsd.end_time, wsd.status, wsd.note,
+               wsd.check_in_time, wsd.check_out_time, wsd.work_weight,
                ws.employee_id, ws.department_id, ws.room_id,
                e.employee_code as staff_code, e.full_name as staff_name, e.avatar,
-               st.name as shift_name, st.code as shift_code, st.shift_type,
+               st.id as shift_id, st.name as shift_name, st.code as shift_code,
+               st.shift_type, st.start_time as shift_start, st.end_time as shift_end,
+               st.coefficient,
                dep.name as department_name, r.name as room_name
         FROM hr_work_schedule_details wsd
         JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
@@ -458,17 +488,103 @@ const workScheduleController = {
         LEFT JOIN cat_rooms r ON r.id=ws.room_id
         WHERE wsd.id=?`, [req.params.id]);
       if (!d) return fail(res, 404, 'Không tìm thấy chi tiết chấm công');
-      ok(res, d);
+
+      // Map sang format FE expect
+      ok(res, {
+        id: String(d.id),
+        workDate: d.work_date,
+        startTime: d.shift_start || d.start_time,
+        endTime: d.shift_end || d.end_time,
+        status: d.status,
+        displayCode: d.status,
+        note: d.note || '',
+        noteStartTime: null,
+        noteEndTime: null,
+        totalWorkHours: (() => {
+          if (!d.check_in_time || !d.check_out_time) return 0;
+          const diff = (new Date(d.check_out_time) - new Date(d.check_in_time)) / 3600000;
+          return Math.round((diff < 0 ? diff + 24 : diff) * 100) / 100;
+        })(),
+        totalCompHours: 0,
+        departmentName: d.department_name || '',
+        roomName: d.room_name || '',
+        departments: d.department_name ? [{ id: String(d.department_id||''), name: d.department_name }] : [],
+        rooms: d.room_name ? [{ id: String(d.room_id||''), name: d.room_name }] : [],
+        histories: [],
+        breaktime: [],
+        staff: {
+          id: String(d.employee_id),
+          code: d.staff_code,
+          name: d.staff_name,
+          avatar: d.avatar ? `http://localhost:5000/${d.avatar}` : null,
+        },
+        shift: {
+          id: String(d.shift_id),
+          code: d.shift_code,
+          name: d.shift_name,
+          color: '#6576FF',
+          type: d.shift_type,
+          startTime: d.shift_start,
+          endTime: d.shift_end,
+        },
+        attendance: {
+          // Format HH:mm (+7) để FE dùng với dayjs(val, 'HH:mm')
+          checkInTime: d.check_in_time ? (() => {
+            const d2 = new Date(d.check_in_time);
+            const h = String((d2.getUTCHours() + 7) % 24).padStart(2,'0');
+            const m = String(d2.getUTCMinutes()).padStart(2,'0');
+            return `${h}:${m}`;
+          })() : null,
+          checkOutTime: d.check_out_time ? (() => {
+            const d2 = new Date(d.check_out_time);
+            const h = String((d2.getUTCHours() + 7) % 24).padStart(2,'0');
+            const m = String(d2.getUTCMinutes()).padStart(2,'0');
+            return `${h}:${m}`;
+          })() : null,
+          checkInImage: null,
+          checkOutImage: null,
+          checkInLocation: null,
+          checkOutLocation: null,
+          checkInMethod: 'MANUAL',
+          checkOutMethod: 'MANUAL',
+        },
+      });
     } catch (e) { fail(res, 500, 'Lỗi lấy chi tiết chấm công', e); }
   },
 
   // PATCH /work-schedule/detail/:id/attendance
   updateAttendance: async (req, res) => {
     try {
-      const { checkInTime, checkOutTime, status, note } = req.body;
+      const { checkInTime, checkOutTime, actualCheckIn, actualCheckOut, status, note, reason } = req.body;
+      const id = req.params.id;
+
+      // Lấy work_date từ DB
+      const [[wsd]] = await db.query(
+        `SELECT DATE_FORMAT(work_date,'%Y-%m-%d') as work_date FROM hr_work_schedule_details WHERE id=?`, [id]
+      );
+      if (!wsd) return fail(res, 404, 'Không tìm thấy bản ghi chấm công');
+      const workDate = wsd.work_date;
+
+      let ci = actualCheckIn || checkInTime || null;
+      let co = actualCheckOut || checkOutTime || null;
+
+      // Ghép HH:mm với work_date
+      const isHHmm = (s) => s && /^\d{2}:\d{2}$/.test(s);
+      if (isHHmm(ci)) ci = `${workDate} ${ci}:00`;
+      if (isHHmm(co)) {
+        const ciHour = ci ? parseInt(ci.split(' ')[1]) : 0;
+        const coHour = parseInt(co.split(':')[0]);
+        if (coHour < ciHour) {
+          const next = new Date(workDate); next.setDate(next.getDate() + 1);
+          co = `${next.toISOString().slice(0,10)} ${co}:00`;
+        } else {
+          co = `${workDate} ${co}:00`;
+        }
+      }
+
       await db.query(
         `UPDATE hr_work_schedule_details SET check_in_time=?,check_out_time=?,status=?,note=? WHERE id=?`,
-        [checkInTime||null, checkOutTime||null, status||'PRESENT', note||null, req.params.id]
+        [ci||null, co||null, status||'PRESENT', note||reason||null, id]
       );
       ok(res, null, 'Cập nhật chấm công thành công');
     } catch (e) { fail(res, 500, 'Lỗi cập nhật chấm công', e); }

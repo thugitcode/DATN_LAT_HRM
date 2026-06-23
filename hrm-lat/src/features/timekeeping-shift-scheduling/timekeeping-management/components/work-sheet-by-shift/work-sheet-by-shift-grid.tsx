@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useState, type FC } from 'react';
 import { DrawerType, useDrawer } from '@/store/useDrawer';
-
 import { StaffPosition } from '@/types/global.type';
 import { cn } from '@/lib/utils';
 import { TableEmpty } from '@/components/table/table-empty';
@@ -8,19 +7,15 @@ import { TableLoading } from '@/components/table/table-loading';
 import { StaffInfo } from '@/features/timekeeping-shift-scheduling/components/staff-infor';
 import { getDaysInMonth, mapToRow } from '@/features/timekeeping-shift-scheduling/helper';
 import { useYearMonth } from '@/features/timekeeping-shift-scheduling/hooks/use-year-month';
-import { ROW_H } from '@/features/timekeeping-shift-scheduling/shift-management/constants/constants';
 
 import { CELL_W, STICKY_COL_W, SUMMARY_COL_W } from '../../constants/data';
-import { useWorkSheetColumns } from '../../hooks/use-work-sheet-columns'; 
+import { useWorkSheetColumns } from '../../hooks/use-work-sheet-columns';
 import type { WorkSheetByShiftType } from '../../types/timekeeping-management.type';
 import { GridStickyHeaderRow } from './grid-sticky-header-row';
 
-interface WorkSheetByShiftGridProps {
-  data?: WorkSheetByShiftType[];
-  isLoading?: boolean;
-}
+const ROW_H = 48;
 
-// Badge hiển thị trạng thái chấm công
+// ─── Badge ───────────────────────────────────────────────────
 function AttendanceBadge({ code, wsdId }: { code: string; wsdId?: string }) {
   const open = useDrawer((state) => state.onOpen);
   const onClick = () => { if (wsdId) open(DrawerType.TIME_SHEET_DETAIL, wsdId); };
@@ -58,21 +53,44 @@ function AttendanceBadge({ code, wsdId }: { code: string; wsdId?: string }) {
   );
 }
 
+// ─── Build daysMap ───────────────────────────────────────────
+interface WorkSheetByShiftGridProps {
+  data?: WorkSheetByShiftType[];
+  isLoading?: boolean;
+}
+
+function buildDaysMap(item: WorkSheetByShiftType): Record<string, Array<{ displayCode: string; workScheduleDetailId: string }>> {
+  const map: Record<string, Array<{ displayCode: string; workScheduleDetailId: string }>> = {};
+  for (const shiftEntry of item.shifts) {
+    for (const [date, dayData] of Object.entries(shiftEntry.days)) {
+      if (!dayData) continue;
+      const code = dayData.displayCode;
+      if (!code || code === 'N' || code === 'SC') continue;
+      if (!map[date]) map[date] = [];
+      map[date].push({ displayCode: code, workScheduleDetailId: dayData.workScheduleDetailId ?? '' });
+    }
+  }
+  return map;
+}
+
+
 export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
   data = [],
   isLoading,
 }) => {
   const { month, year } = useYearMonth();
   const { summaryColumns } = useWorkSheetColumns();
-
-  const [hoveredRow, setHoveredRow] = useState<number | null>(null);
-  const [hoveredDay, setHoveredDay] = useState<number | null>(null);
+  const [hoveredRow, setHoveredRow]               = useState<number | null>(null);
+  const [hoveredDay, setHoveredDay]               = useState<string | null>(null);
   const [hoveredSummaryCol, setHoveredSummaryCol] = useState<string | null>(null);
 
-  const days = useMemo(() => getDaysInMonth(year, month), [year, month]);
-  const rows = useMemo(() => data.map((item) => mapToRow(item, days)), [data, days]);
+  const days    = useMemo(() => getDaysInMonth(year, month), [year, month]);
+  const rows    = useMemo(() => data.map((item) => mapToRow(item, days)), [data, days]);
+  // Build daysMap per nhân viên — gộp tất cả ca thực tế theo date
+  const daysMaps = useMemo(() => data.map((item) => buildDaysMap(item)), [data]);
 
   const handleDayLeave = useCallback(() => setHoveredDay(null), []);
+  console.log('[DEBUG] data length:', data?.length, '| daysMaps[0]:', daysMaps[0] ? Object.keys(daysMaps[0]).slice(0,3) : 'empty');
   const isEmpty = !isLoading && rows.length === 0;
 
   return (
@@ -86,8 +104,13 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
       >
         <GridStickyHeaderRow
           days={days}
-          hoveredDay={hoveredDay}
-          setHoveredDay={setHoveredDay}
+          hoveredDay={hoveredDay !== null ? new Date(hoveredDay).getDate() : null}
+          setHoveredDay={(d) => {
+            if (d === null) { setHoveredDay(null); return; }
+            // Tìm date string từ day number
+            const found = days.find((day) => day.day === d);
+            if (found) setHoveredDay(found.date);
+          }}
           hoveredSummaryCol={hoveredSummaryCol}
           setHoveredSummaryCol={setHoveredSummaryCol}
           summaryColumns={summaryColumns}
@@ -97,26 +120,22 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
           {isEmpty ? (
             <TableEmpty />
           ) : (
-            rows.map((row, ri) => {
+            rows.map((row: ReturnType<typeof mapToRow>, ri: number) => {
               const isRowHovered = hoveredRow === ri;
+              const daysMap      = daysMaps[ri] ?? {};
+
               return (
                 <tr
                   key={row.employee.id}
                   style={{ height: ROW_H }}
-                  className={cn(
-                    'transition-colors duration-100',
-                    isRowHovered ? 'bg-blue-50/40' : 'bg-white',
-                  )}
+                  className={cn('transition-colors duration-100', isRowHovered ? 'bg-blue-50/40' : 'bg-white')}
                   onMouseEnter={() => setHoveredRow(ri)}
                   onMouseLeave={() => setHoveredRow(null)}
                 >
-                  {/* Cột thông tin nhân viên */}
+                  {/* Nhân viên */}
                   <td
                     style={{ minWidth: 320, width: 320 }}
-                    className={cn(
-                      'sticky left-0 z-50 p-0 border-b px-2.5 border-r border-gray-100 bg-white py-2',
-                      'transition-colors duration-100 align-middle',
-                    )}
+                    className="sticky left-0 z-50 p-0 border-b px-2.5 border-r border-gray-100 bg-white py-2 align-middle"
                   >
                     <StaffInfo
                       avatarUrl={row.employee.avatar ?? ''}
@@ -129,34 +148,30 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     />
                   </td>
 
-                  {/* 1 ô per ngày — gộp tất cả ca của ngày đó */}
+                  {/* 1 ô per ngày — dùng daysMap đã gộp */}
                   {days.map((d) => {
-                    const isCN = d.dayOfWeek === 0;
-                    const isColHovered = hoveredDay === d.day;
-
-                    // Thu thập tất cả ca có chấm công trong ngày này
-                    const dayEntries = row.shifts
-                      .map((shiftEntry) => (shiftEntry as any).days?.[d.date])
-                      .filter(Boolean);
+                    const isCN     = d.dayOfWeek === 0;
+                    const isColHov = hoveredDay === d.date;
+                    const entries  = daysMap[d.date] ?? [];
 
                     return (
                       <td
                         key={d.date}
                         className={cn(
                           'border-b border-r border-gray-100 p-0 transition-colors duration-100',
-                          isColHovered && isRowHovered ? 'bg-blue-100/60' : '',
-                          isColHovered && !isRowHovered ? 'bg-blue-50/40' : '',
-                          !isColHovered && isCN ? 'bg-red-50/20' : '',
+                          isColHov && isRowHovered  ? 'bg-blue-100/60' : '',
+                          isColHov && !isRowHovered ? 'bg-blue-50/40'  : '',
+                          !isColHov && isCN         ? 'bg-red-50/20'   : '',
                         )}
                         style={{ width: CELL_W, minWidth: CELL_W }}
-                        onMouseEnter={() => setHoveredDay(d.day)}
+                        onMouseEnter={() => setHoveredDay(d.date)}
                         onMouseLeave={handleDayLeave}
                       >
-                        <div className="flex items-center justify-center gap-0.5 h-full py-1 flex-wrap">
-                          {dayEntries.length === 0 ? (
+                        <div className="flex items-center justify-center gap-0.5 h-full flex-wrap py-1">
+                          {entries.length === 0 ? (
                             <AttendanceBadge code="N" />
                           ) : (
-                            dayEntries.map((entry, ei) => (
+                            entries.map((entry: { displayCode: string; workScheduleDetailId: string }, ei: number) => (
                               <AttendanceBadge
                                 key={ei}
                                 code={entry.displayCode}
@@ -169,22 +184,9 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                     );
                   })}
 
-                  {/* Cột tổng hợp */}
+                  {/* Summary */}
                   {summaryColumns.map((col) => {
-                    const isColHovered = hoveredSummaryCol === col.key;
-
-                    // Chuyển đổi mảng ngày thành dạng Record<string, WorkDay> chuẩn TypeScript
-                    const rowDaysRecord = days.reduce((acc, d) => {
-                      const dayEntry = row.shifts
-                        .map((shiftEntry) => (shiftEntry as any).days?.[d.date])
-                        .filter(Boolean)[0]; 
-
-                      if (dayEntry) {
-                        acc[d.date] = dayEntry;
-                      }
-                      return acc;
-                    }, {} as Record<string, any>);
-
+                    const isColHov = hoveredSummaryCol === col.key;
                     return (
                       <td
                         key={col.key}
@@ -192,11 +194,7 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                         style={{
                           width: SUMMARY_COL_W,
                           minWidth: SUMMARY_COL_W,
-                          backgroundColor: isColHovered
-                            ? '#F0F1FF'
-                            : isRowHovered
-                              ? 'rgba(239,246,255,0.4)'
-                              : '#ffffff',
+                          backgroundColor: isColHov ? '#F0F1FF' : isRowHovered ? 'rgba(239,246,255,0.4)' : '#ffffff',
                         }}
                       >
                         {col?.render?.(null, {
@@ -208,8 +206,8 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
                           rooms: row.employee.rooms,
                           position: row.employee.role as StaffPosition,
                           summary: row.summary,
-                          shift: row.shifts?.[0]?.shift ?? row.shifts[0]?.shift as any,
-                          days: rowDaysRecord, // Đã map chính xác cấu trúc Dictionary Record
+                          days: {} as any,
+                          shift: row.shifts?.[0]?.shift as any,
                         }, ri)}
                       </td>
                     );
@@ -220,7 +218,6 @@ export const WorkSheetByShiftGrid: FC<Readonly<WorkSheetByShiftGridProps>> = ({
           )}
         </tbody>
       </table>
-
       {isLoading && <TableLoading />}
     </div>
   );
