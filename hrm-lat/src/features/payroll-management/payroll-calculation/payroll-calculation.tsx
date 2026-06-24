@@ -13,7 +13,6 @@ import { PageContainer } from '@/components/page-container';
 import { PageFilter } from '@/components/page-filter';
 import { TitlePage } from '@/components/title-page';
 import { useDepartmentName } from '@/hooks/use-department-name';
-import { useMonthDateRange } from '@/hooks/use-month-date-range';
 import { usePaginationConfig } from '@/hooks/use-pagination-config';
 import { useQueryFilter } from '@/hooks/useQueryFilter';
 import type { ShiftManagementParams } from '@/types';
@@ -29,16 +28,15 @@ export const PayrollCalculation = () => {
   const printRef = useRef<HTMLDivElement>(null);
 
   const { columns } = usePayrollCalculationColumns();
-  const { onOpen } = useDrawer();
+  useDrawer();
   const { filters } = useQueryFilter<ShiftManagementParams>();
-  const { departmentId, month, roomId, search, status, page, limit } = filters;
-  const { startDate, endDate } = useMonthDateRange(month);
+  const { departmentId, month, page, limit } = filters;
 
   const handlePrint = useReactToPrint({ contentRef: printRef });
 
   const { departmentName } = useDepartmentName({ departmentId });
 
-  const { data, isLoading, isError } = usePayrollCalculationList({
+  const { data, isLoading } = usePayrollCalculationList({
     page: filters.page ?? 1,
     limit: filters.limit ?? 10,
     search: filters.search,
@@ -51,8 +49,8 @@ export const PayrollCalculation = () => {
   const { paginationConfig } = usePaginationConfig({
     page,
     limit,
-    total: data?.pagination?.total,
-    totalPage: data?.pagination?.totalPage,
+    total: data?.data?.pagination?.total ?? data?.pagination?.total,
+    totalPage: (data?.data?.pagination as any)?.totalPage ?? (data?.data?.pagination as any)?.totalPages,
   });
 
   const handleExport = () => {

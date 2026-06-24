@@ -44,7 +44,11 @@ export const usePayrollCalculationColumns = () => {
       key: 'position', // Map từ position thay cho jobTitle
       title: t('payrollCalculation.columns.job_title'),
       width: 140,
-      render: (_, record) => tc(`options.staff_position.${record.position}` as any),
+      render: (_, record) => {
+        const translated = tc(`options.staff_position.${record.position}` as any);
+        // Nếu key không tồn tại trong i18n thì hiện thẳng giá trị gốc
+        return translated.includes('options.staff_position') ? (record.position || '--') : translated;
+      },
     },
     {
       key: 'salaryTemplateName', // Map từ confirmationStatus thay cho salaryTemplate
