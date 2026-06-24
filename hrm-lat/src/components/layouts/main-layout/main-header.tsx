@@ -83,7 +83,12 @@ export const MainHeader = () => {
               key="logout"
               color="danger"
               closeOnSelect={true}
-              onClick={() => { }}
+              onClick={() => {
+                localStorage.removeItem('jwt');
+                localStorage.removeItem('user');
+                localStorage.removeItem('partner_code');
+                window.location.href = '/login';
+              }}
             >
               {t('header.logout')}
             </DropdownItem>

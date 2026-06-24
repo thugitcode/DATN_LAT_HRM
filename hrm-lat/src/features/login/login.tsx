@@ -17,7 +17,7 @@ export const Login = () => {
 
     try {
       // GỌI API BACKEND
-      const response = await fetch('http://localhost:3000/api/auth/login', {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -28,13 +28,12 @@ export const Login = () => {
       const result = await response.json();
 
       if (result.success) {
-        // Lưu thông tin user vào trình duyệt
+        // Lưu thông tin user và jwt vào trình duyệt
         localStorage.setItem('user', JSON.stringify(result.data));
+        localStorage.setItem('jwt', 'hrm-local-token-' + result.data.id);
         
-        alert(`Đăng nhập thành công! Chào ${result.data.role === 'admin' ? 'Sếp' : 'bạn'} ${result.data.username}`);
-        
-        // Chuyển hướng thẳng vào giao diện web lưới phân ca
-        window.location.href = '/admin/timekeeping-shift-scheduling'; 
+        // Chuyển hướng vào hệ thống
+        window.location.href = '/admin/timekeeping-shift-scheduling/timekeeping-management';
       } else {
         alert(result.message); // Báo lỗi sai tài khoản/mật khẩu
       }

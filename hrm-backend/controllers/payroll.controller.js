@@ -82,7 +82,13 @@ const payrollController = {
 
         const workDays     = present.filter(r => !isNight(r)).length;
         const onCallDays   = present.filter(r => isNight(r)).length;
-        const paidLeave    = wsdRows.filter(r => ['LEAVE','LEAVE_PAID'].includes(r.status)).length;
+        // paidLeave = từ chấm công + đơn nghỉ APPROVED trong tháng
+        const wsdPaidLeave = wsdRows.filter(r => ['LEAVE','LEAVE_PAID'].includes(r.status)).length;
+        const [[leaveRow]] = await db.query(
+          `SELECT COALESCE(SUM(total_days),0) as cnt FROM hr_leave_requests WHERE employee_id=? AND status='APPROVED' AND from_date BETWEEN ? AND ?`,
+          [s.id, fromDate, toDate]
+        );
+        const paidLeave = wsdPaidLeave + parseInt(leaveRow?.cnt || 0);
         const absentDays   = wsdRows.filter(r => r.status==='ABSENT').length;
         const totalAttendance = workDays + onCallDays + paidLeave;
 
@@ -226,32 +232,149 @@ const payrollController = {
   getStaffHistory: async (req, res) => {
     try {
       const { id } = req.params;
-      const [[salary]] = await db.query(
-        `SELECT * FROM hr_staff_salary WHERE employee_id=? LIMIT 1`, [id]
-      );
-      if (!salary) return ok(res, []);
-      // Trả về lịch sử lương 3 tháng gần nhất
+      const [[sal]] = await db.query(`SELECT * FROM hr_staff_salary WHERE employee_id=? LIMIT 1`, [id]);
+      if (!sal) return ok(res, { data: [], pagination: { total: 0, page: 1, limit: 10, totalPage: 0 } });
+
+      const basicSalary = parseFloat(sal.gross_salary || sal.net_salary || 0);
+      const STANDARD_DAYS = 26;
+
       const history = [];
       const now = new Date();
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 12; i++) {
         const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
         const y = d.getFullYear(), m = d.getMonth() + 1;
+        const month = `${y}-${String(m).padStart(2,'0')}`;
+        const fromDate = `${month}-01`;
+        const toDate = new Date(y, m, 0).toISOString().slice(0,10);
+
+        const [wsdRows] = await db.query(`
+          SELECT wsd.status, wsd.check_in_time, wsd.check_out_time,
+                 st.shift_type, st.code as shift_code
+          FROM hr_work_schedule_details wsd
+          JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
+          JOIN shifts st ON st.id=wsd.shift_template_id
+          WHERE ws.employee_id=? AND wsd.work_date BETWEEN ? AND ?
+        `, [id, fromDate, toDate]);
+
+        if (!wsdRows.length) continue;
+
+        const isNight = r => r.shift_type==='ON_CALL'||['D','Đ'].includes((r.shift_code||'').toUpperCase());
+        const present = wsdRows.filter(r=>['PRESENT','LATE','EARLY_LEAVE'].includes(r.status));
+        const onCallDays = present.filter(r=>isNight(r)).length;
+        const actualWorkDays = present.length;
+
+        let overtimeHours = 0;
+        present.forEach(r => {
+          if (r.check_in_time && r.check_out_time) {
+            const diff = (new Date(r.check_out_time)-new Date(r.check_in_time))/3600000;
+            overtimeHours += Math.max(0, (diff<0?diff+24:diff)-8);
+          }
+        });
+
+        const salaryByWork = basicSalary>0 ? Math.round((basicSalary/STANDARD_DAYS)*actualWorkDays) : 0;
+        const allowanceAmount = Math.round(onCallDays*150000 + parseFloat(sal.meal_allowance||0) + parseFloat(sal.phone_allowance||0));
+        const overtimeAmount = basicSalary>0 ? Math.round((basicSalary/STANDARD_DAYS/8)*overtimeHours*1.5) : 0;
+        const totalGross = salaryByWork + allowanceAmount + overtimeAmount;
+        const insuranceAmount = Math.round(basicSalary * ((sal.has_social_insurance?parseFloat(sal.social_insurance_rate||8):0) + (sal.has_health_insurance?parseFloat(sal.health_insurance_rate||1.5):0) + (sal.has_unemployment_insurance?parseFloat(sal.unemployment_insurance_rate||1):0)) / 100);
+        const netPay = Math.max(0, totalGross - insuranceAmount);
+
         history.push({
-          month: `${y}-${String(m).padStart(2,'0')}`,
-          basicSalary: parseFloat(salary.base_salary || 0),
-          netSalary: parseFloat(salary.net_salary || 0),
-          grossSalary: parseFloat(salary.gross_salary || 0),
-          status: i === 0 ? 'DRAFT' : 'PUBLISHED',
+          id: `${id}-${month}`,
+          basicSalary: salaryByWork, allowanceAmount, overtimeAmount,
+          bonusAmount: 0, deductionAmount: 0, insuranceAmount, taxAmount: 0, netPay,
+          calculationDetails: { actualWorkDays, overtimeHours: Math.round(overtimeHours*100)/100 },
+          isPaid: i > 0,
+          paidAt: i > 0 ? toDate : null,
+          payrollPeriod: {
+            name: `Tháng ${m}/${y}`, fromDate, toDate,
+            standardWorkingDays: STANDARD_DAYS, status: i===0?'DRAFT':'PUBLISHED', note: null,
+          },
         });
       }
-      ok(res, history);
+
+      ok(res, { data: history, pagination: { total: history.length, page: 1, limit: 12, totalPage: 1 } });
     } catch (e) { fail(res, 500, 'Lỗi lấy lịch sử lương', e); }
   },
 
   // GET /payroll/feedback
   getFeedback: async (req, res) => {
     try {
-      ok(res, { data: [], pagination: { total: 0, page: 1, limit: 20 } });
+      const { month, search, status, page=1, limit=10 } = req.query;
+      let where = ['1=1'];
+      let params = [];
+      if (month)  { where.push('f.month=?'); params.push(month); }
+      if (status) { where.push('f.status=?'); params.push(status); }
+      if (search) { where.push('(e.full_name LIKE ? OR e.employee_code LIKE ?)'); params.push(`%${search}%`,`%${search}%`); }
+
+      const [[{total}]] = await db.query(
+        `SELECT COUNT(*) as total FROM hr_payslip_feedback f JOIN hr_employees e ON e.id=f.employee_id WHERE ${where.join(' AND ')}`, params);
+
+      const [rows] = await db.query(`
+        SELECT f.*, e.employee_code, e.full_name, e.avatar,
+               d.name as dept_name,
+               sal.gross_salary, sal.net_salary,
+               sal.hazard_allowance, sal.meal_allowance, sal.phone_allowance,
+               sal.has_social_insurance, sal.social_insurance_rate,
+               sal.has_health_insurance, sal.health_insurance_rate,
+               sal.has_unemployment_insurance, sal.unemployment_insurance_rate,
+               DATE_FORMAT(f.created_at,'%Y-%m-%dT%H:%i:%sZ') as created_at_str
+        FROM hr_payslip_feedback f
+        JOIN hr_employees e ON e.id=f.employee_id
+        LEFT JOIN hr_staff_departments rsd ON rsd.employee_id=e.id
+        LEFT JOIN cat_departments d ON d.code=rsd.department_code
+        LEFT JOIN hr_staff_salary sal ON sal.employee_id=f.employee_id
+        WHERE ${where.join(' AND ')}
+        GROUP BY f.id
+        ORDER BY f.created_at DESC
+        LIMIT ? OFFSET ?
+      `, [...params, parseInt(limit), (parseInt(page)-1)*parseInt(limit)]);
+
+      ok(res, {
+        data: rows.map(r => ({
+          id: String(r.id), content: r.content,
+          responseContent: r.response_content || null,
+          status: r.status, resolvedAt: r.resolved_at || null,
+          createdAt: r.created_at_str, updatedAt: r.created_at_str, deletedAt: null,
+          staff: {
+            id: String(r.employee_id), code: r.employee_code,
+            name: r.full_name, avatar: r.avatar,
+            departments: r.dept_name ? [{ id:'', name: r.dept_name }] : [], rooms: [],
+          },
+          payroll: (() => {
+            const basicSalary = parseFloat(r.gross_salary || r.net_salary || 0);
+            const allowance = parseFloat(r.hazard_allowance||0) + parseFloat(r.meal_allowance||0) + parseFloat(r.phone_allowance||0);
+            const siRate = r.has_social_insurance ? parseFloat(r.social_insurance_rate||8) : 0;
+            const hiRate = r.has_health_insurance ? parseFloat(r.health_insurance_rate||1.5) : 0;
+            const uiRate = r.has_unemployment_insurance ? parseFloat(r.unemployment_insurance_rate||1) : 0;
+            const insurance = Math.round(basicSalary*(siRate+hiRate+uiRate)/100);
+            const totalGross = basicSalary + allowance;
+            const netPay = Math.max(0, totalGross - insurance);
+            return {
+            id: `${r.employee_id}-${r.month}`,
+            netPay, totalGross,
+            basicSalary: r.basic_salary || 0,
+            allowanceAmount: r.allowance_amount || 0,
+            overtimeAmount: r.overtime_amount || 0,
+            insuranceAmount: r.insurance_amount || 0,
+            taxAmount: r.tax_amount || 0,
+            workDays: r.work_days || 0,
+            totalAttendance: r.total_attendance || 0,
+            overtimeHours: r.overtime_hours || 0,
+            onCallDays: r.on_call_days || 0,
+            advancePayment: 0,
+            payslipStatus: 'NOT_SENT',
+            isPaid: false,
+            calculationDetails: {
+              standardDays: 26,
+              actualWorkDays: r.work_days || 0,
+              overtimeHours: r.overtime_hours || 0,
+            },
+            payrollPeriod: { id:'', month: r.month, name:`Tháng ${r.month}`, fromDate:`${r.month}-01`, toDate:`${r.month}-30`, standardWorkingDays: 26, status:'DRAFT', note:null },
+          }; })(),
+          period: { id:'', month: r.month, name:`Tháng ${r.month}`, fromDate:`${r.month}-01`, toDate:`${r.month}-30` },
+        })),
+        pagination: { total: parseInt(total), page: parseInt(page), limit: parseInt(limit), totalPage: Math.ceil(total/limit) }
+      });
     } catch (e) { fail(res, 500, 'Lỗi lấy feedback lương', e); }
   },
 

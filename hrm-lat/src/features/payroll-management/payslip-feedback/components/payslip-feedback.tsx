@@ -22,7 +22,7 @@ export const PayslipFeedback = () => {
   const { columns } = usePayrollFeedbackColumns();
 
   const { filters } = useQueryFilter<ShiftManagementParams>();
-  const { departmentId, month, roomId, search, status, page, limit } = filters;
+  const { month, search, status, page, limit } = filters;
   const { startDate, endDate } = useMonthDateRange(month);
 
   const { data, isLoading } = usePayrollFeedbackList({
@@ -39,8 +39,8 @@ export const PayslipFeedback = () => {
   const { paginationConfig } = usePaginationConfig({
     page,
     limit,
-    total: data?.pagination?.total,
-    totalPage: data?.pagination?.totalPage,
+    total: (data as any)?.data?.pagination?.total ?? (data as any)?.pagination?.total,
+    totalPage: (data as any)?.data?.pagination?.totalPage ?? (data as any)?.pagination?.totalPage,
   });
 
   return (
@@ -53,7 +53,7 @@ export const PayslipFeedback = () => {
       <PageFilter extraFilters={<StatusFilter />} />
 
       <DataTable
-        dataSource={data?.data ?? []}
+        dataSource={(data as any)?.data?.data ?? (data as any)?.data ?? []}
         columns={columns}
         selectionMode="single"
         loading={isLoading}

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import type { Staff } from '@/types/shift-management.type';
+import type { SalaryHistory } from '../../types/salary-history.type';
 
 import { useStaffSalary } from '../../hooks/use-payroll-management';
 import { EmptyState } from './empty-state';
@@ -17,7 +18,7 @@ type StaffSalaryHistoryProps = {
 export const StaffSalaryHistory = ({ staff }: StaffSalaryHistoryProps) => {
   const { data, isLoading } = useStaffSalary(staff?.id ?? '');
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT)
-  const salaryList = data?.data ?? [];
+  const salaryList: SalaryHistory[] = (data as any)?.data?.data ?? (data as any)?.data ?? [];
 
   const { latestSalary, latestDelta } = useMemo(() => {
     if (!salaryList.length) return { latestSalary: 0, latestDelta: 0 };
@@ -41,7 +42,7 @@ export const StaffSalaryHistory = ({ staff }: StaffSalaryHistoryProps) => {
         ) : !salaryList.length ? (
           <EmptyState message={t('salary-history.no_salary_history')} />
         ) : (
-          salaryList.map((item, i) => (
+          salaryList.map((item: SalaryHistory, i: number) => (
             <SalaryHistoryRow
               key={item.id}
               item={item}

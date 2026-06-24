@@ -7,6 +7,8 @@ export const Route = createFileRoute('/_private/logout')({
     await idbPersister.removeClient();
 
     localStorage.removeItem('partner_code');
+    localStorage.removeItem('jwt');
+    localStorage.removeItem('user');
 
     auth.logout();
 

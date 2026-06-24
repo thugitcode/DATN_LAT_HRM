@@ -36,13 +36,14 @@ const leaveRequestController = {
       const [rows] = await db.query(`
         SELECT lr.*,
                e.employee_code as staff_code, e.full_name as staff_name,
-               hc.title_name as position,
+               COALESCE(jt.name, 'Nhân viên') as position,
                sub.full_name as substitute_name,
                mgr.full_name as manager_name,
                lq.name as leave_type_name
         FROM hr_leave_requests lr
         JOIN hr_employees e ON e.id = lr.employee_id
         LEFT JOIN hr_contracts hc ON hc.employee_id = e.id AND hc.status = 'ACTIVE'
+        LEFT JOIN cat_titles jt ON jt.id = hc.job_title_code
         LEFT JOIN hr_staff_departments rsd ON rsd.employee_id = lr.employee_id
         LEFT JOIN hr_staff_rooms rsr ON rsr.employee_id = lr.employee_id
         LEFT JOIN hr_employees sub ON sub.id = lr.substitute_id
@@ -58,11 +59,11 @@ const leaveRequestController = {
       let depts = [], rooms = [];
       if (empIds.length) {
         [depts] = await db.query(
-          `SELECT rsd.employee_id, d.id, d.name FROM hr_staff_departments rsd JOIN cat_departments d ON d.id=rsd.department_id WHERE rsd.employee_id IN (?)`,
+          `SELECT rsd.employee_id, d.id, d.name FROM hr_staff_departments rsd JOIN cat_departments d ON d.code=rsd.department_code WHERE rsd.employee_id IN (?)`,
           [empIds]
         );
         [rooms] = await db.query(
-          `SELECT rsr.employee_id, r.id, r.name FROM hr_staff_rooms rsr JOIN cat_rooms r ON r.id=rsr.room_id WHERE rsr.employee_id IN (?)`,
+          `SELECT rsr.employee_id, r.id, r.name FROM hr_staff_rooms rsr JOIN cat_rooms r ON r.code=rsr.room_code WHERE rsr.employee_id IN (?)`,
           [empIds]
         );
       }
@@ -73,9 +74,9 @@ const leaveRequestController = {
       const [[meta]] = await db.query(`
         SELECT
           COUNT(*) as total,
-          SUM(status='APPROVED') as approved,
-          SUM(status='REJECTED') as rejected,
-          SUM(status='PENDING') as pending
+          SUM(lr.status='APPROVED') as approved,
+          SUM(lr.status='REJECTED') as rejected,
+          SUM(lr.status='PENDING') as pending
         FROM hr_leave_requests lr
         JOIN hr_employees e ON e.id = lr.employee_id
         LEFT JOIN hr_staff_departments rsd ON rsd.employee_id = lr.employee_id
@@ -143,7 +144,15 @@ const leaveRequestController = {
     try {
       const { id } = req.params;
       const { approvedById } = req.body;
-      await db.query(`UPDATE hr_leave_requests SET status='APPROVED', approved_by_id=?, approved_at=NOW() WHERE id=?`, [approvedById || null, id]);
+      // Kiểm tra status hiện tại
+      const [[lr]] = await db.query(`SELECT status FROM hr_leave_requests WHERE id=?`, [id]);
+      if (!lr) return fail(res, 404, 'Không tìm thấy đơn nghỉ');
+      // PENDING -> MANAGER_APPROVED, MANAGER_APPROVED -> APPROVED
+      const newStatus = lr.status === 'PENDING' ? 'MANAGER_APPROVED' : 'APPROVED';
+      await db.query(
+        `UPDATE hr_leave_requests SET status=?, approved_by_id=?, approved_at=NOW() WHERE id=?`,
+        [newStatus, approvedById || null, id]
+      );
       ok(res, null, 'Duyệt đơn nghỉ thành công');
     } catch (e) { fail(res, 500, 'Lỗi duyệt đơn nghỉ', e); }
   },
@@ -152,8 +161,9 @@ const leaveRequestController = {
   reject: async (req, res) => {
     try {
       const { id } = req.params;
-      const { reason } = req.body;
-      await db.query(`UPDATE hr_leave_requests SET status='REJECTED', rejected_reason=? WHERE id=?`, [reason || '', id]);
+      const { reason, rejectedReason } = req.body;
+      const rejectReason = rejectedReason || reason || '';
+      await db.query(`UPDATE hr_leave_requests SET status='HR_REJECTED', rejected_reason=? WHERE id=?`, [rejectReason, id]);
       ok(res, null, 'Từ chối đơn nghỉ thành công');
     } catch (e) { fail(res, 500, 'Lỗi từ chối đơn nghỉ', e); }
   },
