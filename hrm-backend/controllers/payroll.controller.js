@@ -1,5 +1,6 @@
 const db = require('../config/db');
 const { calcPayroll } = require('./payroll-engine');
+const { sendPayslipEmail } = require('../services/email.service');
 const ok   = (res, data, msg = 'success') => res.json({ statusCode: 200, data, message: msg });
 const fail = (res, status, msg, err = null) => {
   if (err) console.error(`[payroll] ${msg}:`, err.message);
@@ -174,7 +175,7 @@ const payrollController = {
           : 0;
 
         // D. Gross
-        const totalGross = salaryByWork + allowanceAmount + overtimeAmount + otherIncomeAmount;
+        const totalGross = salaryByWork + allowanceAmount + overtimeAmount;
 
         // E. Khấu trừ bảo hiểm 10.5%
         const insuranceBase    = basicSalary;
@@ -321,18 +322,20 @@ const payrollController = {
           }
         });
 
-        const salaryByWork = basicSalary>0 ? Math.round((basicSalary/STANDARD_DAYS)*actualWorkDays) : 0;
-        const allowanceAmount = Math.round(onCallDays*150000 + parseFloat(sal.meal_allowance||0) + parseFloat(sal.phone_allowance||0));
-        const overtimeAmount = basicSalary>0 ? Math.round((basicSalary/STANDARD_DAYS/8)*overtimeHours*1.5) : 0;
-        const totalGross = salaryByWork + allowanceAmount + overtimeAmount + otherIncomeAmount;
-        const insuranceAmount = Math.round(basicSalary * ((sal.has_social_insurance?parseFloat(sal.social_insurance_rate||8):0) + (sal.has_health_insurance?parseFloat(sal.health_insurance_rate||1.5):0) + (sal.has_unemployment_insurance?parseFloat(sal.unemployment_insurance_rate||1):0)) / 100);
-        const netPay = Math.max(0, totalGross - insuranceAmount);
+        // Dùng calcPayroll cho số liệu chính xác
+        const p = await calcPayroll(id, month);
+        const salaryByWork = p.salaryByWork;
+        const allowanceAmount = p.totalAllowance;
+        const overtimeAmount = p.overtimeAmount;
+        const totalGross = p.totalGross;
+        const insuranceAmount = p.totalIns;
+        const netPay = p.netIncome;
 
         history.push({
           id: `${id}-${month}`,
           basicSalary: salaryByWork, allowanceAmount, overtimeAmount,
-          bonusAmount: 0, deductionAmount: 0, insuranceAmount, taxAmount: 0, netPay,
-          calculationDetails: { actualWorkDays, overtimeHours: Math.round(overtimeHours*100)/100 },
+          bonusAmount: p.kpiBonus + p.revenueBonus, deductionAmount: p.totalDeduction, insuranceAmount, taxAmount: p.pit, netPay,
+          calculationDetails: { actualWorkDays: p.totalWorkDays, overtimeHours: p.overtimeHours },
           isPaid: i > 0,
           paidAt: i > 0 ? toDate : null,
           payrollPeriod: {
@@ -545,6 +548,49 @@ const payrollController = {
 
       ok(res, null, 'Đã khóa bảng lương');
     } catch(e) { fail(res, 500, 'Lỗi khóa bảng lương', e); }
+  },
+
+  sendPayslip: async (req, res) => {
+    try {
+      const { staffIds, month } = req.body;
+      if (!month) return fail(res, 400, 'Thiếu tháng lương');
+
+      const ids = staffIds && staffIds.length > 0 ? staffIds : null;
+      let query = `SELECT e.id, e.full_name, e.email FROM hr_employees e WHERE e.status NOT IN ('RESIGNED','TERMINATED')`;
+      const params = [];
+      if (ids) { query += ` AND e.id IN (?)`;  params.push(ids); }
+
+      const [staffList] = await db.query(query, params);
+      const results = [];
+
+      for (const staff of staffList) {
+        if (!staff.email) {
+          results.push({ staffId: staff.id, name: staff.full_name, status: 'skip', reason: 'Không có email' });
+          continue;
+        }
+        try {
+          const p = await calcPayroll(staff.id, month);
+          await sendPayslipEmail({
+            to: staff.email,
+            staffName: staff.full_name,
+            month,
+            data: {
+              ...p,
+              socialInsurance: p.socialIns,
+              healthInsurance: p.healthIns,
+              unemploymentInsurance: p.unemployIns,
+              personalIncomeTax: p.pit,
+            }
+          });
+          results.push({ staffId: staff.id, name: staff.full_name, email: staff.email, status: 'sent' });
+        } catch(e) {
+          results.push({ staffId: staff.id, name: staff.full_name, status: 'error', reason: e.message });
+        }
+      }
+
+      const sent = results.filter(r => r.status === 'sent').length;
+      ok(res, { results, sent, total: staffList.length }, `Đã gửi ${sent}/${staffList.length} phiếu lương`);
+    } catch(e) { fail(res, 500, 'Lỗi gửi phiếu lương', e); }
   },
 
   unlock: async (req, res) => {

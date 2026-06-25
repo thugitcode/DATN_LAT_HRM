@@ -16,7 +16,7 @@ class PayrollSendPayslipService extends BaseApiService<
   RequestsParams
 > {
   constructor() {
-    super(hrmInstance, API_ENDPOINTS.HRM.PAYROLL_MANAGEMENT.PAYROLL_BY_MONTH);
+    super(hrmInstance, API_ENDPOINTS.HRM.PAYROLL_MANAGEMENT.PAYROLL_SEND_PAYSLIP);
   }
 
   async sendPayslips(payload: SendPayslipPayload) {

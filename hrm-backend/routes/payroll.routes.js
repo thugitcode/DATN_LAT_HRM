@@ -40,4 +40,6 @@ router.delete('/other-income/:id', otherIncomeCtrl.remove);
 router.get('/by-month/summary',        require('../controllers/payroll.controller').getSummary);
 router.get('/by-month/latest-summary', require('../controllers/payroll.controller').getSummaryLatest);
 
+router.post('/send-payslip', ctrl.sendPayslip);
+
 module.exports = router;
