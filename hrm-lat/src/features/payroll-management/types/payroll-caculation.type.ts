@@ -36,6 +36,10 @@ export interface StaffPayroll {
   basicSalary: number;
   allowanceAmount: number;
   overtimeAmount: number;
+  bonusAmount?: number;
+  performanceSalary?: number;
+  otherIncomeAmount?: number;
+  violationPenalty?: number;
   deductionAmount: number;
   netPay: number;
   totalGross: number;

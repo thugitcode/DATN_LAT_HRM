@@ -94,12 +94,14 @@ export const usePayrollCalculationColumns = () => {
       ),
     },
     {
-      key: 'overtimeAmount', // Tạm map vào bonus nếu API không có trường bonus riêng
+      key: 'bonusAmount',
       title: t('payrollCalculation.columns.bonus'),
       width: 120,
       align: 'end',
       render: (_, record) => (
-        <span className="text-primary">+{record.overtimeAmount?.toLocaleString('vi-VN')}</span>
+        <span className="text-primary">
+          {(record.bonusAmount || 0) > 0 ? `+${(record.bonusAmount||0).toLocaleString('vi-VN')}` : '+0'}
+        </span>
       ),
     },
     {

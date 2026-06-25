@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { calcPayroll } = require('./payroll-engine');
 const ok   = (res, data, msg = 'success') => res.json({ statusCode: 200, data, message: msg });
 const fail = (res, status, msg, err = null) => {
   if (err) console.error(`[payroll] ${msg}:`, err.message);
@@ -64,11 +65,10 @@ const payrollController = {
       }
 
       const result = await Promise.all(staff.map(async s => {
-        // 1. Lấy hồ sơ lương + hợp đồng
+        const p = await calcPayroll(s.id, month);
         const [[sal]] = await db.query(`SELECT * FROM hr_staff_salary WHERE employee_id=? LIMIT 1`, [s.id]);
-        // Lương cơ bản ưu tiên từ hợp đồng ACTIVE, fallback về hr_staff_salary
         const [[contract]] = await db.query(
-          `SELECT base_salary, insurance_salary FROM hr_contracts WHERE employee_id=? AND status='ACTIVE' LIMIT 1`, [s.id]);
+          `SELECT base_salary FROM hr_contracts WHERE employee_id=? AND status='ACTIVE' LIMIT 1`, [s.id]);
 
         // 2. Lấy tổng hợp công từ bảng chấm công
         const [wsdRows] = await db.query(`
@@ -203,34 +203,39 @@ const payrollController = {
           staffCode:          s.code,
           staffName:          s.name,
           avatar:             s.avatar,
-          position:           s.position || 'DOCTOR',
-          salaryTemplateName,
+          position:           s.position || 'Nhân viên',
+          salaryTemplateName: sal ? (p.baseSalary >= 20000000 ? 'Bậc cao' : p.baseSalary >= 10000000 ? 'Bậc trung' : 'Bậc cơ bản') : 'Chưa có hợp đồng',
           departments:        depts.filter(d=>d.employee_id===s.id).map(d=>({id:String(d.id),name:d.name})),
           rooms:              rooms_list.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
-          workDays,
-          onCallDays,
-          holidayDays,
-          totalAttendance,
-          actualWorkDays,
-          paidLeave,
-          absentDays,
-          overtimeHours,
-          otherIncomeAmount,
+          workDays:           p.workDays,
+          onCallDays:         p.onCallDays,
+          holidayDays:        p.holidayDays,
+          compRestDays:       p.compRestDays,
+          totalAttendance:    p.totalWorkDays,
+          actualWorkDays:     p.totalWorkDays,
+          paidLeave:          p.paidLeave,
+          absentDays:         p.absentDays,
+          overtimeHours:      p.overtimeHours,
           totalLateMinutes:   0,
           totalEarlyMinutes:  0,
-          basicSalary,
-          salaryByWork,
-          onCallAllowance,
-          allowanceAmount,
-          overtimeAmount,
-          deductionAmount,
-          insuranceAmount,
-          personalIncomeTax:  pit,
-          totalGross,
-          netPay,
+          basicSalary:        p.baseSalary,
+          salaryByWork:       p.salaryByWork,
+          onCallAllowance:    p.onCallSalary,
+          allowanceAmount:    p.totalAllowance,
+          overtimeAmount:     p.overtimeAmount,
+          otherIncomeAmount:  p.otherIncomeAmount,
+          kpiScore:           p.kpiScore,
+          revenueRate:        p.revenueRate,
+          bonusAmount:        p.revenueBonus + p.kpiBonus,
+          deductionAmount:    p.totalDeduction,
+          insuranceAmount:    p.totalIns,
+          personalIncomeTax:  p.pit,
+          violationPenalty:   p.violationPenalty,
+          totalGross:         p.totalGross,
+          netPay:             p.netIncome,
           confirmationStatus: 'N/A',
           note:               '',
-          staffStatus:        'WORKING',
+          staffStatus:        s.status || 'WORKING',
         };
       }));
 
@@ -552,12 +557,10 @@ const payrollController = {
       const parts = id.split('-');
       const staffId = parts[0];
       const month = parts.slice(1).join('-'); // YYYY-MM
-      const fromDate = `${month}-01`;
       const [y, m] = month.split('-').map(Number);
-      const toDate = new Date(y, m, 0).toISOString().slice(0, 10);
-      const STANDARD_DAYS = 26;
-      const ON_CALL_ALLOWANCE = 150000;
-      const OT_RATE = 1.5;
+      const fromDate = `${month}-01`;
+      const lastDay = new Date(y, m, 0).getDate();
+      const toDate = `${month}-${String(lastDay).padStart(2,'0')}`;
 
       const [[e]] = await db.query(`
         SELECT e.id, e.employee_code as code, e.full_name as name, e.avatar,
@@ -571,90 +574,76 @@ const payrollController = {
         WHERE e.id=? LIMIT 1`, [staffId]);
       if (!e) return fail(res, 404, 'Không tìm thấy nhân viên');
 
-      const [[sal]] = await db.query(`SELECT * FROM hr_staff_salary WHERE employee_id=? LIMIT 1`, [staffId]);
-      const [wsdRows] = await db.query(`
-        SELECT wsd.status, wsd.check_in_time, wsd.check_out_time,
-               st.shift_type, st.code as shift_code, st.start_time
-        FROM hr_work_schedule_details wsd
-        JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
-        JOIN shifts st ON st.id=wsd.shift_template_id
-        WHERE ws.employee_id=? AND wsd.work_date BETWEEN ? AND ?
-      `, [staffId, fromDate, toDate]);
-
-      const isNight = (r) => r.shift_type==='ON_CALL'||['D','Đ'].includes((r.shift_code||'').toUpperCase())||(r.start_time||'').startsWith('21')||(r.start_time||'').startsWith('22');
-      const present = wsdRows.filter(r=>['PRESENT','LATE','EARLY_LEAVE'].includes(r.status));
-      const workDays = present.filter(r=>!isNight(r)).length;
-      const onCallDays = present.filter(r=>isNight(r)).length;
-      const paidLeave = wsdRows.filter(r=>['LEAVE','LEAVE_PAID'].includes(r.status)).length;
-      const actualWorkDays = workDays + onCallDays + paidLeave;
-
-      let totalOvertimeHours = 0;
-      present.forEach(r => {
-        if (r.check_in_time && r.check_out_time) {
-          const diff = (new Date(r.check_out_time)-new Date(r.check_in_time))/3600000;
-          totalOvertimeHours += Math.max(0, (diff<0?diff+24:diff)-8);
-        }
-      });
-      totalOvertimeHours = Math.round(totalOvertimeHours*100)/100;
-
-      const basicSalary = parseFloat(sal?.gross_salary||sal?.net_salary||0);
-      const [ry,rm] = month.split('-').map(Number);
-      const dim = new Date(ry,rm,0).getDate();
-      let wdim = 0; for(let i=1;i<=dim;i++){if(new Date(ry,rm-1,i).getDay()!==0)wdim++;}
-      const effStd = Math.min(STANDARD_DAYS, wdim);
-      const salaryByWork = basicSalary>0 ? Math.round((basicSalary/effStd)*actualWorkDays) : 0;
-      const onCallSalary = onCallDays * ON_CALL_ALLOWANCE;
-      const hazardAllowance = parseFloat(sal?.hazard_allowance||0);
-      const mealAllowance = sal?.meal_allowance_unit==='DAY' ? parseFloat(sal?.meal_allowance||0)*actualWorkDays : parseFloat(sal?.meal_allowance||0);
-      const phoneAllowance = parseFloat(sal?.phone_allowance||0);
-      const positionAllowance = parseFloat(sal?.position_allowance||0);
-      const otherAllowance = parseFloat(sal?.other_allowance||0);
-      const overtimeAmount = basicSalary>0 ? Math.round((basicSalary/STANDARD_DAYS/8)*totalOvertimeHours*OT_RATE) : 0;
-      const totalBeforeDeduction = salaryByWork + onCallSalary + hazardAllowance + mealAllowance + phoneAllowance + positionAllowance + otherAllowance + overtimeAmount;
-
-      const siRate = sal?.has_social_insurance ? parseFloat(sal?.social_insurance_rate||8) : 0;
-      const hiRate = sal?.has_health_insurance ? parseFloat(sal?.health_insurance_rate||1.5) : 0;
-      const uiRate = sal?.has_unemployment_insurance ? parseFloat(sal?.unemployment_insurance_rate||1) : 0;
-      const socialInsurance = Math.round(basicSalary*siRate/100);
-      const healthInsurance = Math.round(basicSalary*hiRate/100);
-      const unemploymentInsurance = Math.round(basicSalary*uiRate/100);
-      const totalInsurance = socialInsurance + healthInsurance + unemploymentInsurance;
-
-      const SELF_DEDUCT = 11000000;
-      const DEP_DEDUCT = 4400000 * parseInt(sal?.dependents_count||0);
-      const taxableIncome = Math.max(0, totalBeforeDeduction - totalInsurance - SELF_DEDUCT - DEP_DEDUCT);
-      const personalIncomeTax = calcPIT(taxableIncome);
-      const totalDeduction = totalInsurance + personalIncomeTax;
-      const netIncome = Math.max(0, totalBeforeDeduction - totalDeduction);
+      const p = await calcPayroll(staffId, month);
 
       ok(res, {
         staffName: e.name, staffCode: e.code, departmentName: e.department_name||'',
         monthLabel: `Tháng ${m}/${y}`, fromDate, toDate,
-        standardWorkingDays: effStd, actualWorkDays, paidLeave,
-        unpaidLeave: 0, totalWorkDays: actualWorkDays, workDays,
-        totalAttendance: actualWorkDays,
-        totalLeaveDays: 0, usedLeaveDays: 0, remainingLeaveDays: 0,
-        totalOvertimeHours, overtimeAmount, compHoursUsed: 0, compHoursRemaining: 0,
-        contractBasicSalary: basicSalary, contractHazardAllowance: hazardAllowance,
-        contractSupportAllowance: positionAllowance, contractTotalSalary: basicSalary,
-        actualWorkSalary: salaryByWork, onCallDays, onCallSalary,
-        actualPositionAllowance: positionAllowance, actualBasicSalaryByWork: salaryByWork,
-        responsibilityAllowance: 0, positionAllowance, hazardAllowance,
-        mealAllowance, fuelAllowance: parseFloat(sal?.fuel_allowance||0),
-        phoneAllowance, businessTripAllowance: parseFloat(sal?.business_trip_allowance||0),
-        otherAllowance, performanceSalary: 0, bonusAmount: 0,
-        otherIncomeAndOvertime: overtimeAmount, totalBeforeDeduction,
-        violationPenalty: 0, violationDetails: '',
-        insuranceBaseSalary: basicSalary, socialInsurance, healthInsurance,
-        unemploymentInsurance, unionFee: 0,
-        selfDeduction: SELF_DEDUCT, familyDeduction: DEP_DEDUCT,
-        taxExemptIncome: SELF_DEDUCT+DEP_DEDUCT, personalIncomeTax,
-        totalDeduction, netIncome, prepaidPhase1: 0, advancePayment: 0,
-        pensionFund1Percent: 0, finalAmount: netIncome,
-        employerSocialInsurance: 0, employerHealthInsurance: 0,
-        employerUnemploymentInsurance: 0, employerUnionFee: 0, employerTotal: 0,
+        // Công
+        standardWorkingDays: p.standardWorkingDays,
+        actualWorkDays: p.totalWorkDays,
+        workDays: p.standardWorkingDays,   // FE dùng workDays cho "Ngày công chuẩn" → phải là 26
+        onCallDays: p.onCallDays,
+        holidayDays: p.holidayDays,
+        compRestDays: p.compRestDays,
+        paidLeave: p.paidLeave,
+        unpaidLeave: p.unpaidAbsents,
+        totalWorkDays: p.totalWorkDays,
+        totalAttendance: p.totalWorkDays,  // FE dùng totalAttendance cho "Ngày công thực tế" → phải là 19
+        totalLeaveDays: p.paidLeave,
+        usedLeaveDays: p.paidLeave,
+        remainingLeaveDays: 12 - p.paidLeave,
+        totalOvertimeHours: p.overtimeHours,
+        compHoursUsed: 0, compHoursRemaining: 0,
+        // Thu nhập
+        contractBasicSalary: p.baseSalary,
+        contractHazardAllowance: p.hazardAllowance,
+        contractSupportAllowance: p.positionAllowance,
+        contractTotalSalary: p.baseSalary,
+        actualWorkSalary: p.salaryByWork,
+        actualBasicSalaryByWork: p.salaryByWork,
+        onCallSalary: p.onCallSalary,
+        overtimeAmount: p.overtimeAmount,
+        responsibilityAllowance: 0,
+        positionAllowance: p.positionAllowance,
+        hazardAllowance: p.hazardAllowance,
+        mealAllowance: p.mealAllowance,
+        fuelAllowance: p.fuelAllowance,
+        phoneAllowance: p.phoneAllowance,
+        businessTripAllowance: p.bizTripAllowance,
+        otherAllowance: p.otherAllowance,
+        // Thu nhập ngoài
+        performanceSalary: p.kpiBonus,
+        bonusAmount: p.revenueBonus,
+        otherIncomeAndOvertime: p.otherIncomeAmount,
+        otherIncomeAmount: p.otherIncomeAmount,
+        kpiScore: p.kpiScore,
+        revenueRate: p.revenueRate,
+        // Tổng
+        totalBeforeDeduction: p.totalGross,
+        // Bảo hiểm
+        insuranceBaseSalary: p.insuranceBase,
+        socialInsurance: p.socialIns,
+        healthInsurance: p.healthIns,
+        unemploymentInsurance: p.unemployIns,
+        unionFee: p.unionFee,
+        selfDeduction: 11000000,
+        familyDeduction: p.taxable ? (11000000 + 4400000 * 0) : 0,
+        taxableIncome: p.taxable,
+        personalIncomeTax: p.pit,
+        violationPenalty: p.violationPenalty,
+        totalDeduction: p.totalDeduction,
+        netIncome: p.netIncome,
+        finalAmount: p.netIncome,           // FE dùng finalAmount cho Tổng thực nhận
+        advancePayment: 0,
+        // Doanh nghiệp đóng thêm
+        employerSocialInsurance: Math.round(p.insuranceBase * 17.5 / 100),
+        employerHealthInsurance: Math.round(p.insuranceBase * 3 / 100),
+        employerUnemploymentInsurance: Math.round(p.insuranceBase * 1 / 100),
+        employerUnionFee: Math.round(p.insuranceBase * 2 / 100),
+        employerTotal: Math.round(p.insuranceBase * 23.5 / 100),
       });
-    } catch(e) { fail(res, 500, 'Lỗi lấy chi tiết lương', e); }
+    } catch (e) { fail(res, 500, 'Lỗi lấy chi tiết lương', e); }
   },
 };
 
