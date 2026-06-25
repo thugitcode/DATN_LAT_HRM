@@ -20,49 +20,117 @@ function statusCode(s) {
   return { SCHEDULED:'SC', PRESENT:'P', ABSENT:'AB', LATE:'L', EARLY_LEAVE:'EL',
            MISSING_CHECKIN:'MCI', MISSING_CHECKOUT:'MCO', HOLIDAY:'H', LEAVE:'LV', ON_CALL:'OC' }[s] || s;
 }
-function buildSummary(details) {
-  // Tính giờ thực tế + overtime từ check_in/out
-  let totalWorkHours = 0, overtimeHours = 0;
-  details.forEach(d => {
-    if (d.check_in_time && d.check_out_time) {
-      const diff = (new Date(d.check_out_time) - new Date(d.check_in_time)) / 3600000;
-      const hours = diff < 0 ? diff + 24 : diff;
-      totalWorkHours += hours;
-      overtimeHours  += Math.max(0, hours - 8);
-    }
-  });
-
-  // Ca trực đêm: shift_type ON_CALL hoặc code D/Đ hoặc start 21-22h
+function buildSummary(details, explanations = {}) {
+  // explanations = { 'YYYY-MM-DD': 'APPROVED'|'REJECTED'|'PENDING' }
+  // Helper: ca trực đêm
   const isNight = (d) =>
     d.shift_type === 'ON_CALL' ||
     ['D','Đ'].includes((d.shift_code||'').toUpperCase()) ||
     (d.shift_start||'').startsWith('21') || (d.shift_start||'').startsWith('22');
 
-  const present = details.filter(d => ['PRESENT','LATE','EARLY_LEAVE'].includes(d.status));
+  // Nhóm theo status — nếu có giải trình APPROVED thì ABSENT tính như PRESENT
+  const present = details.filter(d => {
+    if (['PRESENT','LATE','EARLY_LEAVE'].includes(d.status)) return true;
+    if (d.status === 'ABSENT' && explanations[d.work_date] === 'APPROVED') return true;
+    return false;
+  });
+  const absent = details.filter(d =>
+    d.status === 'ABSENT' && explanations[d.work_date] !== 'APPROVED'
+  );
+  const late  = details.filter(d =>
+    d.status === 'LATE' && explanations[d.work_date] !== 'APPROVED'
+  );
+  const early = details.filter(d =>
+    d.status === 'EARLY_LEAVE' && explanations[d.work_date] !== 'APPROVED'
+  );
 
-  // Tổng công theo công thức SRS
-  const workDays  = present.filter(d => !isNight(d)).length;
-  const onCall    = present.filter(d => isNight(d)).length;
+  // Ngày làm ca ngày vs ca trực đêm
+  const workDays = present.filter(d => !isNight(d)).length;
+  const onCall   = present.filter(d => isNight(d)).length;
+
+  // Nghỉ phép hưởng lương (từ chấm công)
   const paidLeave = details.filter(d => ['LEAVE','LEAVE_PAID'].includes(d.status)).length;
-  const holiday   = details.filter(d => d.status === 'HOLIDAY').length;
+
+  // Nghỉ bù trực
+  const compRest = details.filter(d => d.status === 'COMPENSATORY_LEAVE').length;
+
+  // Nghỉ lễ
+  const holiday = details.filter(d => d.status === 'HOLIDAY').length;
+
+  // Nghỉ khác (unpaid, social insurance...)
+  const otherLeave = details.filter(d =>
+    ['UNPAID_LEAVE','SOCIAL_INSURANCE_LEAVE','SICK_LEAVE'].includes(d.status)
+  ).length;
+
+  // Tính giờ làm thực tế + tăng ca + giờ bù
+  let totalWorkHours = 0, overtimeHours = 0, compHours = 0;
+
+  // Tìm các ngày sau ca trực đêm có nghỉ bù không
+  const onCallDates = details
+    .filter(d => isNight(d) && ['PRESENT','LATE','EARLY_LEAVE'].includes(d.status))
+    .map(d => {
+      const next = new Date(d.work_date); next.setDate(next.getDate() + 1);
+      return next.toISOString().slice(0,10);
+    });
+  const compRestDates = details
+    .filter(d => d.status === 'COMPENSATORY_LEAVE')
+    .map(d => d.work_date);
+
+  // Ca trực đêm không có ngày nghỉ bù → giờ trực tích vào quỹ giờ bù
+  const onCallNoBu = onCallDates.filter(d => !compRestDates.includes(d));
+
+  details.forEach(d => {
+    if (!d.check_in_time || !d.check_out_time) return;
+    const diff = (new Date(d.check_out_time) - new Date(d.check_in_time)) / 3600000;
+    const hours = diff < 0 ? diff + 24 : diff;
+
+    if (d.status === 'COMPENSATORY_LEAVE') {
+      // Đi làm vào ngày nghỉ bù → tích vào quỹ giờ bù
+      compHours += hours;
+    } else if (isNight(d) && ['PRESENT','LATE','EARLY_LEAVE'].includes(d.status)) {
+      totalWorkHours += hours;
+      const stdHours = 9;
+      overtimeHours += Math.max(0, hours - stdHours);
+      // Trực đêm không có ngày nghỉ bù → cộng thêm 8h vào quỹ giờ bù
+      const nextDate = new Date(d.work_date); nextDate.setDate(nextDate.getDate() + 1);
+      if (onCallNoBu.includes(nextDate.toISOString().slice(0,10))) {
+        compHours += 8; // 1 ngày làm việc chuẩn = 8h bù
+      }
+    } else {
+      totalWorkHours += hours;
+      const stdHours = 8;
+      overtimeHours += Math.max(0, hours - stdHours);
+    }
+  });
+
+  // Tổng công = Ngày làm + Công trực + Nghỉ phép + Nghỉ lễ
   const totalWork = workDays + (onCall * 1.0) + paidLeave + holiday;
 
+  // Phút muộn/về sớm
+  const totalLateMinutes  = late.length  * 15; // ước tính 15p/lần
+  const totalEarlyMinutes = early.length * 15;
+
   return {
-    totalWork: Math.round(totalWork * 100) / 100,
-    workDays,
-    actualWorkDays: present.length,
-    absentDays: details.filter(d => d.status === 'ABSENT').length,
-    totalLateMinutes: 0, totalEarlyMinutes: 0,
-    holiday,
-    onCall,
-    paidLeave,
-    otherLeave: 0,
-    overtimeHours: Math.round(overtimeHours * 100) / 100,
-    totalAttendance: details.filter(d => d.check_in_time).length,
-    compHours: 0, compLeave: 0, compRest: 0, socialInsuranceLeave: 0, unpaidLeave: 0,
-    violationCount: details.filter(d => ['LATE','EARLY_LEAVE'].includes(d.status)).length,
-    totalWorkHours: Math.round(totalWorkHours * 100) / 100,
-    nightShiftCount: onCall,
+    totalWork:        Math.round(totalWork * 100) / 100,
+    workDays,                          // Ngày làm ca ngày
+    onCall,                            // Công trực đêm
+    actualWorkDays:   present.length,  // Tổng ngày có mặt
+    absentDays:       absent.length,   // Ngày vắng
+    totalLateMinutes,
+    totalEarlyMinutes,
+    holiday,                           // Nghỉ lễ
+    paidLeave,                         // Nghỉ phép hưởng lương
+    otherLeave,                        // Nghỉ khác
+    compRest,                          // Nghỉ bù trực
+    compHours:        Math.round(compHours * 100) / 100,      // Quỹ giờ bù tích lũy
+    overtimeHours:    Math.round(overtimeHours * 100) / 100,  // Tăng ca
+    totalAttendance:  details.filter(d => d.check_in_time).length,
+    violationCount:   late.length + early.length,
+    totalWorkHours:   Math.round(totalWorkHours * 100) / 100,
+    nightShiftCount:  onCall,
+    unpaidLeave:      0,
+    socialInsuranceLeave: 0,
+    compLeave:        compRest,
   };
 }
 
@@ -376,16 +444,41 @@ const workScheduleController = {
                wsd.start_time, wsd.end_time, wsd.check_in_time, wsd.check_out_time,
                wsd.status, wsd.work_weight, ws.employee_id,
                st.name as shift_name, st.code as shift_code, st.shift_type,
-               st.start_time as shift_start, st.end_time as shift_end, st.id as shift_template_id
+               st.start_time as shift_start, st.end_time as shift_end, st.id as shift_template_id,
+               ae.status as explanation_status
         FROM hr_work_schedule_details wsd
         JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
         JOIN shifts st ON st.id=wsd.shift_template_id
+        LEFT JOIN (
+          SELECT employee_id, DATE_FORMAT(work_date,'%Y-%m-%d') as work_date,
+                 MAX(CASE WHEN status='APPROVED' THEN 'APPROVED'
+                          WHEN status='PENDING' THEN 'PENDING'
+                          ELSE status END) as status
+          FROM hr_attendance_explanations
+          GROUP BY employee_id, DATE_FORMAT(work_date,'%Y-%m-%d')
+        ) ae ON ae.employee_id=ws.employee_id 
+               AND ae.work_date=DATE_FORMAT(wsd.work_date,'%Y-%m-%d')
         WHERE ws.employee_id IN (?) AND wsd.work_date BETWEEN ? AND ?
         ORDER BY wsd.work_date
       `, [staffIds, fromDate, toDate]);
 
+      // Load explanations cho tất cả staff trong tháng
+      const [explRows] = await db.query(`
+        SELECT employee_id, DATE_FORMAT(work_date,'%Y-%m-%d') as work_date, status
+        FROM hr_attendance_explanations
+        WHERE employee_id IN (?) AND work_date BETWEEN ? AND ?
+      `, [staffIds, fromDate, toDate]);
+
+      // Map: { empId: { 'YYYY-MM-DD': 'APPROVED'|... } }
+      const explMap = {};
+      explRows.forEach(e => {
+        if (!explMap[e.employee_id]) explMap[e.employee_id] = {};
+        explMap[e.employee_id][e.work_date] = e.status;
+      });
+
       const result = staff.map(s => {
         const sd = details.filter(d => d.employee_id === s.id);
+        const empExpl = explMap[s.id] || {};
         const byShift = {};
         sd.forEach(d => {
           const key = d.shift_template_id;
@@ -395,21 +488,22 @@ const workScheduleController = {
           };
           byShift[key].days[d.work_date] = {
             workScheduleDetailId:String(d.id), date:d.work_date,
-            displayCode: statusCode(d.status),
+            // Nếu có giải trình APPROVED → hiện GT, ngược lại theo status
+            displayCode: d.explanation_status === 'APPROVED' ? 'GT' : statusCode(d.status),
             shiftStartTime:d.shift_start, shiftEndTime:d.shift_end,
             checkInTime:d.check_in_time||null, checkOutTime:d.check_out_time||null,
             status:d.status, workWeight:parseFloat(d.work_weight)||1,
           };
         });
         Object.values(byShift).forEach(g => {
-          g.summary = buildSummary(sd.filter(d=>d.shift_template_id===parseInt(g.shift.id)));
+          g.summary = buildSummary(sd.filter(d=>d.shift_template_id===parseInt(g.shift.id)), empExpl);
         });
         return {
           staff: { id:String(s.id),code:s.code,name:s.name,avatar:s.avatar,status:'ACTIVE',
             departments:depts.filter(d=>d.employee_id===s.id).map(d=>({id:String(d.id),name:d.name})),
             rooms:rooms.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
           },
-          shifts: Object.values(byShift), summary: buildSummary(sd),
+          shifts: Object.values(byShift), summary: buildSummary(sd, empExpl),
         };
       });
       ok(res, result);
@@ -593,35 +687,98 @@ const workScheduleController = {
   // GET /work-schedule/staff-daily-attendance
   getStaffDailyAttendance: async (req, res) => {
     try {
-      const { staffId, month } = req.query;
+      const { staffId, fromDate: fd, toDate: td, month } = req.query;
       if (!staffId) return fail(res, 400, 'Thiếu staffId');
       const currentMonth = month || new Date().toISOString().slice(0, 7);
-      const fromDate = `${currentMonth}-01`, toDate = getLastDay(currentMonth);
+      const fromDate = fd || `${currentMonth}-01`;
+      const toDate   = td || getLastDay(currentMonth);
 
-      let [details] = await db.query(`
+      const [[emp]] = await db.query(
+        `SELECT e.id, e.employee_code, e.full_name, e.avatar,
+                COALESCE(c.level_name, 'DOCTOR') as position,
+                dep.name as department_name
+         FROM hr_employees e
+         LEFT JOIN hr_contracts c ON c.employee_id=e.id AND c.status='ACTIVE'
+         LEFT JOIN hr_staff_departments rsd ON rsd.employee_id=e.id
+         LEFT JOIN cat_departments dep ON dep.code=rsd.department_code
+         WHERE e.id=? LIMIT 1`, [staffId]);
+
+      const [details] = await db.query(`
         SELECT wsd.id, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
-               wsd.start_time, wsd.end_time, wsd.check_in_time, wsd.check_out_time,
-               wsd.status, wsd.work_weight, wsd.note,
+               wsd.check_in_time, wsd.check_out_time, wsd.status, wsd.note,
                st.name as shift_name, st.code as shift_code, st.shift_type,
                st.start_time as shift_start, st.end_time as shift_end
         FROM hr_work_schedule_details wsd
         JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
         JOIN shifts st ON st.id=wsd.shift_template_id
         WHERE ws.employee_id=? AND wsd.work_date BETWEEN ? AND ?
-        ORDER BY wsd.work_date, wsd.start_time
+        ORDER BY wsd.work_date, wsd.check_in_time
       `, [staffId, fromDate, toDate]);
 
+      const DOW = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+
+      // Group by date
       const byDate = {};
       details.forEach(d => {
-        if (!byDate[d.work_date]) byDate[d.work_date] = {date:d.work_date,dayOfWeek:new Date(d.work_date).getDay(),shifts:[]};
-        byDate[d.work_date].shifts.push({
-          id:String(d.id), shiftName:d.shift_name, shiftCode:d.shift_code, shiftType:d.shift_type,
-          startTime:d.shift_start, endTime:d.shift_end,
-          checkInTime:d.check_in_time, checkOutTime:d.check_out_time,
-          status:d.status, workWeight:parseFloat(d.work_weight)||1,
-        });
+        if (!byDate[d.work_date]) byDate[d.work_date] = { date: d.work_date, dayOfWeek: DOW[new Date(d.work_date).getDay()], entries: [] };
+        byDate[d.work_date].entries.push(d);
       });
-      ok(res, Object.values(byDate));
+
+      // Build days array
+      const days = Object.values(byDate).map(day => {
+        const entry = day.entries[0];
+        const ci = entry?.check_in_time;
+        const co = entry?.check_out_time;
+        let totalHours = 0;
+        if (ci && co) {
+          const diff = (new Date(co) - new Date(ci)) / 3600000;
+          totalHours = Math.round((diff < 0 ? diff + 24 : diff) * 100) / 100;
+        }
+        // Ghép các ca trong ngày
+        const shiftCodes = day.entries.map(e => e.shift_code).filter(Boolean).join(', ');
+        const ciStr = ci ? (() => { const d2=new Date(ci); return `${String((d2.getUTCHours()+7)%24).padStart(2,'0')}:${String(d2.getUTCMinutes()).padStart(2,'0')}`; })() : null;
+        const coStr = co ? (() => { const d2=new Date(co); return `${String((d2.getUTCHours()+7)%24).padStart(2,'0')}:${String(d2.getUTCMinutes()).padStart(2,'0')}`; })() : null;
+
+        return {
+          date: day.date,
+          dayOfWeek: day.dayOfWeek,
+          checkInTime: ciStr,
+          checkOutTime: coStr,
+          totalHoursDisplay: totalHours ? `${Math.floor(totalHours)}h${Math.round((totalHours%1)*60)}m` : '--',
+          totalHours,
+          lateMinutes: entry?.status === 'LATE' ? 15 : 0,
+          earlyMinutes: 0,
+          explanationStatus: 'NONE',
+          isLeave: ['LEAVE','LEAVE_PAID'].includes(entry?.status),
+          shiftCode: shiftCodes || null,
+          timeline: [],
+          allowedLateMinutes: 15,
+          allowedEarlyLeaveMinutes: 15,
+          displayCode: entry?.status === 'PRESENT' ? 'P' : entry?.status === 'ABSENT' ? 'AB' : entry?.status === 'LATE' ? 'L' : 'N',
+        };
+      });
+
+      // Summary
+      const lateCount    = details.filter(d => d.status === 'LATE').length;
+      const absentCount  = details.filter(d => d.status === 'ABSENT').length;
+      const summary = {
+        dayOff: absentCount,
+        lateCount,
+        earlyLeaveCount: 0,
+        missedCheckIn: details.filter(d => !d.check_in_time && d.status !== 'ABSENT').length,
+        remainingLeave: 12,
+        unauthorizedLeave: absentCount,
+      };
+
+      ok(res, [{
+        staffId: String(emp?.id || staffId),
+        staffCode: emp?.employee_code || '',
+        staffName: emp?.full_name || '',
+        position: emp?.position || 'DOCTOR',
+        departmentName: emp?.department_name || '',
+        summary,
+        days,
+      }]);
     } catch (e) { fail(res, 500, 'Lỗi lấy chấm công nhân viên', e); }
   },
 };

@@ -28,6 +28,7 @@ import {
   useUpdateKPIManagement,
 } from '../hooks/use-payroll-management';
 import { createKpiMutateSchema, type KpiMutateFormValues } from '../schemas/kpi-mutate-schema';
+import dayjs from 'dayjs';
 import { KpiRatingEnum, KpiSourceEnum, type Kpi, type KpiMutatePayload } from '../types/kpi.type';
 
 export const FormKpiMutate = () => {
@@ -38,9 +39,9 @@ export const FormKpiMutate = () => {
   const onClose = useDrawer((state) => state.onClose);
   const dataRow = useDrawer((state) => state.data) as Kpi;
 
-  const { data, isLoading } = useKpiDetail(dataRow?.id);
+  const { data, isLoading } = useKpiDetail(dataRow?.id ?? '');
 
-  const dataDetail = data?.data;
+  const dataDetail = dataRow?.id ? data?.data : undefined;
 
   const schema = useMemo(() => createKpiMutateSchema(), []);
 
@@ -68,7 +69,7 @@ export const FormKpiMutate = () => {
       departmentId: '',
       roomId: '',
       staffId: '',
-      month: '',
+      month: dayjs().format('YYYY-MM'),
       kpiScore: '',
       rating: '',
       evaluatorId: '',
@@ -102,9 +103,17 @@ export const FormKpiMutate = () => {
 
     setValue('kpiScore', dataDetail.kpiScore ? String(dataDetail.kpiScore) : '');
     setValue('rating', dataDetail.rating);
-    setValue('evaluatorId', dataDetail.evaluator?.id ?? '');
+    setValue('evaluatorId', (dataDetail as any).evaluatorId ?? dataDetail.evaluator?.id ?? '');
     setValue('source', dataDetail.source);
     setValue('status', dataDetail.status);
+
+    // Set selectedStaff để filteredDepartmentOptions/filteredRoomOptions hoạt động
+    const empForStaff = staffOptions.find((e) => e.key === dataDetail.staff.id);
+    if (empForStaff) {
+      setSelectedStaff(empForStaff);
+      setValue('departmentId', (dataDetail as any).departmentId ?? dataDetail.departments?.[0]?.id ?? '');
+      setValue('roomId', (dataDetail as any).roomId ?? dataDetail.rooms?.[0]?.id ?? '');
+    }
   }, [dataDetail, staffOptions, hasAutofilled]);
 
   useEffect(() => {
@@ -169,9 +178,10 @@ export const FormKpiMutate = () => {
   };
 
   const onSubmit = (values: KpiMutateFormValues) => {
+    const currentMonth = dayjs().format('YYYY-MM');
     const payload: KpiMutatePayload = {
       staffId: values.staffId,
-      month: '2026-03',
+      month: values.month || currentMonth,
       kpiScore: Number(values.kpiScore),
       rating: values.rating as KpiRatingEnum,
       evaluatorId: values.evaluatorId,

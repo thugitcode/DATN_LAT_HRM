@@ -48,8 +48,8 @@ export const FormOtherIncomeMutate = () => {
   const onClose = useDrawer((state) => state.onClose);
   const dataRow = useDrawer((state) => state.data) as OtherIncome;
 
-  const { data, isLoading } = useOtherIncomeDetail(dataRow?.id);
-  const dataDetail = data?.data;
+  const { data, isLoading } = useOtherIncomeDetail(dataRow?.id ?? '');
+  const dataDetail = dataRow?.id ? data?.data : undefined;
 
   const schema = useMemo(() => createOtherIncomeMutateSchema(), []);
 
@@ -114,8 +114,8 @@ export const FormOtherIncomeMutate = () => {
     methods.reset({
       staffCode: dataDetail.staff?.code || '',
       name: dataDetail.staff?.id || '',
-      departmentId: dataDetail.departments[0]?.id || '',
-      roomId: dataDetail.rooms[0]?.id || '',
+      departmentId: (dataDetail as any).departments?.[0]?.id || (dataDetail as any).staff?.departments?.[0]?.id || '',
+      roomId: (dataDetail as any).rooms?.[0]?.id || (dataDetail as any).staff?.rooms?.[0]?.id || '',
       staffId: dataDetail.staff?.id || '',
       type: dataDetail.type || '',
       allowanceId: dataDetail.allowance?.id || '',
@@ -228,10 +228,10 @@ export const FormOtherIncomeMutate = () => {
       mutateUpdate({ id: dataDetail.id, payload });
     }
   };
-  const typeOptions = Object.values(AllowanceType).map((val) => ({
-    label: t(`otherIncome.allowance_type.${val}`),
-    key: val,
-  }));
+  // const typeOptions = Object.values(AllowanceType).map((val) => ({
+  //   label: t(`otherIncome.allowance_type.${val}`),
+  //   key: val,
+  // }));
   const isDisabledStaff = isPending || isPendingUpdate || !!dataDetail;
 
   return (

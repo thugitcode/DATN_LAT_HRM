@@ -42,8 +42,8 @@ export const RevenueData = () => {
   const { paginationConfig } = usePaginationConfig({
     page,
     limit,
-    total: data?.pagination?.total,
-    totalPage: data?.pagination?.totalPage,
+    total: (data as any)?.data?.pagination?.total ?? data?.pagination?.total,
+    totalPage: (data as any)?.data?.pagination?.totalPage ?? data?.pagination?.totalPage,
   });
 
   return (
@@ -67,7 +67,7 @@ export const RevenueData = () => {
       <PayrollManagementFilters statusOptions={statusRevenueOptions} />
 
       <DataTable
-        dataSource={data?.data ?? []}
+        dataSource={(data as any)?.data?.data ?? data?.data ?? []}
         columns={columns}
         selectionMode="single"
         loading={isLoading}

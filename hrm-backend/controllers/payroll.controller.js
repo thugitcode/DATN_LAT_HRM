@@ -64,8 +64,11 @@ const payrollController = {
       }
 
       const result = await Promise.all(staff.map(async s => {
-        // 1. Lấy hồ sơ lương
+        // 1. Lấy hồ sơ lương + hợp đồng
         const [[sal]] = await db.query(`SELECT * FROM hr_staff_salary WHERE employee_id=? LIMIT 1`, [s.id]);
+        // Lương cơ bản ưu tiên từ hợp đồng ACTIVE, fallback về hr_staff_salary
+        const [[contract]] = await db.query(
+          `SELECT base_salary, insurance_salary FROM hr_contracts WHERE employee_id=? AND status='ACTIVE' LIMIT 1`, [s.id]);
 
         // 2. Lấy tổng hợp công từ bảng chấm công
         const [wsdRows] = await db.query(`
@@ -89,7 +92,43 @@ const payrollController = {
           [s.id, fromDate, toDate]
         );
         const paidLeave = wsdPaidLeave + parseInt(leaveRow?.cnt || 0);
-        const absentDays   = wsdRows.filter(r => r.status==='ABSENT').length;
+
+        // Nghỉ lễ
+        const holidayDays = wsdRows.filter(r => r.status === 'HOLIDAY').length;
+
+        // Thu nhập khác của NV trong tháng
+        const [[otherIncome]] = await db.query(
+          `SELECT COALESCE(SUM(amount),0) as total FROM hr_other_income WHERE employee_id=? AND DATE_FORMAT(month,'%Y-%m')=?`,
+          [s.id, month]
+        );
+        const otherIncomeAmount = parseFloat(otherIncome?.total || 0);
+        const absentDays = wsdRows.filter(r => r.status==='ABSENT').length;
+
+        // Kiểm tra vắng có giải trình APPROVED → được tính công
+        // PENDING → chưa duyệt → chưa tính
+        const [[approvedExpl]] = await db.query(`
+          SELECT COUNT(*) as cnt FROM hr_attendance_explanations
+          WHERE employee_id=? AND status='APPROVED'
+          AND work_date BETWEEN ? AND ?
+        `, [s.id, fromDate, toDate]);
+        const approvedAbsents = parseInt(approvedExpl?.cnt || 0);
+        const unpaidAbsents   = Math.max(0, absentDays - approvedAbsents);
+
+        // LATE → vẫn tính công, chỉ trừ tiền phạt (vi phạm)
+        // Tính tiền phạt muộn dựa trên số phút
+        let latePenaltyAmount = 0;
+        const lateRows = wsdRows.filter(r => r.status === 'LATE');
+        for (const lr of lateRows) {
+          if (!lr.check_in_time || !lr.start_time) continue;
+          const actualIn = new Date(lr.check_in_time);
+          const [sh, sm] = lr.start_time.split(':').map(Number);
+          const scheduled = new Date(actualIn);
+          scheduled.setUTCHours(sh - 7, sm, 0);
+          const lateMinutes = (actualIn - scheduled) / 60000;
+          // Phạt theo phút muộn: 50,000đ/30p muộn
+          if (lateMinutes > 15) latePenaltyAmount += Math.ceil(lateMinutes / 30) * 50000;
+        }
+
         const totalAttendance = workDays + onCallDays + paidLeave;
 
         // Tính giờ tăng ca
@@ -104,8 +143,10 @@ const payrollController = {
         overtimeHours = Math.round(overtimeHours * 100) / 100;
 
         // 3. Công thức SRS
-        const basicSalary   = parseFloat(sal?.gross_salary || sal?.net_salary || 0);
-        const actualWorkDays = workDays + onCallDays + paidLeave;
+        const basicSalary   = parseFloat(contract?.base_salary || sal?.gross_salary || sal?.net_salary || 0);
+        // LATE vẫn tính công đầy đủ
+        // Chỉ ABSENT không có giải trình APPROVED mới không tính công
+        const actualWorkDays = workDays + onCallDays + paidLeave + holidayDays - unpaidAbsents;
 
         // A. Lương theo công: (basicSalary / 26) * actualWorkDays
         // Tính số ngày làm việc thực tế trong tháng (trừ CN)
@@ -133,7 +174,7 @@ const payrollController = {
           : 0;
 
         // D. Gross
-        const totalGross = salaryByWork + allowanceAmount + overtimeAmount;
+        const totalGross = salaryByWork + allowanceAmount + overtimeAmount + otherIncomeAmount;
 
         // E. Khấu trừ bảo hiểm 10.5%
         const insuranceBase    = basicSalary;
@@ -148,7 +189,9 @@ const payrollController = {
         const taxableIncome = Math.max(0, totalGross - insuranceAmount - SELF_DEDUCT - DEP_DEDUCT);
         const pit = calcPIT(taxableIncome);
 
-        const deductionAmount = insuranceAmount + pit;
+        // Phạt vi phạm (đi muộn)
+        const violationPenalty = latePenaltyAmount || 0;
+        const deductionAmount = insuranceAmount + pit + violationPenalty;
         const netPay          = Math.max(0, totalGross - deductionAmount);
 
         // Bậc lương
@@ -166,11 +209,13 @@ const payrollController = {
           rooms:              rooms_list.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
           workDays,
           onCallDays,
+          holidayDays,
           totalAttendance,
           actualWorkDays,
           paidLeave,
           absentDays,
           overtimeHours,
+          otherIncomeAmount,
           totalLateMinutes:   0,
           totalEarlyMinutes:  0,
           basicSalary,
@@ -274,7 +319,7 @@ const payrollController = {
         const salaryByWork = basicSalary>0 ? Math.round((basicSalary/STANDARD_DAYS)*actualWorkDays) : 0;
         const allowanceAmount = Math.round(onCallDays*150000 + parseFloat(sal.meal_allowance||0) + parseFloat(sal.phone_allowance||0));
         const overtimeAmount = basicSalary>0 ? Math.round((basicSalary/STANDARD_DAYS/8)*overtimeHours*1.5) : 0;
-        const totalGross = salaryByWork + allowanceAmount + overtimeAmount;
+        const totalGross = salaryByWork + allowanceAmount + overtimeAmount + otherIncomeAmount;
         const insuranceAmount = Math.round(basicSalary * ((sal.has_social_insurance?parseFloat(sal.social_insurance_rate||8):0) + (sal.has_health_insurance?parseFloat(sal.health_insurance_rate||1.5):0) + (sal.has_unemployment_insurance?parseFloat(sal.unemployment_insurance_rate||1):0)) / 100);
         const netPay = Math.max(0, totalGross - insuranceAmount);
 
@@ -412,13 +457,26 @@ const payrollController = {
       const [salaries] = await db.query(`SELECT gross_salary FROM hr_staff_salary`);
       const totalGross = salaries.reduce((s,r) => s+parseFloat(r.gross_salary||0), 0);
 
-      const [[kpiCount]] = await db.query(`SELECT COUNT(*) as c FROM hr_staff_kpi WHERE DATE_FORMAT(month,'%Y-%m')=?`, [month]);
-      const [[otherCount]] = await db.query(`SELECT COUNT(*) as c FROM hr_other_income WHERE DATE_FORMAT(month,'%Y-%m')=? OR month IS NULL`, [month]).catch(()=>[[{c:0}]]);
+      const [[kpiData]] = await db.query(`SELECT COUNT(*) as c, AVG(kpi_score) as avg_score FROM hr_staff_kpi WHERE DATE_FORMAT(month,'%Y-%m')=?`, [month]);
+      const [[otherCount]] = await db.query(`SELECT COUNT(*) as c, SUM(amount) as total FROM hr_other_income WHERE DATE_FORMAT(month,'%Y-%m')=?`, [month]).catch(()=>[[{c:0,total:0}]]);
+      const [[revenueData]] = await db.query(`SELECT COUNT(*) as c, SUM(actual_amount) as total FROM hr_staff_revenue WHERE DATE_FORMAT(month,'%Y-%m')=? AND status='CONFIRMED'`, [month]).catch(()=>[[{c:0,total:0}]]);
+
+      const totalOtherIncome = parseFloat(otherCount?.total||0);
+      const totalRevenue = parseFloat(revenueData?.total||0);
+      const avgKpi = parseFloat(kpiData?.avg_score||0);
+      const totalBonus = totalOtherIncome;
+      const estimatedPay = (totalGross + totalBonus) * 0.895;
 
       ok(res, {
         month,
-        inputs: { attendance: String(payroll.totalPresent||0), revenue: 0, kpiPoint: 0, otherIncomeCount: parseInt(otherCount?.c||0) },
-        costs: { totalGrossSalary: totalGross, totalBonus: 0, totalPenalty: 0, estimatedTotalPay: totalGross * 0.895 },
+        inputs: {
+          attendance: String(payroll.totalPresent||0),
+          revenue: totalRevenue,
+          kpiPoint: Math.round(avgKpi * 100) / 100,
+          otherIncomeCount: parseInt(otherCount?.c||0),
+          otherIncomeTotal: totalOtherIncome,
+        },
+        costs: { totalGrossSalary: totalGross, totalBonus, totalPenalty: 0, estimatedTotalPay: estimatedPay },
       });
     } catch(e) { fail(res, 500, 'Lỗi lấy tổng hợp', e); }
   },
@@ -431,11 +489,57 @@ const payrollController = {
   },
 
   calculate: async (req, res) => {
-    ok(res, null, 'Đã tính lương thành công');
+    try {
+      const { month } = req.body || req.query;
+      const currentMonth = month || new Date().toISOString().slice(0, 7);
+      const fromDate = `${currentMonth}-01`;
+      const [y, m] = currentMonth.split('-').map(Number);
+      const toDate = new Date(y, m, 0).toISOString().slice(0, 10);
+
+      // Kiểm tra còn đơn giải trình PENDING không
+      const [[pending]] = await db.query(`
+        SELECT COUNT(*) as cnt FROM hr_attendance_explanations
+        WHERE status IN ('PENDING','MANAGER_APPROVED')
+        AND work_date BETWEEN ? AND ?
+      `, [fromDate, toDate]);
+
+      if (parseInt(pending?.cnt || 0) > 0) {
+        return res.status(400).json({
+          statusCode: 400,
+          message: `⚠️ Không thể tính lương! Còn ${pending.cnt} đơn giải trình chưa được duyệt. Vui lòng duyệt hoặc từ chối hết trước khi chốt lương.`,
+          pendingCount: parseInt(pending.cnt),
+        });
+      }
+
+      ok(res, null, 'Đã tính lương thành công');
+    } catch(e) { fail(res, 500, 'Lỗi tính lương', e); }
   },
 
   lock: async (req, res) => {
-    ok(res, null, 'Đã khóa bảng lương');
+    try {
+      const { month } = req.body || req.query;
+      const currentMonth = month || new Date().toISOString().slice(0, 7);
+      const fromDate = `${currentMonth}-01`;
+      const [y, m] = currentMonth.split('-').map(Number);
+      const toDate = new Date(y, m, 0).toISOString().slice(0, 10);
+
+      // Hard constraint: không chốt khi còn PENDING
+      const [[pending]] = await db.query(`
+        SELECT COUNT(*) as cnt FROM hr_attendance_explanations
+        WHERE status IN ('PENDING','MANAGER_APPROVED')
+        AND work_date BETWEEN ? AND ?
+      `, [fromDate, toDate]);
+
+      if (parseInt(pending?.cnt || 0) > 0) {
+        return res.status(400).json({
+          statusCode: 400,
+          message: `⚠️ Không thể chốt lương! Còn ${pending.cnt} đơn giải trình chưa xử lý.`,
+          pendingCount: parseInt(pending.cnt),
+        });
+      }
+
+      ok(res, null, 'Đã khóa bảng lương');
+    } catch(e) { fail(res, 500, 'Lỗi khóa bảng lương', e); }
   },
 
   unlock: async (req, res) => {

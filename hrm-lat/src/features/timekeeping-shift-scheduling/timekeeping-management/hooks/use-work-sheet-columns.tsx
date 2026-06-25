@@ -151,11 +151,11 @@ export const useWorkSheetColumns = () => {
   const summaryColumns = useMemo<Column<WorkSheetByShiftRow>[]>(
     () => [
       {
-        key: 'summary.totalAttendance',
+        key: 'summary.totalWork',
         title: t('columns.summary.total_attendance'),
         align: 'center',
         render: (_, record) => (
-          <div className="text-sm text-black text-center">{record?.summary?.totalAttendance}</div>
+          <div className="text-sm text-black text-center">{record?.summary?.totalWork}</div>
         ),
       },
       {
@@ -163,7 +163,7 @@ export const useWorkSheetColumns = () => {
         title: t('columns.summary.work_days'),
         align: 'center',
         render: (_, record) => (
-          <div className="text-sm text-black text-center">{record.summary?.actualWorkDays}</div>
+          <div className="text-sm text-black text-center">{record.summary?.workDays}</div>
         ),
       },
       {

@@ -97,10 +97,18 @@ export const EnterRevenueDrawer = () => {
   } = methods;
   useEffect(() => {
     if (detailData?.data?.id) {
+      const detailStaff = detailData.data.staff;
+      const depts = toNameKeyOptions(detailStaff?.departments);
+      const rooms = toNameKeyOptions(detailStaff?.rooms);
+      setUserOptions({ departments: depts, rooms });
+
       reset({
         ...detailData?.data,
-        departmentId: autoFillSingle(staff?.departments ?? []),
-        roomId: autoFillSingle(staff?.rooms ?? []),
+        staffId: detailStaff?.id ?? '',
+        staffCode: detailStaff?.code ?? '',
+        name: detailStaff?.id ?? '',
+        departmentId: autoFillSingle(detailStaff?.departments ?? []),
+        roomId: autoFillSingle(detailStaff?.rooms ?? []),
       });
     }
   }, [detailData?.data]);

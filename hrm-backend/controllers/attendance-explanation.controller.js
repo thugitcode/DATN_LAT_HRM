@@ -234,7 +234,7 @@ const ctrl = {
         const workDate = ae.work_date;
         const empId    = ae.employee_id;
         const [wsds] = await db.query(`
-          SELECT wsd.id, st.code as shift_code, st.start_time
+          SELECT wsd.id, wsd.status as current_status, st.code as shift_code, st.start_time
           FROM hr_work_schedule_details wsd
           JOIN hr_work_schedules ws ON ws.id = wsd.work_schedule_id
           JOIN shifts st ON st.id = wsd.shift_template_id
@@ -259,9 +259,11 @@ const ctrl = {
               checkIn = `${dateStr} 21:55:00`; checkOut = `${next.toISOString().slice(0,10)} 06:05:00`;
             }
           }
+          // ABSENT → PRESENT, LATE/EARLY_LEAVE → giữ status nhưng cập nhật giờ + đánh EXPLAINED
+          const newStatus = ae.type === 'MISSING_CHECK_IN' ? 'PRESENT' : wsd.current_status || 'PRESENT';
           await db.query(
-            `UPDATE hr_work_schedule_details SET status='PRESENT', check_in_time=?, check_out_time=? WHERE id=?`,
-            [checkIn, checkOut, wsd.id]
+            `UPDATE hr_work_schedule_details SET status=?, check_in_time=?, check_out_time=? WHERE id=?`,
+            [newStatus, checkIn, checkOut, wsd.id]
           );
         }
       }
@@ -272,11 +274,21 @@ const ctrl = {
   // POST /attendance-explanation/:id/approve
   approve: async (req, res) => {
     try {
-      const { managerId, comment } = req.body;
+      const { managerId, comment, hrComment } = req.body;
+      const [[ae]] = await db.query('SELECT * FROM hr_attendance_explanations WHERE id=?', [req.params.id]);
+      if (!ae) return fail(res, 404, 'Không tìm thấy đơn giải trình');
+
+      // Nếu đang PENDING → MANAGER_APPROVED, nếu MANAGER_APPROVED → APPROVED
+      const newStatus = ae.status === 'PENDING' ? 'MANAGER_APPROVED' : 'APPROVED';
       await db.query(
-        `UPDATE hr_attendance_explanations SET status='MANAGER_APPROVED', approved_by_manager_id=?, manager_approved_at=NOW(), manager_confirmation=? WHERE id=?`,
-        [managerId||null, comment||null, req.params.id]
+        `UPDATE hr_attendance_explanations SET status=?, approved_by_manager_id=?, manager_approved_at=NOW(), hr_comment=? WHERE id=?`,
+        [newStatus, managerId||null, hrComment||comment||null, req.params.id]
       );
+
+      // Nếu APPROVED → update chấm công ngay
+      if (newStatus === 'APPROVED') {
+        await updateWsdAfterApprove(ae, db);
+      }
       ok(res, null, 'Duyệt giải trình thành công');
     } catch (e) { fail(res, 500, 'Lỗi duyệt giải trình', e); }
   },
@@ -285,10 +297,14 @@ const ctrl = {
   managerApprove: async (req, res) => {
     try {
       const { hrId, comment } = req.body;
+      const [[ae]] = await db.query('SELECT * FROM hr_attendance_explanations WHERE id=?', [req.params.id]);
+      if (!ae) return fail(res, 404, 'Không tìm thấy đơn giải trình');
       await db.query(
         `UPDATE hr_attendance_explanations SET status='APPROVED', approved_by_hr_id=?, hr_approved_at=NOW(), hr_comment=? WHERE id=?`,
         [hrId||null, comment||null, req.params.id]
       );
+      // Update chấm công
+      await updateWsdAfterApprove(ae, db);
       ok(res, null, 'Phê duyệt giải trình thành công');
     } catch (e) { fail(res, 500, 'Lỗi phê duyệt giải trình', e); }
   },
