@@ -76,7 +76,7 @@
       "employerHealthInsurance": "Employer Health Insurance",
       "employerUnemploymentInsurance": "Employer Unemployment Insurance",
       "employerUnionFee": "Employer Union Fee",
-      "totalEmployerCost": "Total Employer Cost"
+      "totalEmployerCost": "Total Employer Insurance"
     },
     "sendPayslip": {
       "title": "Send Payslip",
@@ -95,7 +95,6 @@
       "AUTO_CONFIRMED": "Auto Confirmed"
     }
   },
-
   "payslipFeedback": {
     "title": "Payslip Feedback",
     "columns": {
@@ -140,7 +139,6 @@
       "history": "Feedback history"
     }
   },
-
   "data_summary": {
     "tabs": {
       "attendance_data": "Attendance Data",
@@ -150,11 +148,9 @@
       "summary_finalize": "Summary & Finalize"
     }
   },
-
   "attendance_data": {
     "viewDetail": "View Details"
   },
-
   "kpi": {
     "title": "KPI",
     "validation": {
@@ -180,7 +176,6 @@
       "note": "Note"
     }
   },
-
   "otherIncome": {
     "title": "Other Income",
     "validation": {
@@ -189,7 +184,6 @@
       "department_required": "Please select a department",
       "room_required": "Please select a room",
       "staff_id_required": "Missing staff information",
-
       "type_required": "Please select income type",
       "allowance_id_required": "Please select an allowance",
       "amount_required": "Please enter amount",
@@ -225,7 +219,6 @@
       }
     }
   },
-
   "summary-finalize": {
     "title": "Summary and Finalization",
     "input-summary": {
@@ -252,7 +245,6 @@
       "processing": "Processing..."
     }
   },
-
   "columns": {
     "stt": "No.",
     "department": "Department/Ward",
@@ -279,7 +271,6 @@
     "input_by": "Entered by",
     "actions": "Actions"
   },
-
   "revenue": {
     "columns": {
       "stt": "No.",
@@ -317,7 +308,6 @@
       }
     }
   },
-
   "salary-history": {
     "title": "Employee Salary History",
     "current_salary": "Current Salary",

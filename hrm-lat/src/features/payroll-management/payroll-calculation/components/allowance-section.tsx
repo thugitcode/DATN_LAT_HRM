@@ -61,7 +61,8 @@ export function AllowanceSection({ data }: AllowanceSectionProps) {
     (data.businessTripAllowance || 0) +
     (data.otherAllowance || 0) +
     (data.performanceSalary || 0) +
-    (data.bonusAmount || 0);
+    (data.bonusAmount || 0) +
+    ((data as any).otherIncomeAmount || 0);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -124,6 +125,12 @@ export function AllowanceSection({ data }: AllowanceSectionProps) {
         <AllowanceRow
           label={t('payrollCalculation.detail.bonus_amount')}
           value={data.bonusAmount}
+          formulaLabel={t('payrollCalculation.detail.formula')}
+          formatCurrency={formatCurrency}
+        />
+        <AllowanceRow
+          label="Các khoản thu nhập khác"
+          value={(data as any).otherIncomeAmount || 0}
           formulaLabel={t('payrollCalculation.detail.formula')}
           formatCurrency={formatCurrency}
         />

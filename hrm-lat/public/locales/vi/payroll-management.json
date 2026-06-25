@@ -76,7 +76,7 @@
       "employerHealthInsurance": "Bảo hiểm y tế",
       "employerUnemploymentInsurance": "Bảo hiểm thất nghiệp",
       "employerUnionFee": "Kinh phí công đoàn",
-      "totalEmployerCost": "Tổng chi phí NSDLD"
+      "totalEmployerCost": "Tổng bảo hiểm DN đóng thêm"
     },
     "sendPayslip": {
       "title": "Gửi phiếu lương",
@@ -95,7 +95,6 @@
       "AUTO_CONFIRMED": "Tự động xác nhận"
     }
   },
-
   "payslipFeedback": {
     "title": "Phản hồi phiếu lương",
     "columns": {
@@ -140,7 +139,6 @@
       "history": "Lịch sử phản hồi"
     }
   },
-
   "data_summary": {
     "tabs": {
       "attendance_data": "Dữ liệu chấm công",
@@ -153,7 +151,6 @@
   "attendance_data": {
     "viewDetail": "Xem chi tiết"
   },
-
   "kpi": {
     "title": "KPI",
     "validation": {
@@ -179,7 +176,6 @@
       "note": "Ghi chú"
     }
   },
-
   "otherIncome": {
     "title": "Các khoản thu nhập khác",
     "validation": {
@@ -223,7 +219,6 @@
       }
     }
   },
-
   "summary-finalize": {
     "title": "Tổng hợp và chốt",
     "input-summary": {
@@ -250,7 +245,6 @@
       "processing": "Đang xử lý..."
     }
   },
-
   "columns": {
     "stt": "STT",
     "department": "Khoa/Phòng",
@@ -277,7 +271,6 @@
     "input_by": "Người nhập",
     "actions": "Thao tác"
   },
-
   "revenue": {
     "columns": {
       "stt": "STT",
@@ -321,10 +314,8 @@
       "status": "Trạng thái",
       "actions": "Thao tác"
     },
-
     "kpi": {
       "title": "KPI",
-
       "validation": {
         "staff_id_required": "Mã nhân viên không được để trống",
         "name_required": "Tên nhân viên không được để trống",
@@ -335,7 +326,6 @@
         "evaluator_required": "Người đánh giá không được để trống",
         "rating_required": "Xếp loại không được để trống"
       },
-
       "form": {
         "staff_info": "Thông tin nhân viên",
         "staff_code": "Mã nhân viên",
@@ -350,7 +340,6 @@
       }
     }
   },
-
   "salary-history": {
     "title": "Lịch sử lương nhân viên",
     "current_salary": "Lương hiện tại",

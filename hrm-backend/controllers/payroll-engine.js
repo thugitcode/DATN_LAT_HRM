@@ -186,12 +186,12 @@ async function calcPayroll(staffId, month) {
   const otherIncomeAmount = parseFloat(otherRow?.total||0);
 
   // ── 4. BƯỚC 1: Tính Gross ────────────────────────────────────
-  const salaryByWork   = baseSalary > 0 ? Math.round((baseSalary / standardWorkingDays) * totalWorkDaysForSalary) : 0;
+  const salaryByWork   = baseSalary > 0 ? Math.round((baseSalary / standardWorkingDays) * totalWorkDays) : 0;
   const onCallSalary   = onCallDays * ON_CALL_RATE;
   const overtimeAmount = baseSalary > 0 ? Math.round((baseSalary / STANDARD_DAYS / 8) * overtimeHours * OT_RATE) : 0;
-  const totalAllowance = Math.round(hazardAllowance + mealAllowance + phoneAllowance + positionAllowance + otherAllowance + fuelAllowance + bizTripAllowance);
+  const totalAllowance = Math.round(hazardAllowance + mealAllowance + phoneAllowance + positionAllowance + otherAllowance + fuelAllowance + bizTripAllowance + otherIncomeAmount);
 
-  const totalGross = salaryByWork + onCallSalary + overtimeAmount + totalAllowance + kpiBonus + revenueBonus + otherIncomeAmount;
+  const totalGross = salaryByWork + onCallSalary + overtimeAmount + totalAllowance + kpiBonus + revenueBonus;
 
   // ── 5. BƯỚC 2: Bảo hiểm ─────────────────────────────────────
   const siRate    = sal?.has_social_insurance     ? parseFloat(sal?.social_insurance_rate||8)    : 0;
@@ -212,7 +212,8 @@ async function calcPayroll(staffId, month) {
   const pit         = calcPIT(taxable);
 
   // ── 7. BƯỚC 4: Phạt vi phạm ─────────────────────────────────
-  const totalDeduction = totalIns + unionFee + pit + violationPenalty;
+  // totalIns đã bao gồm unionFee rồi → không cộng lại
+  const totalDeduction = totalIns + pit + violationPenalty;
   const netIncome      = Math.max(0, totalGross - totalDeduction);
 
   return {
@@ -225,6 +226,7 @@ async function calcPayroll(staffId, month) {
     totalAllowance, hazardAllowance, mealAllowance, phoneAllowance,
     positionAllowance, otherAllowance, fuelAllowance, bizTripAllowance,
     kpiBonus, kpiScore, revenueBonus, revenueRate, otherIncomeAmount,
+    bonusAmount: kpiBonus + revenueBonus,
     totalGross,
     // Bảo hiểm
     socialIns, healthIns, unemployIns, unionFee, totalIns,
