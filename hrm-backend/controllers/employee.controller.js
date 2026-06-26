@@ -87,6 +87,7 @@ const employeeController = {
     try {
       await connection.beginTransaction();
       const { personal, contract } = req.body;
+      console.log('[createEmployee] body:', JSON.stringify(req.body).slice(0, 500));
 
       // Kiểm tra ràng buộc tuổi hành nghề lớn hơn hoặc bằng 18
       const dob = new Date(personal.dob);

@@ -80,4 +80,29 @@ async function sendPayslipEmail({ to, staffName, month, data }) {
   });
 }
 
-module.exports = { sendPayslipEmail };
+async function sendAccountEmail({ to, staffName, username, password }) {
+  await transporter.sendMail({
+    from: `"HRM System" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: `[HRM] Thông tin tài khoản đăng nhập - ${staffName}`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;padding:20px">
+        <div style="background:#2C3782;padding:20px;border-radius:12px 12px 0 0;text-align:center">
+          <h2 style="color:white;margin:0">🏥 HRM - Thông tin tài khoản</h2>
+        </div>
+        <div style="background:#f9f9f9;padding:24px;border-radius:0 0 12px 12px;border:1px solid #e0e0e0">
+          <p>Xin chào <strong>${staffName}</strong>,</p>
+          <p>Tài khoản đăng nhập hệ thống HRM của bạn đã được tạo:</p>
+          <div style="background:white;border:1px solid #e0e0e0;border-radius:8px;padding:16px;margin:16px 0">
+            <p style="margin:8px 0"><strong>🔑 Tên đăng nhập:</strong> <span style="color:#2C3782;font-size:16px">${username}</span></p>
+            <p style="margin:8px 0"><strong>🔒 Mật khẩu:</strong> <span style="color:#2C3782;font-size:16px">${password}</span></p>
+          </div>
+          <p style="color:#e53e3e;font-size:13px">⚠️ Vui lòng đổi mật khẩu sau khi đăng nhập lần đầu.</p>
+          <p style="color:#666;font-size:12px;margin-top:20px">Trân trọng,<br/>Bộ phận Nhân sự</p>
+        </div>
+      </div>
+    `,
+  });
+}
+
+module.exports = { sendPayslipEmail, sendAccountEmail };

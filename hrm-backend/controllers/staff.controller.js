@@ -620,4 +620,20 @@ async function getRoomCode(conn, roomId) {
   return roomId;
 }
 
+staffController.sendAccount = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [[emp]] = await db.query(
+      `SELECT full_name, email, username, password, employee_code FROM hr_employees WHERE id=? LIMIT 1`, [id]
+    );
+    if (!emp) return fail(res, 404, 'Không tìm thấy nhân viên');
+    if (!emp.email) return fail(res, 400, 'Nhân viên chưa có email');
+    const username = emp.username || emp.employee_code.toLowerCase();
+    const password = emp.password || '123456';
+    const { sendAccountEmail } = require('../services/email.service');
+    await sendAccountEmail({ to: emp.email, staffName: emp.full_name, username, password });
+    ok(res, null, null, null, `Đã gửi thông tin tài khoản đến ${emp.email}`);
+  } catch(e) { fail(res, 500, 'Lỗi gửi email tài khoản', e); }
+};
+
 module.exports = staffController;

@@ -137,6 +137,13 @@ export const StaffDetailHeader: FC<StaffDetailHeaderProps> = ({ staff }) => {
                     color="primary"
                     className="h-10 px-4 font-semibold rounded-xl bg-[#6576FF]"
                     startContent={<IconMail size={18} />}
+                    onPress={async () => {
+                      try {
+                        const res = await fetch(`http://localhost:5000/api/staff/${staff.id}/send-account`, { method: 'POST' });
+                        const d = await res.json();
+                        alert(d.message || 'Đã gửi email tài khoản!');
+                      } catch { alert('Lỗi gửi email!'); }
+                    }}
                 >
                     {t('actions.send_email')}
                 </Button>
