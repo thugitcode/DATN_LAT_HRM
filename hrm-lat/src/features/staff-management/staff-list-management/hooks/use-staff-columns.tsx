@@ -174,6 +174,36 @@ export const useStaffColumns = () => {
       ),
     },
     {
+      key: 'certificateExpiryDate',
+      title: 'CCHN',
+      width: 140,
+      render: (_, record) => {
+        const expiry = record.certificateExpiryDate;
+        if (!expiry) return <span className="text-muted-foreground text-xs">--</span>;
+
+        const expiryDate = new Date(expiry);
+        const today = new Date();
+        const daysLeft = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        const dateStr = expiryDate.toLocaleDateString('vi-VN');
+
+        if (daysLeft < 0) {
+          return (
+            <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+              ⚠ Hết hạn
+            </span>
+          );
+        }
+        if (daysLeft <= 30) {
+          return (
+            <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-xs font-medium text-orange-700">
+              ⚠ Còn {daysLeft} ngày
+            </span>
+          );
+        }
+        return <span className="text-xs text-muted-foreground">{dateStr}</span>;
+      },
+    },
+    {
       key: 'actions',
       title: t('staff_table.columns.actions'),
       render: (_, record) => (

@@ -1,5 +1,5 @@
 import { NAMESPACES } from "@/i18n/constants";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { SectionHeader } from "./section-header";
 import { FormSelect } from "@/components/form-fields/form-select";
@@ -15,6 +15,17 @@ import { AcademicTitleEnum, StaffQualificationEnum } from "@/types/staff.type";
 export const QualificationSection = () => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
     const { control, trigger, getValues } = useFormContext();
+    const certificateExpiryDate = useWatch({ control, name: 'certificateExpiryDate' });
+
+    const cchnStatus = (() => {
+      if (!certificateExpiryDate) return null;
+      const expiry = new Date(certificateExpiryDate);
+      const today = new Date();
+      const daysLeft = Math.ceil((expiry.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      if (daysLeft < 0) return { type: 'expired', msg: 'Chứng chỉ hành nghề đã hết hạn! Cần cập nhật ngay.' };
+      if (daysLeft <= 30) return { type: 'warning', msg: `Chứng chỉ hành nghề sắp hết hạn! Còn ${daysLeft} ngày.` };
+      return null;
+    })();
     const { data, setMode, isView: view } = useControlMode();
 
     const { mutateAsync: updateStaff, isPending: isUpdating } = useUpdateStaff();
@@ -129,6 +140,16 @@ export const QualificationSection = () => {
                         isReadOnly={!isEditingQual || view}
                         variant={variantQual}
                     />
+                    {cchnStatus && (
+                      <div className={`flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-medium ${
+                        cchnStatus.type === 'expired'
+                          ? 'bg-red-50 text-red-700 border border-red-200'
+                          : 'bg-orange-50 text-orange-700 border border-orange-200'
+                      }`}>
+                        <span>{cchnStatus.type === 'expired' ? '🔴' : '⚠️'}</span>
+                        <span>{cchnStatus.msg}</span>
+                      </div>
+                    )}
                 </div>
             </div>
 
