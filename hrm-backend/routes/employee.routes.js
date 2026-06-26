@@ -4,7 +4,9 @@ const employeeController = require('../controllers/employee.controller');
 
 // ✅ Mở song song cả 2 cổng để tương thích tuyệt đối với FE có sẵn trên máy bạn
 router.get('/', employeeController.getEmployeesByTab);
+
 router.get('/tabs', employeeController.getEmployeesByTab);
+router.get('/:id', employeeController.getEmployeeById);
 
 router.post('/', employeeController.createEmployee);
 router.put('/:id', employeeController.updateEmployee);

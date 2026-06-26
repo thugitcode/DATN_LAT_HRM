@@ -10,5 +10,6 @@ router.post('/:id/reject',         ctrl.reject);
 router.patch('/:id',               ctrl.update);
 router.get('/:id',                 ctrl.getById);
 router.get('/',                    ctrl.getAll);
+router.post('/',                   ctrl.create);
 
 module.exports = router;

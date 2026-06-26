@@ -33,7 +33,12 @@ export const Login = () => {
         localStorage.setItem('jwt', 'hrm-local-token-' + result.data.id);
         
         // Chuyển hướng vào hệ thống
-        window.location.href = '/admin/timekeeping-shift-scheduling/timekeeping-management';
+        const role = result.data?.role;
+        if (role === 'admin' || role === 'ADMIN' || role === 'HR') {
+          window.location.href = '/admin/timekeeping-shift-scheduling/timekeeping-management';
+        } else {
+          window.location.href = '/user/profile';
+        }
       } else {
         alert(result.message); // Báo lỗi sai tài khoản/mật khẩu
       }
@@ -105,10 +110,10 @@ export const Login = () => {
 
         {/* Footer */}
         <div className="flex flex-wrap justify-between gap-2 font-medium text-white">
-          <span>Trường: TLU </span>
-          <span>SVTH: Luu Anh Thu</span>
-          <span>Made by Shenoryl</span>
-          <span>Please don't copyright</span>
+          <span>Trường: ___________________________</span>
+          <span>Đề tài: ___________________________</span>
+          <span>GVHD: ___________________________</span>
+          <span>SVTH: ___________________________</span>
         </div>
       </div>
     </div>

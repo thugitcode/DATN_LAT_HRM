@@ -10,6 +10,7 @@ router.patch('/by-month/unlock',   ctrl.unlock);
 router.get('/results/:id/detailed', ctrl.getResultDetails);
 router.get('/periods',           ctrl.getPeriods);
 router.get('/feedback',          ctrl.getFeedback);
+router.post('/feedback',         ctrl.createFeedback);
 router.get('/staff/:id/history', ctrl.getStaffHistory);
 
 // Revenue routes

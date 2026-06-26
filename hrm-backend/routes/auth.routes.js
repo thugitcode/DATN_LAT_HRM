@@ -17,14 +17,20 @@ router.post('/login', async (req, res) => {
       if (rows.length) user = rows[0];
     } catch(e) {}
 
-    // Fallback: thử hr_employees
+    // Fallback: thử hr_employees — mã NV làm username, password mặc định = mã NV
     if (!user) {
       const [rows] = await db.query(
-        `SELECT id, employee_code as username, full_name, 'hr' as role FROM hr_employees 
-         WHERE employee_code=? AND status='ACTIVE' LIMIT 1`,
+        `SELECT id, employee_code as username, full_name, email, avatar, 'employee' as role
+         FROM hr_employees
+         WHERE employee_code=? AND status != 'RESIGNED' LIMIT 1`,
         [username]
       );
-      if (rows.length) user = rows[0];
+      if (rows.length) {
+        // Password mặc định = mã nhân viên (hoặc '123456' nếu muốn chung)
+        if (password === rows[0].username || password === '123456') {
+          user = rows[0];
+        }
+      }
     }
 
     // Tài khoản admin mặc định

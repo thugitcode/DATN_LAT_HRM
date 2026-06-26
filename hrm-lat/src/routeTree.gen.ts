@@ -19,13 +19,22 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PrivateLogoutRouteImport } from './routes/_private/logout'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as PrivateUserIndexRouteImport } from './routes/_private/user/index'
 import { Route as PrivateAdminIndexRouteImport } from './routes/_private/admin/index'
 import { Route as AuthTimekeepingShiftSchedulingIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/index'
+import { Route as PrivateUserDashboardRouteImport } from './routes/_private/user/_dashboard'
 import { Route as PrivateAdminDetailRouteImport } from './routes/_private/admin/_detail'
 import { Route as PrivateAdminDashboardRouteImport } from './routes/_private/admin/_dashboard'
 import { Route as AuthTimekeepingShiftSchedulingTimekeepingManagementIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/timekeeping-management/index'
 import { Route as AuthTimekeepingShiftSchedulingShiftManagementIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/shift-management/index'
 import { Route as AuthTimekeepingShiftSchedulingExplanationManagementIndexRouteImport } from './routes/_auth/timekeeping-shift-scheduling/explanation-management/index'
+import { Route as PrivateUserDashboardTimekeepingRouteImport } from './routes/_private/user/_dashboard/timekeeping'
+import { Route as PrivateUserDashboardScheduleRouteImport } from './routes/_private/user/_dashboard/schedule'
+import { Route as PrivateUserDashboardProfileRouteImport } from './routes/_private/user/_dashboard/profile'
+import { Route as PrivateUserDashboardPayslipRouteImport } from './routes/_private/user/_dashboard/payslip'
+import { Route as PrivateUserDashboardLeaveRouteImport } from './routes/_private/user/_dashboard/leave'
+import { Route as PrivateUserDashboardFeedbackRouteImport } from './routes/_private/user/_dashboard/feedback'
+import { Route as PrivateUserDashboardExplanationRouteImport } from './routes/_private/user/_dashboard/explanation'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/index'
 import { Route as PrivateAdminDashboardStaffManagementIndexRouteImport } from './routes/_private/admin/_dashboard/staff-management/index'
 import { Route as PrivateAdminDashboardRecruitmentManagementIndexRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/index'
@@ -107,6 +116,11 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AuthRoute,
 } as any)
+const PrivateUserIndexRoute = PrivateUserIndexRouteImport.update({
+  id: '/user/',
+  path: '/user/',
+  getParentRoute: () => PrivateRoute,
+} as any)
 const PrivateAdminIndexRoute = PrivateAdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -118,6 +132,11 @@ const AuthTimekeepingShiftSchedulingIndexRoute =
     path: '/timekeeping-shift-scheduling/',
     getParentRoute: () => AuthRoute,
   } as any)
+const PrivateUserDashboardRoute = PrivateUserDashboardRouteImport.update({
+  id: '/user/_dashboard',
+  path: '/user',
+  getParentRoute: () => PrivateRoute,
+} as any)
 const PrivateAdminDetailRoute = PrivateAdminDetailRouteImport.update({
   id: '/admin/_detail',
   path: '/admin',
@@ -156,6 +175,48 @@ const PrivateAdminDashboardDashboardLazyRoute =
       (d) => d.Route,
     ),
   )
+const PrivateUserDashboardTimekeepingRoute =
+  PrivateUserDashboardTimekeepingRouteImport.update({
+    id: '/timekeeping',
+    path: '/timekeeping',
+    getParentRoute: () => PrivateUserDashboardRoute,
+  } as any)
+const PrivateUserDashboardScheduleRoute =
+  PrivateUserDashboardScheduleRouteImport.update({
+    id: '/schedule',
+    path: '/schedule',
+    getParentRoute: () => PrivateUserDashboardRoute,
+  } as any)
+const PrivateUserDashboardProfileRoute =
+  PrivateUserDashboardProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => PrivateUserDashboardRoute,
+  } as any)
+const PrivateUserDashboardPayslipRoute =
+  PrivateUserDashboardPayslipRouteImport.update({
+    id: '/payslip',
+    path: '/payslip',
+    getParentRoute: () => PrivateUserDashboardRoute,
+  } as any)
+const PrivateUserDashboardLeaveRoute =
+  PrivateUserDashboardLeaveRouteImport.update({
+    id: '/leave',
+    path: '/leave',
+    getParentRoute: () => PrivateUserDashboardRoute,
+  } as any)
+const PrivateUserDashboardFeedbackRoute =
+  PrivateUserDashboardFeedbackRouteImport.update({
+    id: '/feedback',
+    path: '/feedback',
+    getParentRoute: () => PrivateUserDashboardRoute,
+  } as any)
+const PrivateUserDashboardExplanationRoute =
+  PrivateUserDashboardExplanationRouteImport.update({
+    id: '/explanation',
+    path: '/explanation',
+    getParentRoute: () => PrivateUserDashboardRoute,
+  } as any)
 const PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute =
   PrivateAdminDashboardTimekeepingShiftSchedulingIndexRouteImport.update({
     id: '/timekeeping-shift-scheduling/',
@@ -433,8 +494,17 @@ export interface FileRoutesByFullPath {
   '/login': typeof AuthLoginRoute
   '/logout': typeof PrivateLogoutRoute
   '/admin': typeof PrivateAdminDetailRouteWithChildren
+  '/user': typeof PrivateUserDashboardRouteWithChildren
   '/timekeeping-shift-scheduling/': typeof AuthTimekeepingShiftSchedulingIndexRoute
   '/admin/': typeof PrivateAdminIndexRoute
+  '/user/': typeof PrivateUserIndexRoute
+  '/user/explanation': typeof PrivateUserDashboardExplanationRoute
+  '/user/feedback': typeof PrivateUserDashboardFeedbackRoute
+  '/user/leave': typeof PrivateUserDashboardLeaveRoute
+  '/user/payslip': typeof PrivateUserDashboardPayslipRoute
+  '/user/profile': typeof PrivateUserDashboardProfileRoute
+  '/user/schedule': typeof PrivateUserDashboardScheduleRoute
+  '/user/timekeeping': typeof PrivateUserDashboardTimekeepingRoute
   '/admin/dashboard': typeof PrivateAdminDashboardDashboardLazyRoute
   '/timekeeping-shift-scheduling/explanation-management/': typeof AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/timekeeping-shift-scheduling/shift-management/': typeof AuthTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -486,7 +556,15 @@ export interface FileRoutesByTo {
   '/login': typeof AuthLoginRoute
   '/logout': typeof PrivateLogoutRoute
   '/admin': typeof PrivateAdminIndexRoute
+  '/user': typeof PrivateUserIndexRoute
   '/timekeeping-shift-scheduling': typeof AuthTimekeepingShiftSchedulingIndexRoute
+  '/user/explanation': typeof PrivateUserDashboardExplanationRoute
+  '/user/feedback': typeof PrivateUserDashboardFeedbackRoute
+  '/user/leave': typeof PrivateUserDashboardLeaveRoute
+  '/user/payslip': typeof PrivateUserDashboardPayslipRoute
+  '/user/profile': typeof PrivateUserDashboardProfileRoute
+  '/user/schedule': typeof PrivateUserDashboardScheduleRoute
+  '/user/timekeeping': typeof PrivateUserDashboardTimekeepingRoute
   '/admin/dashboard': typeof PrivateAdminDashboardDashboardLazyRoute
   '/timekeeping-shift-scheduling/explanation-management': typeof AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/timekeeping-shift-scheduling/shift-management': typeof AuthTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -540,8 +618,17 @@ export interface FileRoutesById {
   '/_private/logout': typeof PrivateLogoutRoute
   '/_private/admin/_dashboard': typeof PrivateAdminDashboardRouteWithChildren
   '/_private/admin/_detail': typeof PrivateAdminDetailRouteWithChildren
+  '/_private/user/_dashboard': typeof PrivateUserDashboardRouteWithChildren
   '/_auth/timekeeping-shift-scheduling/': typeof AuthTimekeepingShiftSchedulingIndexRoute
   '/_private/admin/': typeof PrivateAdminIndexRoute
+  '/_private/user/': typeof PrivateUserIndexRoute
+  '/_private/user/_dashboard/explanation': typeof PrivateUserDashboardExplanationRoute
+  '/_private/user/_dashboard/feedback': typeof PrivateUserDashboardFeedbackRoute
+  '/_private/user/_dashboard/leave': typeof PrivateUserDashboardLeaveRoute
+  '/_private/user/_dashboard/payslip': typeof PrivateUserDashboardPayslipRoute
+  '/_private/user/_dashboard/profile': typeof PrivateUserDashboardProfileRoute
+  '/_private/user/_dashboard/schedule': typeof PrivateUserDashboardScheduleRoute
+  '/_private/user/_dashboard/timekeeping': typeof PrivateUserDashboardTimekeepingRoute
   '/_private/admin/_dashboard/dashboard': typeof PrivateAdminDashboardDashboardLazyRoute
   '/_auth/timekeeping-shift-scheduling/explanation-management/': typeof AuthTimekeepingShiftSchedulingExplanationManagementIndexRoute
   '/_auth/timekeeping-shift-scheduling/shift-management/': typeof AuthTimekeepingShiftSchedulingShiftManagementIndexRoute
@@ -595,8 +682,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/admin'
+    | '/user'
     | '/timekeeping-shift-scheduling/'
     | '/admin/'
+    | '/user/'
+    | '/user/explanation'
+    | '/user/feedback'
+    | '/user/leave'
+    | '/user/payslip'
+    | '/user/profile'
+    | '/user/schedule'
+    | '/user/timekeeping'
     | '/admin/dashboard'
     | '/timekeeping-shift-scheduling/explanation-management/'
     | '/timekeeping-shift-scheduling/shift-management/'
@@ -648,7 +744,15 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/admin'
+    | '/user'
     | '/timekeeping-shift-scheduling'
+    | '/user/explanation'
+    | '/user/feedback'
+    | '/user/leave'
+    | '/user/payslip'
+    | '/user/profile'
+    | '/user/schedule'
+    | '/user/timekeeping'
     | '/admin/dashboard'
     | '/timekeeping-shift-scheduling/explanation-management'
     | '/timekeeping-shift-scheduling/shift-management'
@@ -701,8 +805,17 @@ export interface FileRouteTypes {
     | '/_private/logout'
     | '/_private/admin/_dashboard'
     | '/_private/admin/_detail'
+    | '/_private/user/_dashboard'
     | '/_auth/timekeeping-shift-scheduling/'
     | '/_private/admin/'
+    | '/_private/user/'
+    | '/_private/user/_dashboard/explanation'
+    | '/_private/user/_dashboard/feedback'
+    | '/_private/user/_dashboard/leave'
+    | '/_private/user/_dashboard/payslip'
+    | '/_private/user/_dashboard/profile'
+    | '/_private/user/_dashboard/schedule'
+    | '/_private/user/_dashboard/timekeeping'
     | '/_private/admin/_dashboard/dashboard'
     | '/_auth/timekeeping-shift-scheduling/explanation-management/'
     | '/_auth/timekeeping-shift-scheduling/shift-management/'
@@ -814,6 +927,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_private/user/': {
+      id: '/_private/user/'
+      path: '/user'
+      fullPath: '/user/'
+      preLoaderRoute: typeof PrivateUserIndexRouteImport
+      parentRoute: typeof PrivateRoute
+    }
     '/_private/admin/': {
       id: '/_private/admin/'
       path: '/admin'
@@ -827,6 +947,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/timekeeping-shift-scheduling/'
       preLoaderRoute: typeof AuthTimekeepingShiftSchedulingIndexRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/_private/user/_dashboard': {
+      id: '/_private/user/_dashboard'
+      path: '/user'
+      fullPath: '/user'
+      preLoaderRoute: typeof PrivateUserDashboardRouteImport
+      parentRoute: typeof PrivateRoute
     }
     '/_private/admin/_detail': {
       id: '/_private/admin/_detail'
@@ -869,6 +996,55 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof PrivateAdminDashboardDashboardLazyRouteImport
       parentRoute: typeof PrivateAdminDashboardRoute
+    }
+    '/_private/user/_dashboard/timekeeping': {
+      id: '/_private/user/_dashboard/timekeeping'
+      path: '/timekeeping'
+      fullPath: '/user/timekeeping'
+      preLoaderRoute: typeof PrivateUserDashboardTimekeepingRouteImport
+      parentRoute: typeof PrivateUserDashboardRoute
+    }
+    '/_private/user/_dashboard/schedule': {
+      id: '/_private/user/_dashboard/schedule'
+      path: '/schedule'
+      fullPath: '/user/schedule'
+      preLoaderRoute: typeof PrivateUserDashboardScheduleRouteImport
+      parentRoute: typeof PrivateUserDashboardRoute
+    }
+    '/_private/user/_dashboard/profile': {
+      id: '/_private/user/_dashboard/profile'
+      path: '/profile'
+      fullPath: '/user/profile'
+      preLoaderRoute: typeof PrivateUserDashboardProfileRouteImport
+      parentRoute: typeof PrivateUserDashboardRoute
+    }
+    '/_private/user/_dashboard/payslip': {
+      id: '/_private/user/_dashboard/payslip'
+      path: '/payslip'
+      fullPath: '/user/payslip'
+      preLoaderRoute: typeof PrivateUserDashboardPayslipRouteImport
+      parentRoute: typeof PrivateUserDashboardRoute
+    }
+    '/_private/user/_dashboard/leave': {
+      id: '/_private/user/_dashboard/leave'
+      path: '/leave'
+      fullPath: '/user/leave'
+      preLoaderRoute: typeof PrivateUserDashboardLeaveRouteImport
+      parentRoute: typeof PrivateUserDashboardRoute
+    }
+    '/_private/user/_dashboard/feedback': {
+      id: '/_private/user/_dashboard/feedback'
+      path: '/feedback'
+      fullPath: '/user/feedback'
+      preLoaderRoute: typeof PrivateUserDashboardFeedbackRouteImport
+      parentRoute: typeof PrivateUserDashboardRoute
+    }
+    '/_private/user/_dashboard/explanation': {
+      id: '/_private/user/_dashboard/explanation'
+      path: '/explanation'
+      fullPath: '/user/explanation'
+      preLoaderRoute: typeof PrivateUserDashboardExplanationRouteImport
+      parentRoute: typeof PrivateUserDashboardRoute
     }
     '/_private/admin/_dashboard/timekeeping-shift-scheduling/': {
       id: '/_private/admin/_dashboard/timekeeping-shift-scheduling/'
@@ -1322,18 +1498,45 @@ const PrivateAdminDetailRouteChildren: PrivateAdminDetailRouteChildren = {
 const PrivateAdminDetailRouteWithChildren =
   PrivateAdminDetailRoute._addFileChildren(PrivateAdminDetailRouteChildren)
 
+interface PrivateUserDashboardRouteChildren {
+  PrivateUserDashboardExplanationRoute: typeof PrivateUserDashboardExplanationRoute
+  PrivateUserDashboardFeedbackRoute: typeof PrivateUserDashboardFeedbackRoute
+  PrivateUserDashboardLeaveRoute: typeof PrivateUserDashboardLeaveRoute
+  PrivateUserDashboardPayslipRoute: typeof PrivateUserDashboardPayslipRoute
+  PrivateUserDashboardProfileRoute: typeof PrivateUserDashboardProfileRoute
+  PrivateUserDashboardScheduleRoute: typeof PrivateUserDashboardScheduleRoute
+  PrivateUserDashboardTimekeepingRoute: typeof PrivateUserDashboardTimekeepingRoute
+}
+
+const PrivateUserDashboardRouteChildren: PrivateUserDashboardRouteChildren = {
+  PrivateUserDashboardExplanationRoute: PrivateUserDashboardExplanationRoute,
+  PrivateUserDashboardFeedbackRoute: PrivateUserDashboardFeedbackRoute,
+  PrivateUserDashboardLeaveRoute: PrivateUserDashboardLeaveRoute,
+  PrivateUserDashboardPayslipRoute: PrivateUserDashboardPayslipRoute,
+  PrivateUserDashboardProfileRoute: PrivateUserDashboardProfileRoute,
+  PrivateUserDashboardScheduleRoute: PrivateUserDashboardScheduleRoute,
+  PrivateUserDashboardTimekeepingRoute: PrivateUserDashboardTimekeepingRoute,
+}
+
+const PrivateUserDashboardRouteWithChildren =
+  PrivateUserDashboardRoute._addFileChildren(PrivateUserDashboardRouteChildren)
+
 interface PrivateRouteChildren {
   PrivateLogoutRoute: typeof PrivateLogoutRoute
   PrivateAdminDashboardRoute: typeof PrivateAdminDashboardRouteWithChildren
   PrivateAdminDetailRoute: typeof PrivateAdminDetailRouteWithChildren
+  PrivateUserDashboardRoute: typeof PrivateUserDashboardRouteWithChildren
   PrivateAdminIndexRoute: typeof PrivateAdminIndexRoute
+  PrivateUserIndexRoute: typeof PrivateUserIndexRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateLogoutRoute: PrivateLogoutRoute,
   PrivateAdminDashboardRoute: PrivateAdminDashboardRouteWithChildren,
   PrivateAdminDetailRoute: PrivateAdminDetailRouteWithChildren,
+  PrivateUserDashboardRoute: PrivateUserDashboardRouteWithChildren,
   PrivateAdminIndexRoute: PrivateAdminIndexRoute,
+  PrivateUserIndexRoute: PrivateUserIndexRoute,
 }
 
 const PrivateRouteWithChildren =

@@ -240,4 +240,27 @@ const employeeController = {
   }
 };
 
+employeeController.getEmployeeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [[emp]] = await db.query(`
+      SELECT e.*,
+             COALESCE(jt.name,'Nhân viên') as job_title_name,
+             dep.name as department_name, rm.name as room_name
+      FROM hr_employees e
+      LEFT JOIN hr_contracts c ON c.employee_id=e.id AND c.status='ACTIVE'
+      LEFT JOIN cat_titles jt ON jt.id=c.job_title_code
+      LEFT JOIN hr_staff_departments rsd ON rsd.employee_id=e.id
+      LEFT JOIN cat_departments dep ON dep.code=rsd.department_code
+      LEFT JOIN hr_staff_rooms rsr ON rsr.employee_id=e.id
+      LEFT JOIN cat_rooms rm ON rm.code=rsr.room_code
+      WHERE e.id=? LIMIT 1
+    `, [id]);
+    if (!emp) return res.status(404).json({ statusCode: 404, message: 'Không tìm thấy nhân viên' });
+    res.json({ statusCode: 200, data: emp, message: 'success' });
+  } catch(e) {
+    res.status(500).json({ statusCode: 500, message: 'Lỗi lấy thông tin nhân viên', error: e.message });
+  }
+};
+
 module.exports = employeeController;

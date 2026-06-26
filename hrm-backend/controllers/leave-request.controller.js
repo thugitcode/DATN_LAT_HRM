@@ -197,4 +197,15 @@ function mapLeaveRequest(row, depts, rooms) {
   };
 }
 
+leaveRequestController.cancel = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [[row]] = await db.query(`SELECT status FROM hr_leave_requests WHERE id=? LIMIT 1`, [id]);
+    if (!row) return fail(res, 404, 'Không tìm thấy đơn');
+    if (row.status !== 'PENDING') return fail(res, 400, 'Chỉ hủy được đơn đang chờ duyệt');
+    await db.query(`UPDATE hr_leave_requests SET status='CANCELLED', updated_at=NOW() WHERE id=?`, [id]);
+    ok(res, null, 'Đã hủy đơn nghỉ');
+  } catch(e) { fail(res, 500, 'Lỗi hủy đơn', e); }
+};
+
 module.exports = leaveRequestController;

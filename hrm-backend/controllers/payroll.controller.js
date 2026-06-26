@@ -352,9 +352,10 @@ const payrollController = {
   // GET /payroll/feedback
   getFeedback: async (req, res) => {
     try {
-      const { month, search, status, page=1, limit=10 } = req.query;
+      const { month, search, status, employeeId, page=1, limit=10 } = req.query;
       let where = ['1=1'];
       let params = [];
+      if (employeeId) { where.push('f.employee_id=?'); params.push(employeeId); }
       if (month)  { where.push('f.month=?'); params.push(month); }
       if (status) { where.push('f.status=?'); params.push(status); }
       if (search) { where.push('(e.full_name LIKE ? OR e.employee_code LIKE ?)'); params.push(`%${search}%`,`%${search}%`); }
@@ -716,5 +717,24 @@ function calcPIT(taxableIncome) {
   }
   return Math.round(tax);
 }
+
+payrollController.createFeedback = async (req, res) => {
+  try {
+    const { employeeId, month, content } = req.body;
+    if (!employeeId || !month || !content) return fail(res, 400, 'Thiếu thông tin phản hồi');
+
+    const [[existing]] = await db.query(
+      `SELECT id FROM hr_payslip_feedback WHERE employee_id=? AND month=? LIMIT 1`,
+      [employeeId, month]
+    );
+    if (existing) return fail(res, 400, 'Bạn đã gửi phản hồi cho tháng này rồi!');
+
+    const [result] = await db.query(
+      `INSERT INTO hr_payslip_feedback (employee_id, month, content, status, created_at) VALUES (?,?,?,'PENDING',NOW())`,
+      [employeeId, month, content]
+    );
+    ok(res, { id: result.insertId }, 'Gửi phản hồi thành công');
+  } catch(e) { fail(res, 500, 'Lỗi gửi phản hồi', e); }
+};
 
 module.exports = payrollController;

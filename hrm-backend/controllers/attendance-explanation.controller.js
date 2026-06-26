@@ -355,4 +355,26 @@ const ctrl = {
   },
 };
 
+ctrl.create = async (req, res) => {
+  try {
+    const { employeeId, workDate, type, reason } = req.body;
+    if (!employeeId || !workDate || !reason) return res.status(400).json({ statusCode: 400, message: 'Thiếu thông tin giải trình' });
+
+    // Kiểm tra đã có giải trình cho ngày này chưa
+    const [[existing]] = await db.query(
+      `SELECT id FROM hr_attendance_explanations WHERE employee_id=? AND work_date=? LIMIT 1`,
+      [employeeId, workDate]
+    );
+    if (existing) return res.status(400).json({ statusCode: 400, message: 'Đã có giải trình cho ngày này rồi!' });
+
+    const [result] = await db.query(
+      `INSERT INTO hr_attendance_explanations (employee_id, work_date, type, reason, status, created_at) VALUES (?,?,?,?,'PENDING',NOW())`,
+      [employeeId, workDate, type || 'OTHER', reason]
+    );
+    res.json({ statusCode: 200, data: { id: result.insertId }, message: 'Gửi giải trình thành công' });
+  } catch(e) {
+    res.status(500).json({ statusCode: 500, message: 'Lỗi gửi giải trình', error: e.message });
+  }
+};
+
 module.exports = ctrl;
