@@ -110,10 +110,10 @@ export const Login = () => {
 
         {/* Footer */}
         <div className="flex flex-wrap justify-between gap-2 font-medium text-white">
-          <span>Trường: ___________________________</span>
-          <span>Đề tài: ___________________________</span>
-          <span>GVHD: ___________________________</span>
-          <span>SVTH: ___________________________</span>
+          <span>TLU</span>
+          <span>LUU ANH THU</span>
+          <span>PLEASE DON'T RECOPY</span>
+          <span>Made by Shenoryl</span>
         </div>
       </div>
     </div>
