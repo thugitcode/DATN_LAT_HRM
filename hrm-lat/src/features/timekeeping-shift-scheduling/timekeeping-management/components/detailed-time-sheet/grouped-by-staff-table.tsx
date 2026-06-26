@@ -47,7 +47,7 @@ export function GroupedTable() {
   }, [filters.month]);
 
   const ROW_HEIGHT = 52;
-  const TABLE_HEIGHT = 540;
+  const TABLE_HEIGHT = typeof window !== 'undefined' ? window.innerHeight - 280 : 700;
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [stickyGroup, setStickyGroup] = useState<FlatRow | null>(null);
 
@@ -78,7 +78,15 @@ export function GroupedTable() {
   }, [loaderRef, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const flatRows = useMemo(() => {
-    const allStaffs = data?.pages.flatMap((page) => page.data) || [];
+    const rawStaffs = data?.pages.flatMap((page) => page.data) || [];
+    // Deduplicate theo staff.code để tránh duplicate key khi React Query cache
+    const seen = new Set<string>();
+    const allStaffs = rawStaffs.filter(s => {
+      const code = s?.staff?.code;
+      if (!code || seen.has(code)) return false;
+      seen.add(code);
+      return true;
+    });
     const firstPageMeta = data?.pages[0]?.metadata as any;
 
     return buildFlatRows({

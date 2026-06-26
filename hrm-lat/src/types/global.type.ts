@@ -16,7 +16,7 @@ export interface MenuItem {
   children?: {
     id: string;
     label: string;
-    path: LinkProps['to'];
+    path: LinkProps['to'] | string;
   }[];
 }
 

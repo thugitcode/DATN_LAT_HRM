@@ -7,7 +7,8 @@ router.get('/calendar',                        ctrl.getCalendar);
 router.get('/attendance-table',                ctrl.getAttendanceTable);
 router.get('/attendance-by-hours',             ctrl.getAttendanceByHours);
 router.get('/staff-daily-attendance',          ctrl.getStaffDailyAttendance);
-router.get('/detailed-attendance-table',       ctrl.getAttendanceTable);  // alias
+const detailedCtrl = require('../controllers/detailed-time-sheet.controller');
+router.get('/detailed-attendance-table',       detailedCtrl.getDetailedAttendanceTable);
 router.get('/work-schedule-detail/:id',        ctrl.getDetail);
 router.patch('/detail/:id/attendance',         ctrl.updateAttendance);
 router.post('/range',                          ctrl.createRange);

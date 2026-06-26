@@ -50,10 +50,26 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
       {
         id: '1',
         label: t('sidebar.official_staff'),
-        path: '/admin/staff-management/official-employee',
+        path: '/admin/staff-management/official-staff',
+      },
+      {
+        id: '2',
+        label: t('sidebar.probationary_staff'),
+        path: '/admin/staff-management/probationary-staff',
+      },
+      {
+        id: '3',
+        label: t('sidebar.apprentice_staff'),
+        path: '/admin/staff-management/apprentice-staff',
+      },
+      {
+        id: '4',
+        label: t('sidebar.partner_staff'),
+        path: '/admin/staff-management/partner-staff',
       },
     ],
   },
+
   {
     id: '6',
     path: '/admin/payroll-management',
@@ -82,10 +98,17 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
       },
     ],
   },
-  // Ẩn: Quản lý các yêu cầu khác và Tuyển dụng (ngoài scope đồ án)
+
+  // Ẩn id 8 và 9 (ngoài scope đồ án)
 ];
 
 export const menuSidebar: MenuItem[] = [
+  // {
+  //   id: '1',
+  //   path: '/admin/dashboard',
+  //   label: 'Tổng quan',
+  //   icon: icons.home,
+  // },
   {
     id: '2',
     path: '/admin/timekeeping-shift-scheduling',
@@ -131,8 +154,48 @@ export const menuSidebar: MenuItem[] = [
       {
         id: '1',
         label: 'Nhân viên chính thức',
-        path: '/admin/staff-management/official-employee',
+        path: '/admin/staff-management/official-staff',
+      },
+      {
+        id: '2',
+        label: 'Nhân viên thử việc',
+        path: '/admin/staff-management/probationary-staff',
+      },
+      {
+        id: '3',
+        label: 'Nhân viên học việc',
+        path: '/admin/staff-management/apprentice-staff',
+      },
+      {
+        id: '4',
+        label: 'Nhân sự hợp tác',
+        path: '/admin/staff-management/partner-staff',
       },
     ],
   },
+  // {
+  //   id: '5',
+  //   path: '/admin/contract-management',
+  //   label: 'Quản lý hợp đồng',
+  //   icon: icons.notePen,
+  // },
+  // {
+  //   id: '6',
+  //   path: '/admin/payroll-management',
+  //   label: 'Quản lý lương',
+  //   icon: icons.payroll,
+  // },
+  // {
+  //   id: '7',
+  //   path: '/admin/recruitment-management',
+  //   label: 'Quản lý tuyển dụng',
+  //   icon: icons.plusUser,
+  // },
+
+  // {
+  //   id: '9',
+  //   path: '/admin/management-report',
+  //   label: 'Báo cáo quản trị',
+  //   icon: icons.note,
+  // },
 ];
