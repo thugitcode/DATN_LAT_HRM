@@ -5,8 +5,8 @@ import { cn } from '@/lib/utils';
 import { MainSidebarFooter } from './main-sidebar-footer';
 import { MainSidebarNav } from './main-sidebar-nav';
 import { ToggleSidebar } from './toggle-sidebar';
-import logoFull from '@public/images/logo-deepcare.png'
-import logo from '@public/images/logo.png'
+import logoFull from '@public/images/logo-hrm-full.svg'
+import logo from '@public/images/logo-hrm-icon.svg'
 import { Image } from '@heroui/react';
 export const MainSidebar = () => {
   const isCollapsed = useSidebarStore((state) => state.isCollapsed);
@@ -19,7 +19,7 @@ export const MainSidebar = () => {
       )}
     >
       <div className="flex flex-col items-center gap-6">
-        <Image src={isCollapsed ? logo : logoFull} alt="logo" width={isCollapsed ? 42 : 200} height={isCollapsed ? 42 : 100} className='object-contain' />
+        <Image src={isCollapsed ? logo : logoFull} alt="logo" width={isCollapsed ? 52 : 240} height={isCollapsed ? 52 : 120} className='object-contain' />
         <ToggleSidebar />
         <MainSidebarNav isCollapsed={isCollapsed} />
       </div>

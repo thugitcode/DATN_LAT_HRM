@@ -50,26 +50,10 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
       {
         id: '1',
         label: t('sidebar.official_staff'),
-        path: '/admin/staff-management/official-staff',
-      },
-      {
-        id: '2',
-        label: t('sidebar.probationary_staff'),
-        path: '/admin/staff-management/probationary-staff',
-      },
-      {
-        id: '3',
-        label: t('sidebar.apprentice_staff'),
-        path: '/admin/staff-management/apprentice-staff',
-      },
-      {
-        id: '4',
-        label: t('sidebar.partner_staff'),
-        path: '/admin/staff-management/partner-staff',
+        path: '/admin/staff-management/official-employee',
       },
     ],
   },
-
   {
     id: '6',
     path: '/admin/payroll-management',
@@ -98,77 +82,10 @@ export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem
       },
     ],
   },
-
-  {
-    id: '8',
-    path: '/admin/other-requests-management',
-    label: t('sidebar.other_requests_management'),
-    icon: icons.listMenu,
-    children: [
-      {
-        id: '1',
-        label: t('sidebar.business_trip_management'),
-        path: '/admin/other-requests-management/business-trip-management',
-      },
-      {
-        id: '2',
-        label: t('sidebar.overtime_management'),
-        path: '/admin/other-requests-management/overtime-management',
-      },
-      {
-        id: '3',
-        label: t('sidebar.remote_work_management'),
-        path: '/admin/other-requests-management/remote-work-management',
-      },
-      {
-        id: '4',
-        label: t('sidebar.training_registration_management'),
-        path: '/admin/other-requests-management/training-registration-ranagement',
-      },
-    ],
-  },
-  {
-    id: '9',
-    path: '/admin/recruitment-management',
-    label: t('sidebar.recruitment_management'),
-    icon: icons.recruitment,
-    children: [
-      {
-        id: '1',
-        label: t('sidebar.recruitment_request'),
-        path: '/admin/recruitment-management/recruitment-request',
-      },
-      {
-        id: '2',
-        label: t('sidebar.candidate'),
-        path: '/admin/recruitment-management/candidate',
-      },
-      {
-        id: '3',
-        label: t('sidebar.interview_schedule'),
-        path: '/admin/recruitment-management/interview-schedule',
-      },
-      {
-        id: '4',
-        label: t('sidebar.probation_management'),
-        path: '/admin/recruitment-management/probation-management',
-      },
-      {
-        id: '5',
-        label: t('sidebar.recruitment_report'),
-        path: '/admin/recruitment-management/report',
-      },
-    ],
-  },
+  // Ẩn: Quản lý các yêu cầu khác và Tuyển dụng (ngoài scope đồ án)
 ];
 
 export const menuSidebar: MenuItem[] = [
-  // {
-  //   id: '1',
-  //   path: '/admin/dashboard',
-  //   label: 'Tổng quan',
-  //   icon: icons.home,
-  // },
   {
     id: '2',
     path: '/admin/timekeeping-shift-scheduling',
@@ -214,48 +131,8 @@ export const menuSidebar: MenuItem[] = [
       {
         id: '1',
         label: 'Nhân viên chính thức',
-        path: '/admin/staff-management/official-staff',
-      },
-      {
-        id: '2',
-        label: 'Nhân viên thử việc',
-        path: '/admin/staff-management/probationary-staff',
-      },
-      {
-        id: '3',
-        label: 'Nhân viên học việc',
-        path: '/admin/staff-management/apprentice-staff',
-      },
-      {
-        id: '4',
-        label: 'Nhân sự hợp tác',
-        path: '/admin/staff-management/partner-staff',
+        path: '/admin/staff-management/official-employee',
       },
     ],
   },
-  // {
-  //   id: '5',
-  //   path: '/admin/contract-management',
-  //   label: 'Quản lý hợp đồng',
-  //   icon: icons.notePen,
-  // },
-  // {
-  //   id: '6',
-  //   path: '/admin/payroll-management',
-  //   label: 'Quản lý lương',
-  //   icon: icons.payroll,
-  // },
-  // {
-  //   id: '7',
-  //   path: '/admin/recruitment-management',
-  //   label: 'Quản lý tuyển dụng',
-  //   icon: icons.plusUser,
-  // },
-
-  // {
-  //   id: '9',
-  //   path: '/admin/management-report',
-  //   label: 'Báo cáo quản trị',
-  //   icon: icons.note,
-  // },
 ];

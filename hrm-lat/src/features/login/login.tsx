@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Card, CardBody, Input } from '@heroui/react';
 import imageLoginBg from '@public/images/login-bg.jpg';
-import imageLogoH247 from '@public/images/logo-h247.svg';
+import imageLogoHRM from '@public/images/logo-hrm-full.svg';
 import { IconCircleArrowRightFilled } from '@tabler/icons-react';
 
 export const Login = () => {
@@ -62,12 +62,11 @@ export const Login = () => {
           <CardBody className="px-8 py-10">
             <div className="flex flex-col items-center gap-6">
               {/* Logo */}
-              <img src={imageLogoH247} alt="H247 Logo" className="w-[220px]" />
+              <img src={imageLogoHRM} alt="HRM Logo" className="w-[220px]" />
 
               {/* Description */}
               <p className="text-center text-base text-default-600">
-                Giải pháp thông minh quản lý phòng khám, chuỗi phòng khám đa khoa hiệu quả, tiện
-                dụng, mọi lúc, mọi nơi trên mọi nền tảng
+                Hệ thống quản trị nhân sự tích hợp chấm công và tính lương tự động dành cho cơ sở y tế
               </p>
 
               {/* Form Đăng nhập mới thay thế cho nút bấm Keycloak */}
@@ -106,20 +105,10 @@ export const Login = () => {
 
         {/* Footer */}
         <div className="flex flex-wrap justify-between gap-2 font-medium text-white">
-          <span>
-            Địa chỉ: Số 35 Lê Văn Thiêm, Phường Thanh Xuân Trung, Quận Thanh Xuân, TP Hà Nội
-          </span>
-
-          <span>
-            Website:{' '}
-            <a href="https://deepcare.io" className="underline" target="_blank" rel="noreferrer">
-              Deepcare.io
-            </a>
-          </span>
-
-          <span>Hotline: 1900 068 856</span>
-
-          <span>Email: contact@deepcare.io</span>
+          <span>Trường: TLU </span>
+          <span>SVTH: Luu Anh Thu</span>
+          <span>Made by Shenoryl</span>
+          <span>Please don't copyright</span>
         </div>
       </div>
     </div>
