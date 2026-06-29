@@ -10,5 +10,6 @@ router.post('/:id/reject',    ctrl.reject);
 router.get('/:id',            ctrl.getById);
 router.get('/',               ctrl.getAll);
 router.post('/',              ctrl.create);
+router.post('/:id/manager-approve', ctrl.managerApprove);
 
 module.exports = router;

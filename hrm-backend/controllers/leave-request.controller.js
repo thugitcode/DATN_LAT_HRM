@@ -208,4 +208,19 @@ leaveRequestController.cancel = async (req, res) => {
   } catch(e) { fail(res, 500, 'Lỗi hủy đơn', e); }
 };
 
+leaveRequestController.managerApprove = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { managerId } = req.body;
+    const [[lr]] = await db.query(`SELECT status, manager_id FROM hr_leave_requests WHERE id=?`, [id]);
+    if (!lr) return fail(res, 404, 'Không tìm thấy đơn nghỉ');
+    if (lr.status !== 'PENDING') return fail(res, 400, 'Đơn không ở trạng thái chờ duyệt');
+    await db.query(
+      `UPDATE hr_leave_requests SET status='MANAGER_APPROVED', approved_by_id=?, approved_at=NOW() WHERE id=?`,
+      [managerId || null, id]
+    );
+    ok(res, null, 'Trưởng khoa đã xác nhận đơn nghỉ');
+  } catch(e) { fail(res, 500, 'Lỗi duyệt đơn', e); }
+};
+
 module.exports = leaveRequestController;
