@@ -1,7 +1,4 @@
-/**
- * Payroll Engine - Sprint 2
- * Tính lương theo đúng spec SRS
- */
+// tinh luongg
 const db = require('../config/db');
 
 const STANDARD_DAYS  = 26;

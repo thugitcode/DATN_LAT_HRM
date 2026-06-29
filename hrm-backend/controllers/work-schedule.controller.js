@@ -783,7 +783,7 @@ const workScheduleController = {
   },
 };
 
-// ─── Helpers ─────────────────────────────────────────────────
+// Helpers
 async function resolveShiftTimes(shiftTemplateId, startTime, endTime) {
   let st = startTime || null, et = endTime || null;
   if (!st || !et) {
