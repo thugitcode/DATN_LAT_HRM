@@ -45,9 +45,117 @@ const Section = ({ title, icon, children }: { title: string; icon: string; child
   </div>
 );
 
+const ChangePasswordModal = ({ onClose }: { onClose: () => void }) => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const [form, setForm] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    setError(''); setSuccess('');
+    if (!form.oldPassword || !form.newPassword || !form.confirmPassword) {
+      return setError('Vui lòng điền đầy đủ thông tin');
+    }
+    if (form.newPassword.length < 6) {
+      return setError('Mật khẩu mới phải có ít nhất 6 ký tự');
+    }
+    if (form.newPassword !== form.confirmPassword) {
+      return setError('Mật khẩu xác nhận không khớp');
+    }
+    setLoading(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.userId, oldPassword: form.oldPassword, newPassword: form.newPassword }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccess('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.');
+        setTimeout(() => {
+          localStorage.removeItem('user');
+          localStorage.removeItem('jwt');
+          window.location.href = '/login';
+        }, 2000);
+      } else {
+        setError(data.message || 'Đổi mật khẩu thất bại');
+      }
+    } catch {
+      setError('Lỗi kết nối máy chủ');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="w-full max-w-md rounded-2xl bg-white shadow-xl p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-bold text-gray-800">🔒 Đổi mật khẩu</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div>
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Mật khẩu hiện tại</label>
+            <input
+              type="password"
+              className="mt-1 w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C3782]"
+              value={form.oldPassword}
+              onChange={e => setForm(f => ({ ...f, oldPassword: e.target.value }))}
+              placeholder="Nhập mật khẩu hiện tại"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Mật khẩu mới</label>
+            <input
+              type="password"
+              className="mt-1 w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C3782]"
+              value={form.newPassword}
+              onChange={e => setForm(f => ({ ...f, newPassword: e.target.value }))}
+              placeholder="Ít nhất 6 ký tự"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Xác nhận mật khẩu mới</label>
+            <input
+              type="password"
+              className="mt-1 w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C3782]"
+              value={form.confirmPassword}
+              onChange={e => setForm(f => ({ ...f, confirmPassword: e.target.value }))}
+              placeholder="Nhập lại mật khẩu mới"
+            />
+          </div>
+
+          {error && <p className="text-sm text-red-500 bg-red-50 px-4 py-2.5 rounded-lg">{error}</p>}
+          {success && <p className="text-sm text-green-600 bg-green-50 px-4 py-2.5 rounded-lg">{success}</p>}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={onClose}
+              className="flex-1 rounded-lg border border-gray-200 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50"
+            >
+              Hủy
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="flex-1 rounded-lg bg-[#2C3782] py-2.5 text-sm font-medium text-white hover:bg-[#232d6a] disabled:opacity-50"
+            >
+              {loading ? 'Đang lưu...' : 'Xác nhận'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const UserProfile = () => {
   const [staff, setStaff] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   useEffect(() => {
@@ -82,6 +190,8 @@ export const UserProfile = () => {
 
   return (
     <div className="p-6">
+      {showChangePassword && <ChangePasswordModal onClose={() => setShowChangePassword(false)} />}
+
       {/* Hero card */}
       <div className="mb-5 rounded-2xl bg-[#2C3782] p-6 text-white shadow-lg">
         <div className="flex items-center gap-5">
@@ -117,6 +227,12 @@ export const UserProfile = () => {
           <div className="shrink-0 text-right">
             <p className="text-2xl font-bold">{staff.employee_code}</p>
             <p className="text-xs text-white/50 mt-1">Mã nhân viên</p>
+            <button
+              onClick={() => setShowChangePassword(true)}
+              className="mt-3 rounded-lg bg-white/10 hover:bg-white/20 px-4 py-1.5 text-xs font-medium text-white/80 transition-colors"
+            >
+              🔒 Đổi mật khẩu
+            </button>
           </div>
         </div>
       </div>

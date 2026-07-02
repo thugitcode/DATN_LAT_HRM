@@ -417,6 +417,15 @@ const staffController = {
         await saveWorkingAreas(conn, employeeId, b.workingAreas);
       }
 
+      // Tạo tài khoản đăng nhập
+      const defaultUsername = code.toLowerCase();
+      const defaultPassword = code.toLowerCase();
+      await conn.query(
+        `INSERT INTO users (username, password, role, employee_id, status)
+        VALUES (?, ?, 'employee', ?, 'active')`,
+        [defaultUsername, defaultPassword, employeeId]
+      );
+
       await conn.commit();
       conn.release();
 
@@ -589,7 +598,7 @@ const staffController = {
   },
 };
 
-// ── Helper functions ─────────────────────────────────────────
+// Helper functions
 async function generateCode(conn) {
   const [[{ max }]] = await conn.query(
     `SELECT MAX(CAST(SUBSTRING(employee_code, 3) AS UNSIGNED)) AS max
@@ -624,14 +633,16 @@ staffController.sendAccount = async (req, res) => {
   try {
     const { id } = req.params;
     const [[emp]] = await db.query(
-      `SELECT full_name, email, username, password, employee_code FROM hr_employees WHERE id=? LIMIT 1`, [id]
+      `SELECT e.full_name, e.email, u.username, u.password
+       FROM hr_employees e
+       LEFT JOIN users u ON u.employee_id = e.id
+       WHERE e.id = ? LIMIT 1`, [id]
     );
     if (!emp) return fail(res, 404, 'Không tìm thấy nhân viên');
     if (!emp.email) return fail(res, 400, 'Nhân viên chưa có email');
-    const username = emp.username || emp.employee_code.toLowerCase();
-    const password = emp.password || '123456';
+    if (!emp.username) return fail(res, 400, 'Nhân viên chưa có tài khoản đăng nhập');
     const { sendAccountEmail } = require('../services/email.service');
-    await sendAccountEmail({ to: emp.email, staffName: emp.full_name, username, password });
+    await sendAccountEmail({ to: emp.email, staffName: emp.full_name, username: emp.username, password: emp.password });
     ok(res, null, null, null, `Đã gửi thông tin tài khoản đến ${emp.email}`);
   } catch(e) { fail(res, 500, 'Lỗi gửi email tài khoản', e); }
 };

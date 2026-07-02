@@ -38,6 +38,74 @@ app.set('etag', false);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// ── Request Logger ────────────────────────────────────────────
+const COLORS = {
+  GET:    '\x1b[32m',
+  POST:   '\x1b[34m',
+  PATCH:  '\x1b[33m',
+  PUT:    '\x1b[33m',
+  DELETE: '\x1b[31m',
+  RESET:  '\x1b[0m',
+  DIM:    '\x1b[2m',
+  GREEN:  '\x1b[32m',
+  RED:    '\x1b[31m',
+  YELLOW: '\x1b[33m',
+  CYAN:   '\x1b[36m',
+};
+
+app.use((req, res, next) => {
+  const start = Date.now();
+  const time = new Date().toLocaleTimeString('vi-VN');
+  const methodColor = COLORS[req.method] || '\x1b[37m';
+
+  // Lấy tên user từ body hoặc query (nếu có)
+  const who = req.body?.username || req.query?.username || '';
+
+  // Đếm số field trong body
+  const bodySize = req.body && typeof req.body === 'object'
+    ? Object.keys(req.body).length
+    : 0;
+
+  // Ghi đè res.json để bắt response data
+  const originalJson = res.json.bind(res);
+  let responseData = null;
+  res.json = (data) => {
+    responseData = data;
+    return originalJson(data);
+  };
+
+  res.on('finish', () => {
+    const ms = Date.now() - start;
+    const statusColor = res.statusCode >= 500 ? COLORS.RED
+                      : res.statusCode >= 400 ? COLORS.YELLOW
+                      : COLORS.GREEN;
+
+    // Lấy message lỗi từ response nếu có
+    const errMsg = res.statusCode >= 400 && responseData?.message
+      ? ` ${COLORS.RED}✗ ${responseData.message}${COLORS.RESET}`
+      : '';
+
+    // Thông tin thêm
+    const extra = [];
+    if (who) extra.push(`${COLORS.CYAN}@${who}${COLORS.RESET}`);
+    if (['POST', 'PATCH', 'PUT'].includes(req.method) && bodySize > 0)
+      extra.push(`${COLORS.DIM}body:${bodySize}fields${COLORS.RESET}`);
+
+    const extraStr = extra.length ? '  ' + extra.join(' ') : '';
+
+    console.log(
+      `${COLORS.DIM}[${time}]${COLORS.RESET} ` +
+      `${methodColor}${req.method.padEnd(6)}${COLORS.RESET} ` +
+      `${statusColor}${res.statusCode}${COLORS.RESET} ` +
+      `${req.originalUrl.split('?')[0].padEnd(42)}` +
+      `${COLORS.DIM}${String(ms).padStart(5)}ms${COLORS.RESET}` +
+      `${extraStr}${errMsg}`
+    );
+  });
+
+  next();
+});
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ── Routes CŨ ────────────────────────────────────────────────
