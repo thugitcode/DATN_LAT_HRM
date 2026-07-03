@@ -18,6 +18,54 @@ export const UserLeave = () => {
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
+  // ─── Tab "Duyệt đơn nghỉ" (chỉ hiện nếu người này là quản lý trực tiếp của ai đó) ───
+  const [activeTab, setActiveTab] = useState<'mine' | 'manage'>('mine');
+  const [isManager, setIsManager] = useState(false);
+  const [manageList, setManageList] = useState<any[]>([]);
+  const [manageLoading, setManageLoading] = useState(true);
+  const [actingId, setActingId] = useState<string | null>(null);
+
+  const fetchManageList = () => {
+    setManageLoading(true);
+    fetch(`http://localhost:5000/api/leave-request/for-manager/${user.id}`)
+      .then(r => r.json())
+      .then(d => {
+        const notManagerMsg = 'Bạn hiện không quản lý trực tiếp nhân viên nào';
+        setIsManager(d.message !== notManagerMsg);
+        setManageList(d.data || []);
+        setManageLoading(false);
+      })
+      .catch(() => setManageLoading(false));
+  };
+
+  const handleManagerApprove = async (id: string) => {
+    setActingId(id);
+    try {
+      await fetch(`http://localhost:5000/api/leave-request/${id}/manager-approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hrId: user.id }),
+      });
+      fetchManageList();
+    } finally { setActingId(null); }
+  };
+
+  const handleManagerReject = async (id: string) => {
+    const reason = window.prompt('Lý do từ chối:');
+    if (reason === null) return;
+    setActingId(id);
+    try {
+      await fetch(`http://localhost:5000/api/leave-request/${id}/reject`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ rejectedReason: reason }),
+      });
+      fetchManageList();
+    } finally { setActingId(null); }
+  };
+
+  useEffect(() => { fetchManageList(); }, [user.id]);
+
   const fetchData = () => {
     setLoading(true);
     Promise.all([
@@ -92,6 +140,84 @@ export const UserLeave = () => {
         </button>
       </div>
 
+      {isManager && (
+        <div className="mb-5 flex gap-2 border-b border-gray-100">
+          <button
+            onClick={() => setActiveTab('mine')}
+            className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
+              activeTab === 'mine' ? 'border-[#2C3782] text-[#2C3782]' : 'border-transparent text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            Đơn của tôi
+          </button>
+          <button
+            onClick={() => setActiveTab('manage')}
+            className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors ${
+              activeTab === 'manage' ? 'border-[#2C3782] text-[#2C3782]' : 'border-transparent text-gray-400 hover:text-gray-600'
+            }`}
+          >
+            Duyệt đơn nghỉ {manageList.length > 0 && `(${manageList.length})`}
+          </button>
+        </div>
+      )}
+
+      {activeTab === 'manage' && isManager ? (
+        <div className="rounded-2xl bg-white shadow-sm border border-gray-100 overflow-hidden">
+          {manageLoading ? (
+            <div className="flex h-48 items-center justify-center">
+              <div className="h-7 w-7 animate-spin rounded-full border-2 border-[#2C3782] border-t-transparent" />
+            </div>
+          ) : manageList.length === 0 ? (
+            <div className="flex h-48 flex-col items-center justify-center text-gray-400">
+              <p className="text-4xl mb-2">✅</p>
+              <p className="text-sm">Không có đơn nghỉ nào cần bạn duyệt</p>
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 text-xs uppercase tracking-wide text-gray-400">
+                  {['Nhân viên', 'Loại nghỉ', 'Từ ngày', 'Đến ngày', 'Số ngày', 'Lý do', 'Thao tác'].map(h => (
+                    <th key={h} className="px-5 py-3.5 text-left font-semibold">{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {manageList.map((r) => (
+                  <tr key={r.id} className="border-t border-gray-50 hover:bg-gray-50/50">
+                    <td className="px-5 py-3.5 font-medium text-gray-800 whitespace-nowrap">
+                      {r.staffName} <span className="text-gray-400 text-xs">({r.staffCode})</span>
+                    </td>
+                    <td className="px-5 py-3.5 text-gray-600">{r.leaveType || '--'}</td>
+                    <td className="px-5 py-3.5 text-gray-600 whitespace-nowrap">{dayjs(r.fromDate).format('DD/MM/YYYY')}</td>
+                    <td className="px-5 py-3.5 text-gray-600 whitespace-nowrap">{dayjs(r.toDate).format('DD/MM/YYYY')}</td>
+                    <td className="px-5 py-3.5 font-semibold text-[#2C3782]">{r.totalDays} ngày</td>
+                    <td className="px-5 py-3.5 text-gray-500 max-w-[200px] truncate">{r.reason}</td>
+                    <td className="px-5 py-3.5">
+                      <div className="flex gap-2">
+                        <button
+                          disabled={actingId === r.id}
+                          onClick={() => handleManagerApprove(r.id)}
+                          className="rounded-lg bg-green-50 text-green-700 border border-green-200 px-3 py-1.5 text-xs font-semibold hover:bg-green-100 disabled:opacity-50"
+                        >
+                          Duyệt
+                        </button>
+                        <button
+                          disabled={actingId === r.id}
+                          onClick={() => handleManagerReject(r.id)}
+                          className="rounded-lg bg-red-50 text-red-700 border border-red-200 px-3 py-1.5 text-xs font-semibold hover:bg-red-100 disabled:opacity-50"
+                        >
+                          Từ chối
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      ) : (
+      <>
       {/* Alert */}
       {msg && (
         <div className={`mb-5 rounded-xl border px-4 py-3 text-sm font-medium ${
@@ -199,6 +325,8 @@ export const UserLeave = () => {
           </table>
         )}
       </div>
+      </>
+      )}
     </div>
   );
 };

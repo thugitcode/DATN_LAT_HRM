@@ -139,6 +139,63 @@ const leaveRequestController = {
     } catch (e) { fail(res, 500, 'Lỗi tạo đơn nghỉ', e); }
   },
 
+  // GET /leave-request/for-manager/:managerId
+  // Chỉ trả về đơn nghỉ phép của các nhân viên có managerId này là "Quản lý trực tiếp"
+  // trong hợp đồng ACTIVE, và đang chờ quản lý duyệt (PENDING).
+  getForManager: async (req, res) => {
+    try {
+      const { managerId } = req.params;
+      if (!managerId) return fail(res, 400, 'Thiếu managerId');
+
+      const [managed] = await db.query(
+        `SELECT DISTINCT employee_id FROM hr_contracts
+         WHERE status = 'ACTIVE'
+         AND JSON_CONTAINS(direct_manager_ids, JSON_QUOTE(CAST(? AS CHAR)))`,
+        [managerId]
+      );
+      const empIds = managed.map(m => m.employee_id);
+
+      if (!empIds.length) {
+        return ok(res, [], 'Bạn hiện không quản lý trực tiếp nhân viên nào');
+      }
+
+      const [rows] = await db.query(`
+        SELECT lr.*,
+               e.employee_code as staff_code, e.full_name as staff_name,
+               COALESCE(jt.name, 'Nhân viên') as position,
+               sub.full_name as substitute_name,
+               mgr.full_name as manager_name,
+               lq.name as leave_type_name
+        FROM hr_leave_requests lr
+        JOIN hr_employees e ON e.id = lr.employee_id
+        LEFT JOIN hr_contracts hc ON hc.employee_id = e.id AND hc.status = 'ACTIVE'
+        LEFT JOIN cat_titles jt ON jt.id = hc.job_title_code
+        LEFT JOIN hr_employees sub ON sub.id = lr.substitute_id
+        LEFT JOIN hr_employees mgr ON mgr.id = lr.manager_id
+        LEFT JOIN cat_leave_quotas lq ON lq.id = lr.leave_quota_id
+        WHERE lr.employee_id IN (?) AND lr.status = 'PENDING'
+        GROUP BY lr.id
+        ORDER BY lr.created_at DESC
+      `, [empIds]);
+
+      const empIds2 = [...new Set(rows.map(r => r.employee_id))];
+      let depts = [], rooms = [];
+      if (empIds2.length) {
+        [depts] = await db.query(
+          `SELECT rsd.employee_id, d.id, d.name FROM hr_staff_departments rsd JOIN cat_departments d ON d.code=rsd.department_code WHERE rsd.employee_id IN (?)`,
+          [empIds2]
+        );
+        [rooms] = await db.query(
+          `SELECT rsr.employee_id, r.id, r.name FROM hr_staff_rooms rsr JOIN cat_rooms r ON r.code=rsr.room_code WHERE rsr.employee_id IN (?)`,
+          [empIds2]
+        );
+      }
+
+      const data = rows.map(row => mapLeaveRequest(row, depts, rooms));
+      ok(res, data, 'success');
+    } catch (e) { fail(res, 500, 'Lỗi lấy danh sách đơn nghỉ cần bạn duyệt', e); }
+  },
+
   // PATCH /leave-request/:id/approve
   approve: async (req, res) => {
     try {

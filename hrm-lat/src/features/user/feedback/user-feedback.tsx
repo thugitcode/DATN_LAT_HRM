@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 
 const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  PENDING:  { label: 'Chờ phản hồi', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-  RESOLVED: { label: 'Đã xử lý',     color: 'bg-green-50 text-green-700 border-green-200' },
-  REJECTED: { label: 'Không chấp nhận', color: 'bg-red-50 text-red-700 border-red-200' },
+  PENDING:   { label: 'Chờ phản hồi', color: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+  CONFIRMED: { label: 'Đã xử lý',     color: 'bg-green-50 text-green-700 border-green-200' },
+  REJECTED:  { label: 'Không chấp nhận', color: 'bg-red-50 text-red-700 border-red-200' },
 };
 
 export const UserFeedback = () => {
@@ -22,10 +22,12 @@ export const UserFeedback = () => {
     fetch(`http://localhost:5000/api/payroll/feedback?employeeId=${user.id}&limit=20`)
       .then(r => r.json())
       .then(d => {
-        setList(d.data?.filter((f: any) => String(f.staff?.id) === String(user.id)) || []);
+        // API trả về dạng { data: { data: [...], pagination: {...} } } — lấy đúng d.data.data
+        const rows = d.data?.data || [];
+        setList(rows.filter((f: any) => String(f.staff?.id) === String(user.id)));
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => { console.error('[UserFeedback] fetchData error:', err); setLoading(false); });
   };
 
   useEffect(() => { fetchData(); }, [user.id]);

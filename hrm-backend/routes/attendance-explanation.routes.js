@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const ctrl = require('../controllers/attendance-explanation.controller');
 
-router.post('/seed-mock',          ctrl.seedMock);
 router.post('/bulk-approve',       ctrl.bulkApprove);
+router.get('/for-manager/:managerId', ctrl.getForManager);
 router.post('/:id/approve',        ctrl.approve);
 router.post('/:id/manager-approve',ctrl.managerApprove);
 router.post('/:id/reject',         ctrl.reject);

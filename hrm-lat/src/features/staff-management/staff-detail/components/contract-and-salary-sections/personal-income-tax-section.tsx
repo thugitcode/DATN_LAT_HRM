@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 export const PersonalIncomeTaxSection: FC<{ forceReadOnly?: boolean }> = ({ forceReadOnly = false }) => {
     const { t } = useTranslation(NAMESPACES.STAFF_MANAGEMENT);
-    const { control, watch, formState: { isSubmitting } } = useFormContext();
+    const { control, watch, setValue, formState: { isSubmitting } } = useFormContext();
     const { isView } = useControlMode()
     // Dùng forceReadOnly prop trực tiếp - không phụ thuộc store
   const readOnly = forceReadOnly
@@ -25,6 +25,10 @@ export const PersonalIncomeTaxSection: FC<{ forceReadOnly?: boolean }> = ({ forc
                 <h3 className="text-[15px] font-bold text-[#11181C]">{t('salary_benefits.sections.tax')}</h3>
             </div>
 
+            <p className="text-xs text-[#71717a] -mt-2">
+                {t('salary_benefits.tax_mode_hint', 'Chỉ áp dụng 1 trong 2 cách tính thuế — chọn cách này sẽ tự bỏ chọn cách kia.')}
+            </p>
+
             <div className="grid grid-cols-2 gap-6 mt-2">
                 {/* Giảm trừ gia cảnh */}
                 <div className="flex flex-col gap-2">
@@ -33,6 +37,10 @@ export const PersonalIncomeTaxSection: FC<{ forceReadOnly?: boolean }> = ({ forc
                         name="salary.hasFamilyDeduction"
                         label={t('salary_benefits.family_deduction')}
                         disabled={isSubmitting || readOnly}
+                        onValueChange={(val) => {
+                            // Loại trừ với thuế TNCN theo tỷ lệ % — tránh trường hợp tick cả 2 nhưng chỉ 1 có tác dụng
+                            if (val) setValue('salary.hasPersonalIncomeTax', false);
+                        }}
                     />
 
                     <FormNumberInput
@@ -55,6 +63,10 @@ export const PersonalIncomeTaxSection: FC<{ forceReadOnly?: boolean }> = ({ forc
                         name="salary.hasPersonalIncomeTax"
                         label={t('salary_benefits.sections.tax')}
                         disabled={isSubmitting || readOnly}
+                        onValueChange={(val) => {
+                            // Loại trừ với giảm trừ gia cảnh — cùng lý do trên
+                            if (val) setValue('salary.hasFamilyDeduction', false);
+                        }}
                     />
 
                     <FormNumberInput

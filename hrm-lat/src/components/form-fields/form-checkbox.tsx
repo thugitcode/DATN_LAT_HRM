@@ -9,6 +9,7 @@ interface FormCheckboxProps {
   label: string;
   disabled?: boolean;
   classNames?: any;
+  onValueChange?: (value: boolean) => void;
 }
 
 export const FormCheckbox: FC<FormCheckboxProps> = ({
@@ -17,13 +18,17 @@ export const FormCheckbox: FC<FormCheckboxProps> = ({
   label,
   disabled,
   classNames,
+  onValueChange,
 }) => {
   const { field } = useController({ control, name });
 
   return (
     <Checkbox
       isSelected={field.value ?? false}
-      onValueChange={field.onChange}
+      onValueChange={(val: boolean) => {
+        field.onChange(val);
+        onValueChange?.(val);
+      }}
       isDisabled={disabled}
       classNames={{
         label: 'text-sm font-semibold text-[#11181C]',

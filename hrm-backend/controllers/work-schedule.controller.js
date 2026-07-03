@@ -269,30 +269,74 @@ const workScheduleController = {
       const { staffId, departmentId, roomId, fromDate, toDate, note, details } = req.body;
       if (!staffId || !details?.length) return fail(res, 400, 'Thiếu thông tin phân ca');
 
+      const dates = getDateRange(fromDate, toDate);
+
+      // Đổi "HH:MM:SS" thành số phút từ 00:00; ca qua đêm (end <= start) thì +24h cho end
+      const toMinutesRange = (start, end) => {
+        const [sh, sm] = (start || '00:00:00').split(':').map(Number);
+        const [eh, em] = (end   || '00:00:00').split(':').map(Number);
+        let s = sh * 60 + sm;
+        let e = eh * 60 + em;
+        if (e <= s) e += 24 * 60;
+        return [s, e];
+      };
+      const isOverlap = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;
+
+      // ── BƯỚC 1: kiểm tra trùng giờ cho TOÀN BỘ (ngày, ca) trước — CHƯA insert gì cả ──
+      const conflicts = [];
+      const resolvedDetails = []; // cache lại startTime/endTime đã resolve để dùng lại ở bước insert, tránh gọi lại
+
+      for (const date of dates) {
+        for (const d of details) {
+          const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
+          resolvedDetails.push({ date, d, startTime, endTime });
+
+          const [existingSameDay] = await db.query(
+            `SELECT wsd.start_time, wsd.end_time, st.name AS shift_name
+             FROM hr_work_schedule_details wsd
+             JOIN shifts st ON st.id = wsd.shift_template_id
+             WHERE wsd.employee_id = ? AND wsd.work_date = ?`,
+            [staffId, date]
+          );
+
+          const [newS, newE] = toMinutesRange(startTime, endTime);
+          for (const ex of existingSameDay) {
+            const [exS, exE] = toMinutesRange(ex.start_time, ex.end_time);
+            if (isOverlap(newS, newE, exS, exE)) {
+              conflicts.push(
+                `Ngày ${date}: trùng giờ với ca "${ex.shift_name}" (${ex.start_time}-${ex.end_time})`
+              );
+            }
+          }
+        }
+      }
+
+      if (conflicts.length) {
+        return fail(res, 400, `⚠️ Nhân viên bị trùng giờ ca làm việc, chưa lưu gì cả:\n${conflicts.join('\n')}`);
+      }
+
+      // ── BƯỚC 2: không có trùng giờ nào — an toàn để insert ──
       const [ws] = await db.query(
         `INSERT INTO hr_work_schedules (employee_id,department_id,room_id,from_date,to_date,note) VALUES (?,?,?,?,?,?)`,
         [staffId, departmentId||null, roomId||null, fromDate, toDate, note||null]
       );
       const wsId = ws.insertId;
-      const dates = getDateRange(fromDate, toDate);
 
-      for (const date of dates) {
-        for (const d of details) {
-          const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
-          // UPSERT - tránh duplicate
-          const [[existing]] = await db.query(
-            `SELECT id FROM hr_work_schedule_details WHERE work_schedule_id=? AND work_date=? AND shift_template_id=?`,
-            [wsId, date, d.shiftTemplateId]
+      for (const { date, d, startTime, endTime } of resolvedDetails) {
+        // UPSERT - tránh duplicate
+        const [[existing]] = await db.query(
+          `SELECT id FROM hr_work_schedule_details WHERE work_schedule_id=? AND work_date=? AND shift_template_id=?`,
+          [wsId, date, d.shiftTemplateId]
+        );
+        if (!existing) {
+          const [wsd] = await db.query(
+            `INSERT INTO hr_work_schedule_details (work_schedule_id,employee_id,shift_template_id,work_date,start_time,end_time,note) VALUES (?,?,?,?,?,?,?)`,
+            [wsId, staffId, d.shiftTemplateId, date, startTime, endTime, d.note||null]
           );
-          if (!existing) {
-            const [wsd] = await db.query(
-              `INSERT INTO hr_work_schedule_details (work_schedule_id,employee_id,shift_template_id,work_date,start_time,end_time,note) VALUES (?,?,?,?,?,?,?)`,
-              [wsId, staffId, d.shiftTemplateId, date, startTime, endTime, d.note||null]
-            );
-            await generateAttendance(staffId, wsd.insertId, date, d.shiftTemplateId, startTime);
-          }
+          await generateAttendance(staffId, wsd.insertId, date, d.shiftTemplateId, startTime);
         }
       }
+
       ok(res, { id: String(wsId) }, 'Thêm phân ca thành công');
     } catch (e) { fail(res, 500, 'Lỗi tạo phân ca', e); }
   },
@@ -662,17 +706,18 @@ const workScheduleController = {
       let ci = actualCheckIn || checkInTime || null;
       let co = actualCheckOut || checkOutTime || null;
 
-      // Ghép HH:mm với work_date
-      const isHHmm = (s) => s && /^\d{2}:\d{2}$/.test(s);
-      if (isHHmm(ci)) ci = `${workDate} ${ci}:00`;
+      // Ghép HH:mm với work_date — chấp nhận cả "HH:mm" và "HH:mm:ss" (FE gửi kèm giây)
+      const isHHmm = (s) => s && /^\d{2}:\d{2}(:\d{2})?$/.test(s);
+      const toHHmm = (s) => s.slice(0, 5); // chỉ lấy "HH:mm", bỏ phần giây nếu có
+      if (isHHmm(ci)) ci = `${workDate} ${toHHmm(ci)}:00`;
       if (isHHmm(co)) {
         const ciHour = ci ? parseInt(ci.split(' ')[1]) : 0;
-        const coHour = parseInt(co.split(':')[0]);
+        const coHour = parseInt(toHHmm(co).split(':')[0]);
         if (coHour < ciHour) {
           const next = new Date(workDate); next.setDate(next.getDate() + 1);
-          co = `${next.toISOString().slice(0,10)} ${co}:00`;
+          co = `${next.toISOString().slice(0,10)} ${toHHmm(co)}:00`;
         } else {
-          co = `${workDate} ${co}:00`;
+          co = `${workDate} ${toHHmm(co)}:00`;
         }
       }
 

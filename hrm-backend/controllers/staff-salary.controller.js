@@ -22,9 +22,11 @@ const staffSalaryController = {
         [staffId]
       );
 
-      // Lấy chi tiết lương từ hr_staff_salary
+      // Lấy chi tiết lương từ hr_staff_salary — luôn lấy dòng mới nhất
+      // (đề phòng employee_id chưa có UNIQUE key, khiến ON DUPLICATE KEY UPDATE
+      // tạo dòng mới thay vì update dòng cũ mỗi lần lưu)
       const [[salaryDetail]] = await db.query(
-        'SELECT * FROM hr_staff_salary WHERE employee_id = ?',
+        'SELECT * FROM hr_staff_salary WHERE employee_id = ? ORDER BY id DESC LIMIT 1',
         [staffId]
       ).catch(() => [[null]]);
 

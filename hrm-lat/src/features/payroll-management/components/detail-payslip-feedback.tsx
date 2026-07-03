@@ -1,10 +1,12 @@
+import { useState } from 'react';
 import { useDrawer } from '@/store/useDrawer';
-import { Button } from '@heroui/react';
+import { Button, Textarea, addToast } from '@heroui/react';
 import { useTranslation } from 'react-i18next';
 
 import { NAMESPACES } from '@/i18n/constants';
 import { formatVND } from '@/lib/helpers';
 import { StaffAvatar } from '@/features/timekeeping-shift-scheduling/components/staff-avatar';
+import { hrmInstance } from '@/lib/axios';
 
 import type { PayslipFeedback } from '../types/payslip-feedback.type';
 import { icons } from '@/lib/icons';
@@ -41,6 +43,9 @@ export const DetailPayslipFeedback = () => {
   const { t } = useTranslation(NAMESPACES.PAYROLL_MANAGEMENT);
   const { t: tCommon } = useTranslation(NAMESPACES.COMMON);
 
+  const [responseContent, setResponseContent] = useState('');
+  const [isSending, setIsSending] = useState(false);
+
   const dataRow = data as PayslipFeedback | undefined;
 
   if (!dataRow) return null;
@@ -49,6 +54,7 @@ export const DetailPayslipFeedback = () => {
 
   const details = payroll?.calculationDetails;
 
+  // status='CONFIRMED' khớp đúng với PayslipFeedbackStatus enum (PENDING|CONFIRMED|REJECTED)
   const isResolved = status === 'CONFIRMED';
   const staffSubtitle = [
     staff?.code,
@@ -56,6 +62,23 @@ export const DetailPayslipFeedback = () => {
   ]
     .filter(Boolean)
     .join(' · ');
+
+  const handleSendResponse = async () => {
+    if (!responseContent.trim()) {
+      addToast({ description: 'Vui lòng nhập nội dung trả lời', color: 'warning' });
+      return;
+    }
+    setIsSending(true);
+    try {
+      await hrmInstance.patch(`/payroll/feedback/${dataRow.id}/respond`, { responseContent });
+      addToast({ description: 'Đã gửi trả lời cho nhân viên', color: 'success' });
+      onClose();
+    } catch {
+      addToast({ description: 'Gửi trả lời thất bại', color: 'danger' });
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   return (
     <div className="flex flex-col justify-between pb-5 h-full gap-3 bg-white overflow-hidden">
@@ -121,10 +144,10 @@ export const DetailPayslipFeedback = () => {
             <Row label={t('payslipFeedback.detail.total_gross')} value={formatVND(payroll?.totalGross ?? 0)} bold />
             <Row
               label={t('payslipFeedback.detail.insurance')}
-              value={formatVND(Number(payroll?.employeeContribution ?? 0))}
+              value={formatVND(Number(payroll?.insuranceAmount ?? 0))}
               bold
             />
-            <Row label={t('payslipFeedback.detail.tax')} value={formatVND(Number(payroll?.personalIncomeTax ?? 0))} bold />
+            <Row label={t('payslipFeedback.detail.tax')} value={formatVND(Number(payroll?.taxAmount ?? 0))} bold />
             <Row label={t('payslipFeedback.detail.advance')} value={formatVND(Number(payroll?.advancePayment ?? 0))} bold />
           </div>
 
@@ -154,6 +177,38 @@ export const DetailPayslipFeedback = () => {
               <div className='bg-[#F4F4F5] rounded-xl p-3 text-xs leading-4'>
                 {dataRow.content}
               </div>
+            </div>
+          </div>
+
+          {/* Trả lời của HR — trước đây không có ô nào, chỉ xem không trả lời được */}
+          <div className="border border-[#11111126] rounded-xl mt-4">
+            <div className="bg-[#F4F4F5] rounded-t-xl p-3 font-medium">
+              Trả lời của HR
+            </div>
+            <div className="p-3 flex flex-col gap-3">
+              {dataRow.responseContent ? (
+                <div className="bg-blue-50 border border-blue-100 rounded-xl p-3 text-sm text-blue-800">
+                  {dataRow.responseContent}
+                </div>
+              ) : (
+                <>
+                  <Textarea
+                    value={responseContent}
+                    onValueChange={setResponseContent}
+                    placeholder="Nhập nội dung trả lời cho nhân viên..."
+                    minRows={3}
+                  />
+                  <Button
+                    color="primary"
+                    onPress={handleSendResponse}
+                    isLoading={isSending}
+                    isDisabled={!responseContent.trim()}
+                    className="self-end"
+                  >
+                    Gửi trả lời
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

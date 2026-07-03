@@ -17,6 +17,22 @@ function getTypeLabel(type) {
   return map[type] || type;
 }
 
+// ─── Cập nhật lại chấm công sau khi giải trình được duyệt hoàn tất ──
+// Coi như hợp lệ: bỏ trạng thái đi muộn/thiếu chấm công của đúng ngày đó
+async function updateWsdAfterApprove(ae, dbConn) {
+  try {
+    await dbConn.query(
+      `UPDATE hr_work_schedule_details
+       SET status = 'PRESENT', note = CONCAT(COALESCE(note,''), ' [Đã giải trình được duyệt]')
+       WHERE employee_id = ? AND work_date = ?`,
+      [ae.employee_id, ae.work_date]
+    );
+  } catch (e) {
+    console.error('[updateWsdAfterApprove]', e.message);
+    // Không throw ra ngoài — lỗi cập nhật chấm công không nên chặn việc duyệt giải trình thành công
+  }
+}
+
 function mapRow(row, attachments, depts, rooms) {
   const att = (attachments || []).filter(a => a.explanation_id === row.id);
   return {
@@ -177,6 +193,68 @@ const ctrl = {
     } catch (e) { fail(res, 500, 'Lỗi lấy danh sách giải trình', e); }
   },
 
+  // GET /attendance-explanation/for-manager/:managerId
+  // Chỉ trả về giải trình của các nhân viên có managerId này là "Quản lý trực tiếp"
+  // trong hợp đồng ACTIVE, và đang chờ quản lý duyệt (PENDING).
+  getForManager: async (req, res) => {
+    try {
+      const { managerId } = req.params;
+      if (!managerId) return fail(res, 400, 'Thiếu managerId');
+
+      const [managed] = await db.query(
+        `SELECT DISTINCT employee_id FROM hr_contracts
+         WHERE status = 'ACTIVE'
+         AND JSON_CONTAINS(direct_manager_ids, JSON_QUOTE(CAST(? AS CHAR)))`,
+        [managerId]
+      );
+      const empIds = managed.map(m => m.employee_id);
+
+      if (!empIds.length) {
+        return ok(res, [], 'Bạn hiện không quản lý trực tiếp nhân viên nào');
+      }
+
+      const [rows] = await db.query(`
+        SELECT ae.id, ae.employee_id, ae.work_date, ae.type, ae.reason,
+               ae.status, ae.manager_confirmation, ae.hr_comment,
+               ae.approved_by_manager_id, ae.manager_approved_at,
+               ae.approved_by_hr_id, ae.hr_approved_at,
+               ae.rejected_by_id, ae.rejected_reason, ae.rejected_at,
+               ae.created_at, ae.updated_at,
+               e.employee_code as staff_code, e.full_name as staff_name, e.avatar as staff_avatar,
+               mgr.full_name as manager_name,
+               rej.full_name as rejected_by_name,
+               st.name as shift_name,
+               st.start_time as shift_start_time,
+               st.end_time as shift_end_time,
+               wsd.check_in_time as actual_check_in,
+               wsd.check_out_time as actual_check_out
+        FROM hr_attendance_explanations ae
+        JOIN hr_employees e ON e.id = ae.employee_id
+        LEFT JOIN hr_employees mgr ON mgr.id = ae.approved_by_manager_id
+        LEFT JOIN hr_employees rej ON rej.id = ae.rejected_by_id
+        LEFT JOIN hr_work_schedule_details wsd
+               ON wsd.employee_id = ae.employee_id
+              AND DATE_FORMAT(wsd.work_date,'%Y-%m-%d') = DATE_FORMAT(ae.work_date,'%Y-%m-%d')
+        LEFT JOIN shifts st ON st.id = wsd.shift_template_id
+        WHERE ae.employee_id IN (?) AND ae.status = 'PENDING'
+        GROUP BY ae.id
+        ORDER BY ae.created_at DESC
+      `, [empIds]);
+
+      const ids = rows.map(r => r.id);
+      let attachments = [];
+      if (ids.length) {
+        [attachments] = await db.query(
+          `SELECT * FROM hr_attendance_explanation_attachments WHERE explanation_id IN (?)`, [ids]
+        ).catch(() => [[]]);
+      }
+      const { depts, rooms } = await getDeptRooms(empIds);
+      const data = rows.map(row => mapRow(row, attachments, depts, rooms));
+
+      ok(res, data, 'success');
+    } catch (e) { fail(res, 500, 'Lỗi lấy danh sách giải trình cần bạn duyệt', e); }
+  },
+
   // GET /attendance-explanation/:id
   getById: async (req, res) => {
     try {
@@ -335,29 +413,11 @@ const ctrl = {
   },
 
   // POST /attendance-explanation/seed-mock
-  seedMock: async (req, res) => {
-    try {
-      const [emps] = await db.query(`SELECT id, employee_code, full_name FROM hr_employees WHERE status!='RESIGNED' LIMIT 3`);
-      if (!emps.length) return fail(res, 400, 'Không có nhân viên nào');
-      const types   = ['MISSING_CHECK_IN', 'LATE', 'MISSING_CHECK_OUT'];
-      const reasons = ['Quên quẹt thẻ do bận cấp cứu ca đêm', 'Đi muộn do kẹt xe đột xuất', 'Quên quẹt thẻ ra do bàn giao ca gấp'];
-      const date    = new Date().toISOString().slice(0, 10);
-      const inserted = [];
-      for (let i = 0; i < emps.length; i++) {
-        const [r] = await db.query(
-          `INSERT INTO hr_attendance_explanations (employee_id,work_date,type,reason,status,created_at) VALUES (?,?,?,?,'PENDING',NOW())`,
-          [emps[i].id, date, types[i], reasons[i]]
-        );
-        inserted.push({ id: r.insertId, staffName: emps[i].full_name, type: types[i] });
-      }
-      res.json({ statusCode: 200, data: inserted, message: `Đã tạo ${inserted.length} đơn giải trình mẫu` });
-    } catch (e) { fail(res, 500, 'Lỗi tạo mẫu giải trình', e); }
-  },
 };
 
 ctrl.create = async (req, res) => {
   try {
-    const { employeeId, workDate, type, reason } = req.body;
+    const { employeeId, workDate, type, reason, attachments } = req.body;
     if (!employeeId || !workDate || !reason) return res.status(400).json({ statusCode: 400, message: 'Thiếu thông tin giải trình' });
 
     // Kiểm tra đã có giải trình cho ngày này chưa
@@ -371,7 +431,20 @@ ctrl.create = async (req, res) => {
       `INSERT INTO hr_attendance_explanations (employee_id, work_date, type, reason, status, created_at) VALUES (?,?,?,?,'PENDING',NOW())`,
       [employeeId, workDate, type || 'OTHER', reason]
     );
-    res.json({ statusCode: 200, data: { id: result.insertId }, message: 'Gửi giải trình thành công' });
+    const explanationId = result.insertId;
+
+    // Lưu file đính kèm (nếu có) — mỗi file lấy từ kết quả POST /api/upload/multiple trước đó
+    if (Array.isArray(attachments) && attachments.length) {
+      for (const f of attachments) {
+        if (!f?.url) continue;
+        await db.query(
+          `INSERT INTO hr_attendance_explanation_attachments (explanation_id, file_url, file_name, file_type, file_size) VALUES (?,?,?,?,?)`,
+          [explanationId, f.url, f.fileName || '', f.fileType || '', parseInt(f.fileSize) || 0]
+        );
+      }
+    }
+
+    res.json({ statusCode: 200, data: { id: explanationId }, message: 'Gửi giải trình thành công' });
   } catch(e) {
     res.status(500).json({ statusCode: 500, message: 'Lỗi gửi giải trình', error: e.message });
   }
