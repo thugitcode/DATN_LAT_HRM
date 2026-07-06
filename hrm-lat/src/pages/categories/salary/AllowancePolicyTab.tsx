@@ -5,10 +5,11 @@ import {
   Input, Button, Switch, Select, SelectItem, Checkbox, Chip
 } from '@heroui/react';
 import { IconPlus, IconSearch, IconTrash, IconEdit, IconArrowLeft } from '@tabler/icons-react';
-
-const MOCK_EMPLOYEES = ["Cấn Đạt", "Bác Sĩ Hảo", "Nguyễn Văn A", "Trần Thị B", "Lê Văn C"];
+import { useStaffOptions } from '@/hooks/options/use-staff-options';
 
 export default function AllowancePolicyTab() {
+  // Danh sách nhân viên THẬT (trước đây dùng MOCK_EMPLOYEES cứng — đã bỏ)
+  const { options: employeeOptions } = useStaffOptions();
   const [view, setView] = useState<'list' | 'form'>('list');
   const [list, setList] = useState<any[]>([]);
   const [search, setSearch] = useState('');
@@ -53,7 +54,7 @@ export default function AllowancePolicyTab() {
       if (resMaster.data.success) {
         setDepartments(resMaster.data.departments || []);
         setRooms(resMaster.data.rooms || []);
-        setPositions(resMaster.data.positions || []);
+        setPositions(resMaster.data.titles || []);
       }
 
       // Tải danh mục biến số lương hoạt động để nhét vào ô thiết lập % gốc
@@ -65,6 +66,37 @@ export default function AllowancePolicyTab() {
   };
 
   useEffect(() => { loadInitialData(); }, []);
+
+  // ── Lọc liên kết: Khoa → Phòng, Khoa/Phòng → Nhân viên (không để 4 ô này độc lập, chọn gì cũng được) ──
+  const filteredRooms = formData.applied_departments.length
+    ? rooms.filter((r: any) => formData.applied_departments.includes(r.department_code))
+    : rooms;
+
+  const filteredEmployeeOptions = (formData.applied_departments.length || formData.applied_rooms.length)
+    ? employeeOptions.filter((emp: any) => {
+        const inDept = formData.applied_departments.length ? emp.departments?.some((d: any) => formData.applied_departments.includes(d.code)) : true;
+        const inRoom = formData.applied_rooms.length ? emp.rooms?.some((r: any) => formData.applied_rooms.includes(r.code)) : true;
+        return inDept && inRoom;
+      })
+    : employeeOptions;
+
+  // Khi đổi Khoa/Phòng, tự bỏ những lựa chọn Phòng/Nhân viên đã chọn trước đó nhưng KHÔNG còn hợp lệ
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      applied_rooms: prev.applied_rooms.filter((code: string) => filteredRooms.some((r: any) => r.code === code)),
+      applied_employees: prev.applied_employees.filter((key: string) => filteredEmployeeOptions.some((e: any) => String(e.code) === String(key))),
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(formData.applied_departments)]);
+
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      applied_employees: prev.applied_employees.filter((key: string) => filteredEmployeeOptions.some((e: any) => String(e.code) === String(key))),
+    }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(formData.applied_rooms)]);
 
   const handleOpenAdd = () => {
     setSelectedId(null);
@@ -327,7 +359,7 @@ export default function AllowancePolicyTab() {
             selectedKeys={new Set(formData.applied_rooms)} onSelectionChange={(keys) => setFormData({...formData, applied_rooms: Array.from(keys) as string[]})}
             classNames={{ trigger: "bg-white border" }}
           >
-            {rooms.map(r => <SelectItem key={r.code} textValue={r.name}>{r.name}</SelectItem>)}
+            {filteredRooms.map((r: any) => <SelectItem key={r.code} textValue={r.name}>{r.name}</SelectItem>)}
           </Select>
         </div>
 
@@ -344,7 +376,7 @@ export default function AllowancePolicyTab() {
             selectedKeys={new Set(formData.applied_employees)} onSelectionChange={(keys) => setFormData({...formData, applied_employees: Array.from(keys) as string[]})}
             classNames={{ trigger: "bg-white border" }}
           >
-            {MOCK_EMPLOYEES.map(emp => <SelectItem key={emp} textValue={emp}>{emp}</SelectItem>)}
+            {filteredEmployeeOptions.map((emp: any) => <SelectItem key={emp.code} textValue={`${emp.label} (${emp.code})`}>{emp.label} ({emp.code})</SelectItem>)}
           </Select>
         </div>
 

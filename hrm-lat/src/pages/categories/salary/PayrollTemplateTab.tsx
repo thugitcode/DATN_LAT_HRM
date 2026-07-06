@@ -5,10 +5,11 @@ import {
   Input, Button, Switch, Select, SelectItem, Checkbox, Chip, Drawer, DrawerContent, DrawerHeader, DrawerBody, DrawerFooter, useDisclosure
 } from '@heroui/react';
 import { IconPlus, IconSearch, IconTrash, IconEdit, IconArrowLeft, IconGridPattern } from '@tabler/icons-react';
-
-const MOCK_EMPLOYEES = ["Cấn Đạt", "Bác Sĩ Hảo", "Nguyễn Văn A", "Trần Thị B", "Lê Văn C"];
+import { useStaffOptions } from '@/hooks/options/use-staff-options';
 
 export default function PayrollTemplateTab() {
+  // Danh sách nhân viên THẬT (trước đây dùng MOCK_EMPLOYEES cứng — đã bỏ, gây hiển thị tên giả không tồn tại)
+  const { options: employeeOptions } = useStaffOptions();
   // Trạng thái điều hướng màn hình (list: Lưới danh sách, form: Thêm/Sửa Full-page)
   const [view, setView] = useState<'list' | 'form'>('list');
   const { isOpen: isCompOpen, onOpen: onCompOpen, onOpenChange: onCompOpenChange, onClose: onCompClose } = useDisclosure();
@@ -43,7 +44,7 @@ export default function PayrollTemplateTab() {
 
       const resMaster = await axios.get('http://localhost:5000/api/v1/master-data/hospital-lookup');
       if (resMaster.data.success) {
-        setPositions(resMaster.data.positions || []);
+        setPositions(resMaster.data.titles || []);
         setDepartments(resMaster.data.departments || []);
         setRooms(resMaster.data.rooms || []);
       }
@@ -51,6 +52,34 @@ export default function PayrollTemplateTab() {
   };
 
   useEffect(() => { loadInitialData(); }, []);
+
+  // ── Lọc liên kết: Khoa → Phòng, Khoa/Phòng → Nhân viên (không để 4 ô này độc lập, chọn gì cũng được) ──
+  // Phòng chỉ hiện đúng phòng thuộc Khoa đã chọn (dựa vào department_code của cat_rooms).
+  const filteredRooms = selDeps.length
+    ? rooms.filter((r: any) => selDeps.includes(r.department_code))
+    : rooms;
+
+  // Nhân viên chỉ hiện đúng người thuộc Khoa/Phòng đã chọn (dựa vào departments/rooms gắn theo hồ sơ nhân viên).
+  const filteredEmployeeOptions = (selDeps.length || selRooms.length)
+    ? employeeOptions.filter((emp: any) => {
+        const inDept = selDeps.length ? emp.departments?.some((d: any) => selDeps.includes(d.code)) : true;
+        const inRoom = selRooms.length ? emp.rooms?.some((r: any) => selRooms.includes(r.code)) : true;
+        return inDept && inRoom;
+      })
+    : employeeOptions;
+
+  // Khi đổi Khoa/Phòng, tự bỏ những lựa chọn Phòng/Nhân viên đã chọn trước đó nhưng KHÔNG còn hợp lệ
+  // (VD: đã chọn nhân viên khoa A, sau đó đổi Khoa áp dụng sang khoa B → nhân viên đó phải tự bị bỏ chọn).
+  useEffect(() => {
+    setSelRooms(prev => prev.filter(code => filteredRooms.some((r: any) => r.code === code)));
+    setSelEmps(prev => prev.filter(key => filteredEmployeeOptions.some((e: any) => String(e.code) === String(key))));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(selDeps)]);
+
+  useEffect(() => {
+    setSelEmps(prev => prev.filter(key => filteredEmployeeOptions.some((e: any) => String(e.code) === String(key))));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(selRooms)]);
 
   const handleOpenAdd = () => {
     setTplId(null); setTplName('');
@@ -251,7 +280,7 @@ export default function PayrollTemplateTab() {
             selectedKeys={new Set(selRooms)} onSelectionChange={(keys) => setSelRooms(Array.from(keys) as string[])}
             classNames={{ trigger: "bg-white border" }}
           >
-            {rooms.map(r => <SelectItem key={r.code} textValue={r.name}>{r.name}</SelectItem>)}
+            {filteredRooms.map((r: any) => <SelectItem key={r.code} textValue={r.name}>{r.name}</SelectItem>)}
           </Select>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -260,7 +289,7 @@ export default function PayrollTemplateTab() {
             selectedKeys={new Set(selEmps)} onSelectionChange={(keys) => setSelEmps(Array.from(keys) as string[])}
             classNames={{ trigger: "bg-white border" }}
           >
-            {MOCK_EMPLOYEES.map(emp => <SelectItem key={emp} textValue={emp}>{emp}</SelectItem>)}
+            {filteredEmployeeOptions.map((emp: any) => <SelectItem key={emp.code} textValue={`${emp.label} (${emp.code})`}>{emp.label} ({emp.code})</SelectItem>)}
           </Select>
           <Select 
             label="Vị trí áp dụng *" selectionMode="multiple" placeholder="Chọn chức danh"

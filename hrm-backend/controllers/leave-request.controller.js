@@ -39,7 +39,9 @@ const leaveRequestController = {
                COALESCE(jt.name, 'Nhân viên') as position,
                sub.full_name as substitute_name,
                mgr.full_name as manager_name,
-               lq.name as leave_type_name
+               lq.name as leave_type_name,
+               lrs.name as leave_reason_name, lrs.salary_rate as leave_reason_salary_rate,
+               lrs.require_document as leave_reason_require_document
         FROM hr_leave_requests lr
         JOIN hr_employees e ON e.id = lr.employee_id
         LEFT JOIN hr_contracts hc ON hc.employee_id = e.id AND hc.status = 'ACTIVE'
@@ -49,6 +51,7 @@ const leaveRequestController = {
         LEFT JOIN hr_employees sub ON sub.id = lr.substitute_id
         LEFT JOIN hr_employees mgr ON mgr.id = lr.manager_id
         LEFT JOIN cat_leave_quotas lq ON lq.id = lr.leave_quota_id
+        LEFT JOIN leave_reasons lrs ON lrs.id = lr.leave_reason_id
         WHERE ${where.join(' AND ')}
         GROUP BY lr.id
         ORDER BY lr.created_at DESC
@@ -106,13 +109,16 @@ const leaveRequestController = {
       const [[row]] = await db.query(`
         SELECT lr.*, e.employee_code as staff_code, e.full_name as staff_name,
                hc.title_name as position, sub.full_name as substitute_name,
-               mgr.full_name as manager_name, lq.name as leave_type_name
+               mgr.full_name as manager_name, lq.name as leave_type_name,
+               lrs.name as leave_reason_name, lrs.salary_rate as leave_reason_salary_rate,
+               lrs.require_document as leave_reason_require_document
         FROM hr_leave_requests lr
         JOIN hr_employees e ON e.id = lr.employee_id
         LEFT JOIN hr_contracts hc ON hc.employee_id = e.id AND hc.status = 'ACTIVE'
         LEFT JOIN hr_employees sub ON sub.id = lr.substitute_id
         LEFT JOIN hr_employees mgr ON mgr.id = lr.manager_id
         LEFT JOIN cat_leave_quotas lq ON lq.id = lr.leave_quota_id
+        LEFT JOIN leave_reasons lrs ON lrs.id = lr.leave_reason_id
         WHERE lr.id = ?
       `, [id]);
       if (!row) return fail(res, 404, 'Không tìm thấy đơn nghỉ');
@@ -127,15 +133,31 @@ const leaveRequestController = {
   // POST /leave-request
   create: async (req, res) => {
     try {
-      const { staffId, leaveQuotaId, fromDate, toDate, totalDays, reason, substituteId, managerId } = req.body;
+      const { staffId, leaveQuotaId, leaveReasonId, fromDate, toDate, totalDays, reason, substituteId, managerId } = req.body;
       if (!staffId || !fromDate || !toDate || !reason) return fail(res, 400, 'Thiếu thông tin đơn nghỉ');
 
-      const [result] = await db.query(`
-        INSERT INTO hr_leave_requests (employee_id, leave_quota_id, from_date, to_date, total_days, reason, substitute_id, manager_id)
-        VALUES (?,?,?,?,?,?,?,?)
-      `, [staffId, leaveQuotaId || null, fromDate, toDate, totalDays || 1, reason, substituteId || null, managerId || null]);
+      // Nếu chọn lý do nghỉ cụ thể, kiểm tra xem lý do đó có yêu cầu hồ sơ đính kèm không
+      // (VD: "Ốm đau" yêu cầu giấy xác nhận BHXH) — hiện chỉ cảnh báo qua message, chưa chặn cứng
+      // vì màn đính kèm file chưa áp dụng cho đơn nghỉ (chỉ mới có ở giải trình công).
+      let leaveReasonInfo = null;
+      if (leaveReasonId) {
+        const [[lrInfo]] = await db.query(
+          `SELECT id, name, salary_rate, require_document, leave_fund_id FROM leave_reasons WHERE id=?`,
+          [leaveReasonId]
+        );
+        leaveReasonInfo = lrInfo || null;
+      }
 
-      ok(res, { id: String(result.insertId) }, 'Tạo đơn nghỉ thành công');
+      const [result] = await db.query(`
+        INSERT INTO hr_leave_requests (employee_id, leave_quota_id, leave_reason_id, from_date, to_date, total_days, reason, substitute_id, manager_id)
+        VALUES (?,?,?,?,?,?,?,?,?)
+      `, [staffId, leaveQuotaId || null, leaveReasonId || null, fromDate, toDate, totalDays || 1, reason, substituteId || null, managerId || null]);
+
+      const msg = leaveReasonInfo?.require_document
+        ? `Tạo đơn nghỉ thành công. Lưu ý: lý do "${leaveReasonInfo.name}" cần bổ sung hồ sơ/giấy tờ liên quan cho HR.`
+        : 'Tạo đơn nghỉ thành công';
+
+      ok(res, { id: String(result.insertId) }, msg);
     } catch (e) { fail(res, 500, 'Lỗi tạo đơn nghỉ', e); }
   },
 
@@ -237,6 +259,10 @@ function mapLeaveRequest(row, depts, rooms) {
     rooms: rooms.filter(r => r.employee_id === row.employee_id).map(r => ({ id: String(r.id), name: r.name })),
     leaveQuotaId: row.leave_quota_id ? String(row.leave_quota_id) : null,
     leaveType: row.leave_type_name || '',
+    leaveReasonId: row.leave_reason_id ? String(row.leave_reason_id) : null,
+    leaveReasonName: row.leave_reason_name || '',
+    leaveReasonSalaryRate: row.leave_reason_salary_rate != null ? parseFloat(row.leave_reason_salary_rate) : null,
+    leaveReasonRequireDocument: !!row.leave_reason_require_document,
     fromDate: row.from_date,
     toDate: row.to_date,
     totalDays: parseFloat(row.total_days) || 1,

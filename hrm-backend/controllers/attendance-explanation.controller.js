@@ -420,6 +420,25 @@ ctrl.create = async (req, res) => {
     const { employeeId, workDate, type, reason, attachments } = req.body;
     if (!employeeId || !workDate || !reason) return res.status(400).json({ statusCode: 400, message: 'Thiếu thông tin giải trình' });
 
+    // ── Chặn nộp giải trình quá hạn — theo "Hạn gửi giải trình công" cấu hình ở Thiết lập chấm công ──
+    // Hạn tính theo THÁNG KẾ TIẾP của ngày cần giải trình: work_date thuộc tháng M → hạn cuối là
+    // ngày [allow_explanation_days] của tháng M+1 (VD work_date tháng 6, allow_explanation_days=5
+    // → hạn cuối 05/07, quá ngày này không cho nộp giải trình cho các ngày thuộc tháng 6 nữa).
+    const [[cfg]] = await db.query(`SELECT allow_explanation_days FROM timekeeping_configs WHERE id = 1`).catch(() => [[null]]);
+    const allowDays = parseInt(cfg?.allow_explanation_days ?? 0);
+    if (allowDays > 0) {
+      const wd = new Date(workDate);
+      const deadline = new Date(wd.getFullYear(), wd.getMonth() + 1, allowDays, 23, 59, 59);
+      const now = new Date();
+      if (now > deadline) {
+        const deadlineStr = `${String(deadline.getDate()).padStart(2,'0')}/${String(deadline.getMonth()+1).padStart(2,'0')}/${deadline.getFullYear()}`;
+        return res.status(400).json({
+          statusCode: 400,
+          message: `⚠️ Đã quá hạn gửi giải trình cho ngày ${workDate}. Hạn cuối là ${deadlineStr} (theo cấu hình "Hạn gửi giải trình công").`,
+        });
+      }
+    }
+
     // Kiểm tra đã có giải trình cho ngày này chưa
     const [[existing]] = await db.query(
       `SELECT id FROM hr_attendance_explanations WHERE employee_id=? AND work_date=? LIMIT 1`,

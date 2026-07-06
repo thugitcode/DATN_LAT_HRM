@@ -41,15 +41,16 @@ async function findTemplate(employeeId) {
   // Lấy thông tin NV
   const [[emp]] = await db.query(
     `SELECT e.id, e.employee_code,
-            c.department_code, c.room_code, c.level_name
+            c.department_code, c.room_code, c.level_name, jt.name as job_title_name
      FROM hr_employees e
      LEFT JOIN hr_contracts c ON c.employee_id = e.id AND c.status = 'ACTIVE'
+     LEFT JOIN cat_titles jt ON jt.id = c.job_title_code
      WHERE e.id = ? LIMIT 1`,
     [employeeId]
   );
   if (!emp) return null;
 
-  console.log('[findTemplate] emp:', emp.employee_code, '| dept:', emp.department_code, '| room:', emp.room_code, '| pos:', emp.level_name);
+  console.log('[findTemplate] emp:', emp.employee_code, '| dept:', emp.department_code, '| room:', emp.room_code, '| chức danh:', emp.job_title_name);
 
 
   // Lấy tất cả template ACTIVE
@@ -57,18 +58,18 @@ async function findTemplate(employeeId) {
     `SELECT * FROM payroll_templates WHERE status = 'ACTIVE' ORDER BY id ASC`
   );
 
-  // Match template theo thứ tự ưu tiên: employee > position > room > department
+  // Match template theo thứ tự ưu tiên: employee > chức danh nghề nghiệp > room > department
   for (const tpl of templates) {
     const appliedEmps  = tpl.applied_employees  ? JSON.parse(tpl.applied_employees)  : [];
     const appliedPos   = tpl.applied_positions  ? JSON.parse(tpl.applied_positions)  : [];
     const appliedRooms = tpl.applied_rooms       ? JSON.parse(tpl.applied_rooms)      : [];
     const appliedDepts = tpl.applied_departments ? JSON.parse(tpl.applied_departments): [];
 
-    console.log('[findTemplate] tpl', tpl.id, '| depts:', appliedDepts, '| rooms:', appliedRooms, '| pos:', appliedPos);
+    console.log('[findTemplate] tpl', tpl.id, '| depts:', appliedDepts, '| rooms:', appliedRooms, '| chức danh:', appliedPos);
 
   
-    if (appliedEmps.includes(emp.employee_code))    return tpl;
-    if (appliedPos.includes(emp.level_name))         return tpl;
+    if (appliedEmps.includes(emp.employee_code))     return tpl;
+    if (appliedPos.includes(emp.job_title_name))     return tpl;
     if (appliedRooms.includes(emp.room_code))        return tpl;
     if (appliedDepts.includes(emp.department_code)) return tpl;
   }
@@ -125,8 +126,10 @@ async function collectVars(staffId, month) {
 
   // Chấm công
   const [wsdRows] = await db.query(
-    `SELECT wsd.status, wsd.check_in_time, wsd.check_out_time,
-            st.shift_type, st.code as shift_code, st.start_time
+    `SELECT wsd.status, wsd.check_in_time, wsd.check_out_time, wsd.work_date,
+            st.shift_type, st.code as shift_code, st.start_time, st.end_time,
+            st.allowance as shift_allowance, st.coefficient as shift_coefficient,
+            st.late_allowance, st.early_allowance, st.work_hours
      FROM hr_work_schedule_details wsd
      JOIN hr_work_schedules ws ON ws.id = wsd.work_schedule_id
      JOIN shifts st ON st.id = wsd.shift_template_id
@@ -134,26 +137,77 @@ async function collectVars(staffId, month) {
     [staffId, fromDate, toDate]
   );
 
+  // Danh mục ngày nghỉ lễ (Điều 112, 98 Bộ luật Lao động) — dùng để tự phát hiện ngày lễ
+  // và áp hệ số làm việc ngày lễ (tối thiểu 300% theo luật), không phụ thuộc phải tick tay status='HOLIDAY'
+  const [holidayRows] = await db.query(
+    `SELECT start_date, end_date, salary_coef_work FROM holidays
+     WHERE start_date <= ? AND end_date >= ?`,
+    [toDate, fromDate]
+  ).catch(() => [[]]);
+  const isHolidayDate = (dateStr) => {
+    const d = new Date(dateStr).toISOString().slice(0, 10);
+    const row = holidayRows.find(h => {
+      const s = new Date(h.start_date).toISOString().slice(0, 10);
+      const e = new Date(h.end_date).toISOString().slice(0, 10);
+      return d >= s && d <= e;
+    });
+    return row ? parseFloat(row.salary_coef_work || 3) : null;
+  };
+
   const isNight = r =>
     r.shift_type === 'ON_CALL' ||
     (r.start_time || '').startsWith('21') ||
     (r.start_time || '').startsWith('22');
 
-  const present    = wsdRows.filter(r => ['PRESENT','LATE','EARLY_LEAVE'].includes(r.status));
+  // MISSING_HOURS = có đi làm (ca linh hoạt/trực), chỉ thiếu giờ so với yêu cầu — vẫn tính là "có công",
+  // không phải vắng mặt. Phần thiếu giờ được xử lý bằng cách nhân hệ số theo TỶ LỆ giờ thực tế/giờ yêu cầu
+  // (bên dưới), không loại hẳn khỏi công — đúng nguyên tắc trả lương theo giờ làm thực tế (Điều 95 BLLĐ 2019).
+  const present    = wsdRows.filter(r => ['PRESENT','LATE','EARLY_LEAVE','MISSING_HOURS'].includes(r.status));
   const workDays   = present.filter(r => !isNight(r)).length;
   const onCallDays = present.filter(r => isNight(r)).length;
   const holidayDays = wsdRows.filter(r => r.status === 'HOLIDAY').length;
   const compDays    = wsdRows.filter(r => r.status === 'COMPENSATORY_LEAVE').length;
   const wsdPaid     = wsdRows.filter(r => ['LEAVE','LEAVE_PAID'].includes(r.status)).length;
 
-  // Nghỉ phép có lương
+  // Phụ cấp ca trực: đọc ĐÚNG "allowance" đã cấu hình cho từng ca (Danh mục ca làm việc),
+  // thay vì hardcode 150.000đ cho mọi ca trực — mỗi ca trực có thể phụ cấp khác nhau.
+  const onCallAllowanceTotal = present.filter(r => isNight(r))
+    .reduce((sum, r) => sum + parseFloat(r.shift_allowance || 150000), 0);
+
+  // Tổng hệ số công ngày thường của các ngày đã đi làm (chưa cộng nghỉ phép/lễ/nghỉ bù —
+  // cộng nốt bên dưới sau khi tính paidLeave) — dùng "coefficient" cấu hình riêng từng ca.
+  // Tổng hệ số công ngày thường của các ngày đã đi làm — nhân thêm tỷ lệ giờ thực tế/giờ yêu cầu
+  // cho đúng những ngày MISSING_HOURS (ca linh hoạt/trực thiếu giờ), giữ nguyên hệ số đầy đủ cho
+  // PRESENT/LATE/EARLY_LEAVE (đã đủ hoặc quá giờ, hoặc có giờ chuẩn cố định nên không áp dụng tỷ lệ này).
+  const workedCoefficientSum = present.reduce((sum, r) => {
+    const coef = parseFloat(r.shift_coefficient || 1);
+    if (r.status === 'MISSING_HOURS' && r.check_in_time && r.check_out_time) {
+      const diff = (new Date(r.check_out_time) - new Date(r.check_in_time)) / 3600000;
+      const workedHours = diff < 0 ? diff + 24 : diff;
+      const requiredHours = parseFloat(r.work_hours || 0);
+      const ratio = requiredHours > 0 ? Math.min(1, workedHours / requiredHours) : 1;
+      return sum + coef * ratio;
+    }
+    return sum + coef;
+  }, 0);
+
+  // Nghỉ phép có lương — nhân theo ĐÚNG % lương của lý do nghỉ cụ thể (leave_reasons.salary_rate),
+  // VD "Ốm đau" 75%, "Không lương" 0%, "Phép năm" 100%. Đơn cũ chưa chọn lý do (leave_reason_id NULL)
+  // thì coi như 100% để không đổi hành vi ngược so với trước khi có tính năng này.
   const [[leaveRow]] = await db.query(
-    `SELECT COALESCE(SUM(total_days),0) as cnt FROM hr_leave_requests
-     WHERE employee_id=? AND status='APPROVED' AND from_date BETWEEN ? AND ?`,
+    `SELECT
+       COALESCE(SUM(lr.total_days), 0) as cnt,
+       COALESCE(SUM(lr.total_days * COALESCE(lrs.salary_rate, 100) / 100), 0) as weighted_cnt
+     FROM hr_leave_requests lr
+     LEFT JOIN leave_reasons lrs ON lrs.id = lr.leave_reason_id
+     WHERE lr.employee_id=? AND lr.status='APPROVED' AND lr.from_date BETWEEN ? AND ?`,
     [staffId, fromDate, toDate]
   );
   const paidLeave = wsdPaid + parseInt(leaveRow?.cnt || 0);
+  const paidLeaveWeighted = wsdPaid + parseFloat(leaveRow?.weighted_cnt || 0);
   const totalWorkDays = workDays + onCallDays + compDays + holidayDays + paidLeave;
+  // Ngày công quy đổi theo hệ số riêng từng ca + % lương thật của từng lý do nghỉ
+  const weightedWorkDays = workedCoefficientSum + compDays + holidayDays + paidLeaveWeighted;
 
   // Ngày chuẩn trong tháng (trừ CN)
   let standardDays = 0;
@@ -171,6 +225,22 @@ async function collectVars(staffId, month) {
     const std = isNight(r) ? 9 : 8;
     overtimeHours += Math.max(0, h - std);
   });
+
+  // Thưởng làm việc ngày lễ, tết (Điều 98 Khoản 1 Điểm c BLLĐ 2019: ít nhất 300%, chưa kể lương
+  // ngày lễ đã hưởng nguyên lương). Ngày đã được tính 1 lần (100%) qua workDays/onCallDays như
+  // ngày công thường, nên chỉ cần cộng thêm phần CHÊNH LỆCH (coefWork - 1) x đơn giá ngày.
+  const baseSalaryForHolidayCalc = parseFloat(contract?.base_salary || sal?.gross_salary || 0);
+  let holidayWorkBonus = 0;
+  if (baseSalaryForHolidayCalc > 0) {
+    const dayRate = baseSalaryForHolidayCalc / Math.min(26, (() => {
+      let cnt = 0; for (let i = 1; i <= lastDay; i++) if (new Date(y, m - 1, i).getDay() !== 0) cnt++; return cnt;
+    })());
+    present.forEach(r => {
+      const coefWork = isHolidayDate(r.work_date);
+      if (coefWork) holidayWorkBonus += dayRate * (coefWork - 1);
+    });
+    holidayWorkBonus = Math.round(holidayWorkBonus);
+  }
 
   // Phạt vi phạm
   let violationPenalty = 0;
@@ -224,11 +294,14 @@ async function collectVars(staffId, month) {
 
     // Biến công
     TONG_NGAY_CONG:        totalWorkDays,
+    TONG_NGAY_CONG_QUY_DOI: weightedWorkDays,
+    PHU_CAP_TRUC_THUC_SO:  Math.round(onCallAllowanceTotal),
     NGAY_LAM_THUONG:       workDays,
     SO_CA_TRUC:            onCallDays,
     NGAY_LE:               holidayDays,
     NGAY_NGHI_PHEP:        paidLeave,
     GIO_OT:                Math.round(overtimeHours * 100) / 100,
+    THUONG_LAM_LE_SO:      holidayWorkBonus,
 
     // Biến KPI / doanh số
     KPI_SCORE:             kpiScore,
@@ -242,13 +315,16 @@ async function collectVars(staffId, month) {
     PHU_CAP_XANG_XE_SO:    parseFloat(sal?.fuel_allowance    || 0),
     PHU_CAP_DOC_HAI_SO:    parseFloat(sal?.hazard_allowance  || 0),
     PHU_CAP_CONG_TAC_SO:   parseFloat(sal?.business_trip_allowance || 0),
+    PHU_CAP_KHAC_SO:       parseFloat(sal?.other_allowance || 0),
     PHU_CAP_CHUC_VU_SO:    parseFloat(sal?.position_allowance || 0),
+    PHU_CAP_TRACH_NHIEM_SO: parseFloat(sal?.responsibility_allowance || 0),
     THU_NHAP_KHAC_SO:      parseFloat(otherRow?.total || 0),
 
     // Biến bảo hiểm
     BHXH_RATE:   sal?.has_social_insurance      ? parseFloat(sal?.social_insurance_rate      || 8)   : 0,
     BHYT_RATE:   sal?.has_health_insurance       ? parseFloat(sal?.health_insurance_rate      || 1.5) : 0,
     BHTN_RATE:   sal?.has_unemployment_insurance ? parseFloat(sal?.unemployment_insurance_rate|| 1)   : 0,
+    CONG_DOAN_RATE: sal?.has_union_fee ? parseFloat(sal?.union_fee || 1) : 0,
 
     // Biến phạt
     PHAT_VI_PHAM_SO: violationPenalty,
@@ -335,6 +411,11 @@ async function calcPayroll(staffId, month) {
 
   const netIncome = Math.max(0, totalGross - totalDeduct);
 
+  // Thưởng làm việc ngày lễ theo Điều 98 BLLĐ 2019 — cộng bảo đảm dù mẫu bảng lương công ty
+  // có cấu hình thành phần riêng cho việc này hay không, tránh vi phạm mức tối thiểu luật định.
+  const totalGrossWithHoliday = totalGross + vars.THUONG_LAM_LE_SO;
+  const netIncomeWithHoliday  = Math.max(0, totalGrossWithHoliday - totalDeduct);
+
     console.log('[calcPayroll] template:', template.id, '| components:', components.length);
     console.log('[calcPayroll] vars BHXH_RATE:', vars.BHXH_RATE, '| LUONG_DONG_BH:', vars.LUONG_DONG_BH);
     console.log('[calcPayroll] results:', JSON.stringify(results));
@@ -374,8 +455,10 @@ async function calcPayroll(staffId, month) {
     phoneAllowance:      results['PHU_CAP_DIEN_THOAI'] || 0,
     hazardAllowance:     results['PHU_CAP_DOC_HAI']    || 0,
     positionAllowance:   results['PHU_CAP_CHUC_VU']    || 0,
+    responsibilityAllowance: results['PHU_CAP_TRACH_NHIEM'] || 0,
     fuelAllowance:       results['PHU_CAP_XANG_XE']    || 0,
     bizTripAllowance:    results['PHU_CAP_CONG_TAC']   || 0,
+    otherAllowance:      results['PHU_CAP_KHAC']       || 0,
     otherIncomeAmount:   results['THU_NHAP_KHAC']      || 0,
     totalAllowance:      results['PHU_CAP_AN_TRUA']    || 0,
     bonusAmount:        (results['THUONG_KPI'] || 0) + (results['THUONG_DOANH_SO'] || 0),
@@ -391,9 +474,10 @@ async function calcPayroll(staffId, month) {
 
     pit:                 results['THUE_TNCN']       || 0,
     violationPenalty:    results['PHAT_VI_PHAM']    || 0,
-    totalGross,
+    holidayWorkBonus:    vars.THUONG_LAM_LE_SO,
+    totalGross:          totalGrossWithHoliday,
     totalDeduction:      totalDeduct,
-    netIncome,
+    netIncome:           netIncomeWithHoliday,
   };
 }
 
@@ -406,8 +490,8 @@ async function calcPayrollFallback(staffId, month) {
   const standardDays  = vars.NGAY_CHUAN;
   const totalWorkDays = vars.TONG_NGAY_CONG;
 
-  const salaryByWork   = baseSalary > 0 ? Math.round((baseSalary / standardDays) * totalWorkDays) : 0;
-  const onCallSalary   = vars.SO_CA_TRUC * 150000;
+  const salaryByWork   = baseSalary > 0 ? Math.round((baseSalary / standardDays) * vars.TONG_NGAY_CONG_QUY_DOI) : 0;
+  const onCallSalary   = vars.PHU_CAP_TRUC_THUC_SO;
   const overtimeAmount = baseSalary > 0
     ? Math.round((baseSalary / 26 / 8) * vars.GIO_OT * 1.5) : 0;
   const kpiBonus = vars.KPI_SCORE >= 90 ? Math.round(baseSalary * 0.15)
@@ -416,14 +500,14 @@ async function calcPayrollFallback(staffId, month) {
   const totalAllowance = vars.PHU_CAP_TRUA_NGAY * totalWorkDays
     + vars.PHU_CAP_DIEN_THOAI_SO + vars.PHU_CAP_XANG_XE_SO
     + vars.PHU_CAP_DOC_HAI_SO + vars.PHU_CAP_CONG_TAC_SO
-    + vars.PHU_CAP_CHUC_VU_SO + vars.THU_NHAP_KHAC_SO;
+    + vars.PHU_CAP_CHUC_VU_SO + vars.PHU_CAP_TRACH_NHIEM_SO + vars.PHU_CAP_KHAC_SO + vars.THU_NHAP_KHAC_SO;
 
-  const totalGross = salaryByWork + onCallSalary + overtimeAmount + kpiBonus + revenueBonus + totalAllowance;
+  const totalGross = salaryByWork + onCallSalary + overtimeAmount + kpiBonus + revenueBonus + totalAllowance + vars.THUONG_LAM_LE_SO;
 
   const socialIns  = Math.round(insuranceBase * vars.BHXH_RATE / 100);
   const healthIns  = Math.round(insuranceBase * vars.BHYT_RATE / 100);
   const unemployIns= Math.round(insuranceBase * vars.BHTN_RATE / 100);
-  const unionFee   = Math.round(insuranceBase * 0.01);
+  const unionFee   = Math.round(insuranceBase * vars.CONG_DOAN_RATE / 100);
   const totalIns   = socialIns + healthIns + unemployIns + unionFee;
 
   const taxable = Math.max(0, totalGross - totalIns - vars._selfDeduction - vars._dependents * vars._depDeduction);
@@ -444,9 +528,12 @@ async function calcPayrollFallback(staffId, month) {
     phoneAllowance: vars.PHU_CAP_DIEN_THOAI_SO,
     hazardAllowance: vars.PHU_CAP_DOC_HAI_SO,
     positionAllowance: vars.PHU_CAP_CHUC_VU_SO,
+    responsibilityAllowance: vars.PHU_CAP_TRACH_NHIEM_SO,
     fuelAllowance: vars.PHU_CAP_XANG_XE_SO,
     bizTripAllowance: vars.PHU_CAP_CONG_TAC_SO,
+    otherAllowance: vars.PHU_CAP_KHAC_SO,
     otherIncomeAmount: vars.THU_NHAP_KHAC_SO,
+    holidayWorkBonus: vars.THUONG_LAM_LE_SO,
     totalAllowance, bonusAmount: kpiBonus + revenueBonus,
     socialIns, healthIns, unemployIns, unionFee, totalIns,
     taxable, pit, violationPenalty: vars.PHAT_VI_PHAM_SO,

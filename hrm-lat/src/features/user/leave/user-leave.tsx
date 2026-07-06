@@ -14,7 +14,8 @@ export const UserLeave = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({ leaveQuotaId: '', fromDate: '', toDate: '', reason: '' });
+  const [form, setForm] = useState({ leaveQuotaId: '', leaveReasonId: '', fromDate: '', toDate: '', reason: '' });
+  const [reasons, setReasons] = useState<any[]>([]);
   const [msg, setMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -71,9 +72,11 @@ export const UserLeave = () => {
     Promise.all([
       fetch(`http://localhost:5000/api/leave-request?staffId=${user.id}&limit=20`).then(r => r.json()),
       fetch(`http://localhost:5000/api/leave-quota`).then(r => r.json()),
-    ]).then(([req, quota]) => {
+      fetch(`http://localhost:5000/api/v1/leave-reasons`).then(r => r.json()),
+    ]).then(([req, quota, reasonRes]) => {
       setRequests(req.data || []);
       setQuotas(quota.data?.filter((q: any) => q.status === 'ACTIVE') || []);
+      setReasons((reasonRes.data || []).filter((r: any) => r.status === 'ACTIVE'));
       setLoading(false);
     }).catch(() => setLoading(false));
   };
@@ -97,6 +100,7 @@ export const UserLeave = () => {
         body: JSON.stringify({
           staffId: user.id,
           leaveQuotaId: form.leaveQuotaId,
+          leaveReasonId: form.leaveReasonId || null,
           fromDate: form.fromDate,
           toDate: form.toDate,
           totalDays: totalDays(form.fromDate, form.toDate),
@@ -105,9 +109,9 @@ export const UserLeave = () => {
       });
       const d = await res.json();
       if (res.ok || d.statusCode === 200 || d.success) {
-        setMsg({ type: 'success', text: 'Gửi đơn xin nghỉ thành công!' });
+        setMsg({ type: 'success', text: d.message || 'Gửi đơn xin nghỉ thành công!' });
         setShowForm(false);
-        setForm({ leaveQuotaId: '', fromDate: '', toDate: '', reason: '' });
+        setForm({ leaveQuotaId: '', leaveReasonId: '', fromDate: '', toDate: '', reason: '' });
         fetchData();
       } else {
         setMsg({ type: 'error', text: d.message || 'Gửi đơn thất bại!' });
@@ -237,6 +241,41 @@ export const UserLeave = () => {
                 <option value="">-- Chọn loại nghỉ --</option>
                 {quotas.map(q => <option key={q.id} value={q.id}>{q.name} (tối đa {q.maxQuota} {q.maxQuotaUnit === 'DAY' ? 'ngày' : q.maxQuotaUnit})</option>)}
               </select>
+            </div>
+            <div className="col-span-2">
+              <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-400">Lý do nghỉ cụ thể</label>
+              <select
+                value={form.leaveReasonId}
+                onChange={e => {
+                  const id = e.target.value;
+                  const picked = reasons.find((r: any) => String(r.id) === id);
+                  setForm({
+                    ...form,
+                    leaveReasonId: id,
+                    // Tự điền vào ô "Nội dung" theo tên lý do đã chọn — người dùng vẫn sửa thêm được nếu cần
+                    reason: picked ? picked.name : form.reason,
+                  });
+                }}
+                className="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#2C3782]/20">
+                <option value="">-- Chọn lý do (tùy chọn) --</option>
+                {reasons.map((r: any) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name} — {r.salary_rate}% lương{r.require_document ? ' · cần hồ sơ' : ''}
+                  </option>
+                ))}
+              </select>
+              {form.leaveReasonId && (
+                (() => {
+                  const picked = reasons.find((r: any) => String(r.id) === form.leaveReasonId);
+                  if (!picked) return null;
+                  return (
+                    <p className="mt-1.5 text-xs text-gray-400">
+                      Hưởng {picked.salary_rate}% lương trong những ngày nghỉ này
+                      {picked.require_document ? ' — cần bổ sung hồ sơ/giấy tờ liên quan cho HR.' : ''}
+                    </p>
+                  );
+                })()
+              )}
             </div>
             <div>
               <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-gray-400">Từ ngày *</label>

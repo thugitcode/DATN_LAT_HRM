@@ -2,11 +2,9 @@ const db = require('../config/db');
 const { calcPayroll } = require('./payroll-engine');
 const { sendPayslipEmail } = require('../services/email.service');
 const ok   = (res, data, msg = 'success') => res.json({ statusCode: 200, data, message: msg });
-// QUAN TRỌNG: trả kèm err.message thật ra response (chỉ dùng khi làm đồ án/dev, không dùng khi lên production
-// thật vì lộ chi tiết lỗi hệ thống) — để không phải đoán mò mỗi lần lỗi 500 nữa, cứ mở Network tab là thấy ngay.
 const fail = (res, status, msg, err = null) => {
   if (err) console.error(`[payroll] ${msg}:`, err.message);
-  return res.status(status).json({ statusCode: status, message: msg, error: err?.message || null, errorCode: err?.code || null });
+  return res.status(status).json({ statusCode: status, message: msg });
 };
 
 const payrollController = {
@@ -19,8 +17,7 @@ const payrollController = {
       const toDate = new Date(y, m, 0).toISOString().slice(0, 10);
       const fromDate = `${month}-01`;
 
-      // Nếu bảng hr_payroll_periods chưa tồn tại (chưa chạy SQL tạo bảng) → coi như chưa có kỳ nào, không crash
-      const [[period]] = await db.query(`SELECT * FROM hr_payroll_periods WHERE month=?`, [month]).catch(() => [[null]]);
+      const [[period]] = await db.query(`SELECT * FROM hr_payroll_periods WHERE month=?`, [month]);
       const [[{ totalStaff }]] = await db.query(`SELECT COUNT(*) as totalStaff FROM hr_employees WHERE status != 'RESIGNED'`);
       const [[{ pendingCount }]] = await db.query(`
         SELECT COUNT(*) as pendingCount FROM hr_attendance_explanations
@@ -54,6 +51,8 @@ const payrollController = {
       const [y, m] = month.split('-').map(Number);
       const toDate   = new Date(y, m, 0).toISOString().slice(0, 10);
       const STANDARD_DAYS = 26;
+      const ON_CALL_ALLOWANCE = 150000; // VND/ca trực
+      const OT_RATE = 1.5;
 
       let where = ["e.status != 'RESIGNED'"];
       let params = [];
@@ -76,18 +75,145 @@ const payrollController = {
       `, [...params, parseInt(limit), (parseInt(page)-1)*parseInt(limit)]);
 
       const staffIds = staff.map(s => s.id);
+      // Lấy dept/rooms
       let depts = [], rooms_list = [];
       if (staffIds.length) {
         [depts] = await db.query(`SELECT rsd.employee_id,d.id,d.name FROM hr_staff_departments rsd JOIN cat_departments d ON d.code=rsd.department_code WHERE rsd.employee_id IN (?)`, [staffIds]);
         [rooms_list] = await db.query(`SELECT rsr.employee_id,r.id,r.name FROM hr_staff_rooms rsr JOIN cat_rooms r ON r.code=rsr.room_code WHERE rsr.employee_id IN (?)`, [staffIds]);
       }
 
-      // Trước đây hàm này tự tính lại toàn bộ công thức lương (workDays, allowance, gross, insurance, pit,
-      // netPay...) ngay tại đây, NHƯNG kết quả trả về cuối cùng chỉ dùng p.* (từ calcPayroll()) — toàn bộ
-      // phần tự tính đó là code chết, không ảnh hưởng kết quả, chỉ tốn thêm nhiều query DB không cần thiết.
-      // Đã bỏ, chỉ giữ calcPayroll() làm nguồn tính duy nhất — đảm bảo TRÙNG KHỚP với chi tiết lương.
       const result = await Promise.all(staff.map(async s => {
         const p = await calcPayroll(s.id, month);
+        const [[sal]] = await db.query(`SELECT * FROM hr_staff_salary WHERE employee_id=? LIMIT 1`, [s.id]);
+        const [[contract]] = await db.query(
+          `SELECT base_salary FROM hr_contracts WHERE employee_id=? AND status='ACTIVE' LIMIT 1`, [s.id]);
+
+        // 2. Lấy tổng hợp công từ bảng chấm công
+        const [wsdRows] = await db.query(`
+          SELECT wsd.status, wsd.check_in_time, wsd.check_out_time,
+                 st.shift_type, st.code as shift_code, st.start_time
+          FROM hr_work_schedule_details wsd
+          JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
+          JOIN shifts st ON st.id=wsd.shift_template_id
+          WHERE ws.employee_id=? AND wsd.work_date BETWEEN ? AND ?
+        `, [s.id, fromDate, toDate]);
+
+        const isNight = (r) => r.shift_type==='ON_CALL' || ['D','Đ'].includes((r.shift_code||'').toUpperCase()) || (r.start_time||'').startsWith('21') || (r.start_time||'').startsWith('22');
+        const present = wsdRows.filter(r => ['PRESENT','LATE','EARLY_LEAVE'].includes(r.status));
+
+        const workDays     = present.filter(r => !isNight(r)).length;
+        const onCallDays   = present.filter(r => isNight(r)).length;
+        // paidLeave = từ chấm công + đơn nghỉ APPROVED trong tháng
+        const wsdPaidLeave = wsdRows.filter(r => ['LEAVE','LEAVE_PAID'].includes(r.status)).length;
+        const [[leaveRow]] = await db.query(
+          `SELECT COALESCE(SUM(total_days),0) as cnt FROM hr_leave_requests WHERE employee_id=? AND status='APPROVED' AND from_date BETWEEN ? AND ?`,
+          [s.id, fromDate, toDate]
+        );
+        const paidLeave = wsdPaidLeave + parseInt(leaveRow?.cnt || 0);
+
+        // Nghỉ lễ
+        const holidayDays = wsdRows.filter(r => r.status === 'HOLIDAY').length;
+
+        // Thu nhập khác của NV trong tháng
+        const [[otherIncome]] = await db.query(
+          `SELECT COALESCE(SUM(amount),0) as total FROM hr_other_income WHERE employee_id=? AND DATE_FORMAT(month,'%Y-%m')=?`,
+          [s.id, month]
+        );
+        const otherIncomeAmount = parseFloat(otherIncome?.total || 0);
+        const absentDays = wsdRows.filter(r => r.status==='ABSENT').length;
+
+        // Kiểm tra vắng có giải trình APPROVED → được tính công
+        // PENDING → chưa duyệt → chưa tính
+        const [[approvedExpl]] = await db.query(`
+          SELECT COUNT(*) as cnt FROM hr_attendance_explanations
+          WHERE employee_id=? AND status='APPROVED'
+          AND work_date BETWEEN ? AND ?
+        `, [s.id, fromDate, toDate]);
+        const approvedAbsents = parseInt(approvedExpl?.cnt || 0);
+        const unpaidAbsents   = Math.max(0, absentDays - approvedAbsents);
+
+        // LATE → vẫn tính công, chỉ trừ tiền phạt (vi phạm)
+        // Tính tiền phạt muộn dựa trên số phút
+        let latePenaltyAmount = 0;
+        const lateRows = wsdRows.filter(r => r.status === 'LATE');
+        for (const lr of lateRows) {
+          if (!lr.check_in_time || !lr.start_time) continue;
+          const actualIn = new Date(lr.check_in_time);
+          const [sh, sm] = lr.start_time.split(':').map(Number);
+          const scheduled = new Date(actualIn);
+          scheduled.setUTCHours(sh - 7, sm, 0);
+          const lateMinutes = (actualIn - scheduled) / 60000;
+          // Phạt theo phút muộn: 50,000đ/30p muộn
+          if (lateMinutes > 15) latePenaltyAmount += Math.ceil(lateMinutes / 30) * 50000;
+        }
+
+        const totalAttendance = workDays + onCallDays + paidLeave;
+
+        // Tính giờ tăng ca
+        let overtimeHours = 0;
+        present.forEach(r => {
+          if (r.check_in_time && r.check_out_time) {
+            const diff = (new Date(r.check_out_time) - new Date(r.check_in_time)) / 3600000;
+            const hours = diff < 0 ? diff + 24 : diff;
+            overtimeHours += Math.max(0, hours - 8);
+          }
+        });
+        overtimeHours = Math.round(overtimeHours * 100) / 100;
+
+        // 3. Công thức SRS
+        const basicSalary   = parseFloat(contract?.base_salary || sal?.gross_salary || sal?.net_salary || 0);
+        // LATE vẫn tính công đầy đủ
+        // Chỉ ABSENT không có giải trình APPROVED mới không tính công
+        const actualWorkDays = workDays + onCallDays + paidLeave + holidayDays - unpaidAbsents;
+
+        // A. Lương theo công: (basicSalary / 26) * actualWorkDays
+        // Tính số ngày làm việc thực tế trong tháng (trừ CN)
+        const [y2,m2] = month.split('-').map(Number);
+        const daysInMonth2 = new Date(y2,m2,0).getDate();
+        let workingDaysInMonth = 0;
+        for(let i=1;i<=daysInMonth2;i++){if(new Date(y2,m2-1,i).getDay()!==0)workingDaysInMonth++;}
+        const effectiveStdDays = Math.min(STANDARD_DAYS, workingDaysInMonth);
+        const salaryByWork  = basicSalary > 0 ? Math.round((basicSalary / effectiveStdDays) * actualWorkDays) : 0;
+
+        // B. Phụ cấp
+        const onCallAllowance   = onCallDays * ON_CALL_ALLOWANCE;
+        const hazardAllowance   = parseFloat(sal?.hazard_allowance || 0);
+        const mealAllowance     = sal?.meal_allowance_unit === 'DAY'
+          ? parseFloat(sal?.meal_allowance || 0) * actualWorkDays
+          : parseFloat(sal?.meal_allowance || 0);
+        const phoneAllowance    = parseFloat(sal?.phone_allowance || 0);
+        const positionAllowance = parseFloat(sal?.position_allowance || 0);
+        const otherAllowance    = parseFloat(sal?.other_allowance || 0);
+        const allowanceAmount   = Math.round(onCallAllowance + hazardAllowance + mealAllowance + phoneAllowance + positionAllowance + otherAllowance);
+
+        // C. Tăng ca: (basicSalary/26/8) * OT giờ * 1.5
+        const overtimeAmount = basicSalary > 0
+          ? Math.round((basicSalary / STANDARD_DAYS / 8) * overtimeHours * OT_RATE)
+          : 0;
+
+        // D. Gross
+        const totalGross = salaryByWork + allowanceAmount + overtimeAmount;
+
+        // E. Khấu trừ bảo hiểm 10.5%
+        const insuranceBase    = basicSalary;
+        const siRate           = sal?.has_social_insurance ? parseFloat(sal?.social_insurance_rate || 8) : 0;
+        const hiRate           = sal?.has_health_insurance ? parseFloat(sal?.health_insurance_rate || 1.5) : 0;
+        const uiRate           = sal?.has_unemployment_insurance ? parseFloat(sal?.unemployment_insurance_rate || 1) : 0;
+        const insuranceAmount  = Math.round(insuranceBase * (siRate + hiRate + uiRate) / 100);
+
+        // F. Thuế TNCN lũy tiến
+        const SELF_DEDUCT = 11000000;
+        const DEP_DEDUCT  = 4400000 * parseInt(sal?.dependents_count || 0);
+        const taxableIncome = Math.max(0, totalGross - insuranceAmount - SELF_DEDUCT - DEP_DEDUCT);
+        const pit = calcPIT(taxableIncome);
+
+        // Phạt vi phạm (đi muộn)
+        const violationPenalty = latePenaltyAmount || 0;
+        const deductionAmount = insuranceAmount + pit + violationPenalty;
+        const netPay          = Math.max(0, totalGross - deductionAmount);
+
+        // Bậc lương
+        const salaryTemplateName = sal ? (basicSalary >= 20000000 ? 'Bậc cao' : basicSalary >= 10000000 ? 'Bậc trung' : 'Bậc cơ bản') : 'Chưa có hợp đồng';
 
         return {
           payrollResultId:    `${s.id}-${month}`,
@@ -96,7 +222,7 @@ const payrollController = {
           staffName:          s.name,
           avatar:             s.avatar,
           position:           s.position || 'Nhân viên',
-          salaryTemplateName: p.templateName || (p.baseSalary >= 20000000 ? 'Bậc cao' : p.baseSalary >= 10000000 ? 'Bậc trung' : 'Bậc cơ bản'),
+          salaryTemplateName: sal ? (p.baseSalary >= 20000000 ? 'Bậc cao' : p.baseSalary >= 10000000 ? 'Bậc trung' : 'Bậc cơ bản') : 'Chưa có hợp đồng',
           departments:        depts.filter(d=>d.employee_id===s.id).map(d=>({id:String(d.id),name:d.name})),
           rooms:              rooms_list.filter(r=>r.employee_id===s.id).map(r=>({id:String(r.id),name:r.name})),
           workDays:           p.workDays,
@@ -149,6 +275,7 @@ const payrollController = {
   // GET /payroll/periods
   getPeriods: async (req, res) => {
     try {
+      // Sinh danh sách kỳ lương 6 tháng gần nhất
       const periods = [];
       const now = new Date();
       for (let i = 0; i < 6; i++) {
@@ -176,7 +303,9 @@ const payrollController = {
       const [[sal]] = await db.query(`SELECT * FROM hr_staff_salary WHERE employee_id=? LIMIT 1`, [id]);
       if (!sal) return ok(res, { data: [], pagination: { total: 0, page: 1, limit: 10, totalPage: 0 } });
 
+      const basicSalary = parseFloat(sal.gross_salary || sal.net_salary || 0);
       const STANDARD_DAYS = 26;
+
       const history = [];
       const now = new Date();
       for (let i = 0; i < 12; i++) {
@@ -187,25 +316,42 @@ const payrollController = {
         const toDate = new Date(y, m, 0).toISOString().slice(0,10);
 
         const [wsdRows] = await db.query(`
-          SELECT wsd.id FROM hr_work_schedule_details wsd
+          SELECT wsd.status, wsd.check_in_time, wsd.check_out_time,
+                 st.shift_type, st.code as shift_code
+          FROM hr_work_schedule_details wsd
           JOIN hr_work_schedules ws ON ws.id=wsd.work_schedule_id
+          JOIN shifts st ON st.id=wsd.shift_template_id
           WHERE ws.employee_id=? AND wsd.work_date BETWEEN ? AND ?
         `, [id, fromDate, toDate]);
 
         if (!wsdRows.length) continue;
 
-        // Ưu tiên đọc snapshot đã "chốt" nếu có; nếu bảng chưa tồn tại hoặc lỗi bất kỳ, rơi về tính trực tiếp
-        let p;
-        const [[snapshot]] = await db.query(
-          `SELECT result_json FROM hr_payroll_results WHERE employee_id=? AND period_month=?`,
-          [id, month]
-        ).catch(() => [[null]]);
-        p = snapshot?.result_json ? JSON.parse(snapshot.result_json) : await calcPayroll(id, month);
+        const isNight = r => r.shift_type==='ON_CALL'||['D','Đ'].includes((r.shift_code||'').toUpperCase());
+        const present = wsdRows.filter(r=>['PRESENT','LATE','EARLY_LEAVE'].includes(r.status));
+        const onCallDays = present.filter(r=>isNight(r)).length;
+        const actualWorkDays = present.length;
+
+        let overtimeHours = 0;
+        present.forEach(r => {
+          if (r.check_in_time && r.check_out_time) {
+            const diff = (new Date(r.check_out_time)-new Date(r.check_in_time))/3600000;
+            overtimeHours += Math.max(0, (diff<0?diff+24:diff)-8);
+          }
+        });
+
+        // Dùng calcPayroll cho số liệu chính xác
+        const p = await calcPayroll(id, month);
+        const salaryByWork = p.salaryByWork;
+        const allowanceAmount = p.totalAllowance;
+        const overtimeAmount = p.overtimeAmount;
+        const totalGross = p.totalGross;
+        const insuranceAmount = p.totalIns;
+        const netPay = p.netIncome;
 
         history.push({
           id: `${id}-${month}`,
-          basicSalary: p.salaryByWork, allowanceAmount: p.totalAllowance, overtimeAmount: p.overtimeAmount,
-          bonusAmount: p.kpiBonus + p.revenueBonus, deductionAmount: p.totalDeduction, insuranceAmount: p.totalIns, taxAmount: p.pit, netPay: p.netIncome,
+          basicSalary: salaryByWork, allowanceAmount, overtimeAmount,
+          bonusAmount: p.kpiBonus + p.revenueBonus, deductionAmount: p.totalDeduction, insuranceAmount, taxAmount: p.pit, netPay,
           calculationDetails: { actualWorkDays: p.totalWorkDays, overtimeHours: p.overtimeHours },
           isPaid: i > 0,
           paidAt: i > 0 ? toDate : null,
@@ -280,7 +426,7 @@ const payrollController = {
             basicSalary: r.basic_salary || 0,
             allowanceAmount: r.allowance_amount || 0,
             overtimeAmount: r.overtime_amount || 0,
-            insuranceAmount: insurance,
+            insuranceAmount: r.insurance_amount || 0,
             taxAmount: r.tax_amount || 0,
             workDays: r.work_days || 0,
             totalAttendance: r.total_attendance || 0,
@@ -325,6 +471,7 @@ const payrollController = {
       const [y,m] = month.split('-').map(Number);
       const toDate = new Date(y,m,0).toISOString().slice(0,10);
 
+      // Tổng gross từ bảng lương
       const [[payroll]] = await db.query(`
         SELECT COUNT(*) as staffCount,
                SUM(wsd.status='PRESENT' OR wsd.status='LATE') as totalPresent
@@ -375,6 +522,7 @@ const payrollController = {
       const [y, m] = currentMonth.split('-').map(Number);
       const toDate = new Date(y, m, 0).toISOString().slice(0, 10);
 
+      // Kiểm tra còn đơn giải trình PENDING không
       const [[pending]] = await db.query(`
         SELECT COUNT(*) as cnt FROM hr_attendance_explanations
         WHERE status IN ('PENDING','MANAGER_APPROVED')
@@ -389,24 +537,39 @@ const payrollController = {
         });
       }
 
-      const [[existingPeriod]] = await db.query(`SELECT status FROM hr_payroll_periods WHERE month=?`, [currentMonth]).catch(() => [[null]]);
+      // Chặn tính lại nếu kỳ đã LOCKED (phải unlock trước)
+      const [[existingPeriod]] = await db.query(`SELECT status FROM hr_payroll_periods WHERE month=?`, [currentMonth]);
       if (existingPeriod?.status === 'LOCKED') {
         return res.status(400).json({ statusCode: 400, message: '⚠️ Kỳ lương này đã bị khóa. Vui lòng mở khóa trước khi tính lại.' });
       }
 
+      // Tính lương THẬT cho từng nhân viên đang làm việc, lưu snapshot vào hr_payroll_results
       const [staffList] = await db.query(`SELECT id FROM hr_employees WHERE status != 'RESIGNED'`);
+      const now = new Date();
       let calculated = 0;
 
       for (const s of staffList) {
         try {
           const result = await calcPayroll(s.id, currentMonth);
           await db.query(
-            `INSERT INTO hr_payroll_results (period_month, employee_id, total_gross, total_deduction, net_income, result_json, calculated_at)
-             VALUES (?,?,?,?,?,?,NOW())
+            `INSERT INTO hr_payroll_results
+               (period_month, employee_id, total_gross, total_deduction, net_income,
+                insurance_amount, personal_income_tax, standard_days, actual_work_days, overtime_hours,
+                result_json, calculated_at)
+             VALUES (?,?,?,?,?,?,?,?,?,?,?,NOW())
              ON DUPLICATE KEY UPDATE
                total_gross=VALUES(total_gross), total_deduction=VALUES(total_deduction),
-               net_income=VALUES(net_income), result_json=VALUES(result_json), calculated_at=NOW()`,
-            [currentMonth, s.id, result.totalGross || 0, result.totalDeduction || 0, result.netIncome || 0, JSON.stringify(result)]
+               net_income=VALUES(net_income), insurance_amount=VALUES(insurance_amount),
+               personal_income_tax=VALUES(personal_income_tax), standard_days=VALUES(standard_days),
+               actual_work_days=VALUES(actual_work_days), overtime_hours=VALUES(overtime_hours),
+               result_json=VALUES(result_json), calculated_at=NOW()`,
+            [
+              currentMonth, s.id,
+              result.totalGross || 0, result.totalDeduction || 0, result.netIncome || 0,
+              result.totalIns || 0, result.pit || 0,
+              result.standardWorkingDays || 26, result.totalWorkDays || 0, result.overtimeHours || 0,
+              JSON.stringify(result),
+            ]
           );
           calculated++;
         } catch (e) {
@@ -414,6 +577,7 @@ const payrollController = {
         }
       }
 
+      // Upsert trạng thái kỳ lương
       await db.query(
         `INSERT INTO hr_payroll_periods (month, status, total_staff, calculated_at)
          VALUES (?, 'CALCULATED', ?, NOW())
@@ -422,12 +586,7 @@ const payrollController = {
       );
 
       ok(res, { calculated, total: staffList.length }, `Đã tính lương thành công cho ${calculated}/${staffList.length} nhân viên`);
-    } catch(e) {
-      if (e.code === 'ER_NO_SUCH_TABLE') {
-        return fail(res, 500, '⚠️ Chưa tạo bảng hr_payroll_periods / hr_payroll_results trong CSDL. Vui lòng chạy SQL tạo 2 bảng này trước.', e);
-      }
-      fail(res, 500, 'Lỗi tính lương', e);
-    }
+    } catch(e) { fail(res, 500, 'Lỗi tính lương', e); }
   },
 
   lock: async (req, res) => {
@@ -438,6 +597,7 @@ const payrollController = {
       const [y, m] = currentMonth.split('-').map(Number);
       const toDate = new Date(y, m, 0).toISOString().slice(0, 10);
 
+      // Hard constraint: không chốt khi còn PENDING
       const [[pending]] = await db.query(`
         SELECT COUNT(*) as cnt FROM hr_attendance_explanations
         WHERE status IN ('PENDING','MANAGER_APPROVED')
@@ -452,7 +612,8 @@ const payrollController = {
         });
       }
 
-      const [[period]] = await db.query(`SELECT status FROM hr_payroll_periods WHERE month=?`, [currentMonth]).catch(() => [[null]]);
+      // Bắt buộc phải TÍNH LƯƠNG (CALCULATED) trước mới được khóa
+      const [[period]] = await db.query(`SELECT status FROM hr_payroll_periods WHERE month=?`, [currentMonth]);
       if (!period || period.status === 'DRAFT') {
         return res.status(400).json({ statusCode: 400, message: '⚠️ Chưa tính lương cho kỳ này. Vui lòng bấm "Tính lương" trước khi chốt.' });
       }
@@ -463,12 +624,7 @@ const payrollController = {
       );
 
       ok(res, null, 'Đã khóa bảng lương');
-    } catch(e) {
-      if (e.code === 'ER_NO_SUCH_TABLE') {
-        return fail(res, 500, '⚠️ Chưa tạo bảng hr_payroll_periods / hr_payroll_results trong CSDL. Vui lòng chạy SQL tạo 2 bảng này trước.', e);
-      }
-      fail(res, 500, 'Lỗi khóa bảng lương', e);
-    }
+    } catch(e) { fail(res, 500, 'Lỗi khóa bảng lương', e); }
   },
 
   sendPayslip: async (req, res) => {
@@ -523,20 +679,15 @@ const payrollController = {
         [currentMonth]
       );
       ok(res, null, 'Đã mở khóa bảng lương');
-    } catch(e) {
-      if (e.code === 'ER_NO_SUCH_TABLE') {
-        return fail(res, 500, '⚠️ Chưa tạo bảng hr_payroll_periods / hr_payroll_results trong CSDL. Vui lòng chạy SQL tạo 2 bảng này trước.', e);
-      }
-      fail(res, 500, 'Lỗi mở khóa bảng lương', e);
-    }
+    } catch(e) { fail(res, 500, 'Lỗi mở khóa bảng lương', e); }
   },
 
   getResultDetails: async (req, res) => {
     try {
-      const { id } = req.params;
+      const { id } = req.params; // format: staffId-YYYY-MM
       const parts = id.split('-');
       const staffId = parts[0];
-      const month = parts.slice(1).join('-');
+      const month = parts.slice(1).join('-'); // YYYY-MM
       const [y, m] = month.split('-').map(Number);
       const fromDate = `${month}-01`;
       const lastDay = new Date(y, m, 0).getDate();
@@ -554,36 +705,40 @@ const payrollController = {
         WHERE e.id=? LIMIT 1`, [staffId]);
       if (!e) return fail(res, 404, 'Không tìm thấy nhân viên');
 
-      // Ưu tiên đọc snapshot đã lưu — nếu bảng chưa tồn tại hoặc lỗi bất kỳ, rơi về tính trực tiếp như cũ (KHÔNG crash)
+      // Ưu tiên đọc snapshot đã lưu (nếu kỳ này đã bấm "Tính lương" rồi) — không tính lại từ đầu nữa,
+      // để đúng số đã chốt, tránh bị đổi ngầm nếu dữ liệu chấm công/cấu hình lương thay đổi sau đó.
       let p;
       const [[snapshot]] = await db.query(
         `SELECT result_json FROM hr_payroll_results WHERE employee_id=? AND period_month=?`,
         [staffId, month]
-      ).catch(() => [[null]]);
+      );
       if (snapshot?.result_json) {
         p = JSON.parse(snapshot.result_json);
       } else {
+        // Chưa tính lương chính thức cho kỳ này — tính tạm để xem trước (preview), không lưu lại
         p = await calcPayroll(staffId, month);
       }
 
       ok(res, {
         staffName: e.name, staffCode: e.code, departmentName: e.department_name||'',
         monthLabel: `Tháng ${m}/${y}`, fromDate, toDate,
+        // Công
         standardWorkingDays: p.standardWorkingDays,
         actualWorkDays: p.totalWorkDays,
-        workDays: p.standardWorkingDays,
+        workDays: p.standardWorkingDays,   // FE dùng workDays cho "Ngày công chuẩn" → phải là 26
         onCallDays: p.onCallDays,
         holidayDays: p.holidayDays,
         compRestDays: p.compRestDays,
         paidLeave: p.paidLeave,
         unpaidLeave: p.unpaidAbsents,
         totalWorkDays: p.totalWorkDays,
-        totalAttendance: p.totalWorkDays,
+        totalAttendance: p.totalWorkDays,  // FE dùng totalAttendance cho "Ngày công thực tế" → phải là 19
         totalLeaveDays: p.paidLeave,
         usedLeaveDays: p.paidLeave,
         remainingLeaveDays: 12 - p.paidLeave,
         totalOvertimeHours: p.overtimeHours,
         compHoursUsed: 0, compHoursRemaining: 0,
+        // Thu nhập
         contractBasicSalary: p.baseSalary,
         contractHazardAllowance: p.hazardAllowance,
         contractSupportAllowance: p.positionAllowance,
@@ -592,7 +747,7 @@ const payrollController = {
         actualBasicSalaryByWork: p.salaryByWork,
         onCallSalary: p.onCallSalary,
         overtimeAmount: p.overtimeAmount,
-        responsibilityAllowance: 0,
+        responsibilityAllowance: p.responsibilityAllowance || 0,
         positionAllowance: p.positionAllowance,
         hazardAllowance: p.hazardAllowance,
         mealAllowance: p.mealAllowance,
@@ -600,13 +755,17 @@ const payrollController = {
         phoneAllowance: p.phoneAllowance,
         businessTripAllowance: p.bizTripAllowance,
         otherAllowance: p.otherAllowance,
+        // Thu nhập ngoài
         performanceSalary: p.kpiBonus,
         bonusAmount: p.revenueBonus,
+        holidayWorkBonus: p.holidayWorkBonus || 0,
         otherIncomeAndOvertime: p.otherIncomeAmount,
         otherIncomeAmount: p.otherIncomeAmount,
         kpiScore: p.kpiScore,
         revenueRate: p.revenueRate,
+        // Tổng
         totalBeforeDeduction: p.totalGross,
+        // Bảo hiểm
         insuranceBaseSalary: p.insuranceBase,
         socialInsurance: p.socialIns,
         healthInsurance: p.healthIns,
@@ -619,8 +778,9 @@ const payrollController = {
         violationPenalty: p.violationPenalty,
         totalDeduction: p.totalDeduction,
         netIncome: p.netIncome,
-        finalAmount: p.netIncome,
+        finalAmount: p.netIncome,           // FE dùng finalAmount cho Tổng thực nhận
         advancePayment: 0,
+        // Doanh nghiệp đóng thêm
         employerSocialInsurance: Math.round(p.insuranceBase * 17.5 / 100),
         employerHealthInsurance: Math.round(p.insuranceBase * 3 / 100),
         employerUnemploymentInsurance: Math.round(p.insuranceBase * 1 / 100),
@@ -632,6 +792,7 @@ const payrollController = {
 };
 
 
+// Tính thuế TNCN lũy tiến theo biểu thuế VN
 function calcPIT(taxableIncome) {
   if (taxableIncome <= 0) return 0;
   const brackets = [

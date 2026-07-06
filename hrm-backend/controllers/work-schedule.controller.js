@@ -178,7 +178,216 @@ async function getStaffDeptRooms(staffIds) {
   return { depts, rooms };
 }
 
+// Kiểm tra trùng giờ + vi phạm thời gian nghỉ tối thiểu sau ca — dùng chung cho cả API check-thử (real-time)
+// và API tạo phân ca thật. Không insert gì cả, chỉ trả về danh sách xung đột (rỗng = an toàn để lưu).
+// Căn cứ: Điều 2 Khoản 3 Điểm c Quyết định 73/2011/QĐ-TTg — "Thường trực theo ca 12/24 giờ hoặc 16/24 giờ
+// được nghỉ ít nhất 12 giờ tiếp theo" — dùng đúng "rest_time_after" (giờ) cấu hình riêng từng ca.
+async function checkScheduleConflicts(staffId, dates, details) {
+  const toMinutesRange = (start, end) => {
+    const [sh, sm] = (start || '00:00:00').split(':').map(Number);
+    const [eh, em] = (end   || '00:00:00').split(':').map(Number);
+    let s = sh * 60 + sm;
+    let e = eh * 60 + em;
+    if (e <= s) e += 24 * 60;
+    return [s, e];
+  };
+  const isOverlap = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;
+  const dayDiff = (d1, d2) => Math.round((new Date(`${d2}T00:00:00Z`) - new Date(`${d1}T00:00:00Z`)) / 86400000);
+
+  const conflicts = [];
+  const resolvedDetails = [];
+  const anchor = dates[0]; // mốc 0 chung để quy mọi giờ về 1 trục số phút tuyệt đối, so sánh xuyên ngày dễ dàng
+
+  // ── Bước A: resolve giờ + hệ số nghỉ cho TỪNG (ngày, ca) đang được thêm, quy về trục phút tuyệt đối ──
+  const newEntries = [];
+  for (const date of dates) {
+    for (const d of details) {
+      const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
+      resolvedDetails.push({ date, d, startTime, endTime });
+
+      const [[shiftInfo]] = await db.query(
+        `SELECT rest_time_after, name FROM shifts WHERE id=?`, [d.shiftTemplateId]
+      );
+      const [sLocal, eLocal] = toMinutesRange(startTime, endTime);
+      const offset = dayDiff(anchor, date) * 1440;
+
+      newEntries.push({
+        date, shiftName: shiftInfo?.name || '',
+        absS: sLocal + offset, absE: eLocal + offset,
+        restAfterMin: parseFloat(shiftInfo?.rest_time_after || 0) * 60,
+        startTime, endTime,
+      });
+    }
+  }
+
+  // ── Bước B: so TỪNG CẶP ca mới đang thêm với NHAU (trước đây bỏ sót — 2 ca mới cùng lúc không hề được so) ──
+  for (let i = 0; i < newEntries.length; i++) {
+    for (let j = i + 1; j < newEntries.length; j++) {
+      const a = newEntries[i], b = newEntries[j];
+      if (a.date === b.date && isOverlap(a.absS, a.absE, b.absS, b.absE)) {
+        conflicts.push(`Ngày ${a.date}: 2 ca mới chọn bị trùng giờ ("${a.shiftName}" và "${b.shiftName}")`);
+        continue;
+      }
+      if (a.absE <= b.absS && a.restAfterMin > 0 && (b.absS - a.absE) < a.restAfterMin) {
+        conflicts.push(`Ngày ${b.date}: ca "${b.shiftName}" chưa đủ nghỉ sau ca "${a.shiftName}" (cần ít nhất ${(a.restAfterMin/60)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+      }
+      if (b.absE <= a.absS && b.restAfterMin > 0 && (a.absS - b.absE) < b.restAfterMin) {
+        conflicts.push(`Ngày ${a.date}: ca "${a.shiftName}" chưa đủ nghỉ sau ca "${b.shiftName}" (cần ít nhất ${(b.restAfterMin/60)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+      }
+    }
+  }
+
+  // ── Bước C: so từng ca mới với các ca ĐÃ LƯU sẵn trong CSDL (logic cũ, giữ nguyên) ──
+  for (const entry of newEntries) {
+    const [nearbyShifts] = await db.query(
+      `SELECT wsd.work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
+       FROM hr_work_schedule_details wsd
+       JOIN shifts st ON st.id = wsd.shift_template_id
+       WHERE wsd.employee_id = ? AND wsd.work_date BETWEEN DATE_SUB(?, INTERVAL 1 DAY) AND DATE_ADD(?, INTERVAL 1 DAY)`,
+      [staffId, entry.date, entry.date]
+    );
+
+    for (const ex of nearbyShifts) {
+      const offset = dayDiff(anchor, ex.work_date) * 1440;
+      const [exSraw, exEraw] = toMinutesRange(ex.start_time, ex.end_time);
+      const exS = exSraw + offset, exE = exEraw + offset;
+
+      if (ex.work_date === entry.date && isOverlap(entry.absS, entry.absE, exS, exE)) {
+        conflicts.push(`Ngày ${entry.date}: trùng giờ với ca "${ex.shift_name}" (${ex.start_time}-${ex.end_time})`);
+        continue;
+      }
+
+      const exRestMin = parseFloat(ex.rest_time_after || 0) * 60;
+      if (exE <= entry.absS && exRestMin > 0 && (entry.absS - exE) < exRestMin) {
+        conflicts.push(
+          `Ngày ${entry.date}: chưa đủ thời gian nghỉ sau ca "${ex.shift_name}" (cần nghỉ ít nhất ${ex.rest_time_after} giờ, hiện chỉ cách ${((entry.absS - exE) / 60).toFixed(1)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`
+        );
+      }
+      if (entry.absE <= exS && entry.restAfterMin > 0 && (exS - entry.absE) < entry.restAfterMin) {
+        conflicts.push(
+          `Ngày ${entry.date}: xếp ca "${entry.shiftName}" xong không đủ nghỉ trước khi vào ca "${ex.shift_name}" ngày ${ex.work_date} (cần nghỉ ít nhất ${(entry.restAfterMin/60)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`
+        );
+      }
+    }
+  }
+
+  return { conflicts, resolvedDetails };
+}
+
+// Bản MỞ RỘNG cho màn phân ca nhiều ngày cùng lúc: mỗi ngày có DANH SÁCH CA RIÊNG (không dùng chung
+// 1 mảng details cho cả khoảng ngày như hàm trên — đúng thực tế 1 form có thể chọn nhiều ngày, mỗi
+// ngày 1-nhiều ca khác nhau). Check ĐẦY ĐỦ 2 chiều:
+//   (1) TOÀN BỘ ca đang chọn dở trong form (dù khác ngày) — có tự đá giờ/thiếu nghỉ với nhau không
+//   (2) Từng ca đang chọn — so với ca ĐÃ LƯU SẴN trong CSDL (của cùng nhân viên, quanh những ngày liên quan)
+// days: [{ date: 'YYYY-MM-DD', details: [{shiftTemplateId, startTime, endTime}, ...] }, ...]
+async function checkScheduleConflictsMultiDay(staffId, days) {
+  const toMinutesRange = (start, end) => {
+    const [sh, sm] = (start || '00:00:00').split(':').map(Number);
+    const [eh, em] = (end   || '00:00:00').split(':').map(Number);
+    let s = sh * 60 + sm;
+    let e = eh * 60 + em;
+    if (e <= s) e += 24 * 60;
+    return [s, e];
+  };
+  const isOverlap = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;
+  const dayDiff = (d1, d2) => Math.round((new Date(`${d2}T00:00:00Z`) - new Date(`${d1}T00:00:00Z`)) / 86400000);
+
+  const conflicts = [];
+  const validDays = (days || []).filter(dy => dy.date && dy.details?.length);
+  if (!validDays.length) return { conflicts, resolvedDays: [] };
+
+  const anchor = validDays[0].date;
+
+  // ── Bước A: resolve giờ cho TOÀN BỘ ca đang chọn dở, ở TẤT CẢ các ngày, quy về 1 trục phút tuyệt đối ──
+  const newEntries = [];
+  for (const dy of validDays) {
+    for (const d of dy.details) {
+      if (!d.shiftTemplateId) continue;
+      const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
+      const [[shiftInfo]] = await db.query(`SELECT rest_time_after, name FROM shifts WHERE id=?`, [d.shiftTemplateId]);
+      const [sLocal, eLocal] = toMinutesRange(startTime, endTime);
+      const offset = dayDiff(anchor, dy.date) * 1440;
+      newEntries.push({
+        date: dy.date, shiftName: shiftInfo?.name || '',
+        absS: sLocal + offset, absE: eLocal + offset,
+        restAfterMin: parseFloat(shiftInfo?.rest_time_after || 0) * 60,
+        startTime, endTime,
+      });
+    }
+  }
+
+  // ── Bước B: so TỪNG CẶP ca đang chọn dở với NHAU — dù ở NGÀY KHÁC NHAU trong cùng form ──
+  for (let i = 0; i < newEntries.length; i++) {
+    for (let j = i + 1; j < newEntries.length; j++) {
+      const a = newEntries[i], b = newEntries[j];
+      if (a.date === b.date && isOverlap(a.absS, a.absE, b.absS, b.absE)) {
+        conflicts.push(`Ngày ${a.date}: 2 ca đang chọn bị trùng giờ ("${a.shiftName}" và "${b.shiftName}")`);
+        continue;
+      }
+      if (a.absE <= b.absS && a.restAfterMin > 0 && (b.absS - a.absE) < a.restAfterMin) {
+        conflicts.push(`Ngày ${b.date}: ca "${b.shiftName}" chưa đủ nghỉ sau ca "${a.shiftName}" ngày ${a.date} (cần ít nhất ${(a.restAfterMin/60)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+      }
+      if (b.absE <= a.absS && b.restAfterMin > 0 && (a.absS - b.absE) < b.restAfterMin) {
+        conflicts.push(`Ngày ${a.date}: ca "${a.shiftName}" chưa đủ nghỉ sau ca "${b.shiftName}" ngày ${b.date} (cần ít nhất ${(b.restAfterMin/60)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+      }
+    }
+  }
+
+  // ── Bước C: so từng ca đang chọn dở với các ca ĐÃ LƯU SẴN trong CSDL ──
+  for (const entry of newEntries) {
+    const [nearbyShifts] = await db.query(
+      `SELECT wsd.work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
+       FROM hr_work_schedule_details wsd
+       JOIN shifts st ON st.id = wsd.shift_template_id
+       WHERE wsd.employee_id = ? AND wsd.work_date BETWEEN DATE_SUB(?, INTERVAL 1 DAY) AND DATE_ADD(?, INTERVAL 1 DAY)`,
+      [staffId, entry.date, entry.date]
+    );
+    for (const ex of nearbyShifts) {
+      const offset = dayDiff(anchor, ex.work_date) * 1440;
+      const [exSraw, exEraw] = toMinutesRange(ex.start_time, ex.end_time);
+      const exS = exSraw + offset, exE = exEraw + offset;
+
+      if (ex.work_date === entry.date && isOverlap(entry.absS, entry.absE, exS, exE)) {
+        conflicts.push(`Ngày ${entry.date}: trùng giờ với ca đã xếp sẵn "${ex.shift_name}" (${ex.start_time}-${ex.end_time})`);
+        continue;
+      }
+      const exRestMin = parseFloat(ex.rest_time_after || 0) * 60;
+      if (exE <= entry.absS && exRestMin > 0 && (entry.absS - exE) < exRestMin) {
+        conflicts.push(`Ngày ${entry.date}: chưa đủ thời gian nghỉ sau ca đã xếp sẵn "${ex.shift_name}" (cần nghỉ ít nhất ${ex.rest_time_after} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+      }
+      if (entry.absE <= exS && entry.restAfterMin > 0 && (exS - entry.absE) < entry.restAfterMin) {
+        conflicts.push(`Ngày ${entry.date}: xếp ca "${entry.shiftName}" xong không đủ nghỉ trước khi vào ca đã xếp sẵn "${ex.shift_name}" ngày ${ex.work_date} (cần nghỉ ít nhất ${(entry.restAfterMin/60)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+      }
+    }
+  }
+
+  return { conflicts };
+}
+
 const workScheduleController = {
+
+  // POST /work-schedule/check-conflict — kiểm tra THỬ ngay khi người dùng chọn ca/ngày, KHÔNG lưu gì cả.
+  // FE gọi API này real-time (nên debounce ~300ms) để báo trùng giờ/thiếu giờ nghỉ NGAY khi chọn,
+  // thay vì phải bấm "Lưu" xong mới biết.
+  // Hỗ trợ 2 dạng payload:
+  //   - { staffId, days: [{date, details}, ...] } → check ĐẦY ĐỦ nhiều ngày cùng lúc (khuyên dùng)
+  //   - { staffId, fromDate, toDate, details }     → dạng cũ, 1 khoảng ngày dùng chung 1 mảng ca
+  checkConflict: async (req, res) => {
+    try {
+      const { staffId, days, fromDate, toDate, details } = req.body;
+      if (!staffId) return fail(res, 400, 'Thiếu thông tin để kiểm tra');
+
+      if (Array.isArray(days) && days.length) {
+        const { conflicts } = await checkScheduleConflictsMultiDay(staffId, days);
+        return ok(res, { valid: conflicts.length === 0, conflicts });
+      }
+
+      if (!details?.length) return fail(res, 400, 'Thiếu thông tin để kiểm tra');
+      const dates = getDateRange(fromDate, toDate);
+      const { conflicts } = await checkScheduleConflicts(staffId, dates, details);
+      ok(res, { valid: conflicts.length === 0, conflicts });
+    } catch (e) { fail(res, 500, 'Lỗi kiểm tra xung đột ca', e); }
+  },
 
   // GET /work-schedule
   getAll: async (req, res) => {
@@ -268,51 +477,18 @@ const workScheduleController = {
     try {
       const { staffId, departmentId, roomId, fromDate, toDate, note, details } = req.body;
       if (!staffId || !details?.length) return fail(res, 400, 'Thiếu thông tin phân ca');
-
-      const dates = getDateRange(fromDate, toDate);
-
-      // Đổi "HH:MM:SS" thành số phút từ 00:00; ca qua đêm (end <= start) thì +24h cho end
-      const toMinutesRange = (start, end) => {
-        const [sh, sm] = (start || '00:00:00').split(':').map(Number);
-        const [eh, em] = (end   || '00:00:00').split(':').map(Number);
-        let s = sh * 60 + sm;
-        let e = eh * 60 + em;
-        if (e <= s) e += 24 * 60;
-        return [s, e];
-      };
-      const isOverlap = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;
-
-      // ── BƯỚC 1: kiểm tra trùng giờ cho TOÀN BỘ (ngày, ca) trước — CHƯA insert gì cả ──
-      const conflicts = [];
-      const resolvedDetails = []; // cache lại startTime/endTime đã resolve để dùng lại ở bước insert, tránh gọi lại
-
-      for (const date of dates) {
-        for (const d of details) {
-          const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
-          resolvedDetails.push({ date, d, startTime, endTime });
-
-          const [existingSameDay] = await db.query(
-            `SELECT wsd.start_time, wsd.end_time, st.name AS shift_name
-             FROM hr_work_schedule_details wsd
-             JOIN shifts st ON st.id = wsd.shift_template_id
-             WHERE wsd.employee_id = ? AND wsd.work_date = ?`,
-            [staffId, date]
-          );
-
-          const [newS, newE] = toMinutesRange(startTime, endTime);
-          for (const ex of existingSameDay) {
-            const [exS, exE] = toMinutesRange(ex.start_time, ex.end_time);
-            if (isOverlap(newS, newE, exS, exE)) {
-              conflicts.push(
-                `Ngày ${date}: trùng giờ với ca "${ex.shift_name}" (${ex.start_time}-${ex.end_time})`
-              );
-            }
-          }
-        }
+      if (fromDate && toDate && fromDate > toDate) {
+        return fail(res, 400, `⚠️ Ngày bắt đầu (${fromDate}) phải trước hoặc bằng ngày kết thúc (${toDate})`);
       }
 
+      const dates = getDateRange(fromDate, toDate);
+      if (!dates.length) return fail(res, 400, 'Khoảng ngày không hợp lệ');
+
+      // ── BƯỚC 1: kiểm tra trùng giờ + vi phạm thời gian nghỉ tối thiểu sau ca — CHƯA insert gì cả ──
+      const { conflicts, resolvedDetails } = await checkScheduleConflicts(staffId, dates, details);
+
       if (conflicts.length) {
-        return fail(res, 400, `⚠️ Nhân viên bị trùng giờ ca làm việc, chưa lưu gì cả:\n${conflicts.join('\n')}`);
+        return fail(res, 400, `⚠️ Không thể xếp ca, chưa lưu gì cả:\n${conflicts.join('\n')}`);
       }
 
       // ── BƯỚC 2: không có trùng giờ nào — an toàn để insert ──
@@ -433,11 +609,59 @@ const workScheduleController = {
       );
 
       if (details?.length) {
+        const toMinutesRange = (start, end) => {
+          const [sh, sm] = (start || '00:00:00').split(':').map(Number);
+          const [eh, em] = (end   || '00:00:00').split(':').map(Number);
+          let s = sh * 60 + sm, e = eh * 60 + em;
+          if (e <= s) e += 24 * 60;
+          return [s, e];
+        };
+        const isOverlap = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;
+        const dayDiff = (d1, d2) => Math.round((new Date(`${d2}T00:00:00Z`) - new Date(`${d1}T00:00:00Z`)) / 86400000);
+
         for (const d of details) {
           const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
           const [[existing]] = await db.query(
-            `SELECT id FROM hr_work_schedule_details WHERE work_schedule_id=? LIMIT 1`, [req.params.id]
+            `SELECT id, DATE_FORMAT(work_date,'%Y-%m-%d') as work_date FROM hr_work_schedule_details WHERE work_schedule_id=? LIMIT 1`, [req.params.id]
           );
+          const workDate = existing?.work_date || ws.from_date;
+
+          // ── Check trùng giờ / thiếu nghỉ — GIỐNG ĐÚNG logic create(), nhưng loại trừ chính dòng đang sửa ──
+          const [[shiftInfo]] = await db.query(`SELECT rest_time_after, name FROM shifts WHERE id=?`, [d.shiftTemplateId]);
+          const newRestMin = parseFloat(shiftInfo?.rest_time_after || 0) * 60;
+          const [newS, newE] = toMinutesRange(startTime, endTime);
+
+          const [nearbyShifts] = await db.query(
+            `SELECT wsd.work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
+             FROM hr_work_schedule_details wsd
+             JOIN shifts st ON st.id = wsd.shift_template_id
+             WHERE wsd.employee_id = ? AND wsd.work_date BETWEEN DATE_SUB(?, INTERVAL 1 DAY) AND DATE_ADD(?, INTERVAL 1 DAY)
+             AND wsd.id != ?`,
+            [ws.employee_id, workDate, workDate, existing?.id || 0]
+          );
+
+          const conflicts = [];
+          for (const ex of nearbyShifts) {
+            const offset = dayDiff(workDate, ex.work_date) * 1440;
+            const [exSraw, exEraw] = toMinutesRange(ex.start_time, ex.end_time);
+            const exS = exSraw + offset, exE = exEraw + offset;
+
+            if (ex.work_date === workDate && isOverlap(newS, newE, exS, exE)) {
+              conflicts.push(`Trùng giờ với ca "${ex.shift_name}" (${ex.start_time}-${ex.end_time}) ngày ${ex.work_date}`);
+              continue;
+            }
+            const exRestMin = parseFloat(ex.rest_time_after || 0) * 60;
+            if (exE <= newS && exRestMin > 0 && (newS - exE) < exRestMin) {
+              conflicts.push(`Chưa đủ nghỉ sau ca "${ex.shift_name}" ngày ${ex.work_date} (cần ít nhất ${ex.rest_time_after} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+            }
+            if (newE <= exS && newRestMin > 0 && (exS - newE) < newRestMin) {
+              conflicts.push(`Xếp ca "${shiftInfo?.name || ''}" xong không đủ nghỉ trước ca "${ex.shift_name}" ngày ${ex.work_date} (cần ít nhất ${shiftInfo.rest_time_after} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+            }
+          }
+          if (conflicts.length) {
+            return fail(res, 400, `⚠️ Không thể sửa ca, chưa lưu gì cả:\n${conflicts.join('\n')}`);
+          }
+
           if (existing) {
             await db.query(
               `UPDATE hr_work_schedule_details SET shift_template_id=?,start_time=?,end_time=?,note=? WHERE id=?`,
@@ -696,9 +920,14 @@ const workScheduleController = {
       const { checkInTime, checkOutTime, actualCheckIn, actualCheckOut, status, note, reason } = req.body;
       const id = req.params.id;
 
-      // Lấy work_date từ DB
+      // Lấy work_date + cấu hình ca (giờ chuẩn, số phút cho phép đi muộn/về sớm, loại ca, số giờ yêu cầu) từ DB
       const [[wsd]] = await db.query(
-        `SELECT DATE_FORMAT(work_date,'%Y-%m-%d') as work_date FROM hr_work_schedule_details WHERE id=?`, [id]
+        `SELECT DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+                st.start_time, st.end_time, st.late_allowance, st.early_allowance,
+                st.shift_type, st.work_hours
+         FROM hr_work_schedule_details wsd
+         JOIN shifts st ON st.id = wsd.shift_template_id
+         WHERE wsd.id=?`, [id]
       );
       if (!wsd) return fail(res, 404, 'Không tìm thấy bản ghi chấm công');
       const workDate = wsd.work_date;
@@ -709,6 +938,12 @@ const workScheduleController = {
       // Ghép HH:mm với work_date — chấp nhận cả "HH:mm" và "HH:mm:ss" (FE gửi kèm giây)
       const isHHmm = (s) => s && /^\d{2}:\d{2}(:\d{2})?$/.test(s);
       const toHHmm = (s) => s.slice(0, 5); // chỉ lấy "HH:mm", bỏ phần giây nếu có
+
+      // Giữ lại HH:mm gốc TRƯỚC KHI ghép ngày, dùng để tự xác định đi muộn/về sớm (ca cố định)
+      // hoặc đủ/thiếu giờ (ca linh hoạt, ca trực) theo cấu hình ca
+      const ciHHmm = isHHmm(ci) ? toHHmm(ci) : null;
+      const coHHmm = isHHmm(co) ? toHHmm(co) : null;
+
       if (isHHmm(ci)) ci = `${workDate} ${toHHmm(ci)}:00`;
       if (isHHmm(co)) {
         const ciHour = ci ? parseInt(ci.split(' ')[1]) : 0;
@@ -721,11 +956,49 @@ const workScheduleController = {
         }
       }
 
+      // ── Tự động xác định trạng thái — CHIA 2 NHÁNH THEO LOẠI CA ──
+      // Chỉ áp dụng khi có đủ giờ vào/ra thật để so sánh. Các trạng thái "đặc biệt" (nghỉ, vắng, lễ...)
+      // do người dùng chọn tay ở màn khác thì vẫn tôn trọng nguyên trạng thái đó, không tự đổi.
+      const specialStatuses = ['ABSENT', 'HOLIDAY', 'LEAVE', 'LEAVE_PAID', 'COMPENSATORY_LEAVE'];
+      let finalStatus = status || 'PRESENT';
+      const toMinutes = (hhmm) => { const [h, mi] = hhmm.split(':').map(Number); return h * 60 + mi; };
+
+      if (!specialStatuses.includes(status) && ciHHmm && coHHmm) {
+        if (wsd.shift_type === 'FIXED' && wsd.start_time && wsd.end_time) {
+          // Ca CỐ ĐỊNH — có giờ vào/ra chuẩn cụ thể → so đi muộn/về sớm như bình thường
+        let coMin = toMinutes(coHHmm);
+        const startMin = toMinutes(wsd.start_time.slice(0, 5));
+        let endMin = toMinutes(wsd.end_time.slice(0, 5));
+        if (endMin <= startMin) endMin += 24 * 60;   // ca qua đêm
+        if (coMin < startMin) coMin += 24 * 60;      // giờ ra ghi qua ngày hôm sau (ca đêm)
+
+        const lateAllowance  = parseInt(wsd.late_allowance  || 0);
+        const earlyAllowance = parseInt(wsd.early_allowance || 0);
+
+          const isLate  = ciMin > startMin + lateAllowance;
+          const isEarly = coMin < endMin - earlyAllowance;
+
+          // Ưu tiên "LATE" nếu vừa đi muộn vừa về sớm (chưa có trạng thái gộp riêng trong CSDL)
+          finalStatus = isLate ? 'LATE' : isEarly ? 'EARLY_LEAVE' : 'PRESENT';
+        } else {
+          // Ca LINH HOẠT / TRỰC — không có giờ vào/ra chuẩn cố định để so muộn/sớm, chỉ so
+          // TỔNG SỐ GIỜ đã làm với "work_hours" yêu cầu của ca. Thiếu giờ → đánh dấu MISSING_HOURS
+          // (khớp đúng loại giải trình 'MISSING_HOURS' sẵn có) để nhân viên tự gửi giải trình tương ứng.
+          const ciMin = toMinutes(ciHHmm);
+          let coMin = toMinutes(coHHmm);
+          if (coMin < ciMin) coMin += 24 * 60; // qua đêm
+          const workedHours = (coMin - ciMin) / 60;
+          const requiredHours = parseFloat(wsd.work_hours || 0);
+
+          finalStatus = (requiredHours > 0 && workedHours < requiredHours) ? 'MISSING_HOURS' : 'PRESENT';
+        }
+      }
+
       await db.query(
         `UPDATE hr_work_schedule_details SET check_in_time=?,check_out_time=?,status=?,note=? WHERE id=?`,
-        [ci||null, co||null, status||'PRESENT', note||reason||null, id]
+        [ci||null, co||null, finalStatus, note||reason||null, id]
       );
-      ok(res, null, 'Cập nhật chấm công thành công');
+      ok(res, { status: finalStatus }, 'Cập nhật chấm công thành công');
     } catch (e) { fail(res, 500, 'Lỗi cập nhật chấm công', e); }
   },
 

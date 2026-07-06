@@ -11,6 +11,7 @@ const detailedCtrl = require('../controllers/detailed-time-sheet.controller');
 router.get('/detailed-attendance-table',       detailedCtrl.getDetailedAttendanceTable);
 router.get('/work-schedule-detail/:id',        ctrl.getDetail);
 router.patch('/detail/:id/attendance',         ctrl.updateAttendance);
+router.post('/check-conflict',                 ctrl.checkConflict);
 router.post('/range',                          ctrl.createRange);
 router.get('/',                                ctrl.getAll);
 router.post('/',                               ctrl.create);

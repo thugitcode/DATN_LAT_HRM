@@ -17,7 +17,7 @@ const SalaryComponentsTab = () => {
   const [formData, setFormData] = useState({
     code: '', 
     name: '', 
-    component_type: 'Chấm công', 
+    component_type: 'Tính toán', 
     nature: 'Thu nhập', 
     applied_position: [] as string[],
     limit_amount: '', 
@@ -37,7 +37,7 @@ const SalaryComponentsTab = () => {
     try {
       const resMaster = await axios.get('http://localhost:5000/api/v1/master-data/hospital-lookup');
       if (resMaster.data.success) {
-        setPositions(resMaster.data.positions || []);
+        setPositions(resMaster.data.titles || []);
       }
     } catch (err) { 
       console.error('Lỗi tải chức danh danh mục gốc:', err); 
@@ -61,7 +61,7 @@ const SalaryComponentsTab = () => {
     setFormData({
       code: '', 
       name: '', 
-      component_type: 'Chấm công', 
+      component_type: 'Tính toán', 
       nature: 'Thu nhập', 
       applied_position: ['Tất cả'],
       limit_amount: '', 
@@ -223,8 +223,8 @@ const SalaryComponentsTab = () => {
                     selectedKeys={[formData.component_type]} 
                     onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData({...formData, component_type: e.target.value})}
                   >
-                    <SelectItem key="Chấm công">Chấm công</SelectItem>
-                    <SelectItem key="Khác">Khác</SelectItem>
+                    <SelectItem key="Tính toán">Tính toán</SelectItem>
+                    <SelectItem key="Cố định">Cố định</SelectItem>
                   </Select>
                   <Select 
                     label="Tính chất *" 
@@ -241,7 +241,7 @@ const SalaryComponentsTab = () => {
                 selectedKeys={new Set(formData.applied_position)} 
                 onSelectionChange={(keys) => setFormData({...formData, applied_position: Array.from(keys) as string[]})}
                 >
-                {positions.map((p) => <SelectItem key={p} textValue={p}>{p}</SelectItem>)}
+                {['Tất cả', ...positions].map((p) => <SelectItem key={p} textValue={p}>{p}</SelectItem>)}
                 </Select>
 
                 <div className="flex flex-col gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100 mt-2">

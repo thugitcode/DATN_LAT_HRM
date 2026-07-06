@@ -34,7 +34,7 @@ export default function SalaryScaleTab() {
     try {
       // 2. Tải danh mục chức danh chức vụ gốc (Bác sĩ, Điều dưỡng...) để nhét vào ô Select form
       const resMaster = await axios.get('http://localhost:5000/api/v1/master-data/hospital-lookup');
-      if (resMaster.data.success) setPositions(resMaster.data.positions || []);
+      if (resMaster.data.success) setPositions(resMaster.data.titles || []);
     } catch (err) { console.error('Lỗi tải chức danh danh mục gốc:', err); }
   };
 

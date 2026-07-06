@@ -6,7 +6,8 @@ import { NAMESPACES } from '@/i18n/constants';
 import { useDrawer } from '@/store/useDrawer';
 import { Button, Form } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconTrash } from '@tabler/icons-react';
+import { IconTrash, IconAlertTriangle } from '@tabler/icons-react';
+import { hrmInstance } from '@/lib/axios';
 import {
   FormProvider,
   useFieldArray,
@@ -191,6 +192,60 @@ export const WorkShiftsForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromDate, toDate]);
 
+  // ── Kiểm tra trùng giờ / thiếu giờ nghỉ NGAY khi chọn ca/ngày, không phải chờ bấm Lưu ──
+  const [conflictWarnings, setConflictWarnings] = useState<string[]>([]);
+  const [isCheckingConflict, setIsCheckingConflict] = useState(false);
+  const watchedStaffCode = watch('staffId');
+  const watchedDays = watch('days');
+
+  useEffect(() => {
+    const resolvedStaffId = staffOptions.find((s) => s.code === watchedStaffCode)?.key;
+    const shiftIds = (watchedDays ?? [])
+      .flatMap((d) => d.shifts.map((s) => s.shiftTemplateId))
+      .filter(Boolean);
+
+    if (!resolvedStaffId || !fromDate || !toDate || shiftIds.length === 0) {
+      setConflictWarnings([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setIsCheckingConflict(true);
+      try {
+        // Gửi TOÀN BỘ các ngày đang chọn dở trong 1 lần gọi — để BE check được cả trùng/thiếu nghỉ
+        // CHÉO GIỮA CÁC NGÀY KHÁC NHAU (ví dụ ca trực ngày X, ca hành chính ngày X+1) chứ không chỉ
+        // trong phạm vi 1 ngày riêng lẻ.
+        const daysPayload = (watchedDays ?? [])
+          .map((day) => ({
+            date: day.date,
+            details: (day.shifts ?? [])
+              .filter((s) => s.shiftTemplateId)
+              .map((s) => ({ shiftTemplateId: s.shiftTemplateId, startTime: s.startTime, endTime: s.endTime })),
+          }))
+          .filter((d) => d.details.length > 0);
+
+        if (!daysPayload.length) {
+          setConflictWarnings([]);
+          return;
+        }
+
+        const res = await hrmInstance.post('/work-schedule/check-conflict', {
+          staffId: resolvedStaffId,
+          days: daysPayload,
+        });
+        setConflictWarnings(res?.data?.data?.conflicts ?? []);
+      } catch {
+        // Không chặn form nếu API check-thử lỗi — chỉ để dành cho lúc bấm Lưu bắt lại
+        setConflictWarnings([]);
+      } finally {
+        setIsCheckingConflict(false);
+      }
+    }, 400); // debounce 400ms để không gọi API liên tục khi đang chọn
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchedStaffCode, fromDate, toDate, JSON.stringify(watchedDays)]);
+
   const handleSelectByCode = (code: string) => {
     const emp = staffOptions.find((e) => e.code === code);
     if (!emp) return;
@@ -350,17 +405,35 @@ export const WorkShiftsForm = () => {
           </WrapperBoxForm>
         </div>
 
-        <div className="flex w-full justify-end gap-2 bg-white px-6 pb-6 pt-3">
-          <Button
-            variant="light"
-            onPress={onClose}
-            className="border border-[#6576FF] bg-white text-[14px] font-normal text-[#6576FF]"
-          >
-            {tc('button.cancel')}
-          </Button>
-          <Button type="submit" color="primary" isLoading={isLoading} isDisabled={!!isPastDate}>
-            {tc('button.save')}
-          </Button>
+        <div className="flex w-full flex-col gap-2 bg-white px-6 pb-6 pt-3">
+          {conflictWarnings.length > 0 && (
+            <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              <IconAlertTriangle size={18} className="mt-0.5 shrink-0" />
+              <ul className="list-disc space-y-1 pl-4">
+                {conflictWarnings.map((w, i) => <li key={i}>{w}</li>)}
+              </ul>
+            </div>
+          )}
+          {isCheckingConflict && conflictWarnings.length === 0 && (
+            <p className="px-1 text-xs text-gray-400">Đang kiểm tra trùng giờ / thời gian nghỉ...</p>
+          )}
+          <div className="flex w-full justify-end gap-2">
+            <Button
+              variant="light"
+              onPress={onClose}
+              className="border border-[#6576FF] bg-white text-[14px] font-normal text-[#6576FF]"
+            >
+              {tc('button.cancel')}
+            </Button>
+            <Button
+              type="submit"
+              color="primary"
+              isLoading={isLoading}
+              isDisabled={!!isPastDate || conflictWarnings.length > 0}
+            >
+              {tc('button.save')}
+            </Button>
+          </div>
         </div>
       </Form>
     </FormProvider>
