@@ -3,11 +3,12 @@ import { Link, useLocation } from '@tanstack/react-router';
 import { cn } from '@/lib/utils';
 import logoFull from '@public/images/logo-hrm-full.svg';
 import { Image } from '@heroui/react';
-import { IconCalendar, IconUser, IconFileText, IconLogout, IconCalendarEvent, IconBeach, IconFileDescription, IconMessageCircle } from '@tabler/icons-react';
+import { IconCalendar, IconUser, IconFileText, IconLogout, IconCalendarEvent, IconBeach, IconFileDescription, IconMessageCircle, IconClock } from '@tabler/icons-react';
 
 const menuItems = [
   { path: '/user/profile',     label: 'Hồ sơ cá nhân',  icon: IconUser },
   { path: '/user/schedule',    label: 'Lịch phân ca',    icon: IconCalendarEvent },
+  { path: '/user/checkin',     label: 'Chấm công',       icon: IconClock },
   { path: '/user/timekeeping', label: 'Bảng chấm công',  icon: IconCalendar },
   { path: '/user/leave',       label: 'Đơn xin nghỉ',    icon: IconBeach },
   { path: '/user/explanation', label: 'Giải trình công',  icon: IconFileDescription },

@@ -7,6 +7,28 @@ const fail = (res, status, msg, err = null) => {
 };
 
 // ─── helpers ────────────────────────────────────────────────
+// LƯU Ý QUAN TRỌNG: new Date().toISOString() luôn trả về giờ UTC, KHÔNG phải giờ Việt Nam (UTC+7).
+// Nếu dùng trực tiếp để tính "hôm nay", server sẽ nghĩ vẫn là "ngày hôm qua" trong khoảng 7 giờ đầu
+// ngày mới theo giờ VN (00:00-07:00 VN = 17:00-24:00 UTC hôm trước) — gây lệch ngày nghiêm trọng cho
+// mọi logic so sánh "hôm nay" (chấm công, generateAttendance...). Dùng đúng hàm này thay thế.
+function getVietnamToday() {
+  const now = new Date();
+  const vnMs = now.getTime() + 7 * 3600000; // cộng thêm 7 giờ để ra đúng giờ VN
+  return new Date(vnMs).toISOString().slice(0, 10);
+}
+
+// Trả về {date, h, m, s} theo ĐÚNG giờ Việt Nam hiện tại — không dùng now.getHours() trực tiếp vì
+// kết quả phụ thuộc múi giờ hệ điều hành của máy chủ (có thể là UTC, không phải giờ VN).
+function getVietnamNow() {
+  const vn = new Date(Date.now() + 7 * 3600000);
+  return {
+    date: vn.toISOString().slice(0, 10),
+    h: String(vn.getUTCHours()).padStart(2, '0'),
+    m: String(vn.getUTCMinutes()).padStart(2, '0'),
+    s: String(vn.getUTCSeconds()).padStart(2, '0'),
+  };
+}
+
 function getLastDay(month) {
   const [y, m] = month.split('-').map(Number);
   return new Date(y, m, 0).toISOString().slice(0, 10);
@@ -364,6 +386,41 @@ async function checkScheduleConflictsMultiDay(staffId, days) {
   return { conflicts };
 }
 
+// Tự động xác định trạng thái chấm công theo cấu hình ca — dùng chung cho updateAttendance() (HR sửa tay)
+// và self-check-in/out (nhân viên tự chấm). Trả về 'PRESENT'|'LATE'|'EARLY_LEAVE'|'MISSING_HOURS'.
+function determineAttendanceStatus(wsd, ciHHmm, coHHmm) {
+  const toMinutes = (hhmm) => { const [h, mi] = hhmm.split(':').map(Number); return h * 60 + mi; };
+  if (!ciHHmm || !coHHmm) return 'PRESENT';
+
+  if (wsd.shift_type === 'FIXED' && wsd.start_time && wsd.end_time) {
+    const ciMin = toMinutes(ciHHmm);
+    let coMin = toMinutes(coHHmm);
+    const startMin = toMinutes(wsd.start_time.slice(0, 5));
+    let endMin = toMinutes(wsd.end_time.slice(0, 5));
+    const isOvernightShift = endMin <= startMin; // ca CÓ CẤU HÌNH qua đêm thật (VD 21:00-06:00)
+    if (isOvernightShift) endMin += 24 * 60;
+    // Chỉ cộng thêm 24h cho giờ ra nếu đây thật sự là ca qua đêm VÀ giờ ra nhỏ hơn giờ vào (mới đúng
+    // là "sang ngày hôm sau"). Trước đây so coMin với startMin nên bất kỳ giờ ra nào nhỏ hơn giờ bắt
+    // đầu ca (dù là ca thường, checkout sớm bất thường) đều bị hiểu lầm thành "ra hôm sau", che mất
+    // hẳn trường hợp về sớm.
+    if (isOvernightShift && coMin < ciMin) coMin += 24 * 60;
+
+    const lateAllowance  = parseInt(wsd.late_allowance  || 0);
+    const earlyAllowance = parseInt(wsd.early_allowance || 0);
+    const isLate  = ciMin > startMin + lateAllowance;
+    const isEarly = coMin < endMin - earlyAllowance;
+    return isLate ? 'LATE' : isEarly ? 'EARLY_LEAVE' : 'PRESENT';
+  }
+
+  // Ca linh hoạt / trực — so tổng giờ đã làm với work_hours yêu cầu
+  const ciMin = toMinutes(ciHHmm);
+  let coMin = toMinutes(coHHmm);
+  if (coMin < ciMin) coMin += 24 * 60;
+  const workedHours = (coMin - ciMin) / 60;
+  const requiredHours = parseFloat(wsd.work_hours || 0);
+  return (requiredHours > 0 && workedHours < requiredHours) ? 'MISSING_HOURS' : 'PRESENT';
+}
+
 const workScheduleController = {
 
   // POST /work-schedule/check-conflict — kiểm tra THỬ ngay khi người dùng chọn ca/ngày, KHÔNG lưu gì cả.
@@ -372,6 +429,91 @@ const workScheduleController = {
   // Hỗ trợ 2 dạng payload:
   //   - { staffId, days: [{date, details}, ...] } → check ĐẦY ĐỦ nhiều ngày cùng lúc (khuyên dùng)
   //   - { staffId, fromDate, toDate, details }     → dạng cũ, 1 khoảng ngày dùng chung 1 mảng ca
+  // GET /work-schedule/my-today?employeeId=X — lấy ca làm việc HÔM NAY của chính nhân viên đang đăng nhập
+  getMyToday: async (req, res) => {
+    try {
+      const { employeeId } = req.query;
+      if (!employeeId) return fail(res, 400, 'Thiếu employeeId');
+      const today = getVietnamToday();
+
+      // Lọc theo employee_id của BẢNG CHA (hr_work_schedules) — khớp đúng cách các API khác (VD
+      // detailed-attendance-table) đang lọc, tránh trường hợp cột employee_id ở bảng con
+      // (hr_work_schedule_details) bị lệch/rác so với bảng cha ở vài dòng dữ liệu cũ.
+      const [rows] = await db.query(`
+        SELECT wsd.id, wsd.check_in_time, wsd.check_out_time, wsd.status,
+               st.name as shift_name, st.start_time, st.end_time, st.shift_type
+        FROM hr_work_schedule_details wsd
+        JOIN hr_work_schedules ws ON ws.id = wsd.work_schedule_id
+        JOIN shifts st ON st.id = wsd.shift_template_id
+        WHERE ws.employee_id = ? AND wsd.work_date = ?
+        ORDER BY st.start_time ASC
+      `, [employeeId, today]);
+
+      ok(res, rows);
+    } catch (e) { fail(res, 500, 'Lỗi lấy ca làm việc hôm nay', e); }
+  },
+
+  // POST /work-schedule/:id/self-check-in — nhân viên tự bấm chấm công VÀO, ghi đúng giờ máy chủ lúc bấm
+  selfCheckIn: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { employeeId } = req.body;
+      const [[wsd]] = await db.query(
+        `SELECT wsd.check_in_time, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date, ws.employee_id
+         FROM hr_work_schedule_details wsd
+         JOIN hr_work_schedules ws ON ws.id = wsd.work_schedule_id
+         WHERE wsd.id=?`, [id]
+      );
+      if (!wsd) return fail(res, 404, 'Không tìm thấy ca làm việc');
+      if (employeeId && String(wsd.employee_id) !== String(employeeId)) {
+        return fail(res, 403, 'Không thể chấm công cho ca của người khác');
+      }
+      if (wsd.check_in_time) return fail(res, 400, 'Đã chấm công vào cho ca này rồi');
+
+      const today = getVietnamToday();
+      if (wsd.work_date !== today) return fail(res, 400, 'Chỉ được chấm công cho ca làm việc của HÔM NAY');
+
+      const now = getVietnamNow();
+      const nowStr = `${wsd.work_date} ${now.h}:${now.m}:${now.s}`;
+      await db.query(`UPDATE hr_work_schedule_details SET check_in_time=? WHERE id=?`, [nowStr, id]);
+      ok(res, { checkInTime: nowStr }, 'Chấm công vào thành công');
+    } catch (e) { fail(res, 500, 'Lỗi chấm công vào', e); }
+  },
+
+  // POST /work-schedule/:id/self-check-out — nhân viên tự bấm chấm công RA, tự động xác định trạng thái
+  // (đi muộn/về sớm/thiếu giờ/đúng giờ) theo đúng cấu hình ca — dùng chung determineAttendanceStatus()
+  selfCheckOut: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { employeeId } = req.body;
+      const [[wsd]] = await db.query(`
+        SELECT wsd.check_in_time, wsd.check_out_time, DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date,
+               st.start_time, st.end_time, st.late_allowance, st.early_allowance, st.shift_type, st.work_hours,
+               ws.employee_id
+        FROM hr_work_schedule_details wsd
+        JOIN hr_work_schedules ws ON ws.id = wsd.work_schedule_id
+        JOIN shifts st ON st.id = wsd.shift_template_id
+        WHERE wsd.id=?`, [id]
+      );
+      if (!wsd) return fail(res, 404, 'Không tìm thấy ca làm việc');
+      if (employeeId && String(wsd.employee_id) !== String(employeeId)) {
+        return fail(res, 403, 'Không thể chấm công cho ca của người khác');
+      }
+      if (!wsd.check_in_time) return fail(res, 400, 'Chưa chấm công vào, không thể chấm công ra');
+      if (wsd.check_out_time) return fail(res, 400, 'Đã chấm công ra cho ca này rồi');
+
+      const now = getVietnamNow();
+      const nowStr = `${wsd.work_date} ${now.h}:${now.m}:${now.s}`;
+
+      const ciHHmm = new Date(wsd.check_in_time).toTimeString().slice(0, 5);
+      const coHHmm = `${now.h}:${now.m}`;
+      const finalStatus = determineAttendanceStatus(wsd, ciHHmm, coHHmm);
+
+      await db.query(`UPDATE hr_work_schedule_details SET check_out_time=?, status=? WHERE id=?`, [nowStr, finalStatus, id]);
+      ok(res, { checkOutTime: nowStr, status: finalStatus }, 'Chấm công ra thành công');
+    } catch (e) { fail(res, 500, 'Lỗi chấm công ra', e); }
+  },
+
   checkConflict: async (req, res) => {
     try {
       const { staffId, days, fromDate, toDate, details } = req.body;
@@ -956,42 +1098,14 @@ const workScheduleController = {
         }
       }
 
-      // ── Tự động xác định trạng thái — CHIA 2 NHÁNH THEO LOẠI CA ──
+      // ── Tự động xác định trạng thái (dùng lại hàm chung) ──
       // Chỉ áp dụng khi có đủ giờ vào/ra thật để so sánh. Các trạng thái "đặc biệt" (nghỉ, vắng, lễ...)
       // do người dùng chọn tay ở màn khác thì vẫn tôn trọng nguyên trạng thái đó, không tự đổi.
       const specialStatuses = ['ABSENT', 'HOLIDAY', 'LEAVE', 'LEAVE_PAID', 'COMPENSATORY_LEAVE'];
       let finalStatus = status || 'PRESENT';
-      const toMinutes = (hhmm) => { const [h, mi] = hhmm.split(':').map(Number); return h * 60 + mi; };
 
       if (!specialStatuses.includes(status) && ciHHmm && coHHmm) {
-        if (wsd.shift_type === 'FIXED' && wsd.start_time && wsd.end_time) {
-          // Ca CỐ ĐỊNH — có giờ vào/ra chuẩn cụ thể → so đi muộn/về sớm như bình thường
-        let coMin = toMinutes(coHHmm);
-        const startMin = toMinutes(wsd.start_time.slice(0, 5));
-        let endMin = toMinutes(wsd.end_time.slice(0, 5));
-        if (endMin <= startMin) endMin += 24 * 60;   // ca qua đêm
-        if (coMin < startMin) coMin += 24 * 60;      // giờ ra ghi qua ngày hôm sau (ca đêm)
-
-        const lateAllowance  = parseInt(wsd.late_allowance  || 0);
-        const earlyAllowance = parseInt(wsd.early_allowance || 0);
-
-          const isLate  = ciMin > startMin + lateAllowance;
-          const isEarly = coMin < endMin - earlyAllowance;
-
-          // Ưu tiên "LATE" nếu vừa đi muộn vừa về sớm (chưa có trạng thái gộp riêng trong CSDL)
-          finalStatus = isLate ? 'LATE' : isEarly ? 'EARLY_LEAVE' : 'PRESENT';
-        } else {
-          // Ca LINH HOẠT / TRỰC — không có giờ vào/ra chuẩn cố định để so muộn/sớm, chỉ so
-          // TỔNG SỐ GIỜ đã làm với "work_hours" yêu cầu của ca. Thiếu giờ → đánh dấu MISSING_HOURS
-          // (khớp đúng loại giải trình 'MISSING_HOURS' sẵn có) để nhân viên tự gửi giải trình tương ứng.
-          const ciMin = toMinutes(ciHHmm);
-          let coMin = toMinutes(coHHmm);
-          if (coMin < ciMin) coMin += 24 * 60; // qua đêm
-          const workedHours = (coMin - ciMin) / 60;
-          const requiredHours = parseFloat(wsd.work_hours || 0);
-
-          finalStatus = (requiredHours > 0 && workedHours < requiredHours) ? 'MISSING_HOURS' : 'PRESENT';
-        }
+        finalStatus = determineAttendanceStatus(wsd, ciHHmm, coHHmm);
       }
 
       await db.query(
@@ -1119,6 +1233,12 @@ async function generateAttendance(employeeId, wsdId, date, shiftTemplateId, star
       date = wsd?.work_date;
     }
     if (!date) return;
+
+    // CHỈ tự sinh chấm công giả cho NGÀY ĐÃ QUA (quá khứ) — phục vụ nhanh việc test tính lương cho các
+    // tháng đã elapsed. Ngày HÔM NAY và TƯƠNG LAI để trống thật (check_in_time=NULL), chờ nhân viên
+    // tự bấm "Chấm công vào/ra" (self-check-in) — tránh 2 luồng đá nhau, dữ liệu không còn là giả toàn bộ.
+    const today = getVietnamToday();
+    if (date >= today) return;
 
     const [[shift]] = await db.query(`SELECT code, shift_type, start_time, end_time FROM shifts WHERE id=?`, [shiftTemplateId]);
     if (!shift) return;

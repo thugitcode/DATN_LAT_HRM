@@ -6,6 +6,12 @@ import { icons } from '@/lib/icons';
 
 export const getMenuSidebar = (t: TFunction<typeof NAMESPACES.COMMON>): MenuItem[] => [
   {
+    id: '1',
+    path: '/admin/dashboard',
+    label: 'Tổng quan',
+    icon: icons.home,
+  },
+  {
     id: '2',
     path: '/admin/timekeeping-shift-scheduling',
     label: t('sidebar.timekeeping_shift_scheduling'),

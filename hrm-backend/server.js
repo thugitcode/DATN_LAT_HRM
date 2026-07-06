@@ -171,6 +171,7 @@ app.use('/api/v1/rooms',       roomRoutes);
 app.use('/api/auth', require('./routes/auth.routes')); 
 
 app.use('/api/allowance', allowanceRoutes);
+app.use('/api/dashboard', require('./routes/dashboard.routes'));
 
 app.get('/api/health', (_req, res) =>
   res.json({ status: 'ok', time: new Date().toISOString() }),

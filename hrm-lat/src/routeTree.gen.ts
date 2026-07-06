@@ -35,6 +35,7 @@ import { Route as PrivateUserDashboardPayslipRouteImport } from './routes/_priva
 import { Route as PrivateUserDashboardLeaveRouteImport } from './routes/_private/user/_dashboard/leave'
 import { Route as PrivateUserDashboardFeedbackRouteImport } from './routes/_private/user/_dashboard/feedback'
 import { Route as PrivateUserDashboardExplanationRouteImport } from './routes/_private/user/_dashboard/explanation'
+import { Route as PrivateUserDashboardCheckinRouteImport } from './routes/_private/user/_dashboard/checkin'
 import { Route as PrivateAdminDashboardTimekeepingShiftSchedulingIndexRouteImport } from './routes/_private/admin/_dashboard/timekeeping-shift-scheduling/index'
 import { Route as PrivateAdminDashboardStaffManagementIndexRouteImport } from './routes/_private/admin/_dashboard/staff-management/index'
 import { Route as PrivateAdminDashboardRecruitmentManagementIndexRouteImport } from './routes/_private/admin/_dashboard/recruitment-management/index'
@@ -215,6 +216,12 @@ const PrivateUserDashboardExplanationRoute =
   PrivateUserDashboardExplanationRouteImport.update({
     id: '/explanation',
     path: '/explanation',
+    getParentRoute: () => PrivateUserDashboardRoute,
+  } as any)
+const PrivateUserDashboardCheckinRoute =
+  PrivateUserDashboardCheckinRouteImport.update({
+    id: '/checkin',
+    path: '/checkin',
     getParentRoute: () => PrivateUserDashboardRoute,
   } as any)
 const PrivateAdminDashboardTimekeepingShiftSchedulingIndexRoute =
@@ -498,6 +505,7 @@ export interface FileRoutesByFullPath {
   '/timekeeping-shift-scheduling/': typeof AuthTimekeepingShiftSchedulingIndexRoute
   '/admin/': typeof PrivateAdminIndexRoute
   '/user/': typeof PrivateUserIndexRoute
+  '/user/checkin': typeof PrivateUserDashboardCheckinRoute
   '/user/explanation': typeof PrivateUserDashboardExplanationRoute
   '/user/feedback': typeof PrivateUserDashboardFeedbackRoute
   '/user/leave': typeof PrivateUserDashboardLeaveRoute
@@ -558,6 +566,7 @@ export interface FileRoutesByTo {
   '/admin': typeof PrivateAdminIndexRoute
   '/user': typeof PrivateUserIndexRoute
   '/timekeeping-shift-scheduling': typeof AuthTimekeepingShiftSchedulingIndexRoute
+  '/user/checkin': typeof PrivateUserDashboardCheckinRoute
   '/user/explanation': typeof PrivateUserDashboardExplanationRoute
   '/user/feedback': typeof PrivateUserDashboardFeedbackRoute
   '/user/leave': typeof PrivateUserDashboardLeaveRoute
@@ -622,6 +631,7 @@ export interface FileRoutesById {
   '/_auth/timekeeping-shift-scheduling/': typeof AuthTimekeepingShiftSchedulingIndexRoute
   '/_private/admin/': typeof PrivateAdminIndexRoute
   '/_private/user/': typeof PrivateUserIndexRoute
+  '/_private/user/_dashboard/checkin': typeof PrivateUserDashboardCheckinRoute
   '/_private/user/_dashboard/explanation': typeof PrivateUserDashboardExplanationRoute
   '/_private/user/_dashboard/feedback': typeof PrivateUserDashboardFeedbackRoute
   '/_private/user/_dashboard/leave': typeof PrivateUserDashboardLeaveRoute
@@ -686,6 +696,7 @@ export interface FileRouteTypes {
     | '/timekeeping-shift-scheduling/'
     | '/admin/'
     | '/user/'
+    | '/user/checkin'
     | '/user/explanation'
     | '/user/feedback'
     | '/user/leave'
@@ -746,6 +757,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/user'
     | '/timekeeping-shift-scheduling'
+    | '/user/checkin'
     | '/user/explanation'
     | '/user/feedback'
     | '/user/leave'
@@ -809,6 +821,7 @@ export interface FileRouteTypes {
     | '/_auth/timekeeping-shift-scheduling/'
     | '/_private/admin/'
     | '/_private/user/'
+    | '/_private/user/_dashboard/checkin'
     | '/_private/user/_dashboard/explanation'
     | '/_private/user/_dashboard/feedback'
     | '/_private/user/_dashboard/leave'
@@ -1044,6 +1057,13 @@ declare module '@tanstack/react-router' {
       path: '/explanation'
       fullPath: '/user/explanation'
       preLoaderRoute: typeof PrivateUserDashboardExplanationRouteImport
+      parentRoute: typeof PrivateUserDashboardRoute
+    }
+    '/_private/user/_dashboard/checkin': {
+      id: '/_private/user/_dashboard/checkin'
+      path: '/checkin'
+      fullPath: '/user/checkin'
+      preLoaderRoute: typeof PrivateUserDashboardCheckinRouteImport
       parentRoute: typeof PrivateUserDashboardRoute
     }
     '/_private/admin/_dashboard/timekeeping-shift-scheduling/': {
@@ -1499,6 +1519,7 @@ const PrivateAdminDetailRouteWithChildren =
   PrivateAdminDetailRoute._addFileChildren(PrivateAdminDetailRouteChildren)
 
 interface PrivateUserDashboardRouteChildren {
+  PrivateUserDashboardCheckinRoute: typeof PrivateUserDashboardCheckinRoute
   PrivateUserDashboardExplanationRoute: typeof PrivateUserDashboardExplanationRoute
   PrivateUserDashboardFeedbackRoute: typeof PrivateUserDashboardFeedbackRoute
   PrivateUserDashboardLeaveRoute: typeof PrivateUserDashboardLeaveRoute
@@ -1509,6 +1530,7 @@ interface PrivateUserDashboardRouteChildren {
 }
 
 const PrivateUserDashboardRouteChildren: PrivateUserDashboardRouteChildren = {
+  PrivateUserDashboardCheckinRoute: PrivateUserDashboardCheckinRoute,
   PrivateUserDashboardExplanationRoute: PrivateUserDashboardExplanationRoute,
   PrivateUserDashboardFeedbackRoute: PrivateUserDashboardFeedbackRoute,
   PrivateUserDashboardLeaveRoute: PrivateUserDashboardLeaveRoute,

@@ -5,6 +5,7 @@ const STATUS_MAP: Record<string, { label: string; color: string; dot: string }> 
   PRESENT:     { label: 'Đúng giờ',  color: 'bg-green-50 text-green-700',   dot: 'bg-green-500' },
   LATE:        { label: 'Đi muộn',   color: 'bg-orange-50 text-orange-700', dot: 'bg-orange-500' },
   EARLY_LEAVE: { label: 'Về sớm',    color: 'bg-yellow-50 text-yellow-700', dot: 'bg-yellow-500' },
+  MISSING_HOURS: { label: 'Thiếu giờ', color: 'bg-amber-50 text-amber-700', dot: 'bg-amber-500' },
   ABSENT:      { label: 'Vắng',      color: 'bg-red-50 text-red-700',       dot: 'bg-red-500' },
   HOLIDAY:     { label: 'Nghỉ lễ',   color: 'bg-blue-50 text-blue-700',     dot: 'bg-blue-500' },
   LEAVE_PAID:  { label: 'Nghỉ phép', color: 'bg-purple-50 text-purple-700', dot: 'bg-purple-500' },
