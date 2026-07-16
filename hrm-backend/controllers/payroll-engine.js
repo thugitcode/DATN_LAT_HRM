@@ -58,21 +58,22 @@ async function findTemplate(employeeId) {
     `SELECT * FROM payroll_templates WHERE status = 'ACTIVE' ORDER BY id ASC`
   );
 
-  // Match template theo thứ tự ưu tiên: employee > chức danh nghề nghiệp > room > department
-  for (const tpl of templates) {
-    const appliedEmps  = tpl.applied_employees  ? JSON.parse(tpl.applied_employees)  : [];
-    const appliedPos   = tpl.applied_positions  ? JSON.parse(tpl.applied_positions)  : [];
-    const appliedRooms = tpl.applied_rooms       ? JSON.parse(tpl.applied_rooms)      : [];
-    const appliedDepts = tpl.applied_departments ? JSON.parse(tpl.applied_departments): [];
+  const parsed = templates.map(tpl => ({
+    tpl,
+    appliedEmps:  tpl.applied_employees  ? JSON.parse(tpl.applied_employees)  : [],
+    appliedPos:   tpl.applied_positions  ? JSON.parse(tpl.applied_positions)  : [],
+    appliedRooms: tpl.applied_rooms       ? JSON.parse(tpl.applied_rooms)      : [],
+    appliedDepts: tpl.applied_departments ? JSON.parse(tpl.applied_departments): [],
+  }));
 
-    console.log('[findTemplate] tpl', tpl.id, '| depts:', appliedDepts, '| rooms:', appliedRooms, '| chức danh:', appliedPos);
-
-  
-    if (appliedEmps.includes(emp.employee_code))     return tpl;
-    if (appliedPos.includes(emp.job_title_name))     return tpl;
-    if (appliedRooms.includes(emp.room_code))        return tpl;
-    if (appliedDepts.includes(emp.department_code)) return tpl;
-  }
+  // Match theo ĐÚNG thứ tự ưu tiên: duyệt hết các mẫu ở TỪNG TIÊU CHÍ trước khi xuống tiêu chí kém cụ
+  // thể hơn — tránh trường hợp 1 mẫu cũ khớp department (tiêu chí kém cụ thể) nhưng do đứng trước
+  // theo ID nên "thắng" 1 mẫu khác khớp đúng employee/chức danh (tiêu chí cụ thể hơn) của mẫu sau.
+  // Thứ tự ưu tiên: employee > chức danh nghề nghiệp > room > department
+  for (const p of parsed) if (p.appliedEmps.includes(emp.employee_code))     { console.log('[findTemplate] khớp theo NHÂN VIÊN, tpl', p.tpl.id); return p.tpl; }
+  for (const p of parsed) if (p.appliedPos.includes(emp.job_title_name))     { console.log('[findTemplate] khớp theo CHỨC DANH, tpl', p.tpl.id); return p.tpl; }
+  for (const p of parsed) if (p.appliedRooms.includes(emp.room_code))        { console.log('[findTemplate] khớp theo PHÒNG, tpl', p.tpl.id); return p.tpl; }
+  for (const p of parsed) if (p.appliedDepts.includes(emp.department_code)) { console.log('[findTemplate] khớp theo KHOA, tpl', p.tpl.id); return p.tpl; }
 
     console.log('[findTemplate] NO MATCH — dùng fallback');
 
@@ -411,6 +412,11 @@ async function calcPayroll(staffId, month) {
 
   const netIncome = Math.max(0, totalGross - totalDeduct);
 
+  // Map công thức thật của từng thành phần (theo mã) — để hiển thị lên "Chi tiết lương" thay
+  // cho nhãn tĩnh "Công thức" trước đây, chứng minh trực quan mẫu bảng lương THẬT SỰ khác nhau.
+  const formulaByCode = {};
+  components.forEach(c => { formulaByCode[c.component_code] = c.custom_formula || c.base_formula || ''; });
+
   // Thưởng làm việc ngày lễ theo Điều 98 BLLĐ 2019 — cộng bảo đảm dù mẫu bảng lương công ty
   // có cấu hình thành phần riêng cho việc này hay không, tránh vi phạm mức tối thiểu luật định.
   const totalGrossWithHoliday = totalGross + vars.THUONG_LAM_LE_SO;
@@ -475,6 +481,7 @@ async function calcPayroll(staffId, month) {
     pit:                 results['THUE_TNCN']       || 0,
     violationPenalty:    results['PHAT_VI_PHAM']    || 0,
     holidayWorkBonus:    vars.THUONG_LAM_LE_SO,
+    formulas:            formulaByCode,
     totalGross:          totalGrossWithHoliday,
     totalDeduction:      totalDeduct,
     netIncome:           netIncomeWithHoliday,
@@ -518,6 +525,17 @@ async function calcPayrollFallback(staffId, month) {
 
   return {
     templateId: null, templateName: 'Mặc định', components: [],
+    formulas: {
+      LUONG_THEO_CONG: '(LUONG_CO_BAN / NGAY_CHUAN) * TONG_NGAY_CONG_QUY_DOI',
+      PHU_CAP_TRUC:    'Tổng phụ cấp thật của từng ca trực (theo Danh mục ca làm việc)',
+      LUONG_TANG_CA:   '(LUONG_CO_BAN / NGAY_CHUAN / 8) * GIO_OT * 1.5',
+      THUONG_KPI:      'KPI_SCORE >= 90 ? LUONG_CO_BAN*0.15 : KPI_SCORE >= 70 ? LUONG_CO_BAN*0.10 : 0',
+      THUONG_DOANH_SO: 'DOANH_SO_THUC_TE * THUONG_DOANH_SO_RATE / 100',
+      BHXH_NLD: 'LUONG_DONG_BH * BHXH_RATE / 100', BHYT_NLD: 'LUONG_DONG_BH * BHYT_RATE / 100',
+      BHTN_NLD: 'LUONG_DONG_BH * BHTN_RATE / 100', CONG_DOAN: 'LUONG_DONG_BH * CONG_DOAN_RATE / 100',
+      THUE_TNCN: 'Biểu thuế lũy tiến 5 bậc (Luật 109/2025/QH15) trên thu nhập tính thuế',
+      THU_NHAP_THUC_LINH: 'TONG_GROSS - TONG_KHAU_TRU',
+    },
     standardWorkingDays: standardDays, totalWorkDays,
     workDays: vars.NGAY_LAM_THUONG, onCallDays: vars.SO_CA_TRUC,
     holidayDays: vars.NGAY_LE, paidLeave: vars.NGAY_NGHI_PHEP,

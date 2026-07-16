@@ -51,9 +51,9 @@ export const DeductionSection = ({ data }: { data: any }) => {
 
     // Cấu hình các loại bảo hiểm để map tự động
     const insuranceConfigs = [
-        { key: 'socialInsurance', label: t('payrollCalculation.detail.socialInsurance'), percentage: '8%' },
-        { key: 'healthInsurance', label: t('payrollCalculation.detail.healthInsurance'), percentage: '1.5%' },
-        { key: 'unemploymentInsurance', label: t('payrollCalculation.detail.unemploymentInsurance'), percentage: '1%' },
+        { key: 'socialInsurance', label: t('payrollCalculation.detail.socialInsurance'), percentage: '8%', formulaKey: 'socialInsuranceFormula' },
+        { key: 'healthInsurance', label: t('payrollCalculation.detail.healthInsurance'), percentage: '1.5%', formulaKey: 'healthInsuranceFormula' },
+        { key: 'unemploymentInsurance', label: t('payrollCalculation.detail.unemploymentInsurance'), percentage: '1%', formulaKey: 'unemploymentInsuranceFormula' },
     ];
 
     return (
@@ -68,8 +68,8 @@ export const DeductionSection = ({ data }: { data: any }) => {
                         label={item.label}
                         percentage={item.percentage}
                         value={data[item.key]}
-                        showFormula
-                        formulaLabel={t("payrollCalculation.detail.formula")}
+                        showFormula={!!data[item.formulaKey]}
+                        formulaLabel={data[item.formulaKey] || t("payrollCalculation.detail.formula")}
                         formatCurrency={formatCurrency}
                     />
                 ))}
@@ -78,13 +78,15 @@ export const DeductionSection = ({ data }: { data: any }) => {
                 <DeductionRow
                     label={t("payrollCalculation.detail.unionFee")}
                     value={data.unionFee}
-                    formulaLabel={t("payrollCalculation.detail.formula")}
+                    showFormula={!!data.unionFeeFormula}
+                    formulaLabel={data.unionFeeFormula || t("payrollCalculation.detail.formula")}
                     formatCurrency={formatCurrency}
                 />
                 <DeductionRow
                     label={t("payrollCalculation.detail.personalIncomeTax")}
                     value={data.personalIncomeTax}
-                    formulaLabel={t("payrollCalculation.detail.formula")}
+                    showFormula={!!data.personalIncomeTaxFormula}
+                    formulaLabel={data.personalIncomeTaxFormula || t("payrollCalculation.detail.formula")}
                     formatCurrency={formatCurrency}
                 />
 

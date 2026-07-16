@@ -224,7 +224,12 @@ const leaveRequestController = {
       const { id } = req.params;
       const { approvedById } = req.body;
       // Kiểm tra status hiện tại
-      const [[lr]] = await db.query(`SELECT status FROM hr_leave_requests WHERE id=?`, [id]);
+      const [[lr]] = await db.query(
+        `SELECT lr.status, lr.employee_id, lr.from_date, lr.to_date, lrs.salary_rate
+         FROM hr_leave_requests lr
+         LEFT JOIN leave_reasons lrs ON lrs.id = lr.leave_reason_id
+         WHERE lr.id=?`, [id]
+      );
       if (!lr) return fail(res, 404, 'Không tìm thấy đơn nghỉ');
       // PENDING -> MANAGER_APPROVED, MANAGER_APPROVED -> APPROVED
       const newStatus = lr.status === 'PENDING' ? 'MANAGER_APPROVED' : 'APPROVED';
@@ -232,6 +237,22 @@ const leaveRequestController = {
         `UPDATE hr_leave_requests SET status=?, approved_by_id=?, approved_at=NOW() WHERE id=?`,
         [newStatus, approvedById || null, id]
       );
+
+      // Chỉ đồng bộ sang bảng chấm công ở bước duyệt CUỐI (APPROVED) — tránh cập nhật sớm khi
+      // mới duyệt cấp 1 (MANAGER_APPROVED), vì lúc đó đơn có thể còn bị HR từ chối ở bước sau.
+      // Đồng bộ để: (1) không hiện "chưa chấm công"/cho phép tự chấm công nhầm vào đúng ngày đã
+      // nghỉ, (2) bảng chấm công hiển thị đúng "Nghỉ phép" thay vì trống/ca bình thường.
+      if (newStatus === 'APPROVED') {
+        const leaveStatus = (lr.salary_rate == null || parseFloat(lr.salary_rate) > 0) ? 'LEAVE_PAID' : 'LEAVE';
+        await db.query(
+          `UPDATE hr_work_schedule_details wsd
+           JOIN hr_work_schedules ws ON ws.id = wsd.work_schedule_id
+           SET wsd.status = ?
+           WHERE ws.employee_id = ? AND wsd.work_date BETWEEN ? AND ?`,
+          [leaveStatus, lr.employee_id, lr.from_date, lr.to_date]
+        );
+      }
+
       ok(res, null, 'Duyệt đơn nghỉ thành công');
     } catch (e) { fail(res, 500, 'Lỗi duyệt đơn nghỉ', e); }
   },

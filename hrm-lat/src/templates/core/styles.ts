@@ -1,17 +1,17 @@
 import * as XLSX from 'xlsx-js-style';
-import * as XLSX from 'xlsx-js-style';
 
 // ── Primitives ────────────────────────────────────────────────────────────────
-export const BORDER: XLSX.BorderStyle = {
+export const BORDER = {
   top: { style: 'thin', color: { rgb: 'D1D5DB' } },
   bottom: { style: 'thin', color: { rgb: 'D1D5DB' } },
   left: { style: 'thin', color: { rgb: 'D1D5DB' } },
   right: { style: 'thin', color: { rgb: 'D1D5DB' } },
-};
+} as const;
 
 export const ALIGN = {
   center: { horizontal: 'center', vertical: 'center', wrapText: true },
   left: { horizontal: 'left', vertical: 'center', wrapText: true },
+  right: { horizontal: 'right', vertical: 'center', wrapText: true },
 } as const;
 
 export const headerStyle = (bgRgb: string) => ({
@@ -26,8 +26,8 @@ export const titleStyle = (alignLeft = false) => ({
   font: { bold: true, sz: 11 },
 });
 
-export const dataStyle = (opts: { isLeft?: boolean; bgRgb?: string }) => ({
-  alignment: opts.isLeft ? ALIGN.left : ALIGN.center,
+export const dataStyle = (opts: { isLeft?: boolean; isRight?: boolean; bgRgb?: string }) => ({
+  alignment: opts.isLeft ? ALIGN.left : opts.isRight ? ALIGN.right : ALIGN.center,
   border: BORDER,
   fill: { fgColor: { rgb: opts.bgRgb ?? 'FFFFFF' } },
   font: { sz: 10 },
@@ -110,7 +110,7 @@ export const _applyTableStyles = (
 export const _applyGridStyles = (
   ws: XLSX.WorkSheet,
   lastDataRow: number,
-  fixedCols: number,
+  _fixedCols: number,
   staffRowStart: number[],
 ) => {
   const leftAlignCols = new Set([1, 2, 3, 4, 5]);

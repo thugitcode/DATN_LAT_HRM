@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { NAMESPACES } from '@/i18n/constants';
 import { useConfirmStore } from '@/store/useConfirmStore';
 import dayjs from 'dayjs';
@@ -59,7 +59,7 @@ export const SummaryFinalize = () => {
   const { data: dataLatest, isLoading: isLoadingLatest } = usePayrollSummaryLatest();
 
   const { mutate: mutateCalculate, isPending: isPendingCalculate } = useCalculateMutation(month);
-  const { mutate: mutateDraft, isPending: isPendingSaveDraft } = useSaveDraftMutation(month);
+  const { mutate: mutateDraft, isPending: _isPendingSaveDraft } = useSaveDraftMutation(month);
 
   useEffect(() => {
     if (dataLatest) {
@@ -88,9 +88,9 @@ export const SummaryFinalize = () => {
   const handleClickTransfer = useCallback(() => {
     open(
       {
-        title: 'Xác nhận chốt kỳ lương',
+        title: 'Xác nhận tính lương',
         description:
-          'Sau khi xác nhận, hệ thống sẽ tính toán và chốt dữ liệu lương kỳ này. Hành động không thể hoàn tác.',
+          'Hệ thống sẽ tính toán lương cho toàn bộ nhân viên trong kỳ này. Bạn có thể bấm tính lại nhiều lần nếu cần — dữ liệu chỉ thực sự bị khoá khi bạn chủ động bấm "Chốt lương" ở bước sau.',
         confirmLabel: 'Xác nhận',
         confirmColor: 'primary',
         requireReason: false,

@@ -3,7 +3,6 @@ import type { RequestsParams } from '@/types/global.type';
 import { hrmInstance } from '@/lib/axios';
 import type {
   ApprovePayload,
-  Period,
   PeriodStatusResponsive,
 } from '@/features/timekeeping-shift-scheduling/timekeeping-management/types/timekeeping-management.type';
 
@@ -37,21 +36,21 @@ class PayrollPerriodsService extends BaseApiService<
   }
   async unlock(data: ApprovePayload) {
     return this.request(async () => {
-      const res = await this.instance.patch(`${this.url()}/unlock  `, data);
+      const res = await this.instance.patch(`${this.url()}/unlock`, data);
 
       return res.data;
     });
   }
   async calculate(data: ApprovePayload) {
     return this.request(async () => {
-      const res = await this.instance.post(`${this.url()}/calculate  `, data);
+      const res = await this.instance.post(`${this.url()}/calculate`, data);
 
       return res.data;
     });
   }
   async saveDraft(data: ApprovePayload) {
     return this.request(async () => {
-      const res = await this.instance.patch(`${this.url()}/save-draft  `, data);
+      const res = await this.instance.patch(`${this.url()}/save-draft`, data);
 
       return res.data;
     });

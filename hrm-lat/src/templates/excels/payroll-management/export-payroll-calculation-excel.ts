@@ -20,7 +20,6 @@ import dayjs from 'dayjs';
 
 import type { StaffPayroll } from '@/features/payroll-management/types/payroll-caculation.type';
 import type { TFunction } from 'i18next';
-import type { NAMESPACES } from '@/i18n/constants';
 
 const SHEET_NAME = 'Tính lương';
 const HEADER_BG = 'DBEAFE';
@@ -30,7 +29,7 @@ const ROW_BLANK = 2;
 const ROW_HEADER = 3;
 const ROW_DATA = 4;
 
-const COL_WIDTHS = [8, 22, 16, 22, 20, 22, 18, 18, 16, 16, 18, 18, 18, 18, 20];
+const COL_WIDTHS = [8, 22, 16, 22, 20, 22, 18, 18, 16, 16, 16, 18, 18, 18, 18, 20];
 const TOTAL_COLS = COL_WIDTHS.length;
 
 const resolveMonth = (month?: string) => {
@@ -49,6 +48,7 @@ const buildColHeaderRow = (t: (key: string) => string): string[] => [
   t('payrollCalculation.columns.total_gross'),
   t('payrollCalculation.columns.total_paid_working_days'),
   t('payrollCalculation.columns.total_overtime_hours'),
+  'Lương tăng ca',
   t('payrollCalculation.columns.allowance'),
   t('payrollCalculation.columns.bonus'),
   t('payrollCalculation.columns.deduction'),
@@ -69,8 +69,9 @@ const buildDataRow = (row: StaffPayroll, idx: number): unknown[] => [
   row.totalGross ?? '-',
   row.totalAttendance ?? '-',
   row.overtimeHours ?? '-',
-  row.allowanceAmount ?? '-',
   row.overtimeAmount ?? '-',
+  row.allowanceAmount ?? '-',
+  row.bonusAmount ?? '-',
   row.deductionAmount ?? '-',
   row.netPay ?? '-',
   i18n.t(
@@ -81,7 +82,7 @@ const buildDataRow = (row: StaffPayroll, idx: number): unknown[] => [
 
 const buildAoa = (
   data: StaffPayroll[],
-  base: dayjs.Dayjs,
+  _base: dayjs.Dayjs,
   companyName: string,
   unitName: string,
   departmentName: string,
@@ -145,7 +146,7 @@ const buildApplyStyles =
         // left-align: department, staff name, job title, salary template
         const isLeftAlign = c === 1 || c === 3 || c === 4 || c === 5;
         // right-align: currency columns
-        const isRightAlign = c === 6 || c === 7 || c === 10 || c === 11 || c === 12 || c === 13;
+        const isRightAlign = c === 6 || c === 7 || c === 10 || c === 11 || c === 12 || c === 13 || c === 14;
         return dataStyle({
           isLeft: isLeftAlign,
           isRight: isRightAlign,

@@ -62,22 +62,24 @@ export function BasicIncomeSection({ data }: BasicIncomeSectionProps) {
           label={t('payrollCalculation.detail.contractBasicSalary')}
           sublabel={`${data.totalAttendance} ${t('payrollCalculation.detail.days')} - ${data.workDays} ${t('payrollCalculation.detail.days')}`}
           value={data.actualWorkSalary}
-          showFormula
-          formulaLabel={t('payrollCalculation.detail.formula')}
+          showFormula={!!data.actualWorkSalaryFormula}
+          formulaLabel={data.actualWorkSalaryFormula || t('payrollCalculation.detail.formula')}
           formatCurrency={formatCurrency}
         />
         <SalaryRow
           label={t('payrollCalculation.detail.overtimeSalary')}
           sublabel={`${data.totalOvertimeHours}h OT`}
           value={data.overtimeAmount}
-          formulaLabel={t('payrollCalculation.detail.formula')}
+          showFormula={!!data.overtimeAmountFormula}
+          formulaLabel={data.overtimeAmountFormula || t('payrollCalculation.detail.formula')}
           formatCurrency={formatCurrency}
         />
         <SalaryRow
           label={t('payrollCalculation.detail.onCallSalary')}
           sublabel={`${data.onCallDays} ${t('payrollCalculation.detail.days')}`}
           value={data.onCallSalary}
-          formulaLabel={t('payrollCalculation.detail.formula')}
+          showFormula={!!data.onCallSalaryFormula}
+          formulaLabel={data.onCallSalaryFormula || t('payrollCalculation.detail.formula')}
           formatCurrency={formatCurrency}
         />
         <SalaryRow

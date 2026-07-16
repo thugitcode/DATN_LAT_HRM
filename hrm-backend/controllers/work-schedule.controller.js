@@ -262,7 +262,11 @@ async function checkScheduleConflicts(staffId, dates, details) {
   // ── Bước C: so từng ca mới với các ca ĐÃ LƯU sẵn trong CSDL (logic cũ, giữ nguyên) ──
   for (const entry of newEntries) {
     const [nearbyShifts] = await db.query(
-      `SELECT wsd.work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
+      // BUG FIX: PHẢI dùng DATE_FORMAT() — nếu không, mysql2 (không bật dateStrings) trả wsd.work_date
+      // về dưới dạng JS Date object, trong khi entry.date là string. So sánh "ex.work_date === entry.date"
+      // ở dưới sẽ LUÔN false (Date object !== string), và dayDiff() nhận Date object cũng ra NaN — khiến
+      // toàn bộ check trùng ca / thiếu nghỉ với ca đã lưu sẵn bị vô hiệu hoá âm thầm, không báo lỗi gì cả.
+      `SELECT DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
        FROM hr_work_schedule_details wsd
        JOIN shifts st ON st.id = wsd.shift_template_id
        WHERE wsd.employee_id = ? AND wsd.work_date BETWEEN DATE_SUB(?, INTERVAL 1 DAY) AND DATE_ADD(?, INTERVAL 1 DAY)`,
@@ -358,7 +362,9 @@ async function checkScheduleConflictsMultiDay(staffId, days) {
   // ── Bước C: so từng ca đang chọn dở với các ca ĐÃ LƯU SẴN trong CSDL ──
   for (const entry of newEntries) {
     const [nearbyShifts] = await db.query(
-      `SELECT wsd.work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
+      // BUG FIX: bắt buộc DATE_FORMAT() — lý do xem chú thích ở checkScheduleConflicts() phía trên,
+      // cùng 1 lỗi: thiếu DATE_FORMAT khiến so sánh cùng-ngày và dayDiff() bị vô hiệu hoá âm thầm.
+      `SELECT DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
        FROM hr_work_schedule_details wsd
        JOIN shifts st ON st.id = wsd.shift_template_id
        WHERE wsd.employee_id = ? AND wsd.work_date BETWEEN DATE_SUB(?, INTERVAL 1 DAY) AND DATE_ADD(?, INTERVAL 1 DAY)`,
@@ -761,20 +767,61 @@ const workScheduleController = {
         const isOverlap = (s1, e1, s2, e2) => s1 < e2 && s2 < e1;
         const dayDiff = (d1, d2) => Math.round((new Date(`${d2}T00:00:00Z`) - new Date(`${d1}T00:00:00Z`)) / 86400000);
 
+        // ── BƯỚC A: resolve giờ + workDate + existing row cho TỪNG detail đang sửa TRƯỚC KHI check gì cả ──
+        const resolved = [];
         for (const d of details) {
           const { startTime, endTime } = await resolveShiftTimes(d.shiftTemplateId, d.startTime, d.endTime);
           const [[existing]] = await db.query(
             `SELECT id, DATE_FORMAT(work_date,'%Y-%m-%d') as work_date FROM hr_work_schedule_details WHERE work_schedule_id=? LIMIT 1`, [req.params.id]
           );
           const workDate = existing?.work_date || ws.from_date;
-
-          // ── Check trùng giờ / thiếu nghỉ — GIỐNG ĐÚNG logic create(), nhưng loại trừ chính dòng đang sửa ──
           const [[shiftInfo]] = await db.query(`SELECT rest_time_after, name FROM shifts WHERE id=?`, [d.shiftTemplateId]);
+          resolved.push({ d, existing, workDate, startTime, endTime, shiftInfo });
+        }
+
+        const anchor = resolved[0].workDate;
+        const entries = resolved.map(r => {
+          const [sLocal, eLocal] = toMinutesRange(r.startTime, r.endTime);
+          const offset = dayDiff(anchor, r.workDate) * 1440;
+          return {
+            ...r,
+            absS: sLocal + offset, absE: eLocal + offset,
+            restAfterMin: parseFloat(r.shiftInfo?.rest_time_after || 0) * 60,
+            shiftName: r.shiftInfo?.name || '',
+          };
+        });
+
+        // ── BƯỚC B: so TỪNG CẶP detail đang sửa VỚI NHAU — trước đây bị bỏ sót, chỉ so với DB ──
+        const crossConflicts = [];
+        for (let i = 0; i < entries.length; i++) {
+          for (let j = i + 1; j < entries.length; j++) {
+            const a = entries[i], b = entries[j];
+            if (a.workDate === b.workDate && isOverlap(a.absS, a.absE, b.absS, b.absE)) {
+              crossConflicts.push(`Ngày ${a.workDate}: 2 ca đang sửa bị trùng giờ ("${a.shiftName}" và "${b.shiftName}")`);
+              continue;
+            }
+            if (a.absE <= b.absS && a.restAfterMin > 0 && (b.absS - a.absE) < a.restAfterMin) {
+              crossConflicts.push(`Ngày ${b.workDate}: ca "${b.shiftName}" chưa đủ nghỉ sau ca "${a.shiftName}" (cần ít nhất ${(a.restAfterMin/60)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+            }
+            if (b.absE <= a.absS && b.restAfterMin > 0 && (a.absS - b.absE) < b.restAfterMin) {
+              crossConflicts.push(`Ngày ${a.workDate}: ca "${a.shiftName}" chưa đủ nghỉ sau ca "${b.shiftName}" (cần ít nhất ${(b.restAfterMin/60)} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
+            }
+          }
+        }
+        if (crossConflicts.length) {
+          return fail(res, 400, `⚠️ Không thể sửa ca, chưa lưu gì cả:\n${crossConflicts.join('\n')}`);
+        }
+
+        for (const { d, existing, workDate, startTime, endTime, shiftInfo } of entries) {
+          // ── Check trùng giờ / thiếu nghỉ với ca ĐÃ LƯU SẴN — GIỐNG ĐÚNG logic create(), loại trừ chính dòng đang sửa ──
           const newRestMin = parseFloat(shiftInfo?.rest_time_after || 0) * 60;
           const [newS, newE] = toMinutesRange(startTime, endTime);
 
           const [nearbyShifts] = await db.query(
-            `SELECT wsd.work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
+            // BUG FIX: bắt buộc DATE_FORMAT() — cùng lỗi như checkScheduleConflicts()/MultiDay(): thiếu
+            // DATE_FORMAT khiến wsd.work_date trả về Date object thay vì string, làm so sánh cùng-ngày
+            // và dayDiff() bị vô hiệu hoá âm thầm, không báo trùng ca dù thực tế có trùng.
+            `SELECT DATE_FORMAT(wsd.work_date,'%Y-%m-%d') as work_date, wsd.start_time, wsd.end_time, st.name AS shift_name, st.rest_time_after
              FROM hr_work_schedule_details wsd
              JOIN shifts st ON st.id = wsd.shift_template_id
              WHERE wsd.employee_id = ? AND wsd.work_date BETWEEN DATE_SUB(?, INTERVAL 1 DAY) AND DATE_ADD(?, INTERVAL 1 DAY)
@@ -800,6 +847,16 @@ const workScheduleController = {
               conflicts.push(`Xếp ca "${shiftInfo?.name || ''}" xong không đủ nghỉ trước ca "${ex.shift_name}" ngày ${ex.work_date} (cần ít nhất ${shiftInfo.rest_time_after} giờ) — theo Điều 2 QĐ 73/2011/QĐ-TTg`);
             }
           }
+
+          // ── Chặn xếp ca vào đúng ngày đã được ghi nhận là NGHỈ BÙ TRỰC của nhân viên này ──
+          const [[compLeave]] = await db.query(
+            `SELECT id FROM hr_work_schedule_details WHERE employee_id=? AND work_date=? AND status='COMPENSATORY_LEAVE' AND id != ?`,
+            [ws.employee_id, workDate, existing?.id || 0]
+          );
+          if (compLeave) {
+            conflicts.push(`Ngày ${workDate} đã được ghi nhận là ngày nghỉ bù trực của nhân viên này — không thể xếp ca làm việc vào ngày này`);
+          }
+
           if (conflicts.length) {
             return fail(res, 400, `⚠️ Không thể sửa ca, chưa lưu gì cả:\n${conflicts.join('\n')}`);
           }

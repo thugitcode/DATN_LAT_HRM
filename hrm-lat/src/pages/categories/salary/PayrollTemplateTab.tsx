@@ -17,6 +17,7 @@ export default function PayrollTemplateTab() {
   // Dữ liệu phục vụ Master Data & Lưới
   const [templates, setTemplates] = useState<any[]>([]);
   const [components, setComponents] = useState<any[]>([]);
+  const [compSearchTerm, setCompSearchTerm] = useState('');
   const [positions, setPositions] = useState<string[]>([]);
   const [departments, setDepartments] = useState<any[]>([]);
   const [rooms, setRooms] = useState<any[]>([]);
@@ -456,12 +457,14 @@ export default function PayrollTemplateTab() {
                   </select>
                   <Input 
                     placeholder="Tìm kiếm mã hoặc tên thành phần..." size="sm"
+                    value={compSearchTerm}
+                    onValueChange={setCompSearchTerm}
                     classNames={{ inputWrapper: "bg-gray-100" }}
                     startContent={<IconSearch size={14} className="text-gray-400" />}
                   />
                 </div>
 
-                <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+                <div className="border border-gray-200 rounded-xl bg-white max-h-[55vh] overflow-y-auto">
                   <Table aria-label="Component Selector List Grid" removeWrapper>
                     <TableHeader>
                       <TableColumn width={40}>{" "}</TableColumn>
@@ -471,7 +474,13 @@ export default function PayrollTemplateTab() {
                       <TableColumn>Công thức tính</TableColumn>
                     </TableHeader>
                     <TableBody>
-                      {components.map((c) => {
+                      {components
+                        .filter((c) => {
+                          if (!compSearchTerm.trim()) return true;
+                          const q = compSearchTerm.trim().toLowerCase();
+                          return c.code?.toLowerCase().includes(q) || c.name?.toLowerCase().includes(q);
+                        })
+                        .map((c) => {
                         const isChecked = tempSelectedCompCodes.includes(c.code);
                        
                         const isInactive = c.status === 'INACTIVE';

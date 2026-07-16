@@ -119,13 +119,15 @@ export function AllowanceSection({ data }: AllowanceSectionProps) {
         <AllowanceRow
           label={t('payrollCalculation.detail.performance_salary')}
           value={data.performanceSalary}
-          formulaLabel={t('payrollCalculation.detail.formula')}
+          showFormula={!!data.performanceSalaryFormula}
+          formulaLabel={data.performanceSalaryFormula || t('payrollCalculation.detail.formula')}
           formatCurrency={formatCurrency}
         />
         <AllowanceRow
           label={t('payrollCalculation.detail.bonus_amount')}
           value={data.bonusAmount}
-          formulaLabel={t('payrollCalculation.detail.formula')}
+          showFormula={!!data.bonusAmountFormula}
+          formulaLabel={data.bonusAmountFormula || t('payrollCalculation.detail.formula')}
           formatCurrency={formatCurrency}
         />
         <AllowanceRow

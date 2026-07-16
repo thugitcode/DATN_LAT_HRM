@@ -99,6 +99,7 @@ export interface SalaryData {
   // Overtime
   totalOvertimeHours: number;
   overtimeAmount: number;
+  overtimeAmountFormula?: string;
   compHoursUsed: number;
   compHoursRemaining: number;
 
@@ -110,8 +111,10 @@ export interface SalaryData {
 
   // Actual salary
   actualWorkSalary: number;
+  actualWorkSalaryFormula?: string;
   onCallDays: number;
   onCallSalary: number;
+  onCallSalaryFormula?: string;
   actualPositionAllowance: number;
   actualBasicSalaryByWork: number;
 
@@ -127,9 +130,19 @@ export interface SalaryData {
 
   // Bonus & Performance
   performanceSalary: number;
+  performanceSalaryFormula?: string;
   bonusAmount: number;
+  bonusAmountFormula?: string;
   otherIncomeAndOvertime: number;
   totalBeforeDeduction: number;
+
+  // Formula chung theo mã thành phần (từ mẫu bảng lương hoặc fallback)
+  formulas?: Record<string, string>;
+  socialInsuranceFormula?: string;
+  healthInsuranceFormula?: string;
+  unemploymentInsuranceFormula?: string;
+  unionFeeFormula?: string;
+  personalIncomeTaxFormula?: string;
 
   // Violations
   violationPenalty: number;
